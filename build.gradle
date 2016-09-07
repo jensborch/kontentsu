@@ -1,0 +1,125 @@
+plugins {
+    id 'java'
+    id 'checkstyle'
+    id 'findbugs'
+    id 'build-dashboard'
+    id 'idea'
+    id "jacoco"
+    id "pmd"
+}
+
+ext {
+    log4jVersion = '2.6.2'
+    javaeeVersion = '7.0'
+    h2Version = '1.4.190'
+    jacksonVersion = '2.5.1'
+    jerseyVersion = '2.22.1'
+    hibernateVersion = '5.2.2.Final'
+    querydslVersion = "4.1.2"
+    fileuploadVersion = "1.3.1"
+    ownerVersion = '1.0.9'
+    commonsVfsVersion = '2.1'
+    cacheApiversion = '1.0.0'
+
+    swaggerUiVersion = '2.1.4'
+    swaggerVersion = '1.5.9'
+    angularMaterialVersion = '1.0.9'
+    angularVersion = '1.5.7'
+    materialDesignIconsVersions = '2.2.0'
+
+    payaraVersion = '4.1.1.163'
+
+    checkstyleVersion = "7.1"
+    findbugsVersion =  "3.0.1"
+    pmdVersion = "5.5.1"
+    openejbVersion = '7.0.0'
+    junitVersion = '4.12'
+    jacocoVersion = "0.7.7.201606060606"
+    mockitoVersion = '1.10.19'
+    catchExceptionVersion = '1.4.4'
+    restAssuredVersion = '3.0.0'
+}
+
+defaultTasks 'clean', 'build'
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'checkstyle'
+    apply plugin: 'findbugs'
+    apply plugin: 'pmd'
+    apply plugin: 'jacoco'
+    group = 'dk.kontentsu.cdn'
+    version = '1.0-SNAPSHOT'
+
+    sourceCompatibility = '1.8'
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+    repositories {
+        maven {
+            url "http://maven/nexus/content/groups/public"
+        }
+        mavenCentral()
+    }
+
+    checkstyle {
+        toolVersion = checkstyleVersion
+        ignoreFailures = true
+        sourceSets = [sourceSets.main]
+        configFile = file("$rootProject.projectDir/config/checkstyle/checkstyle.xml")
+    }
+    findbugs {
+        toolVersion = findbugsVersion
+        ignoreFailures = true
+        sourceSets = [sourceSets.main]
+        excludeFilter = file("$rootProject.projectDir/config/findbugs/exclude.xml")
+    }
+    pmd {
+        toolVersion = pmdVersion
+        sourceSets = [sourceSets.main]
+        ignoreFailures = true
+        ruleSetFiles = files("$rootProject.projectDir/config/pmd/ruleset.xml")
+    }
+    jacoco {
+        toolVersion = jacocoVersion
+    }
+    test {
+        finalizedBy jacocoTestReport
+    }
+    dependencies {
+        compile 'org.apache.logging.log4j:log4j-api:' + log4jVersion
+        compile 'org.apache.logging.log4j:log4j-slf4j-impl:' + log4jVersion
+        compile 'org.apache.logging.log4j:log4j-1.2-api:' + log4jVersion
+
+        testCompile 'junit:junit:' + junitVersion
+        testCompile 'org.apache.logging.log4j:log4j-core:' + log4jVersion
+        testCompile 'eu.codearte.catch-exception:catch-exception:' + catchExceptionVersion
+        testCompile 'org.mockito:mockito-all:' + mockitoVersion
+    }
+
+    compileJava {
+        options.encoding = 'UTF-8'
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    }
+
+    tasks.withType(FindBugs) {
+        reports {
+            xml.enabled = true
+            html.enabled = false
+        }
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            csv.enabled false
+            html.enabled true
+            html.destination "${buildDir}/reports/jacoco"
+        }
+    }
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+    }
+}

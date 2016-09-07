@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+    <persistence-unit name="CDN" transaction-type="JTA">
+        <description/>
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <jta-data-source>java:global/CdnDS</jta-data-source>
+        <class>dk.kontentsu.cdn.model.Category</class>
+        <class>dk.kontentsu.cdn.model.Content</class>
+        <class>dk.kontentsu.cdn.model.ExternalFile</class>
+        <class>dk.kontentsu.cdn.model.SemanticUriPath</class>
+        <class>dk.kontentsu.cdn.model.MimeType</class>
+        <class>dk.kontentsu.cdn.model.SemanticUriPath</class>
+        <class>dk.kontentsu.cdn.model.Taxon</class>
+        <class>dk.kontentsu.cdn.model.Taxonomy</class>
+        <!-- Internal -->
+        <class>dk.kontentsu.cdn.model.Approver</class>
+        <class>dk.kontentsu.cdn.model.Host</class>
+        <class>dk.kontentsu.cdn.model.internal.Item</class>
+        <class>dk.kontentsu.cdn.model.internal.Metadata</class>
+        <class>dk.kontentsu.cdn.model.internal.Provider</class>
+        <class>dk.kontentsu.cdn.model.internal.Reference</class>
+        <class>dk.kontentsu.cdn.model.internal.Version</class>
+        <validation-mode>CALLBACK</validation-mode>
+        <properties>
+            <property name="javax.persistence.validation.group.pre-persist" value="javax.validation.groups.Default"/>
+            <property name="javax.persistence.validation.group.pre-update" value="javax.validation.groups.Default"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            <property name="javax.persistence.schema-generation.create-source" value="metadata"/>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.SunOneJtaPlatform"/>
+        </properties>
+    </persistence-unit>
+</persistence>

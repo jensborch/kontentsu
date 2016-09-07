@@ -1,0 +1,41 @@
+{
+    "_links": {
+        "self": {
+            "href": "pages/page-full"
+        },
+        "template": {
+            "href": "components/templates/responsive-multi-article.tpl.html"
+        },
+        "composition-type": {
+            "href": "compositiontypes/default/page-multi-article.json"
+        },
+        "composition": {
+            "articles": [
+                {
+                    "href": "items/article1"
+                },
+                {
+                    "href": "items/article2"
+                }
+            ],
+            "contact": {
+                "href": "items/contact"
+            },
+            "application": {
+                "href": "items/application-info"
+            }
+        }
+    },
+    "seo": {
+        "author": "Peter Nielsen",
+        "description": "Lorem Ipsum page1",
+        "title": "Lorem Ipsum",
+        "company": "Lorem Ipsum Inc.",
+        "keywords": "lorem, ipsum",
+        "canonical": "http://da.lipsum.com/feed/html",
+        "metadata": ""
+    },
+    "content": {
+        "heading": "Lorem Ipsum"
+    }
+}

@@ -1,0 +1,3 @@
+rootProject.name = 'Kontentsu CDN Publishing Service'
+include 'api', 'core', 'util', 'test'
+

@@ -1,0 +1,9 @@
+/build
+/.svn
+/.gradle
+/.nb-gradle
+/test/build
+/util/build
+/core/nbproject
+/core/build
+/api/build

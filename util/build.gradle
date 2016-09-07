@@ -1,0 +1,8 @@
+
+jar {
+    baseName = 'util'
+}
+
+dependencies {
+    compile 'org.apache.tomee:javaee-api:' + javaeeVersion
+}

@@ -1,0 +1,20 @@
+
+jar {
+    baseName = 'cdn-test'
+}
+
+sourceSets {
+    main {
+        output.resourcesDir = "build/classes/main"
+    }
+}
+
+dependencies {
+    compile 'org.apache.tomee:openejb-core:' + openejbVersion
+    compile 'org.apache.tomee:tomee-jaxrs:' + openejbVersion
+    compile 'com.h2database:h2:' + h2Version
+}
+
+configurations {
+    all*.exclude group: 'org.hsqldb'
+}

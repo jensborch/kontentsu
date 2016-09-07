@@ -1,0 +1,8 @@
+
+.md-button.md-fab {
+  line-height: 4rem;
+  min-width: 0;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+}
