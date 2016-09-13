@@ -6,17 +6,13 @@ import { ContentService } from './content.service';
     providers: [ContentService]
 })
 export class AppComponent implements OnInit {
-    private frontPage: String = 'pages/page-simple/page-simple';
+    frontPage: String = 'pages/page-simple/page-simple';
     page = {};
 
     constructor(private contentService: ContentService) { }
 
     ngOnInit(): void {
-        this.getPage(this.frontPage);
-    }
-
-    getPage(path: String): void {
-        this.contentService.getPage(path).then(page => this.page = page);
+        this.contentService.getPage(this.frontPage).then(p => this.page = p);
     }
 
 }

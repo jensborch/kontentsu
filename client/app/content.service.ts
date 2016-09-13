@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import { Headers, Http, Response } from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -14,7 +14,7 @@ export class ContentService {
     getPage(path: String): Promise<any> {
         return this.http.get(this.contentUrl + path, {headers: this.headers})
             .toPromise()
-            .then(response => response.json())
+            .then((response: Response) => response.json())
             .catch(this.handleError);
     }
 
