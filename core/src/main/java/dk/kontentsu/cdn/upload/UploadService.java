@@ -25,12 +25,13 @@ package dk.kontentsu.cdn.upload;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.transaction.UserTransaction;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -54,7 +55,6 @@ import dk.kontentsu.cdn.repository.ItemRepository;
  * @author Jens Borch Christiansen
  */
 @Stateless
-@TransactionManagement(value = TransactionManagementType.BEAN)
 public class UploadService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UploadService.class);
@@ -71,30 +71,30 @@ public class UploadService {
     @Inject
     private ExternalizerService externalizer;
 
+    private UploadService self;
+
     @Resource
-    private UserTransaction userTransaction;
+    private SessionContext ctx;
 
+    @PostConstruct
+    public void init() {
+        self = ctx.getBusinessObject(UploadService.class);
+    }
+
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public Item upload(@Valid final UploadItem uploadeItem) {
-        try {
-            userTransaction.begin();
+        Version version = self.save(uploadeItem);
+        externalizer.externalize(version.getUuid());
+        return version.getItem();
+    }
 
-            Item item = findOrCreateItem(uploadeItem);
-            Version version = addVersion(item, uploadeItem);
-            addHosts(item, uploadeItem);
-            itemRepo.save(item);
-            userTransaction.commit();
-
-            externalizer.externalize(version.getUuid());
-
-            return item;
-        } catch (Exception ex) {
-            try {
-                userTransaction.rollback();
-            } catch (Exception e) {
-                LOGGER.info("Error rolling back transaction", e);
-            }
-            throw new UploadException("Error uploading - transaction has been rolled back", ex);
-        }
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Version save(@Valid final UploadItem uploadeItem) {
+        Item item = findOrCreateItem(uploadeItem);
+        Version version = addVersion(item, uploadeItem);
+        addHosts(item, uploadeItem);
+        itemRepo.save(item);
+        return version;
     }
 
     private Item findOrCreateItem(final UploadItem uploadeItem) {

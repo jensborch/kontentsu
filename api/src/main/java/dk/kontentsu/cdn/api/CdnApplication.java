@@ -78,6 +78,7 @@ public class CdnApplication extends Application {
         classes.add(HostExposure.class);
 
         classes.add(ObjectMapperProvider.class);
+        classes.add(CORSFilter.class);
 
         classes.add(ApiListingResource.class);
         classes.add(SwaggerSerializers.class);

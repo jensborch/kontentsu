@@ -1,17 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ContentService } from './content.service';
 @Component({
     selector: 'editing-app',
-    template: '<h1>Kontentsu editing application</h1>',
+    templateUrl: 'app/app.component.html',
     providers: [ContentService]
 })
-export class AppComponent {
-    page = {}; 
+export class AppComponent implements OnInit {
+    private frontPage: String = 'pages/page-simple/page-simple';
+    page = {};
 
     constructor(private contentService: ContentService) { }
 
-   getPage(): void {
-    this.contentService.getPage().then(page => this.page = page);
-  }
+    ngOnInit(): void {
+        this.getPage(this.frontPage);
+    }
+
+    getPage(path: String): void {
+        this.contentService.getPage(path).then(page => this.page = page);
+    }
 
 }
