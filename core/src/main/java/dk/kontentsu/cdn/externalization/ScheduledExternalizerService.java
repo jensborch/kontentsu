@@ -154,7 +154,7 @@ public class ScheduledExternalizerService {
         Path filePath = hostPath.resolve(f.getItem().getUri().toPath());
         try {
             LOGGER.debug("Saving content to: " + filePath.toString());
-            if (Files.notExists(filePath.getParent())) {
+            if (filePath.getParent() != null && Files.notExists(filePath.getParent())) {
                 Files.createDirectories(filePath.getParent());
             }
             if (Files.notExists(filePath)) {
