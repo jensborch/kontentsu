@@ -32,7 +32,11 @@ import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.annotation.Resource;
@@ -49,8 +53,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.kontentsu.cdn.model.ExternalFile;
+import dk.kontentsu.cdn.model.internal.Host;
 import dk.kontentsu.cdn.repository.ExternalFileRepository;
-import dk.kontentsu.cdn.repository.HostRepository;
 
 /**
  *
@@ -70,9 +74,6 @@ public class ScheduledExternalizerService {
 
     @Inject
     private ExternalFileRepository fileRepo;
-
-    @Inject
-    private HostRepository hostRepo;
 
     @Asynchronous
     public void reschedule() {
@@ -111,16 +112,47 @@ public class ScheduledExternalizerService {
         LOGGER.info("Publishing externalised files available at: {}", time.format(DateTimeFormatter.ISO_DATE_TIME));
         List<ExternalFile> all = fileRepo.findAll(time);
         LOGGER.info("Found {} files to publish", all.size());
-        hostRepo.findAll().forEach(h -> {
-            Path hostPath = h.getPath();
-            all.stream().filter(f -> f.getItem().getHosts().contains(h)).forEach(f -> publish(f, hostPath));
+        Map<Host, Set<ExternalFile>> filesMap = new HashMap<>();
+        all.stream().forEach(f -> {
+            f.getItem().getHosts().stream().forEach(h -> {
+                filesMap.putIfAbsent(h, new HashSet<>());
+                filesMap.get(h).add(f);
+            });
         });
+
+        filesMap.forEach((host, files) -> {
+            deleteAll(host, files);
+            publishAll(host, files);
+        });
+    }
+
+    private void deleteAll(final Host host, final Set<ExternalFile> files) {
+        try {
+            Files.walk(host.getPath()).filter(p -> p.toFile().isFile()).forEach(fsPath -> {
+                if (!files.stream().map(f -> f.resolvePath(host.getPath())).anyMatch(p -> p.equals(fsPath))) {
+                    delete(fsPath);
+                }
+            });
+        } catch (IOException ex) {
+            LOGGER.error("Unable to walk file tree for filesystem with path " + host.getPath().toString(), ex);
+        }
+    }
+
+    private void delete(final Path path) {
+        try {
+            Files.delete(path);
+        } catch (IOException ex) {
+            LOGGER.warn("Unable to delete file with path {}", path.toString());
+        }
+    }
+
+    private void publishAll(final Host host, final Set<ExternalFile> files) {
+        files.forEach(f -> publish(f, host.getPath()));
     }
 
     private void publish(final ExternalFile f, final Path hostPath) {
         Path filePath = hostPath.resolve(f.getItem().getUri().toPath());
         try {
-            //TODO: Delete
             LOGGER.debug("Saving content to: " + filePath.toString());
             if (Files.notExists(filePath.getParent())) {
                 Files.createDirectories(filePath.getParent());

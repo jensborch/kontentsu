@@ -23,6 +23,7 @@
  */
 package dk.kontentsu.cdn.model;
 
+import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
@@ -143,6 +144,10 @@ public class ExternalFile extends AbstractBaseEntity {
 
     public Content getContent() {
         return content;
+    }
+
+    public Path resolvePath(final Path path) {
+        return path.resolve(getItem().getUri().toPath());
     }
 
     /**

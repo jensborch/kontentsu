@@ -90,6 +90,10 @@ public class Host extends AbstractBaseEntity {
         this.path = path;
     }
 
+    public Host(final String name, final String description, final String path) {
+        this(name, description, null, path);
+    }
+
     public String getName() {
         return name;
     }
