@@ -23,10 +23,10 @@
  */
 package dk.kontentsu.cdn.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -68,7 +68,7 @@ public class Taxon extends Category {
     @JoinTable(name = "category_item",
             joinColumns = @JoinColumn(name = "cat_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "item_id", referencedColumnName = "id"))
-    private List<Item> items;
+    private Set<Item> items;
 
     @ManyToOne(cascade = {})
     @JoinColumn(name = "taxonomy_id")
@@ -81,15 +81,15 @@ public class Taxon extends Category {
     public Taxon(final Taxonomy taxonomy, final String... elements) {
         super(elements);
         this.taxonomy = taxonomy;
-        this.items = new ArrayList<>();
+        this.items = new HashSet<>();
     }
 
     public static Taxon parse(final Taxonomy taxonomy, final String uri) {
         return new Taxon(taxonomy, split(uri));
     }
 
-    public List<Item> getItems() {
-        return (items != null) ? Collections.unmodifiableList(items) : null;
+    public Set<Item> getItems() {
+        return (items != null) ? Collections.unmodifiableSet(items) : null;
     }
 
     public Optional<Item> getItem(final String name) {

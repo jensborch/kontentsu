@@ -109,7 +109,10 @@ public class ExternalizerService {
     @Lock(LockType.WRITE)
     public List<ExternalFile> externalize(final Version version) {
         List<Version> versions = findVersionsToExternalize(version);
-        return versions.stream().flatMap(v -> externalizeVersion(v).stream()).collect(Collectors.toList());
+        return versions.stream()
+                .flatMap(v -> externalizeVersion(v).stream())
+                .sorted((f1, f2) -> f1.getInterval().getFrom().compareTo(f2.getInterval().getFrom()))
+                .collect(Collectors.toList());
 
     }
 

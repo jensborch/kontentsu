@@ -24,10 +24,11 @@
  */
 package dk.kontentsu.cdn.model.internal;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
@@ -79,30 +80,30 @@ public class Item extends AbstractBaseEntity {
     private SemanticUri uri;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "items")
-    private List<Taxon> categories;
+    private Set<Taxon> categories;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "item")
-    private List<Version> versions;
+    private Set<Version> versions;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "item")
-    private List<ExternalFile> files;
+    private Set<ExternalFile> files;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, targetEntity = Provider.class)
     @JoinColumn(name = "provider_id")
     private Provider provider;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    private List<Host> hosts;
+    private Set<Host> hosts;
 
     protected Item() {
         //Needed by JPA
     }
 
     public Item(final SemanticUri uri) {
-        this.categories = new ArrayList<>();
-        this.versions = new ArrayList<>();
-        this.files = new ArrayList<>();
-        this.hosts = new ArrayList<>();
+        this.categories = new HashSet<>();
+        this.versions = new HashSet<>();
+        this.files = new HashSet<>();
+        this.hosts = new HashSet<>();
         this.uri = uri;
         uri.getPath().addItem(this);
     }
@@ -112,8 +113,8 @@ public class Item extends AbstractBaseEntity {
         this.provider = provider;
     }
 
-    public List<Host> getHosts() {
-        return Collections.unmodifiableList(hosts);
+    public Set<Host> getHosts() {
+        return Collections.unmodifiableSet(hosts);
     }
 
     public void addHost(final Host host) {
@@ -140,16 +141,16 @@ public class Item extends AbstractBaseEntity {
         return uri;
     }
 
-    public List<Taxon> getCategories() {
-        return Collections.unmodifiableList(categories);
+    public Set<Taxon> getCategories() {
+        return Collections.unmodifiableSet(categories);
     }
 
     public void addCategory(final Taxon category) {
         categories.add(category);
     }
 
-    public List<Version> getVersions() {
-        return Collections.unmodifiableList(versions);
+    public Set<Version> getVersions() {
+        return Collections.unmodifiableSet(versions);
     }
 
     public List<Version> getVersions(final Interval interval) {
@@ -167,8 +168,8 @@ public class Item extends AbstractBaseEntity {
         version.setItem(this);
     }
 
-    public List<ExternalFile> getFiles() {
-        return Collections.unmodifiableList(files);
+    public Set<ExternalFile> getFiles() {
+        return Collections.unmodifiableSet(files);
     }
 
     public final void addFile(@Valid final ExternalFile file) {

@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.ejb.embeddable.EJBContainer;
@@ -96,10 +97,10 @@ public class UploadServiceIT {
         Item result = service.upload(uploadeItem);
         assertEquals("name", result.getName());
         assertEquals(1, result.getVersions().size());
-        assertEquals(NOW, result.getVersions().get(0).getInterval().getFrom());
-        assertEquals(Interval.INFINIT, result.getVersions().get(0).getInterval().getTo());
+        assertEquals(1, result.getVersions().stream().filter(v -> v.getInterval().getFrom().equals(NOW)).collect(Collectors.counting()).intValue());
+        assertEquals(1, result.getVersions().stream().filter(v -> v.getInterval().getTo().equals(Interval.INFINIT)).collect(Collectors.counting()).intValue());
         assertEquals(1, result.getHosts().size());
-        assertEquals(host, result.getHosts().get(0));
+        assertEquals(host, result.getHosts().stream().findFirst().get());
     }
 
     @Test
@@ -125,9 +126,9 @@ public class UploadServiceIT {
         result = service.upload(uploadeItem);
         assertEquals("simple-page", result.getName());
         assertEquals(1, result.getVersions().size());
-        assertEquals(2, result.getVersions().get(0).getReferences().size());
+        assertEquals(2, result.getVersions().stream().findFirst().get().getReferences().size());
         assertEquals(1, result.getHosts().size());
-        assertEquals(host, result.getHosts().get(0));
+        assertEquals(host, result.getHosts().stream().findFirst().get());
 
     }
 

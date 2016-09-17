@@ -23,10 +23,10 @@
  */
 package dk.kontentsu.cdn.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -69,7 +69,7 @@ public class SemanticUriPath extends Category {
     private static final long serialVersionUID = 2921353322551114756L;
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = Item.class, mappedBy = "uri.path")
-    private List<Item> items;
+    private Set<Item> items;
 
     @Transient
     private Long versions;
@@ -84,12 +84,12 @@ public class SemanticUriPath extends Category {
     public SemanticUriPath(final String path, final Long versions) {
         this(split(path));
         this.versions = versions;
-        this.items = new ArrayList<>();
+        this.items = new HashSet<>();
     }
 
     public SemanticUriPath(final String... elements) {
         super(elements);
-        this.items = new ArrayList<>();
+        this.items = new HashSet<>();
     }
 
     public static SemanticUriPath parse(final String path) {
@@ -105,8 +105,8 @@ public class SemanticUriPath extends Category {
         return versions;
     }
 
-    public List<Item> getItems() {
-        return Collections.unmodifiableList(items);
+    public Set<Item> getItems() {
+        return Collections.unmodifiableSet(items);
     }
 
     public Optional<Item> getItem(final String name) {
