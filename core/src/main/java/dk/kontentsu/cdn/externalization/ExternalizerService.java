@@ -163,15 +163,9 @@ public class ExternalizerService {
 
     private boolean exists(final TemporalReferenceTree<ExternalizationVisitor> t, final Version version) {
         Optional<String> id = externalizationId(t);
-        boolean result;
-        if (id.map(i -> i.equals(version.getExternalizationId())).orElse(false)) {
-            result = true;
-        } else {
-            result = false;
-            delete(version);
-        }
+        id.filter(i -> !i.equals(version.getExternalizationId())).ifPresent(i -> delete(version));
         id.ifPresent(i -> version.setExternalizationId(i));
-        return result;
+        return id.map(i -> !i.equals(version.getExternalizationId())).orElse(true);
     }
 
     private void delete(final Version version) {
