@@ -29,6 +29,6 @@ package dk.kontentsu.cdn.model.internal;
  */
 public enum ReferenceType {
 
-    LINK, COMPOSITION, CANONICAL_URL;
+    LINK, COMPOSITION;
 
 }

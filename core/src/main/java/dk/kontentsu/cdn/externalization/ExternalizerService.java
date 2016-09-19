@@ -25,6 +25,7 @@ package dk.kontentsu.cdn.externalization;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -43,6 +44,8 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.kontentsu.cdn.externalization.visitors.ExternalizationIdentifierVisitor;
+import dk.kontentsu.cdn.externalization.visitors.ExternalizationVisitor;
 import dk.kontentsu.cdn.model.ExternalFile;
 import dk.kontentsu.cdn.model.internal.Item;
 import dk.kontentsu.cdn.model.internal.ReferenceProcessor;
@@ -64,7 +67,6 @@ public class ExternalizerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExternalizerService.class);
 
     private List<UUID> processing;
-    private List<UUID> processed;
 
     @Inject
     private ExternalFileRepository fileRepo;
@@ -77,12 +79,11 @@ public class ExternalizerService {
 
     @PostConstruct
     void init() {
-        this.processed = new ArrayList<>();
         this.processing = new ArrayList<>();
     }
 
     private boolean processing(final UUID uuid) {
-        boolean result = processing.contains(uuid) || processed.contains(uuid);
+        boolean result = processing.contains(uuid);
         if (!result) {
             processing.add(uuid);
         }
@@ -91,8 +92,6 @@ public class ExternalizerService {
 
     private void processed(final UUID uuid) {
         processing.remove(uuid);
-        processed.add(uuid);
-        //TODO: cleanup list and/or create week list
     }
 
     @Asynchronous
@@ -145,6 +144,7 @@ public class ExternalizerService {
             ReferenceProcessor<ExternalizationVisitor> processor = new ReferenceProcessor<>(version, ExternalizationVisitor.create(version));
             List<TemporalReferenceTree<ExternalizationVisitor>> trees = processor.process();
             results = trees.stream()
+                    .filter(t -> !exists(t, version))
                     .map(t -> createExternalFile(t, version))
                     .collect(Collectors.toList());
 
@@ -161,9 +161,35 @@ public class ExternalizerService {
         return results;
     }
 
+    private boolean exists(final TemporalReferenceTree<ExternalizationVisitor> t, final Version version) {
+        Optional<String> id = externalizationId(t);
+        boolean result;
+        if (id.map(i -> i.equals(version.getExternalizationId())).orElse(false)) {
+            result = true;
+        } else {
+            result = false;
+            delete(version);
+        }
+        id.ifPresent(i -> version.setExternalizationId(i));
+        return result;
+    }
+
+    private void delete(final Version version) {
+        fileRepo.findByExternalizationId(version.getExternalizationId()).ifPresent(f -> f.delete());
+    }
+
+    private Optional<String> externalizationId(final TemporalReferenceTree<ExternalizationVisitor> t) {
+        if (t.getVisitor() instanceof ExternalizationIdentifierVisitor) {
+            return Optional.of(((ExternalizationIdentifierVisitor) t.getVisitor()).getId());
+        } else {
+            return Optional.empty();
+        }
+    }
+
     private ExternalFile createExternalFile(final TemporalReferenceTree<ExternalizationVisitor> t, final Version version) {
         return ExternalFile.builder()
                 .item(version.getItem())
+                .externalizationId(version.getExternalizationId())
                 .content(t.getVisitor().getContent())
                 .interval(t.getInteval())
                 .state(version.getState())

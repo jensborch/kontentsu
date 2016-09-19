@@ -73,13 +73,15 @@ public class Version extends AbstractBaseEntity {
 
     private static final long serialVersionUID = 720940222528135649L;
 
+    @Column(name = "externalization_id", unique = true)
+    private String externalizationId;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private final List<Reference> references = new ArrayList<>();
 
     @NotNull
     @OneToOne(cascade = CascadeType.ALL)
     private Content content;
-
 
     @NotNull
     @Valid
@@ -134,6 +136,14 @@ public class Version extends AbstractBaseEntity {
 
     public Approver getApprover() {
         return approver;
+    }
+
+    public void setExternalizationId(final String id) {
+        this.externalizationId = id;
+    }
+
+    public String getExternalizationId() {
+        return externalizationId;
     }
 
     void setItem(@Valid final Item item) {
@@ -217,7 +227,7 @@ public class Version extends AbstractBaseEntity {
                 || !getReferences().stream()
                 .filter(c -> c.getType() == ReferenceType.COMPOSITION)
                 .filter(c -> c.getItem().getVersions(interval).isEmpty())
-                        .findAny().isPresent();
+                .findAny().isPresent();
     }
 
     /**

@@ -6,6 +6,7 @@ plugins {
     id 'idea'
     id "jacoco"
     id "pmd"
+    id 'com.github.ben-manes.versions' version '0.13.0'
 }
 
 ext {
@@ -15,15 +16,16 @@ ext {
     jacksonVersion = '2.5.1'
     jerseyVersion = '2.22.1'
     hibernateVersion = '5.2.2.Final'
-    querydslVersion = "4.1.2"
-    fileuploadVersion = "1.3.1"
+    querydslVersion = "4.1.4"
+    fileuploadVersion = "1.3.2"
     ownerVersion = '1.0.9'
     commonsVfsVersion = '2.1'
     cacheApiversion = '1.0.0'
+    hashidsVersion = '1.0.1'
 
-    swaggerUiVersion = '2.1.4'
-    swaggerVersion = '1.5.9'
-    angularMaterialVersion = '1.0.9'
+    swaggerUiVersion = '2.2.2'
+    swaggerVersion = '1.5.10'
+    angularMaterialVersion = '1.1.0'
     angularVersion = '1.5.7'
     materialDesignIconsVersions = '2.2.0'
 
@@ -32,17 +34,18 @@ ext {
     checkstyleVersion = "7.1"
     findbugsVersion =  "3.0.1"
     pmdVersion = "5.5.1"
-    openejbVersion = '7.0.0'
+    openejbVersion = '7.0.1'
     junitVersion = '4.12'
     jacocoVersion = "0.7.7.201606060606"
     mockitoVersion = '1.10.19'
     catchExceptionVersion = '1.4.4'
-    restAssuredVersion = '3.0.0'
+    restAssuredVersion = '3.0.1'
 }
 
-defaultTasks 'clean', 'build'
+defaultTasks 'build'
 
 subprojects {
+    apply plugin: 'com.github.ben-manes.versions'
     apply plugin: 'java'
     apply plugin: 'checkstyle'
     apply plugin: 'findbugs'

@@ -21,26 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.cdn.externalization;
+package dk.kontentsu.cdn.externalization.visitors;
 
+import dk.kontentsu.cdn.externalization.ExternalizationException;
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
 import dk.kontentsu.cdn.model.internal.Version;
 
 /**
+ * Default externalization visitor for content thats should not be processed. Will throw a {@link ExternalizationException} if the content have a composition.
  *
  * @author Jens Borch Christiansen
  */
-public abstract class ExternalizationVisitor implements TemporalReferenceTree.Visitor {
+public class DefaultExternalizationVisitor extends ExternalizationVisitor {
 
-    public static ExternalizationVisitor create(final Version version) {
-        if (version.getMimeType().isHal()) {
-            return new HalJsonExternalizationVisitor(version);
-        } else {
-            return new DefaultExternalizationVisitor(version);
-        }
+    private final Version version;
+
+    public DefaultExternalizationVisitor(final Version version) {
+        this.version = version;
     }
 
-    public abstract Content getContent();
+    @Override
+    public TemporalReferenceTree.Visitor copy() {
+        throw new ExternalizationException("Item version with UUID " + version.getUuid() + " is not procesd for externalization and shuld thus not have a composition");
+    }
+
+    @Override
+    public Content getContent() {
+        return version.getContent();
+    }
+
+    @Override
+    public void visit(final TemporalReferenceTree.Node node) {
+        if (!node.isRoot()) {
+            throw new ExternalizationException("Item version with UUID " + version.getUuid() + " is not procesd for externalization and shuld thus not have a composition");
+        }
+    }
 
 }

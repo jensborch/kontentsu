@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.cdn.externalization;
+package dk.kontentsu.cdn.externalization.visitors;
 
 import static dk.kontentsu.cdn.parsers.HalJsonParser.*;
 
@@ -38,6 +38,7 @@ import java.util.function.Consumer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import dk.kontentsu.cdn.externalization.ExternalizationException;
 import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
@@ -69,6 +70,7 @@ class HalJsonExternalizationVisitor extends ExternalizationVisitor {
         }
     }
 
+    @Override
     public Content getContent() {
         removeComposition(pageNode);
         return new Content(pageNode.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8, version.getMimeType());

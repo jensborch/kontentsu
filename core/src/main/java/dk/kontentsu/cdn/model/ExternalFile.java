@@ -50,6 +50,8 @@ import dk.kontentsu.cdn.repository.Repository;
 @Entity
 @Table(name = "external_file")
 @NamedQueries({
+    @NamedQuery(name = Repository.EXTERNAL_FILE_FIND_BY_EXTERNALIZATION_ID,
+            query = "SELECT f FROM ExternalFile f WHERE f.externalizationId = :id"),
     @NamedQuery(name = Repository.EXTERNAL_FILE_SCHEDULE,
             query = "SELECT DISTINCT f.interval "
             + "FROM ExternalFile f "
@@ -78,6 +80,9 @@ public class ExternalFile extends AbstractBaseEntity {
 
     private static final long serialVersionUID = 857462851260372880L;
 
+    @Column(name = "externalization_id", unique = true)
+    private String externalizationId;
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "item_id")
@@ -104,6 +109,7 @@ public class ExternalFile extends AbstractBaseEntity {
         this.content = builder.content;
         this.interval = new Interval(builder.from, builder.to);
         this.state = builder.state;
+        this.externalizationId = builder.externalizationId;
         if (builder.uuid != null) {
             setUuid(builder.uuid);
         }
@@ -112,6 +118,10 @@ public class ExternalFile extends AbstractBaseEntity {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public String getExternalizationId() {
+        return externalizationId;
     }
 
     public Item getItem() {
@@ -155,6 +165,7 @@ public class ExternalFile extends AbstractBaseEntity {
      */
     public static class Builder {
 
+        private String externalizationId;
         private Item item;
         private Content content;
         private ZonedDateTime from = ZonedDateTime.now();
@@ -172,6 +183,7 @@ public class ExternalFile extends AbstractBaseEntity {
             this.from = file.getInterval().getFrom();
             this.state = file.getState();
             this.uuid = file.getUuid();
+            this.externalizationId = file.getExternalizationId();
             return this;
         }
 
@@ -203,6 +215,11 @@ public class ExternalFile extends AbstractBaseEntity {
 
         public Builder content(final Content content) {
             this.content = content;
+            return this;
+        }
+
+        public Builder externalizationId(final String externalizationId) {
+            this.externalizationId = externalizationId;
             return this;
         }
 

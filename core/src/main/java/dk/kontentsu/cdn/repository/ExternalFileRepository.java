@@ -59,6 +59,20 @@ public class ExternalFileRepository extends Repository<ExternalFile> {
         return query.getSingleResult();
     }
 
+    public ExternalFile getByExternalizationId(final String id) {
+        TypedQuery<ExternalFile> query = em.createNamedQuery(EXTERNAL_FILE_FIND_BY_EXTERNALIZATION_ID, ExternalFile.class);
+        query.setParameter("id", id);
+        return query.getSingleResult();
+    }
+
+    public Optional<ExternalFile> findByExternalizationId(final String id) {
+        try {
+            return Optional.of(getByExternalizationId(id));
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
     public Optional<ExternalFile> findByUri(final SemanticUri uri, final ZonedDateTime at) {
         try {
             return Optional.of(getByUri(uri, at));

@@ -38,7 +38,7 @@ public class ExternalizationException extends ApplicationException {
         super(msg, ex);
     }
 
-    ExternalizationException(final String msg) {
+    public ExternalizationException(final String msg) {
         super(msg);
     }
 

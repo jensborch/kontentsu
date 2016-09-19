@@ -33,7 +33,7 @@ import dk.kontentsu.cdn.model.Interval;
 /**
  * Representation of a item that can be externalized - i.e. an page on the CDN valid in a certain interval.
  *
- * To create actual external content, implement a Visitor for build the content when traversing the tree.
+ * To create actual external content, implement a Visitor to build the content when traversing the tree.
  *
  * @author Jens Borch Christiansen
  */

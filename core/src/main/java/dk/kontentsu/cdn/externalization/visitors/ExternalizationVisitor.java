@@ -21,39 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.cdn.externalization;
+package dk.kontentsu.cdn.externalization.visitors;
 
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
 import dk.kontentsu.cdn.model.internal.Version;
 
 /**
+ * Abstract externalization visitor, from where it is possible to get the content of the externalization.
  *
  * @author Jens Borch Christiansen
  */
-public class DefaultExternalizationVisitor extends ExternalizationVisitor {
+public abstract class ExternalizationVisitor implements TemporalReferenceTree.Visitor {
 
-    private final Version version;
-
-    public DefaultExternalizationVisitor(final Version version) {
-        this.version = version;
-    }
-
-    @Override
-    public TemporalReferenceTree.Visitor copy() {
-        throw new ExternalizationException("Item version with UUID " + version.getUuid() + " is not procesd for externalization and shuld thus not have a composition");
-    }
-
-    @Override
-    public Content getContent() {
-        return version.getContent();
-    }
-
-    @Override
-    public void visit(final TemporalReferenceTree.Node node) {
-        if (!node.isRoot()) {
-            throw new ExternalizationException("Item version with UUID " + version.getUuid() + " is not procesd for externalization and shuld thus not have a composition");
+    /**
+     * Factory method for getting correct implementation based on content mime type.
+     */
+    public static ExternalizationVisitor create(final Version version) {
+        if (version.getMimeType().isHal()) {
+            return new ExternalizationIdentifierVisitor(new HalJsonExternalizationVisitor(version));
+        } else {
+            return new DefaultExternalizationVisitor(version);
         }
     }
+
+    /**
+     * @return the contend created by the externalization process.
+     */
+    public abstract Content getContent();
 
 }
