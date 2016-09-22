@@ -27,8 +27,10 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -73,8 +75,8 @@ public class Version extends AbstractBaseEntity {
 
     private static final long serialVersionUID = 720940222528135649L;
 
-    @Column(name = "externalization_id", unique = true)
-    private String externalizationId;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> externalizationIds;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private final List<Reference> references = new ArrayList<>();
@@ -110,6 +112,7 @@ public class Version extends AbstractBaseEntity {
 
     private Version(final Builder builder) {
         setInterval(new Interval(builder.from, builder.to));
+        this.externalizationIds = new HashSet<>();
         this.content = builder.content;
         this.state = builder.state;
         this.metadata = builder.metadata;
@@ -138,12 +141,16 @@ public class Version extends AbstractBaseEntity {
         return approver;
     }
 
-    public void setExternalizationId(final String id) {
-        this.externalizationId = id;
+    public void addExternalizationId(final String id) {
+        externalizationIds.add(id);
     }
 
-    public String getExternalizationId() {
-        return externalizationId;
+    public void removeExternalizationId(final String id) {
+        externalizationIds.remove(id);
+    }
+
+    public Set<String> getExternalizationIds() {
+        return Collections.unmodifiableSet(externalizationIds);
     }
 
     void setItem(@Valid final Item item) {

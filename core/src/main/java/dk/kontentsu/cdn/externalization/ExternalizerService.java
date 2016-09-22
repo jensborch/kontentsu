@@ -143,8 +143,9 @@ public class ExternalizerService {
             LOGGER.info("Externalizing version {} with uri {}", version.getUuid(), version.getItem().getUri());
             ReferenceProcessor<ExternalizationVisitor> processor = new ReferenceProcessor<>(version, ExternalizationVisitor.create(version));
             List<TemporalReferenceTree<ExternalizationVisitor>> trees = processor.process();
+
             results = trees.stream()
-                    .filter(t -> !exists(t, version))
+                    .filter(t -> different(t, version))
                     .map(t -> createExternalFile(t, version))
                     .collect(Collectors.toList());
 
@@ -161,15 +162,8 @@ public class ExternalizerService {
         return results;
     }
 
-    private boolean exists(final TemporalReferenceTree<ExternalizationVisitor> t, final Version version) {
-        Optional<String> id = externalizationId(t);
-        id.filter(i -> !i.equals(version.getExternalizationId())).ifPresent(i -> delete(version));
-        id.ifPresent(i -> version.setExternalizationId(i));
-        return id.map(i -> !i.equals(version.getExternalizationId())).orElse(true);
-    }
-
-    private void delete(final Version version) {
-        fileRepo.findByExternalizationId(version.getExternalizationId()).ifPresent(f -> f.delete());
+    private boolean different(final TemporalReferenceTree<ExternalizationVisitor> t, final Version version) {
+        return externalizationId(t).filter(i -> !version.getExternalizationIds().contains(i)).isPresent();
     }
 
     private Optional<String> externalizationId(final TemporalReferenceTree<ExternalizationVisitor> t) {
@@ -181,13 +175,13 @@ public class ExternalizerService {
     }
 
     private ExternalFile createExternalFile(final TemporalReferenceTree<ExternalizationVisitor> t, final Version version) {
-        return ExternalFile.builder()
+        ExternalFile.Builder builder = ExternalFile.builder()
                 .item(version.getItem())
-                .externalizationId(version.getExternalizationId())
                 .content(t.getVisitor().getContent())
                 .interval(t.getInteval())
-                .state(version.getState())
-                .build();
+                .state(version.getState());
+        externalizationId(t).ifPresent(i -> builder.externalizationId(i));
+        return builder.build();
     }
 
 }
