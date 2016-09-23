@@ -61,8 +61,9 @@ import dk.kontentsu.cdn.model.State;
 import dk.kontentsu.cdn.repository.Repository;
 
 /**
- * A version of an item that can potentially be published to the CDN server. A version is active during a time period defined by its interval. A version (together with its content)
- * is immutable except it can be marked as inactive.
+ * A version of an item that can potentially be published to the CDN server. A
+ * version is active during a time period defined by its interval. A version
+ * (together with its content) is immutable except it can be marked as inactive.
  *
  * @author Jens Borch Christiansen
  */
@@ -303,7 +304,8 @@ public class Version extends AbstractBaseEntity {
         }
 
         /**
-         * Tuple containing an item and its composition type - useful for building compositions.
+         * Tuple containing an item and its composition type - useful for
+         * building compositions.
          */
         public static class ItemCompositionType {
 

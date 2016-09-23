@@ -1,9 +1,5 @@
 package dk.kontentsu.cdn.repository;
 
-import dk.kontentsu.cdn.repository.CategoryRepository;
-import dk.kontentsu.cdn.repository.ItemRepository;
-import dk.kontentsu.cdn.repository.ExternalFileRepository;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -20,12 +16,6 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.transaction.UserTransaction;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.ExternalFile;
 import dk.kontentsu.cdn.model.Interval;
@@ -34,6 +24,11 @@ import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.SemanticUriPath;
 import dk.kontentsu.cdn.model.internal.Item;
 import dk.kontentsu.cdn.test.TestEJBContainer;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Integration test for {@link ExternalFileRepository}
@@ -129,6 +124,25 @@ public class ExternalFileRepositoryIT {
             List<ExternalFile> files = fileRepo.findAll(NOW);
             assertEquals(0, files.size());
             files = fileRepo.findAll(NOW.plusDays(43));
+            assertEquals(1, files.size());
+        } finally {
+            userTransaction.commit();
+        }
+    }
+
+    @Test
+    public void testFindInInterval() throws Exception {
+        try {
+            userTransaction.begin();
+            List<ExternalFile> files = fileRepo.findAll(new Interval(NOW, NOW.plusDays(10)));
+            assertEquals(0, files.size());
+            files = fileRepo.findAll(new Interval(NOW, NOW.plusDays(43)));
+            assertEquals(1, files.size());
+            files = fileRepo.findAll(new Interval(NOW.plusDays(81), NOW.plusDays(82)));
+            assertEquals(0, files.size());
+            files = fileRepo.findAll(new Interval(NOW.plusDays(50), NOW.plusDays(52)));
+            assertEquals(1, files.size());
+            files = fileRepo.findAll(new Interval(NOW.plusDays(50), NOW.plusDays(100)));
             assertEquals(1, files.size());
         } finally {
             userTransaction.commit();

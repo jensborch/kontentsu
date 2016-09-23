@@ -33,13 +33,20 @@ public final class SemanticUriTaxonomy extends Taxonomy {
     }
 
     @Override
+    public Integer getId() {
+        return -1;
+    }
+
+    @Override
     public boolean equals(final Object obj) {
         return obj == this;
     }
 
     @Override
-    public Integer getId() {
-        return -1;
+    public int hashCode() {
+        return 1;
     }
+
+
 
 }

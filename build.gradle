@@ -6,7 +6,7 @@ plugins {
     id 'idea'
     id "jacoco"
     id "pmd"
-    id 'com.github.ben-manes.versions' version '0.13.0'
+    //id 'com.github.ben-manes.versions' version '0.13.0'
 }
 
 ext {
@@ -45,7 +45,7 @@ ext {
 defaultTasks 'build'
 
 subprojects {
-    apply plugin: 'com.github.ben-manes.versions'
+    //apply plugin: 'com.github.ben-manes.versions'
     apply plugin: 'java'
     apply plugin: 'checkstyle'
     apply plugin: 'findbugs'

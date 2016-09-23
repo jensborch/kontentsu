@@ -40,6 +40,7 @@ import javax.validation.constraints.NotNull;
 
 import dk.kontentsu.cdn.jpa.AbstractBaseEntity;
 import dk.kontentsu.cdn.model.internal.Item;
+import dk.kontentsu.cdn.model.internal.Version;
 import dk.kontentsu.cdn.repository.Repository;
 
 /**
@@ -50,8 +51,12 @@ import dk.kontentsu.cdn.repository.Repository;
 @Entity
 @Table(name = "external_file")
 @NamedQueries({
-    @NamedQuery(name = Repository.EXTERNAL_FILE_FIND_BY_EXTERNALIZATION_ID,
-            query = "SELECT f FROM ExternalFile f WHERE f.externalizationId = :id"),
+    @NamedQuery(name = Repository.EXTERNAL_FILE_FIND_ALL_IN_INTERVAL,
+            query = "SELECT f "
+            + "FROM ExternalFile f "
+            + "JOIN f.interval i "
+            + "WHERE f.state = :state "
+            + "AND i.to >= :from AND i.from < :to"),
     @NamedQuery(name = Repository.EXTERNAL_FILE_SCHEDULE,
             query = "SELECT DISTINCT f.interval "
             + "FROM ExternalFile f "
@@ -158,6 +163,10 @@ public class ExternalFile extends AbstractBaseEntity {
 
     public Path resolvePath(final Path path) {
         return path.resolve(getItem().getUri().toPath());
+    }
+
+    public boolean isDifferent(final Version version) {
+        return !version.getExternalizationIds().contains(externalizationId);
     }
 
     /**

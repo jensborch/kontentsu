@@ -43,7 +43,8 @@ import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.State;
 
 /**
- * Repository class for e.g. persisting external files that can be published directly to the CDN.
+ * Repository class for e.g. persisting external files that can be published
+ * directly to the CDN.
  *
  * @author Jens Borch Christiansen
  */
@@ -57,20 +58,6 @@ public class ExternalFileRepository extends Repository<ExternalFile> {
         TypedQuery<ExternalFile> query = em.createNamedQuery(EXTERNAL_FILE_GET, ExternalFile.class);
         query.setParameter("uuid", uuid);
         return query.getSingleResult();
-    }
-
-    public ExternalFile getByExternalizationId(final String id) {
-        TypedQuery<ExternalFile> query = em.createNamedQuery(EXTERNAL_FILE_FIND_BY_EXTERNALIZATION_ID, ExternalFile.class);
-        query.setParameter("id", id);
-        return query.getSingleResult();
-    }
-
-    public Optional<ExternalFile> findByExternalizationId(final String id) {
-        try {
-            return Optional.of(getByExternalizationId(id));
-        } catch (NoResultException e) {
-            return Optional.empty();
-        }
     }
 
     public Optional<ExternalFile> findByUri(final SemanticUri uri, final ZonedDateTime at) {
@@ -101,6 +88,14 @@ public class ExternalFileRepository extends Repository<ExternalFile> {
         TypedQuery<ExternalFile> query = em.createNamedQuery(EXTERNAL_FILE_FIND_ALL_AT_DATE_TIME, ExternalFile.class);
         query.setParameter("state", State.ACTIVE);
         query.setParameter("at", (at == null) ? ZonedDateTime.now() : at);
+        return query.getResultList();
+    }
+
+    public List<ExternalFile> findAll(final Interval interval) {
+        TypedQuery<ExternalFile> query = em.createNamedQuery(EXTERNAL_FILE_FIND_ALL_IN_INTERVAL, ExternalFile.class);
+        query.setParameter("state", State.ACTIVE);
+        query.setParameter("from", interval.getFrom());
+        query.setParameter("to", interval.getTo());
         return query.getResultList();
     }
 

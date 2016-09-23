@@ -41,9 +41,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.kontentsu.cdn.externalization.visitors.ExternalizationIdentifierVisitor;
 import dk.kontentsu.cdn.externalization.visitors.ExternalizationVisitor;
 import dk.kontentsu.cdn.model.ExternalFile;
@@ -54,6 +51,8 @@ import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
 import dk.kontentsu.cdn.model.internal.Version;
 import dk.kontentsu.cdn.repository.ExternalFileRepository;
 import dk.kontentsu.cdn.repository.ItemRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Service facade for externalizing internal content.
@@ -144,15 +143,24 @@ public class ExternalizerService {
             ReferenceProcessor<ExternalizationVisitor> processor = new ReferenceProcessor<>(version, ExternalizationVisitor.create(version));
             List<TemporalReferenceTree<ExternalizationVisitor>> trees = processor.process();
 
-            results = trees.stream()
-                    .filter(t -> different(t, version))
-                    .map(t -> createExternalFile(t, version))
-                    .collect(Collectors.toList());
+            fileRepo.findAll(version.getInterval())
+                    .stream()
+                    .filter(f -> f.isDifferent(version))
+                    .forEach(f -> {
+                        LOGGER.debug("Deleting file {}", f.getUuid());
+                        version.removeExternalizationId(f.getExternalizationId());
+                        f.delete();
+                    });
 
-            results.stream().forEach(f -> {
-                LOGGER.debug("Saving file {}", f.getUuid());
-                fileRepo.save(f);
-            });
+            trees.stream()
+                    .map(t -> createExternalFile(t, version))
+                    .filter(f -> f.isDifferent(version))
+                    .forEach(f -> {
+                        LOGGER.debug("Saving file {}", f.getUuid());
+                        fileRepo.save(f);
+                        results.add(f);
+                    });
+
             processed(version.getUuid());
             scheduleService.reschedule();
         } else {
@@ -160,10 +168,6 @@ public class ExternalizerService {
         }
 
         return results;
-    }
-
-    private boolean different(final TemporalReferenceTree<ExternalizationVisitor> t, final Version version) {
-        return externalizationId(t).filter(i -> !version.getExternalizationIds().contains(i)).isPresent();
     }
 
     private Optional<String> externalizationId(final TemporalReferenceTree<ExternalizationVisitor> t) {
