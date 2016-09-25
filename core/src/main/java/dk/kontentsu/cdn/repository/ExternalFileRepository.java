@@ -24,8 +24,10 @@
 package dk.kontentsu.cdn.repository;
 
 import java.time.ZonedDateTime;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,8 +45,7 @@ import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.State;
 
 /**
- * Repository class for e.g. persisting external files that can be published
- * directly to the CDN.
+ * Repository class for e.g. persisting external files that can be published directly to the CDN.
  *
  * @author Jens Borch Christiansen
  */
@@ -52,6 +53,8 @@ import dk.kontentsu.cdn.model.State;
 @LocalBean
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class ExternalFileRepository extends Repository<ExternalFile> {
+
+    private static final int MIN_SCHEDULING_INTERVAL = 5;
 
     @Override
     public ExternalFile get(final UUID uuid) {
@@ -99,19 +102,36 @@ public class ExternalFileRepository extends Repository<ExternalFile> {
         return query.getResultList();
     }
 
-    public List<ZonedDateTime> getSchedule() {
+    public Set<ZonedDateTime> getSchedule() {
+        return getSchedule(ZonedDateTime.now());
+    }
+
+    public Set<ZonedDateTime> getSchedule(ZonedDateTime from) {
         TypedQuery<Interval> query = em.createNamedQuery(EXTERNAL_FILE_SCHEDULE, Interval.class);
+        query.setParameter("from", from);
         query.setParameter("state", State.ACTIVE);
 
-        //TODO: Remove ZonedDateTimes that are to close to each other
-        List<ZonedDateTime> result = Stream.concat(
-                query.getResultList().stream().map(i -> i.getFrom()),
-                query.getResultList().stream().map(i -> i.getTo())
+        List<Interval> intervals = query.getResultList();
+
+        List<ZonedDateTime> tmp = Stream.concat(
+                intervals.stream().map(i -> i.getFrom()),
+                intervals.stream().map(i -> i.getTo())
         )
+                .filter(t -> t.isAfter(from))
                 .distinct()
-                .filter(t -> t.isAfter(ZonedDateTime.now()))
                 .sorted()
                 .collect(Collectors.toList());
+
+        Set<ZonedDateTime> result = new LinkedHashSet<>();
+        ZonedDateTime previouse = null;
+        for (ZonedDateTime t : tmp) {
+            if (previouse != null && previouse.plusMinutes(MIN_SCHEDULING_INTERVAL).isAfter(t)) {
+                result.remove(previouse);
+            }
+            result.add(t);
+            previouse = t;
+        }
+
         return result;
     }
 

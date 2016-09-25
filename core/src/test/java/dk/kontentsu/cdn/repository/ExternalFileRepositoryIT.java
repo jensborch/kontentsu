@@ -6,15 +6,23 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.Charset;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ejb.EJBTransactionRequiredException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.transaction.UserTransaction;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.ExternalFile;
@@ -24,11 +32,6 @@ import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.SemanticUriPath;
 import dk.kontentsu.cdn.model.internal.Item;
 import dk.kontentsu.cdn.test.TestEJBContainer;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  * Integration test for {@link ExternalFileRepository}
@@ -38,6 +41,8 @@ import org.junit.Test;
 public class ExternalFileRepositoryIT {
 
     private static final ZonedDateTime NOW = ZonedDateTime.now();
+    private static final ZonedDateTime FROM = NOW.plusDays(42);
+    private static final ZonedDateTime TO = NOW.plusDays(80);
 
     private static EJBContainer container;
 
@@ -87,11 +92,29 @@ public class ExternalFileRepositoryIT {
         Content content = new Content("This is a test".getBytes(), Charset.defaultCharset(), new MimeType("text", "plain"));
         file = ExternalFile.builder()
                 .content(content)
-                .interval(new Interval(NOW.plusDays(42), NOW.plusDays(80)))
+                .interval(new Interval(FROM, TO))
                 .item(item)
                 .build();
 
         fileRepo.save(file);
+
+        fileRepo.save(ExternalFile.builder()
+                .content(content)
+                .interval(new Interval(FROM.minusHours(12), FROM))
+                .item(item)
+                .build());
+
+        fileRepo.save(ExternalFile.builder()
+                .content(content)
+                .interval(new Interval(TO, TO.plusMinutes(4)))
+                .item(item)
+                .build());
+
+        fileRepo.save(ExternalFile.builder()
+                .content(content)
+                .interval(new Interval(NOW.minusDays(2), NOW.minusDays(1)))
+                .item(item)
+                .build());
 
         userTransaction.commit();
     }
@@ -111,7 +134,7 @@ public class ExternalFileRepositoryIT {
         try {
             userTransaction.begin();
             List<ExternalFile> files = fileRepo.findAll();
-            assertEquals(1, files.size());
+            assertEquals(4, files.size());
         } finally {
             userTransaction.commit();
         }
@@ -137,13 +160,13 @@ public class ExternalFileRepositoryIT {
             List<ExternalFile> files = fileRepo.findAll(new Interval(NOW, NOW.plusDays(10)));
             assertEquals(0, files.size());
             files = fileRepo.findAll(new Interval(NOW, NOW.plusDays(43)));
-            assertEquals(1, files.size());
+            assertEquals(2, files.size());
             files = fileRepo.findAll(new Interval(NOW.plusDays(81), NOW.plusDays(82)));
             assertEquals(0, files.size());
             files = fileRepo.findAll(new Interval(NOW.plusDays(50), NOW.plusDays(52)));
             assertEquals(1, files.size());
             files = fileRepo.findAll(new Interval(NOW.plusDays(50), NOW.plusDays(100)));
-            assertEquals(1, files.size());
+            assertEquals(2, files.size());
         } finally {
             userTransaction.commit();
         }
@@ -162,7 +185,7 @@ public class ExternalFileRepositoryIT {
             file.delete();
             List<ExternalFile> result = fileRepo.findAll();
             assertNotNull(result);
-            assertEquals(0, result.size());
+            assertEquals(3, result.size());
         } finally {
             userTransaction.rollback();
         }
@@ -172,12 +195,26 @@ public class ExternalFileRepositoryIT {
     public void testFindByUri() throws Exception {
         try {
             userTransaction.begin();
-            Optional<ExternalFile> file = fileRepo.findByUri(uri, null);
-            assertFalse(file.isPresent());
+            Optional<ExternalFile> tmpFile = fileRepo.findByUri(uri, null);
+            assertFalse(tmpFile.isPresent());
 
-            file = fileRepo.findByUri(uri, NOW.plusDays(43));
-            assertTrue(file.isPresent());
+            tmpFile = fileRepo.findByUri(uri, NOW.plusDays(43));
+            assertTrue(tmpFile.isPresent());
 
+        } finally {
+            userTransaction.commit();
+        }
+    }
+
+    @Test
+    public void testGetSchedule() throws Exception {
+        try {
+            userTransaction.begin();
+            Set<ZonedDateTime> result = fileRepo.getSchedule();
+            assertEquals(3, result.size());
+            assertTrue(result.contains(FROM.withZoneSameInstant(ZoneOffset.UTC)));
+            assertTrue(result.contains(TO.plusMinutes(4).withZoneSameInstant(ZoneOffset.UTC)));
+            assertTrue(result.contains(FROM.minusHours(12).withZoneSameInstant(ZoneOffset.UTC)));
         } finally {
             userTransaction.commit();
         }

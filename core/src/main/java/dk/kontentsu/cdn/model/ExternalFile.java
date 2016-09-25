@@ -62,7 +62,7 @@ import dk.kontentsu.cdn.repository.Repository;
             + "FROM ExternalFile f "
             + "JOIN f.interval i "
             + "WHERE f.state = :state "
-            + "AND i.from >= CURRENT_TIMESTAMP() OR i.to > CURRENT_TIMESTAMP()"),
+            + "AND i.from >= :from OR i.to > :from"),
     @NamedQuery(name = Repository.EXTERNAL_FILE_FIND_ALL,
             query = "SELECT f FROM ExternalFile f WHERE f.state = :state"),
     @NamedQuery(name = Repository.EXTERNAL_FILE_FIND_ALL_AT_DATE_TIME,

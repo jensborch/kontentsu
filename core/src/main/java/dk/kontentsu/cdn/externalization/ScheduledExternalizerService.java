@@ -77,11 +77,11 @@ public class ScheduledExternalizerService {
 
     @Asynchronous
     public void reschedule() {
-        List<ZonedDateTime> schedule = fileRepo.getSchedule();
+        Set<ZonedDateTime> schedule = fileRepo.getSchedule();
         reschedule(schedule);
     }
 
-    private void reschedule(final List<ZonedDateTime> schedule) {
+    private void reschedule(final Set<ZonedDateTime> schedule) {
         if (first.getAndSet(false)) {
             ZonedDateTime now = ZonedDateTime.now().plusMinutes(START_OFFSET);
             if (!schedule.contains(now)) {
