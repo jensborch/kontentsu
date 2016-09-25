@@ -2,6 +2,7 @@ package dk.kontentsu.cdn.externalization.visitors;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.hashids.Hashids;
 
@@ -38,8 +39,8 @@ public class ExternalizationIdentifierVisitor extends ExternalizationVisitor {
         return nested.getContent();
     }
 
-    public String getId() {
-        return new Hashids(SALT).encode(identifiers.stream().sorted().mapToLong(i -> i).toArray());
+    public Optional<String> getContentId() {
+        return Optional.of(new Hashids(SALT).encode(identifiers.stream().sorted().mapToLong(i -> i).toArray()));
     }
 
     @Override

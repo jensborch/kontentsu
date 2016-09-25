@@ -23,6 +23,8 @@
  */
 package dk.kontentsu.cdn.externalization.visitors;
 
+import java.util.Optional;
+
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
 import dk.kontentsu.cdn.model.internal.Version;
@@ -49,5 +51,9 @@ public abstract class ExternalizationVisitor implements TemporalReferenceTree.Vi
      * @return the contend created by the externalization process.
      */
     public abstract Content getContent();
+
+    public Optional<String> getContentId() {
+        return Optional.empty();
+    }
 
 }

@@ -25,7 +25,6 @@ package dk.kontentsu.cdn.externalization;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -41,7 +40,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import dk.kontentsu.cdn.externalization.visitors.ExternalizationIdentifierVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.kontentsu.cdn.externalization.visitors.ExternalizationVisitor;
 import dk.kontentsu.cdn.model.ExternalFile;
 import dk.kontentsu.cdn.model.internal.Item;
@@ -51,8 +52,6 @@ import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
 import dk.kontentsu.cdn.model.internal.Version;
 import dk.kontentsu.cdn.repository.ExternalFileRepository;
 import dk.kontentsu.cdn.repository.ItemRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Service facade for externalizing internal content.
@@ -170,21 +169,13 @@ public class ExternalizerService {
         return results;
     }
 
-    private Optional<String> externalizationId(final TemporalReferenceTree<ExternalizationVisitor> t) {
-        if (t.getVisitor() instanceof ExternalizationIdentifierVisitor) {
-            return Optional.of(((ExternalizationIdentifierVisitor) t.getVisitor()).getId());
-        } else {
-            return Optional.empty();
-        }
-    }
-
     private ExternalFile createExternalFile(final TemporalReferenceTree<ExternalizationVisitor> t, final Version version) {
         ExternalFile.Builder builder = ExternalFile.builder()
                 .item(version.getItem())
                 .content(t.getVisitor().getContent())
                 .interval(t.getInteval())
                 .state(version.getState());
-        externalizationId(t).ifPresent(i -> builder.externalizationId(i));
+        t.getVisitor().getContentId().ifPresent(i -> builder.externalizationId(i));
         return builder.build();
     }
 
