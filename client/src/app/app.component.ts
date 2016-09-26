@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ContentService } from './content.service';
 @Component({
     selector: 'editing-app',
-    templateUrl: 'app/app.component.html',
+    templateUrl: 'app.component.html',
     providers: [ContentService]
 })
 export class AppComponent implements OnInit {
