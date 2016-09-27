@@ -129,7 +129,7 @@ public class UploadService {
                 .to(uploadeItem.getInterval().getTo());
 
         ContentParser.Results parsedContent = ContentParser.create(content).parse();
-        parsedContent.getComposition().stream().forEach(link -> {
+        parsedContent.getLinks().stream().forEach(link -> {
             Item i = itemRepo.findByUri(link.getUri()).orElseGet(() -> {
                 SemanticUriPath tmpPath = catRepo.findByUri(link.getPath()).orElse(link.getPath());
                 Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));

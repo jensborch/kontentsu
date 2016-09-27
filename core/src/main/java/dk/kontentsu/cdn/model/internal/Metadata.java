@@ -82,6 +82,11 @@ public class Metadata implements Serializable {
             this.key = key;
         }
 
+        public Key(final String type, final String key) {
+            this.type = MetadataType.parse(type);
+            this.key = key;
+        }
+
         public MetadataType getType() {
             return type;
         }

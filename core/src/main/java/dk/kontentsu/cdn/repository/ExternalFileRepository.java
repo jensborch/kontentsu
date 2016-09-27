@@ -106,7 +106,7 @@ public class ExternalFileRepository extends Repository<ExternalFile> {
         return getSchedule(ZonedDateTime.now());
     }
 
-    public Set<ZonedDateTime> getSchedule(ZonedDateTime from) {
+    public Set<ZonedDateTime> getSchedule(final ZonedDateTime from) {
         TypedQuery<Interval> query = em.createNamedQuery(EXTERNAL_FILE_SCHEDULE, Interval.class);
         query.setParameter("from", from);
         query.setParameter("state", State.ACTIVE);

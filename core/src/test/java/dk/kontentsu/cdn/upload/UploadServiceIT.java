@@ -126,7 +126,7 @@ public class UploadServiceIT {
         result = service.upload(uploadeItem);
         assertEquals("simple-page", result.getName());
         assertEquals(1, result.getVersions().size());
-        assertEquals(2, result.getVersions().stream().findFirst().get().getReferences().size());
+        assertEquals(3, result.getVersions().stream().findFirst().get().getReferences().size());
         assertEquals(1, result.getHosts().size());
         assertEquals(host, result.getHosts().stream().findFirst().get());
 

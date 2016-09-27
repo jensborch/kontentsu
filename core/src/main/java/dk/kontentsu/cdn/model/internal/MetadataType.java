@@ -24,10 +24,20 @@
 package dk.kontentsu.cdn.model.internal;
 
 /**
+ * The different metadata types that can be present in content.
  *
  * @author Jens Borch Christiansen
  */
 public enum MetadataType {
 
     SEO, OTHER, SEARCH;
+
+    public static MetadataType parse(final String type) {
+        for (MetadataType t : values()) {
+            if (t.name().equalsIgnoreCase(type)) {
+                return t;
+            }
+        }
+        return MetadataType.OTHER;
+    }
 }

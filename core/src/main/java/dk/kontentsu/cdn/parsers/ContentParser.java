@@ -25,12 +25,16 @@ package dk.kontentsu.cdn.parsers;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.internal.Metadata;
 
 /**
+ * Content parser class responsible for parsing content and thus finding links, compositions and metadata in content. Must be sub-classed to pase a certain content type - e.g.
+ * hal+json.
  *
  * @author Jens Borch Christiansen
  */
@@ -48,7 +52,7 @@ public class ContentParser {
     }
 
     public Results parse() {
-        return new Results(new ArrayList<>(), new ArrayList<>());
+        return new Results(new ArrayList<>(), new HashMap<>());
     }
 
     /**
@@ -56,20 +60,20 @@ public class ContentParser {
      */
     public static class Results {
 
-        private final List<Link> composition;
-        private final List<Metadata> metadata;
+        private final List<Link> links;
+        private final Map<Metadata.Key, Metadata> metadata;
 
-        Results(final List<Link> composition, final List<Metadata> metadata) {
-            this.composition = composition;
+        Results(final List<Link> links, final Map<Metadata.Key, Metadata> metadata) {
+            this.links = links;
             this.metadata = metadata;
         }
 
-        public List<Link> getComposition() {
-            return Collections.unmodifiableList(composition);
+        public List<Link> getLinks() {
+            return Collections.unmodifiableList(links);
         }
 
-        public List<Metadata> getMetadata() {
-            return Collections.unmodifiableList(metadata);
+        public Map<Metadata.Key, Metadata> getMetadata() {
+            return Collections.unmodifiableMap(metadata);
         }
     }
 }

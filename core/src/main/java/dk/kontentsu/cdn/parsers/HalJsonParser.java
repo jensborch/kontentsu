@@ -25,6 +25,7 @@ package dk.kontentsu.cdn.parsers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -67,37 +68,67 @@ public class HalJsonParser extends ContentParser {
 
     @Override
     public Results parse() {
-        return new Results(parseComposition(), parseMetadata());
-    }
-
-    private List<Metadata> parseMetadata() {
-        //TODO: Implement
         try {
             JsonNode jsonContent = objectMapper.readTree(content.getData());
-
+            return new Results(parse(jsonContent), parseMetadata(jsonContent));
         } catch (IOException ex) {
-
+            throw new ContentParserException("Unable to parse content for contetn with UUID: " + content.getUuid(), ex);
         }
-        return new ArrayList<>();
     }
 
-    private List<Link> parseComposition() {
-        //TODO: Implement link parsing
-        List<Link> result = new ArrayList<>();
-        try {
-            JsonNode jsonContent = objectMapper.readTree(content.getData());
-            JsonNode compositionNode = jsonContent.findPath(JSON_LINKS).findPath(JSON_COMPOSITION);
-            Iterator<Map.Entry<String, JsonNode>> it = compositionNode.fields();
+    private Map<Metadata.Key, Metadata> parseMetadata(final JsonNode jsonContent) {
+        Map<Metadata.Key, Metadata> result = new HashMap<>();
+        for (String metadataType : JSON_METADATA) {
+            JsonNode linksNode = jsonContent.findPath(metadataType);
+            Iterator<Map.Entry<String, JsonNode>> it = linksNode.fields();
             while (it.hasNext()) {
-                Map.Entry<String, JsonNode> parent = it.next();
-                List<JsonNode> hrefs = parent.getValue().findValues(JSON_HREF);
-                Optional<JsonNode> found = hrefs.stream().findFirst();
-                if (found.isPresent()) {
-                    result.add(new Link(SemanticUri.parse(found.get().asText()), ReferenceType.COMPOSITION));
+                Map.Entry<String, JsonNode> metadata = it.next();
+                if (metadata.getValue().isValueNode()) {
+                    LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", metadata.getKey(), metadataType, metadata.getValue().asText());
+                    result.put(new Metadata.Key(metadataType, metadata.getKey()), new Metadata(metadata.getValue().asText()));
                 }
             }
-        } catch (IOException ex) {
-            LOGGER.warn("Error parsing content for coposition", ex);
+        }
+        return result;
+    }
+
+    private List<Link> parse(final JsonNode jsonContent) {
+        List<Link> result = new ArrayList<>(parseComposition(jsonContent));
+        result.addAll(parseLinks(jsonContent));
+        return result;
+    }
+
+    private List<Link> parseLinks(final JsonNode jsonContent) {
+        List<Link> result = new ArrayList<>();
+        JsonNode linksNode = jsonContent.findPath(JSON_LINKS);
+        Iterator<Map.Entry<String, JsonNode>> it = linksNode.fields();
+        while (it.hasNext()) {
+            Map.Entry<String, JsonNode> link = it.next();
+            if (!JSON_SELF_LINK.equals(link.getKey()) && !JSON_COMPOSITION.equals(link.getKey()) && !link.getKey().contains("template")) {
+                List<JsonNode> hrefs = link.getValue().findValues(JSON_HREF);
+                Optional<JsonNode> found = hrefs.stream().findFirst();
+                if (found.isPresent() && found.get().isTextual()) {
+                    LOGGER.debug("Adding link {}", found.get().asText());
+                    result.add(new Link(SemanticUri.parse(found.get().asText()), ReferenceType.LINK));
+                }
+            }
+        }
+        return result;
+    }
+
+    private List<Link> parseComposition(final JsonNode jsonContent) {
+        List<Link> result = new ArrayList<>();
+        JsonNode compositionNode = jsonContent.findPath(JSON_LINKS).findPath(JSON_COMPOSITION);
+        Iterator<Map.Entry<String, JsonNode>> it = compositionNode.fields();
+        while (it.hasNext()) {
+            Map.Entry<String, JsonNode> parent = it.next();
+            List<JsonNode> hrefs = parent.getValue().findValues(JSON_HREF);
+            hrefs.stream().forEach(found -> {
+                if (found.isTextual()) {
+                    LOGGER.debug("Adding composition {}", found.asText());
+                    result.add(new Link(SemanticUri.parse(found.asText()), ReferenceType.COMPOSITION));
+                }
+            });
         }
         return result;
     }
