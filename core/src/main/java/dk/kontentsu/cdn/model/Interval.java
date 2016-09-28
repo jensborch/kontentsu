@@ -28,8 +28,13 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -108,6 +113,48 @@ public class Interval implements Serializable {
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Given a new interval <code>other</code> this method produces list of all new intervals needed to cover the full range of the intervals but without any overlap.
+     *
+     * @param other interval to use
+     * @return a list of intervals
+     */
+    public Set<Interval> split(final Interval other) {
+        Set<Interval> results = new HashSet<>();
+        Optional<Interval> intersection = intersection(other);
+        if (intersection.isPresent()) {
+            results.add(intersection.get());
+
+            ZonedDateTime min = min(other);
+            if (min.isBefore(intersection.get().getFrom())) {
+                results.add(new Interval(min, intersection.get().getFrom()));
+            }
+            ZonedDateTime max = max(other);
+            if (max.isAfter(intersection.get().getTo())) {
+                results.add(new Interval(intersection.get().getTo(), max));
+            }
+        } else {
+            results.add(other);
+            results.add(this);
+        }
+        return results;
+    }
+
+    private List<ZonedDateTime> times() {
+        List<ZonedDateTime> result = new ArrayList<>(2);
+        result.add(from);
+        result.add(to);
+        return result;
+    }
+
+    public ZonedDateTime min(final Interval other) {
+        return Stream.concat(times().stream(), other.times().stream()).min((t1, t2) -> t1.compareTo(t2)).get();
+    }
+
+    public ZonedDateTime max(final Interval other) {
+        return Stream.concat(times().stream(), other.times().stream()).max((t1, t2) -> t1.compareTo(t2)).get();
     }
 
     @Override

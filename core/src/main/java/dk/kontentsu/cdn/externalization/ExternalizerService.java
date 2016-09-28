@@ -24,17 +24,18 @@
 package dk.kontentsu.cdn.externalization;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
+import javax.ejb.ConcurrencyManagement;
+import javax.ejb.ConcurrencyManagementType;
 import javax.ejb.LocalBean;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -60,11 +61,12 @@ import dk.kontentsu.cdn.repository.ItemRepository;
  */
 @LocalBean
 @Singleton
+@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class ExternalizerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExternalizerService.class);
 
-    private List<UUID> processing;
+    private final Set<UUID> processing = new HashSet<>();
 
     @Inject
     private ExternalFileRepository fileRepo;
@@ -75,26 +77,25 @@ public class ExternalizerService {
     @Inject
     private ScheduledExternalizerService scheduleService;
 
-    @PostConstruct
-    void init() {
-        this.processing = new ArrayList<>();
-    }
-
     private boolean processing(final UUID uuid) {
-        boolean result = processing.contains(uuid);
-        if (!result) {
-            processing.add(uuid);
+        synchronized (processing) {
+            if (processing.contains(uuid)) {
+                return true;
+            } else {
+                processing.add(uuid);
+                return false;
+            }
         }
-        return result;
     }
 
     private void processed(final UUID uuid) {
-        processing.remove(uuid);
+        synchronized (processing) {
+            processing.remove(uuid);
+        }
     }
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    @Lock(LockType.READ)
     public Future<List<ExternalFile>> externalize(final UUID version) {
         Version v = itemRepo.getVersion(version);
         LOGGER.info("Externalizing version {} and its references", version);
@@ -103,7 +104,6 @@ public class ExternalizerService {
     }
 
     @TransactionAttribute(TransactionAttributeType.MANDATORY)
-    @Lock(LockType.WRITE)
     public List<ExternalFile> externalize(final Version version) {
         List<Version> versions = findVersionsToExternalize(version);
         return versions.stream()

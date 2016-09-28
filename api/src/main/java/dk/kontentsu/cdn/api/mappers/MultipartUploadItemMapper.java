@@ -52,11 +52,11 @@ public class MultipartUploadItemMapper implements Function<MultipartUploadItem, 
                 .mimeType(from.mimetype)
                 .content(from.item.getContentRef(), from.is);
 
-        if (from.item.getInterval() != null) {
-            builder.interval(from.item.getInterval());
-        } else {
+        if (from.item.getInterval() == null) {
             LOGGER.debug("Using default interval for item: {}", from.item.getUri());
             builder.interval(new Interval());
+        } else {
+            builder.interval(from.item.getInterval());
         }
 
         from.item.getHost().stream().forEach(h -> builder.host(h));

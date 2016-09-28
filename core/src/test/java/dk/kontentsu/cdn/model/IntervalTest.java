@@ -1,7 +1,5 @@
 package dk.kontentsu.cdn.model;
 
-import dk.kontentsu.cdn.model.Interval;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -74,6 +72,20 @@ public class IntervalTest {
         assertFalse(new Interval(NOW, NOW).equals(new Object()));
         assertTrue(new Interval(NOW, NOW).equals(new Interval(NOW, NOW)));
         assertFalse(new Interval(NOW.plusDays(1), NOW).equals(new Interval(NOW, NOW)));
+    }
+
+    @Test
+    public void testIntersection() throws Exception {
+        assertEquals(new Interval(NOW, NOW.plusDays(2)), nowPlus2days.intersection(nowPlus4days).get());
+        assertFalse(nowPlus2days.intersection(plus4daysPlus8days).isPresent());
+    }
+
+    @Test
+    public void testSplit() throws Exception {
+        Set<Interval> results = nowPlus2days.split(nowPlus4days);
+        assertEquals(2, results.size());
+        assertTrue(results.contains(new Interval(NOW, NOW.plusDays(2))));
+        assertTrue(results.contains(new Interval(NOW.plusDays(2), NOW.plusDays(4))));
     }
 
 }

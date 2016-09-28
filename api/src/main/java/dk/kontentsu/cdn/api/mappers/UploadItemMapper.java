@@ -49,11 +49,11 @@ public class UploadItemMapper implements Function<UploadItemRepresentation, Uplo
                 .content(from.getContentUrl())
                 .mimeType(from.getMimeType());
 
-        if (from.getInterval() != null) {
-            builder.interval(from.getInterval());
-        } else {
+        if (from.getInterval() == null) {
             LOGGER.debug("Using default interval for item: {}", from.getUri());
             builder.interval(new Interval());
+        } else {
+            builder.interval(from.getInterval());
         }
 
         from.getHost().stream().forEach(h -> builder.host(h));
