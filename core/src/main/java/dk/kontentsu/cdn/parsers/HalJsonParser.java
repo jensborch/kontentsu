@@ -25,6 +25,8 @@ package dk.kontentsu.cdn.parsers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -56,7 +58,7 @@ public class HalJsonParser extends ContentParser {
     public static final String JSON_COMPOSITION_TYPE = "composition-type";
     public static final String JSON_COMPOSITION = "composition";
     public static final String JSON_REF = "ref";
-    public static final String[] JSON_METADATA = {"seo"};
+    public static final List<String> JSON_METADATA = Collections.unmodifiableList(Arrays.asList(new String[]{"seo"}));
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HalJsonParser.class);
     private final ObjectMapper objectMapper = ObjectMapperFactory.create();

@@ -31,7 +31,7 @@ ext {
 
     payaraVersion = '4.1.1.163'
 
-    checkstyleVersion = "7.1"
+    checkstyleVersion = "7.1.1"
     findbugsVersion =  "3.0.1"
     pmdVersion = "5.5.1"
     openejbVersion = '7.0.1'

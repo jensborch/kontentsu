@@ -154,7 +154,7 @@ public class ScheduledExternalizerService {
         Path filePath = hostPath.resolve(f.getItem().getUri().toPath());
         try {
             LOGGER.debug("Saving content to: " + filePath.toString());
-            if (filePath.getParent() != null && Files.notExists(filePath.getParent())) {
+            if (hasParent(filePath)) {
                 Files.createDirectories(filePath.getParent());
             }
             if (Files.notExists(filePath)) {
@@ -164,6 +164,11 @@ public class ScheduledExternalizerService {
         } catch (IOException ex) {
             LOGGER.error("Failed to write CDN file: " + filePath.toString(), ex);
         }
+    }
+
+    private boolean hasParent(final Path file) {
+        Path parent = file.getParent();
+        return parent != null && Files.notExists(parent);
     }
 
     private ZonedDateTime getZonedDateTimeFromExpression(final ScheduleExpression expression) {

@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+    <?xml version="1.0"?>
 <ruleset name="Custom ruleset"
          xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -27,6 +27,7 @@
         <exclude name="AtLeastOneConstructor"/>
         <exclude name="CallSuperInConstructor"/>
         <exclude name="OnlyOneReturn"/>
+        <exclude name="DefaultPackage"/>
     </rule>
     <rule ref="rulesets/java/coupling.xml">
         <exclude name="LawOfDemeter"/>
@@ -47,6 +48,7 @@
     <rule ref="rulesets/java/naming.xml">
         <exclude name="ShortVariable"/>
         <exclude name="LongVariable"/>
+        <exclude name="AvoidFieldNameMatchingMethodName"/>
     </rule>
     <rule ref="rulesets/java/optimizations.xml">
         <exclude name="LocalVariableCouldBeFinal"/>

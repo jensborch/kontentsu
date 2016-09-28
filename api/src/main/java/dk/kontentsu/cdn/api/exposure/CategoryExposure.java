@@ -141,7 +141,7 @@ public class CategoryExposure {
         });
         if (categoryPath != null) {
             catRepo.findByTaxonomy(taxonomy, categoryPath)
-                    .orElse(catRepo.save(Taxon.parse(taxonomy, categoryPath)));
+                    .orElseGet(() -> catRepo.save(Taxon.parse(taxonomy, categoryPath)));
         }
         return Response.created(uriInfo.getAbsolutePathBuilder().build()).build();
     }

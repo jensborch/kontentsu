@@ -116,7 +116,8 @@ public class CryptoAttributeConverter implements AttributeConverter<String, Stri
             c.init(Cipher.ENCRYPT_MODE, key, IV_PARAMETERS);
             return new String(Base64.getEncoder().encode(concat(salt, c.doFinal(sensitive.getBytes(ENCODING)))), ENCODING
             );
-        } catch (InvalidAlgorithmParameterException | NoSuchPaddingException | InvalidKeySpecException | NoSuchAlgorithmException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+        } catch (InvalidAlgorithmParameterException | NoSuchPaddingException | InvalidKeySpecException | NoSuchAlgorithmException |
+                InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             throw new CryptoException("Error encrypting database column", e);
         }
     }
@@ -130,7 +131,8 @@ public class CryptoAttributeConverter implements AttributeConverter<String, Stri
             Cipher c = Cipher.getInstance(ALGORITHM);
             c.init(Cipher.DECRYPT_MODE, key, IV_PARAMETERS);
             return new String(c.doFinal(getEncrypted(columnData)), ENCODING);
-        } catch (InvalidAlgorithmParameterException | NoSuchPaddingException | InvalidKeySpecException | NoSuchAlgorithmException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+        } catch (InvalidAlgorithmParameterException | NoSuchPaddingException | InvalidKeySpecException | NoSuchAlgorithmException |
+                InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             throw new CryptoException("Error decrypting database column", e);
         }
     }
