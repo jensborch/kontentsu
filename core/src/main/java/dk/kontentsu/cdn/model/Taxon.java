@@ -89,7 +89,7 @@ public class Taxon extends Category {
     }
 
     public Set<Item> getItems() {
-        return (items != null) ? Collections.unmodifiableSet(items) : null;
+        return Collections.unmodifiableSet(items);
     }
 
     public Optional<Item> getItem(final String name) {

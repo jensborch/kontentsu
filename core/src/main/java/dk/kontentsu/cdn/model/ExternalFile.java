@@ -109,7 +109,7 @@ public class ExternalFile extends AbstractBaseEntity {
         //Needed by JPA
     }
 
-    ExternalFile(final Builder builder) {
+    private ExternalFile(final Builder builder) {
         this.item = builder.item;
         this.content = builder.content;
         this.interval = new Interval(builder.from, builder.to);

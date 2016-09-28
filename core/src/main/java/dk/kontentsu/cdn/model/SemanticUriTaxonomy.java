@@ -15,11 +15,13 @@ public final class SemanticUriTaxonomy extends Taxonomy {
     private SemanticUriTaxonomy() {
     }
 
-    public static synchronized SemanticUriTaxonomy create() {
-        if (instance == null) {
-            instance = new SemanticUriTaxonomy();
+    public static SemanticUriTaxonomy create() {
+        synchronized (SemanticUriTaxonomy.class) {
+            if (instance == null) {
+                instance = new SemanticUriTaxonomy();
+            }
+            return instance;
         }
-        return instance;
     }
 
     @Override
@@ -46,7 +48,5 @@ public final class SemanticUriTaxonomy extends Taxonomy {
     public int hashCode() {
         return 1;
     }
-
-
 
 }

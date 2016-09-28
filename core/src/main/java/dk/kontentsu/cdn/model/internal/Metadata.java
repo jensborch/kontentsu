@@ -99,6 +99,8 @@ public class Metadata implements Serializable {
         @Override
         public int hashCode() {
             int hash = 7;
+            hash = 47 * hash + Objects.hashCode(this.type);
+            hash = 47 * hash + Objects.hashCode(this.key);
             return hash;
         }
 

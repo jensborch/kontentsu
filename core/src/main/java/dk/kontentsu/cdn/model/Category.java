@@ -49,7 +49,7 @@ import dk.kontentsu.cdn.jpa.AbstractBaseEntity;
 public abstract class Category extends AbstractBaseEntity {
 
     public static final char SEPERATOR_CHAR = '/';
-    public static final String SEPERATOR = SEPERATOR_CHAR + "";
+    public static final String SEPERATOR = String.valueOf(SEPERATOR_CHAR);
     private static final long serialVersionUID = -2277423385038369623L;
 
     @NotNull

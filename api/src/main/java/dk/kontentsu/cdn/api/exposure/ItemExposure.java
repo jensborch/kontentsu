@@ -123,7 +123,7 @@ public class ItemExposure {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response find() {
-        final List<ItemRepresentation> result = repo
+        List<ItemRepresentation> result = repo
                 .find(ItemRepository.Criteria.create())
                 .stream()
                 .map(i -> new ItemRepresentation(i, uriInfo))
@@ -142,7 +142,7 @@ public class ItemExposure {
     @Path("{id}/versions")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getVersions(@PathParam("id") final String id) {
-        final List<VersionLinktRepresentation> result = repo.get(UUID.fromString(id))
+        List<VersionLinktRepresentation> result = repo.get(UUID.fromString(id))
                 .getVersions()
                 .stream()
                 .map(v -> new VersionLinktRepresentation(v, uriInfo))
@@ -154,7 +154,7 @@ public class ItemExposure {
     @Path("{item}/versions/{version}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getVersion(@PathParam("item") final String item, @PathParam("version") final String version) {
-        final Optional<VersionRepresentation> result = repo.get(UUID.fromString(item))
+        Optional<VersionRepresentation> result = repo.get(UUID.fromString(item))
                 .getVersions()
                 .stream()
                 .filter(v -> v.getUuid().equals(UUID.fromString(version)))
@@ -204,7 +204,7 @@ public class ItemExposure {
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
     public Response uploade(@Valid final UploadItemRepresentation uploadItemRepresentation) {
         service.upload(new UploadItemMapper().apply(uploadItemRepresentation));
-        final URI uri = uriInfo.getAbsolutePathBuilder().build(UploadItem.class);
+        URI uri = uriInfo.getAbsolutePathBuilder().build(UploadItem.class);
         return Response.created(uri).build();
     }
 
@@ -236,8 +236,8 @@ public class ItemExposure {
     public Response uploade(@Context final HttpServletRequest request) {
         try {
             if (ServletFileUpload.isMultipartContent(request)) {
-                final ServletFileUpload upload = new ServletFileUpload(itemFactory);
-                final UploadItem item = processMultipartItems(upload.parseRequest(request));
+                ServletFileUpload upload = new ServletFileUpload(itemFactory);
+                UploadItem item = processMultipartItems(upload.parseRequest(request));
                 return getMultipartResponse(item);
             } else {
                 throw new ValidationException("Not a multipart upload");
@@ -248,8 +248,8 @@ public class ItemExposure {
     }
 
     private Response getMultipartResponse(final UploadItem uploadItem) {
-        final Item item = service.upload(uploadItem);
-        final URI location = uriInfo.getBaseUriBuilder().
+        Item item = service.upload(uploadItem);
+        URI location = uriInfo.getBaseUriBuilder().
                 path(ItemExposure.class).
                 path(ItemExposure.class, "get").
                 build(item.getUuid());
@@ -257,9 +257,9 @@ public class ItemExposure {
     }
 
     private static MultipartUploadItemRepresentation valid(final MultipartUploadItemRepresentation uploadItemRepresentation) {
-        final ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
-        final Validator validator = vf.getValidator();
-        final Set<ConstraintViolation<MultipartUploadItemRepresentation>> errors = validator.validate(uploadItemRepresentation, Default.class);
+        ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
+        Validator validator = vf.getValidator();
+        Set<ConstraintViolation<MultipartUploadItemRepresentation>> errors = validator.validate(uploadItemRepresentation, Default.class);
         if (!errors.isEmpty()) {
             throw new ConstraintViolationException("Error in multiparet upload for item with URI: "
                     + Objects.toString(uploadItemRepresentation.getUri()), errors);
@@ -307,15 +307,15 @@ public class ItemExposure {
     }
 
     private UploadItem processMultipartItems(final List<FileItem> multipartItems) {
-        final MultipartUploadItemRepresentation uploadItemRepresentation = retrieveMultipartUploadItemRepresentation(multipartItems)
+        MultipartUploadItemRepresentation uploadItemRepresentation = retrieveMultipartUploadItemRepresentation(multipartItems)
                 .orElseThrow(() -> new ValidationException("Error processing multipart data. Form field '" + UPLOAD_ITEM_METADATA_FORM_FIELD + "' not found"));
 
-        final InputStream is = retrieveInputStream(multipartItems, uploadItemRepresentation.getContentRef())
+        InputStream is = retrieveInputStream(multipartItems, uploadItemRepresentation.getContentRef())
                 .orElseThrow(() -> new ValidationException("Error processing multipart data. Content reference '"
                         + uploadItemRepresentation.getContentRef() + "' not found as from field for item with URI: "
                         + uriToString(uploadItemRepresentation)));
 
-        final MimeType m = retrieveMimeType(multipartItems, uploadItemRepresentation.getContentRef())
+        MimeType m = retrieveMimeType(multipartItems, uploadItemRepresentation.getContentRef())
                 .orElseThrow(() -> new ValidationException("Error processing multipart data. Mimetype not specified on attachement for item with URI: "
                         + uriToString(uploadItemRepresentation)));
 
@@ -324,7 +324,7 @@ public class ItemExposure {
     }
 
     private MultipartUploadItemRepresentation getUploadItemRepresentationFromFormMetadata(final String metadata) {
-        final ObjectMapper mapper = ObjectMapperFactory.create();
+        ObjectMapper mapper = ObjectMapperFactory.create();
         try {
             return mapper.readValue(metadata, MultipartUploadItemRepresentation.class);
         } catch (IOException ex) {

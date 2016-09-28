@@ -50,6 +50,7 @@
         <exclude name="LongVariable"/>
         <exclude name="AvoidFieldNameMatchingMethodName"/>
         <exclude name="ShortClassName"/>
+        <exclude name="AbstractNaming"/>
     </rule>
     <rule ref="rulesets/java/optimizations.xml">
         <exclude name="LocalVariableCouldBeFinal"/>

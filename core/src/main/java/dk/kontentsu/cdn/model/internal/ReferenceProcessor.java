@@ -40,6 +40,7 @@ import dk.kontentsu.cdn.model.internal.TemporalReferenceTree.Node;
  * can become an external pages.
  *
  * @author Jens Borch Christiansen
+ * @param <V> the type of the visitor used by the processor
  */
 public class ReferenceProcessor<V extends TemporalReferenceTree.Visitor> {
 

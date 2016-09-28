@@ -35,7 +35,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
-
 /**
  * Time interval a given item should be present on the CDN.
  *
@@ -82,6 +81,9 @@ public class Interval implements Serializable {
 
     /**
      * Returns true intervals share some part of the time-line.
+     *
+     * @param other the other interval to use for check
+     * @return true if intervals overlaps
      */
     public boolean overlaps(final Interval other) {
         if (other == null) {
@@ -92,6 +94,12 @@ public class Interval implements Serializable {
         }
     }
 
+    /**
+     * Creates a new interval that is the intersection of this interval and the other interval.
+     *
+     * @param other the other interval to create intersection from
+     * @return new intersection interval
+     */
     public Optional<Interval> intersection(final Interval other) {
         if (overlaps(other)) {
             ZonedDateTime newFrom = getFrom().isAfter(other.getFrom()) ? getFrom() : other.getFrom();

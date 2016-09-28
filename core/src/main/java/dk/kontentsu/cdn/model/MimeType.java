@@ -68,7 +68,7 @@ public class MimeType implements Serializable {
     // See http://www.ietf.org/rfc/rfc2045.txt for valid mime-type characters.
     private static final String VALID_MIMETYPE_CHARS = "[^\\c\\(\\)<>@,;:\\\\\"/\\[\\]\\?=\\s]";
     private static final String MIME_PARAMS_REGEX_STR = ";\\s*(" + VALID_MIMETYPE_CHARS + "+)\\s*=\\s*(" + VALID_MIMETYPE_CHARS + "+)\\s*";
-    private static final String MIME_REGEX_STR = "^\\s*((" + VALID_MIMETYPE_CHARS + "+|\\*)/(" + VALID_MIMETYPE_CHARS + "+|\\*)|(\\*))"
+    private static final String MIME_REGEX_STR = "^\\s*((?<type>" + VALID_MIMETYPE_CHARS + "+|\\*)/(?<subtype>" + VALID_MIMETYPE_CHARS + "+|\\*)|(?<wildcard>\\*))"
             + "\\s*(" + MIME_PARAMS_REGEX_STR + ")*$";
 
     private static final Pattern MIME_REGEX = Pattern.compile(MIME_REGEX_STR);
@@ -131,13 +131,13 @@ public class MimeType implements Serializable {
             throw new IllegalArgumentException(mimeType + " is not a valid Mime Type");
         }
 
-        final boolean oneWildcard = mimeMatcher.group(4) != null;
-        final String type = oneWildcard ? "*" : mimeMatcher.group(2);
-        final String subType = oneWildcard ? "*" : mimeMatcher.group(3);
+        final boolean oneWildcard = mimeMatcher.group("wildcard") != null;
+        final String type = oneWildcard ? "*" : mimeMatcher.group("type");
+        final String subType = oneWildcard ? "*" : mimeMatcher.group("subtype");
 
         Map<String, String> params = new HashMap<>();
 
-        if (mimeMatcher.group(3) != null) {
+        if (mimeMatcher.group("subtype") != null) {
             params = parseParams(mimeType);
         }
 
@@ -160,7 +160,7 @@ public class MimeType implements Serializable {
     public static Map<String, String> parseParams(final String mimeType) {
         final Map<String, String> params = new HashMap<>();
         final Matcher paramMatcher = MIME_PARAMS_REGEX.matcher(mimeType);
-        
+
         while (paramMatcher.find()) {
             final String key = paramMatcher.group(1);
             if (key != null) {
