@@ -102,10 +102,6 @@ public abstract class Category extends AbstractBaseEntity {
         return hash;
     }
 
-    private boolean equals(final Category other) {
-        return this.path.equals(other.path);
-    }
-
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -118,7 +114,7 @@ public abstract class Category extends AbstractBaseEntity {
             return false;
         }
         final Category other = (Category) obj;
-        return equals(other);
+        return path.equals(other.path);
     }
 
 }

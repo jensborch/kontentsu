@@ -36,11 +36,12 @@ import dk.kontentsu.cdn.model.Interval;
  * To create actual external content, implement a Visitor to build the content when traversing the tree.
  *
  * @author Jens Borch Christiansen
+ * @param <V> type of the visitor use when processing the tree
  */
 public class TemporalReferenceTree<V extends TemporalReferenceTree.Visitor> {
 
     private Interval inteval;
-    private Node root;
+    private final Node root;
     private V visitor;
 
     public TemporalReferenceTree(final Version version, final V visitor) {
@@ -52,6 +53,9 @@ public class TemporalReferenceTree<V extends TemporalReferenceTree.Visitor> {
 
     /**
      * Copy constructor, creating a shallow copy with new interval.
+     *
+     * @param tree the existing tree to create a copy from
+     * @param interval new interval to use
      */
     @SuppressWarnings("unchecked")
     public TemporalReferenceTree(final TemporalReferenceTree tree, final Interval interval) {
@@ -130,11 +134,15 @@ public class TemporalReferenceTree<V extends TemporalReferenceTree.Visitor> {
 
         /**
          * Called when a new node is reached.
+         *
+         * @param node the node visited
          */
         void visit(Node node);
 
         /**
          * When a new temporal reference tree is created based on a new interval combination this method will be called to create a new visitor instance for the tree.
+         *
+         * @return a copy of the visitor with new interval
          */
         Visitor copy();
 

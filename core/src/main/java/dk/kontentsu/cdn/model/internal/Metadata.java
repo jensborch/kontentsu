@@ -23,6 +23,7 @@
  */
 package dk.kontentsu.cdn.model.internal;
 
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -101,10 +102,6 @@ public class Metadata implements Serializable {
             return hash;
         }
 
-        private boolean equals(final Key other) {
-            return Objects.equals(this.key, other.key) && this.type == other.type;
-        }
-
         @Override
         public boolean equals(final Object obj) {
             if (this == obj) {
@@ -116,7 +113,8 @@ public class Metadata implements Serializable {
             if (getClass() != obj.getClass()) {
                 return false;
             }
-            return equals((Key) obj);
+            Key other = (Key) obj;
+            return Objects.equals(this.key, other.key) && this.type == other.type;
         }
 
     }

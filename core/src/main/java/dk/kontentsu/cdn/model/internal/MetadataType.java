@@ -30,7 +30,7 @@ package dk.kontentsu.cdn.model.internal;
  */
 public enum MetadataType {
 
-    SEO, OTHER, SEARCH;
+    SEO, OTHER;
 
     public static MetadataType parse(final String type) {
         for (MetadataType t : values()) {

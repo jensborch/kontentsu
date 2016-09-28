@@ -110,10 +110,6 @@ public class Interval implements Serializable {
         return hash;
     }
 
-    private boolean equals(final Interval interval) {
-        return from.toInstant().equals(interval.from.toInstant()) && to.toInstant().equals(interval.to.toInstant());
-    }
-
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -126,7 +122,7 @@ public class Interval implements Serializable {
             return false;
         }
         final Interval other = (Interval) obj;
-        return equals(other);
+        return from.toInstant().equals(other.from.toInstant()) && to.toInstant().equals(other.to.toInstant());
     }
 
     @Override

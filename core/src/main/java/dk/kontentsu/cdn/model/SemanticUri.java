@@ -114,10 +114,6 @@ public class SemanticUri implements Serializable {
         return hash;
     }
 
-    private boolean equals(final SemanticUri other) {
-        return this.getPath().equals(other.getPath()) && this.getName().equals(other.getName());
-    }
-
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
@@ -130,7 +126,7 @@ public class SemanticUri implements Serializable {
             return false;
         }
         final SemanticUri other = (SemanticUri) obj;
-        return equals(other);
+        return this.getPath().equals(other.getPath()) && this.getName().equals(other.getName());
     }
 
     public boolean matches(final String uri) {
