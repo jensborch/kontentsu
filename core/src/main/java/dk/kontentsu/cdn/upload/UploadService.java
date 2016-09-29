@@ -23,19 +23,16 @@
  */
 package dk.kontentsu.cdn.upload;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.validation.Valid;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import dk.kontentsu.cdn.externalization.ExternalizerService;
 import dk.kontentsu.cdn.model.Content;
@@ -48,9 +45,12 @@ import dk.kontentsu.cdn.parsers.ContentParser;
 import dk.kontentsu.cdn.repository.CategoryRepository;
 import dk.kontentsu.cdn.repository.HostRepository;
 import dk.kontentsu.cdn.repository.ItemRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Service facade for performing various operations on CDN items - like uploading new items.
+ * Service facade for performing various operations on CDN items - like
+ * uploading new items.
  *
  * @author Jens Borch Christiansen
  */
@@ -71,21 +71,36 @@ public class UploadService {
     @Inject
     private ExternalizerService externalizer;
 
+    @Inject
     private UploadService self;
-
-    @Resource
-    private SessionContext ctx;
-
-    @PostConstruct
-    public void init() {
-        self = ctx.getBusinessObject(UploadService.class);
-    }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Item upload(@Valid final UploadItem uploadeItem) {
         Version version = self.save(uploadeItem);
         externalizer.externalize(version.getUuid());
         return version.getItem();
+    }
+
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Item overwrite(UUID itemId, @Valid final UploadItem uploadeItem) {
+        Item item = itemRepo.get(itemId);
+        Set<UUID> externalize = new HashSet<>();
+        item.getVersions()
+                .stream()
+                .filter(i -> i.getInterval().overlaps(uploadeItem.getInterval()))
+                .forEach(v -> {
+                    v.getInterval().disjunctiveUnion(uploadeItem.getInterval())
+                            .stream().forEach(i -> {
+                                Version n = Version.builder().version(v).interval(i).build();
+                                item.addVersion(n);
+                                externalize.add(n.getUuid());
+                            });
+                    v.delete();
+                });
+        Version version = self.save(uploadeItem);
+        externalize.add(version.getUuid());
+        externalize.stream().forEach(u -> externalizer.externalize(u));
+        return item;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

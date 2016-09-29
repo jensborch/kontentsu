@@ -50,6 +50,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -57,12 +58,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.cdn.api.ApiErrorException;
@@ -88,6 +83,11 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 /**
  * REST resource for listing and manipulating items on the CDN.
@@ -191,6 +191,25 @@ public class ItemExposure {
     }
 
     /**
+     * Upload and overwrite content for existing item using JSON with an URL.
+     */
+    @PUT
+    @Path("{item}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    @ApiOperation(value = "Overwrite existing content on the CDN using a data from a URL",
+            notes = "Encoding must be specified for textual content")
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Content has been uploaded"),
+        @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
+    public Response overwrite(@PathParam("item") final String item, @Valid final UploadItemRepresentation uploadItemRepresentation) {
+        service.overwrite(UUID.fromString(item), new UploadItemMapper().apply(uploadItemRepresentation));
+        URI uri = uriInfo.getAbsolutePathBuilder().build(UploadItem.class);
+        return Response.created(uri).build();
+    }
+
+    /**
      * Upload content to CDN using JSON and URL.
      */
     @POST
@@ -200,7 +219,7 @@ public class ItemExposure {
     @ApiOperation(value = "Upload content to the CDN using a data from a URL",
             notes = "Encoding must be specified for textual content")
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Contetn has been uploaded"),
+        @ApiResponse(code = 201, message = "Content has been uploaded"),
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
     public Response uploade(@Valid final UploadItemRepresentation uploadItemRepresentation) {
         service.upload(new UploadItemMapper().apply(uploadItemRepresentation));
@@ -209,9 +228,11 @@ public class ItemExposure {
     }
 
     /**
-     * Upload content to CDN using multipart request. Content should be added as an attachment.
+     * Upload content to CDN using multipart request. Content should be added as
+     * an attachment.
      *
-     * <em>Note:</em> Swagger do not support operation overloading even with different content types, so no documentation is created for this method.
+     * <em>Note:</em> Swagger do not support operation overloading even with
+     * different content types, so no documentation is created for this method.
      */
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -231,9 +252,13 @@ public class ItemExposure {
                 dataType = "java.io.File",
                 paramType = "body")})
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Contetn has been uploaded"),
+        @ApiResponse(code = 201, message = "Content has been uploaded"),
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
     public Response uploade(@Context final HttpServletRequest request) {
+        return processMultipartRequest(request);
+    }
+
+    public Response processMultipartRequest(final HttpServletRequest request) {
         try {
             if (ServletFileUpload.isMultipartContent(request)) {
                 ServletFileUpload upload = new ServletFileUpload(itemFactory);

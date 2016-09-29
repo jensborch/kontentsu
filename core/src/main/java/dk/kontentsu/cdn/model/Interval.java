@@ -50,7 +50,8 @@ import javax.validation.constraints.NotNull;
 public class Interval implements Serializable {
 
     /**
-     * Max date use when "valid to" has not been set. LocalDateTime.MAX can't be used as it exceeded the maximum value of SQL Timestamp.
+     * Max date use when "valid to" has not been set. LocalDateTime.MAX can't be
+     * used as it exceeded the maximum value of SQL Timestamp.
      */
     public static final ZonedDateTime INFINIT = ZonedDateTime.of(LocalDateTime.of(2099, Month.DECEMBER, 31, 0, 0), ZoneOffset.UTC);
 
@@ -100,7 +101,8 @@ public class Interval implements Serializable {
     }
 
     /**
-     * Creates a new interval that is the intersection of this interval and the other interval.
+     * Creates a new interval that is the intersection of this interval and the
+     * other interval.
      *
      * @param other the other interval to create intersection from
      * @return new intersection interval
@@ -116,17 +118,16 @@ public class Interval implements Serializable {
     }
 
     /**
-     * Given a new interval <code>other</code> this method produces list of all new intervals needed to cover the full range of the intervals but without any overlap.
+     * Given a new interval <code>other</code> this method produces list of all
+     * intervals that does not overlap.
      *
      * @param other interval to use
      * @return a list of intervals
      */
-    public Set<Interval> split(final Interval other) {
+    public Set<Interval> disjunctiveUnion(final Interval other) {
         Set<Interval> results = new HashSet<>();
         Optional<Interval> intersection = intersection(other);
         if (intersection.isPresent()) {
-            results.add(intersection.get());
-
             ZonedDateTime min = min(other);
             if (min.isBefore(intersection.get().getFrom())) {
                 results.add(new Interval(min, intersection.get().getFrom()));
@@ -136,7 +137,6 @@ public class Interval implements Serializable {
                 results.add(new Interval(intersection.get().getTo(), max));
             }
         } else {
-            results.add(other);
             results.add(this);
         }
         return results;

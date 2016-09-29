@@ -82,10 +82,13 @@ public class IntervalTest {
 
     @Test
     public void testSplit() throws Exception {
-        Set<Interval> results = nowPlus2days.split(nowPlus4days);
-        assertEquals(2, results.size());
-        assertTrue(results.contains(new Interval(NOW, NOW.plusDays(2))));
+        Set<Interval> results = nowPlus2days.disjunctiveUnion(nowPlus4days);
+        assertEquals(1, results.size());
         assertTrue(results.contains(new Interval(NOW.plusDays(2), NOW.plusDays(4))));
+        results = nowPlus4days.disjunctiveUnion(new Interval(NOW.plusDays(1), NOW.plusDays(3)));
+        assertEquals(2, results.size());
+        assertTrue(results.contains(new Interval(NOW, NOW.plusDays(1))));
+        assertTrue(results.contains(new Interval(NOW.plusDays(3), NOW.plusDays(4))));
     }
 
 }
