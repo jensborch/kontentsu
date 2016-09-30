@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
+ * Test for {@link Interval}
  *
  * @author Jens Borch Christiansen
  */
@@ -52,6 +53,7 @@ public class IntervalTest {
         assertTrue(max.overlaps(plus4daysPlus8days));
         assertTrue(nowPlus2days.overlaps(nowPlus4days));
         assertFalse(nowPlus4days.overlaps(plus4daysPlus8days));
+        assertFalse(plus4daysPlus8days.overlaps(nowPlus4days));
         assertFalse(nowPlus2days.overlaps(plus4daysPlus8days));
         assertTrue(nowMax.overlaps(plus4daysPlus8days));
     }

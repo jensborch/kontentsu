@@ -4,8 +4,9 @@ plugins {
     id 'findbugs'
     id 'build-dashboard'
     id 'idea'
-    id "jacoco"
-    id "pmd"
+    id 'jacoco'
+    id 'pmd'
+    id 'project-report'
     //id 'com.github.ben-manes.versions' version '0.13.0'
 }
 
@@ -44,13 +45,7 @@ ext {
 
 defaultTasks 'build'
 
-subprojects {
-    //apply plugin: 'com.github.ben-manes.versions'
-    apply plugin: 'java'
-    apply plugin: 'checkstyle'
-    apply plugin: 'findbugs'
-    apply plugin: 'pmd'
-    apply plugin: 'jacoco'
+allprojects {
     group = 'dk.kontentsu.cdn'
     version = '1.0-SNAPSHOT'
 
@@ -63,6 +58,16 @@ subprojects {
         }
         mavenCentral()
     }
+}
+
+
+subprojects {
+    //apply plugin: 'com.github.ben-manes.versions'
+    apply plugin: 'java'
+    apply plugin: 'checkstyle'
+    apply plugin: 'findbugs'
+    apply plugin: 'pmd'
+    apply plugin: 'jacoco'
 
     checkstyle {
         toolVersion = checkstyleVersion
@@ -121,6 +126,11 @@ subprojects {
             }
         }
     }
+}
+apply plugin: 'project-report'
+
+htmlDependencyReport {
+    projects = project.subprojects
 }
 
 idea {

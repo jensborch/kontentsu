@@ -75,16 +75,17 @@ public class UploadService {
     private UploadService self;
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Item upload(@Valid final UploadItem uploadeItem) {
+    public UUID upload(@Valid final UploadItem uploadeItem) {
         Version version = self.save(uploadeItem);
         externalizer.externalize(version.getUuid());
-        return version.getItem();
+        return version.getItem().getUuid();
     }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void overwrite(final UUID itemId, @Valid final UploadItem uploadeItem) {
+    public UUID overwrite(final UUID itemId, @Valid final UploadItem uploadeItem) {
         Set<UUID> externalized = self.overwriteAndSave(itemId, uploadeItem);
         externalized.stream().forEach(u -> externalizer.externalize(u));
+        return itemId;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

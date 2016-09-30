@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -88,6 +89,15 @@ public class UploadServiceIT {
         }
     }
 
+    private Item getItem(UUID id) throws Exception {
+        try {
+            userTransaction.begin();
+            return itemRepo.get(id);
+        } finally {
+            userTransaction.commit();
+        }
+    }
+
     @After
     public void tearDown() throws Exception {
         try {
@@ -111,7 +121,7 @@ public class UploadServiceIT {
                 .host("text_host")
                 .encoding(StandardCharsets.UTF_8)
                 .build();
-        Item result = service.upload(uploadeItem);
+        Item result = getItem(service.upload(uploadeItem));
         assertEquals("name", result.getName());
         assertEquals(1, result.getVersions().size());
         assertEquals(1, result.getVersions().stream().filter(v -> v.getInterval().getFrom().equals(NOW)).collect(Collectors.counting()).intValue());
@@ -129,7 +139,7 @@ public class UploadServiceIT {
                 .mimeType(new MimeType("application", "hal+json"))
                 .encoding(StandardCharsets.UTF_8)
                 .build();
-        Item result = service.upload(uploadeItem);
+        Item result = getItem(service.upload(uploadeItem));
         assertEquals("article2", result.getName());
 
         uploadeItem = UploadItem.builder()
@@ -140,7 +150,7 @@ public class UploadServiceIT {
                 .encoding(StandardCharsets.UTF_8)
                 .build();
 
-        result = service.upload(uploadeItem);
+        result = getItem(service.upload(uploadeItem));
         assertEquals("simple-page", result.getName());
         assertEquals(1, result.getVersions().size());
         assertEquals(3, result.getVersions().stream().findFirst().get().getReferences().size());
@@ -158,7 +168,7 @@ public class UploadServiceIT {
                 .mimeType(new MimeType("application", "hal+json"))
                 .encoding(StandardCharsets.UTF_8)
                 .build();
-        Item owerwrite = service.upload(uploadeItem);
+        Item owerwrite = getItem(service.upload(uploadeItem));
         uploadeItem = UploadItem.builder()
                 .content("page", new ByteArrayInputStream(data.getSimplePage()))
                 .uri(SemanticUri.parse("items/page/simple-page"))
