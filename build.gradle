@@ -119,11 +119,6 @@ subprojects {
                 enabled true
                 destination "${buildDir}/reports/jacoco"
             }
-            afterEvaluate {
-                classDirectories = files(classDirectories.files.collect {
-                        fileTree(dir: it, exclude: '**/IT*')
-                    })
-            }
         }
     }
 }
