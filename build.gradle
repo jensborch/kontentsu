@@ -87,9 +87,6 @@ subprojects {
     }
     test {
         finalizedBy jacocoTestReport
-        jacoco {
-            excludes = ['**/*IT*']
-        }
     }
     dependencies {
         compile 'org.apache.logging.log4j:log4j-api:' + log4jVersion
@@ -118,8 +115,15 @@ subprojects {
         reports {
             xml.enabled true
             csv.enabled false
-            html.enabled true
-            html.destination "${buildDir}/reports/jacoco"
+            html {
+                enabled true
+                destination "${buildDir}/reports/jacoco"
+            }
+            afterEvaluate {
+                classDirectories = files(classDirectories.files.collect {
+                        fileTree(dir: it, exclude: '**/IT*')
+                    })
+            }
         }
     }
 }
