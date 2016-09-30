@@ -34,6 +34,9 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.kontentsu.cdn.externalization.ExternalizerService;
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.SemanticUri;
@@ -45,12 +48,9 @@ import dk.kontentsu.cdn.parsers.ContentParser;
 import dk.kontentsu.cdn.repository.CategoryRepository;
 import dk.kontentsu.cdn.repository.HostRepository;
 import dk.kontentsu.cdn.repository.ItemRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Service facade for performing various operations on CDN items - like
- * uploading new items.
+ * Service facade for performing various operations on CDN items - like uploading new items.
  *
  * @author Jens Borch Christiansen
  */
@@ -82,25 +82,41 @@ public class UploadService {
     }
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Item overwrite(UUID itemId, @Valid final UploadItem uploadeItem) {
+    public void overwrite(final UUID itemId, @Valid final UploadItem uploadeItem) {
+        Set<UUID> externalized = self.overwriteAndSave(itemId, uploadeItem);
+        externalized.stream().forEach(u -> externalizer.externalize(u));
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Set<UUID> overwriteAndSave(final UUID itemId, @Valid final UploadItem uploadeItem) {
         Item item = itemRepo.get(itemId);
-        Set<UUID> externalize = new HashSet<>();
+        Set<UUID> externalized = new HashSet<>();
+        //We need to create tmp set to avoid ConcurrentModificationException. HasSet do not support that we loop and modify at the same time.
+        Set<Version> toAdd = new HashSet<>();
         item.getVersions()
                 .stream()
+                .filter(i -> i.isActive())
                 .filter(i -> i.getInterval().overlaps(uploadeItem.getInterval()))
                 .forEach(v -> {
+                    LOGGER.debug("Deleting version {} with interval {}", v.getUuid(), v.getInterval());
+                    v.delete();
                     v.getInterval().disjunctiveUnion(uploadeItem.getInterval())
                             .stream().forEach(i -> {
-                                Version n = Version.builder().version(v).interval(i).build();
-                                item.addVersion(n);
-                                externalize.add(n.getUuid());
+                                Version n = Version.builder()
+                                        .version(v)
+                                        .interval(i)
+                                        .active()
+                                        .build();
+                                LOGGER.debug("Adding new version {} with interval {}", n.getUuid(), n.getInterval());
+                                toAdd.add(n);
+                                externalized.add(n.getUuid());
                             });
-                    v.delete();
                 });
-        Version version = self.save(uploadeItem);
-        externalize.add(version.getUuid());
-        externalize.stream().forEach(u -> externalizer.externalize(u));
-        return item;
+        toAdd.forEach(v -> item.addVersion(v));
+        Version version = addVersion(item, uploadeItem);
+        addHosts(item, uploadeItem);
+        externalized.add(version.getUuid());
+        return externalized;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -154,6 +170,7 @@ public class UploadService {
         });
 
         Version version = builder.build();
+        LOGGER.debug("Adding newly uploadet version {} to item with interval {}", version.getUuid(), version.getInterval());
         item.addVersion(version);
         return version;
     }

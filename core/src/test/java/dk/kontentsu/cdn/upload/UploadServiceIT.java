@@ -29,6 +29,7 @@ import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.internal.Host;
 import dk.kontentsu.cdn.model.internal.Item;
 import dk.kontentsu.cdn.repository.HostRepository;
+import dk.kontentsu.cdn.repository.ItemRepository;
 import dk.kontentsu.cdn.test.TestEJBContainer;
 
 /**
@@ -46,6 +47,9 @@ public class UploadServiceIT {
 
     @Inject
     private HostRepository hostRepo;
+
+    @Inject
+    private ItemRepository itemRepo;
 
     @Inject
     private UploadService service;
@@ -81,6 +85,12 @@ public class UploadServiceIT {
 
     @After
     public void tearDown() throws Exception {
+        try {
+            userTransaction.begin();
+            itemRepo.findAll().stream().forEach(i -> i.delete());
+        } finally {
+            userTransaction.commit();
+        }
 
     }
 
@@ -130,6 +140,43 @@ public class UploadServiceIT {
         assertEquals(1, result.getHosts().size());
         assertEquals(host, result.getHosts().stream().findFirst().get());
 
+    }
+
+    @Test
+    public void testOverwrite() throws Exception {
+        UploadItem uploadeItem = UploadItem.builder()
+                .content("article2", new ByteArrayInputStream(data.getArticle(1)))
+                .uri(SemanticUri.parse("items/article2"))
+                .interval(new Interval(NOW))
+                .mimeType(new MimeType("application", "hal+json"))
+                .encoding(StandardCharsets.UTF_8)
+                .build();
+        Item owerwrite = service.upload(uploadeItem);
+        uploadeItem = UploadItem.builder()
+                .content("page", new ByteArrayInputStream(data.getSimplePage()))
+                .uri(SemanticUri.parse("items/page/simple-page"))
+                .interval(new Interval(NOW))
+                .mimeType(new MimeType("application", "hal+json"))
+                .encoding(StandardCharsets.UTF_8)
+                .build();
+        service.upload(uploadeItem);
+        uploadeItem = UploadItem.builder()
+                .content("article2", new ByteArrayInputStream(data.getArticle(1)))
+                .uri(SemanticUri.parse("items/article2"))
+                .interval(new Interval(NOW.plusDays(1), NOW.plusDays(10)))
+                .mimeType(new MimeType("application", "hal+json"))
+                .encoding(StandardCharsets.UTF_8)
+                .build();
+        service.overwrite(owerwrite.getUuid(), uploadeItem);
+
+        try {
+            userTransaction.begin();
+            Item item = itemRepo.get(owerwrite.getUuid());
+            assertEquals("article2", item.getName());
+            assertEquals(3, item.getVersions().stream().filter(v -> v.isActive()).count());
+        } finally {
+            userTransaction.commit();
+        }
     }
 
     @Test

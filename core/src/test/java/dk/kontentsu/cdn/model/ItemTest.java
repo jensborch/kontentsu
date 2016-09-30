@@ -5,13 +5,8 @@
  */
 package dk.kontentsu.cdn.model;
 
-import dk.kontentsu.cdn.model.SemanticUriPath;
-import dk.kontentsu.cdn.model.SemanticUri;
-import dk.kontentsu.cdn.model.MimeType;
-import dk.kontentsu.cdn.model.Content;
-import dk.kontentsu.cdn.model.Interval;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
@@ -67,6 +62,12 @@ public class ItemTest {
         item.addVersion(nooverlap);
         assertEquals(1, semanticUriPath.getItems().size());
         assertEquals(2, item.getVersions().size());
+    }
+
+    @Test
+    public void testOverlapsEmpty() throws Exception {
+        Version nooverlap = create(NOW.minusHours(1), NOW.minusNanos(1));
+        assertFalse(item.overlaps(nooverlap));
     }
 
     @Test(expected = ValidationException.class)

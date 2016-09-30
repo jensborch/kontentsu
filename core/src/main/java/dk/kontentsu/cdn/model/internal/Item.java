@@ -46,6 +46,9 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.kontentsu.cdn.exception.ValidationException;
 import dk.kontentsu.cdn.jpa.AbstractBaseEntity;
 import dk.kontentsu.cdn.model.ExternalFile;
@@ -73,6 +76,7 @@ import dk.kontentsu.cdn.repository.Repository;
 public class Item extends AbstractBaseEntity {
 
     private static final long serialVersionUID = 1457687095382268401L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Item.class);
 
     @NotNull
     @Valid
@@ -155,7 +159,7 @@ public class Item extends AbstractBaseEntity {
 
     public List<Version> getVersions(final Interval interval) {
         return versions.stream()
-                .filter(v -> v.isActivate())
+                .filter(v -> v.isActive())
                 .filter(v -> v.getInterval().overlaps(interval))
                 .collect(Collectors.toList());
     }
@@ -177,17 +181,19 @@ public class Item extends AbstractBaseEntity {
     }
 
     public boolean overlaps(final Version other) {
-        return getVersions()
+        boolean result = !getVersions().isEmpty() && getVersions()
                 .stream()
                 .filter(v -> !v.equals(other))
-                .filter(v -> v.isActivate())
+                .filter(v -> v.isActive())
                 .filter(v -> v.getInterval().overlaps(other.getInterval()))
                 .findAny()
                 .isPresent();
+        LOGGER.debug("Overlaps between {} and {} returned {}", other.getUuid(), this.getUuid(), result);
+        return result;
     }
 
     public void delete() {
-        getVersions().forEach(v -> v.delete());
+        getVersions().stream().forEach(v -> v.delete());
     }
 
 }

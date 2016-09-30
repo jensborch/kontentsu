@@ -58,8 +58,6 @@ public class UploadItem {
     @NotNull
     private final Content content;
 
-    private final boolean overwrite;
-
     @NotNull
     private final List<String> hosts;
 
@@ -69,7 +67,6 @@ public class UploadItem {
         this.mimeType = builder.mimeType;
         this.encoding = builder.encoding;
         this.content = builder.content;
-        this.overwrite = builder.overwrite;
         this.hosts = new ArrayList<>(builder.hosts);
     }
 
@@ -174,7 +171,6 @@ public class UploadItem {
         private MimeType mimeType;
         private Charset encoding;
         private List<String> hosts = new ArrayList<>();
-        private boolean overwrite;
 
         private Builder() {
         }
@@ -191,11 +187,6 @@ public class UploadItem {
 
         public Builder content(final String ref, final InputStream is) {
             this.content = new MultipartContent(ref, is);
-            return this;
-        }
-
-        public Builder overwrite() {
-            this.overwrite = true;
             return this;
         }
 
