@@ -73,10 +73,15 @@ public class UploadServiceIT {
     public void setUp() throws Exception {
         TestEJBContainer.inject(container, this);
         data = new ContentTestData();
+        host = createHost("test_host");
+
+    }
+
+    private Host createHost(String name) throws Exception {
         try {
             userTransaction.begin();
-            host = hostRepo.findByName("test_host").orElseGet(() -> {
-                return hostRepo.save(new Host("test_host", "Test description", URI.create("ftp://myusername:mypassword@somehost/"), "cdn/upload"));
+            return hostRepo.findByName(name).orElseGet(() -> {
+                return hostRepo.save(new Host(name, "Test description", URI.create("ftp://myusername:mypassword@somehost/"), "cdn/upload"));
             });
         } finally {
             userTransaction.commit();
@@ -96,12 +101,14 @@ public class UploadServiceIT {
 
     @Test
     public void testUploadPlainText() throws Exception {
+        Host textHost = createHost("text_host");
         InputStream is = new ByteArrayInputStream("test data".getBytes());
         UploadItem uploadeItem = UploadItem.builder()
                 .content("TestRef", is)
                 .uri(SemanticUri.parse("test/test/name"))
                 .interval(new Interval(NOW))
                 .mimeType(new MimeType("text", "plain"))
+                .host("text_host")
                 .encoding(StandardCharsets.UTF_8)
                 .build();
         Item result = service.upload(uploadeItem);
@@ -110,7 +117,7 @@ public class UploadServiceIT {
         assertEquals(1, result.getVersions().stream().filter(v -> v.getInterval().getFrom().equals(NOW)).collect(Collectors.counting()).intValue());
         assertEquals(1, result.getVersions().stream().filter(v -> v.getInterval().getTo().equals(Interval.INFINIT)).collect(Collectors.counting()).intValue());
         assertEquals(1, result.getHosts().size());
-        assertEquals(host, result.getHosts().stream().findFirst().get());
+        assertEquals(textHost, result.getHosts().stream().findFirst().get());
     }
 
     @Test

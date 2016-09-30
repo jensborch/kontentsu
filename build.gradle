@@ -76,17 +76,20 @@ subprojects {
         sourceSets = [sourceSets.main]
         excludeFilter = file("$rootProject.projectDir/config/findbugs/exclude.xml")
     }
+    jacoco {
+        toolVersion = jacocoVersion
+    }
     pmd {
         toolVersion = pmdVersion
         sourceSets = [sourceSets.main]
         ignoreFailures = true
         ruleSetFiles = files("$rootProject.projectDir/config/pmd/ruleset.xml")
     }
-    jacoco {
-        toolVersion = jacocoVersion
-    }
     test {
         finalizedBy jacocoTestReport
+        jacoco {
+            excludes = ['**/*IT*']
+        }
     }
     dependencies {
         compile 'org.apache.logging.log4j:log4j-api:' + log4jVersion
