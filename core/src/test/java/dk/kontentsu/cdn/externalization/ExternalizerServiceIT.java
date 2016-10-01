@@ -163,11 +163,11 @@ public class ExternalizerServiceIT {
                 .item(page)
                 .from(NOW)
                 .build();
-        new Transactions(userTransaction).apply(f -> repo.save(f), toDelete);
+        Transactions.commit(userTransaction).param(toDelete).apply(f -> repo.save(f));
 
         List<ExternalFile> result = service.externalize(pageVersion.getUuid()).get();
         assertEquals(2, result.size());
-        ExternalFile deleted = new Transactions(userTransaction).apply(f -> repo.get(f), toDelete.getUuid());
+        ExternalFile deleted = Transactions.commit(userTransaction).param(toDelete.getUuid()).apply(f -> repo.get(f));
         assertTrue(deleted.isDeleted());
     }
 
