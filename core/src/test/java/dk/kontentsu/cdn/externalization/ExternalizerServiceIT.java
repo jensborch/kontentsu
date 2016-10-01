@@ -11,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
 
 import javax.annotation.Resource;
 import javax.ejb.EJBException;
@@ -19,6 +18,12 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.UserTransaction;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.ExternalFile;
@@ -32,11 +37,7 @@ import dk.kontentsu.cdn.model.internal.Version;
 import dk.kontentsu.cdn.repository.ExternalFileRepository;
 import dk.kontentsu.cdn.test.TestEJBContainer;
 import dk.kontentsu.cdn.upload.ContentTestData;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import dk.kontentsu.util.Transactions;
 
 /**
  * Test for {@link ExternalizerService}.
@@ -152,15 +153,6 @@ public class ExternalizerServiceIT {
         em.remove(path);
     }
 
-    public <T, R> R trans(Function<T, R> f, T param) throws Exception {
-        try {
-            userTransaction.begin();
-            return f.apply(param);
-        } finally {
-            userTransaction.commit();
-        }
-    }
-
     @Test
     public void testDelete() throws Exception {
         createItems(MimeType.APPLICATION_HAL_JSON_TYPE);
@@ -171,11 +163,11 @@ public class ExternalizerServiceIT {
                 .item(page)
                 .from(NOW)
                 .build();
-        trans(f -> repo.save(f), toDelete);
+        new Transactions(userTransaction).apply(f -> repo.save(f), toDelete);
 
         List<ExternalFile> result = service.externalize(pageVersion.getUuid()).get();
         assertEquals(2, result.size());
-        ExternalFile deleted = trans(f -> repo.get(f), toDelete.getUuid());
+        ExternalFile deleted = new Transactions(userTransaction).apply(f -> repo.get(f), toDelete.getUuid());
         assertTrue(deleted.isDeleted());
     }
 

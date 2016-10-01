@@ -121,13 +121,21 @@ public class UploadServiceIT {
                 .host("text_host")
                 .encoding(StandardCharsets.UTF_8)
                 .build();
-        Item result = getItem(service.upload(uploadeItem));
-        assertEquals("name", result.getName());
-        assertEquals(1, result.getVersions().size());
-        assertEquals(1, result.getVersions().stream().filter(v -> v.getInterval().getFrom().equals(NOW)).collect(Collectors.counting()).intValue());
-        assertEquals(1, result.getVersions().stream().filter(v -> v.getInterval().getTo().equals(Interval.INFINIT)).collect(Collectors.counting()).intValue());
-        assertEquals(1, result.getHosts().size());
-        assertEquals(textHost, result.getHosts().stream().findFirst().get());
+
+        UUID id = service.upload(uploadeItem);
+
+        try {
+            userTransaction.begin();
+            Item r = itemRepo.get(id);
+            assertEquals("name", r.getName());
+            assertEquals(1, r.getVersions().size());
+            assertEquals(1, r.getVersions().stream().filter(v -> v.getInterval().getFrom().toInstant().equals(NOW.toInstant())).collect(Collectors.counting()).intValue());
+            assertEquals(1, r.getVersions().stream().filter(v -> v.getInterval().getTo().toInstant().equals(Interval.INFINIT.toInstant())).collect(Collectors.counting()).intValue());
+            assertEquals(1, r.getHosts().size());
+            assertEquals(textHost, r.getHosts().stream().findFirst().get());
+        } finally {
+            userTransaction.commit();
+        }
     }
 
     @Test
@@ -150,13 +158,18 @@ public class UploadServiceIT {
                 .encoding(StandardCharsets.UTF_8)
                 .build();
 
-        result = getItem(service.upload(uploadeItem));
-        assertEquals("simple-page", result.getName());
-        assertEquals(1, result.getVersions().size());
-        assertEquals(3, result.getVersions().stream().findFirst().get().getReferences().size());
-        assertEquals(1, result.getHosts().size());
-        assertEquals(host, result.getHosts().stream().findFirst().get());
-
+        UUID id = service.upload(uploadeItem);
+        try {
+            userTransaction.begin();
+            Item r = itemRepo.get(id);
+            assertEquals("simple-page", r.getName());
+            assertEquals(1, r.getVersions().size());
+            assertEquals(3, r.getVersions().stream().findFirst().get().getReferences().size());
+            assertEquals(1, r.getHosts().size());
+            assertEquals(host, r.getHosts().stream().findFirst().get());
+        } finally {
+            userTransaction.commit();
+        }
     }
 
     @Test
