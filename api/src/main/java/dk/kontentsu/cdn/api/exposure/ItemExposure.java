@@ -60,12 +60,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.cdn.api.ApiErrorException;
 import dk.kontentsu.cdn.api.configuration.Config;
@@ -89,6 +83,13 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.servlet.ServletRequestContext;
 
 /**
  * REST resource for listing and manipulating items on the CDN.
@@ -254,9 +255,11 @@ public class ItemExposure {
     }
 
     /**
-     * Upload content to CDN using multipart request. Content should be added as an attachment.
+     * Upload content to CDN using multipart request. Content should be added as
+     * an attachment.
      *
-     * <em>Note:</em> Swagger do not support operation overloading even with different content types, so no documentation is created for this method.
+     * <em>Note:</em> Swagger do not support operation overloading even with
+     * different content types, so no documentation is created for this method.
      */
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -284,7 +287,7 @@ public class ItemExposure {
 
     public Response processMultipartRequest(final HttpServletRequest request, final Function<UploadItem, UUID> strategy) {
         try {
-            if (ServletFileUpload.isMultipartContent(request)) {
+            if (isMultipartContent(request)) {
                 ServletFileUpload upload = new ServletFileUpload(itemFactory);
                 UploadItem item = processMultipartItems(upload.parseRequest(request));
                 return getMultipartResponse(item, strategy);
@@ -380,4 +383,9 @@ public class ItemExposure {
             throw new ApiErrorException("Unable to parse metadata in multipart message", ex);
         }
     }
+
+    private static boolean isMultipartContent(HttpServletRequest request) {
+        return FileUploadBase.isMultipartContent(new ServletRequestContext(request));
+    }
+
 }

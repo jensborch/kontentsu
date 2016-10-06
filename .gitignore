@@ -8,3 +8,5 @@
 /core/build
 /api/build
 /client/node_modules
+/client/app
+/client/typings
