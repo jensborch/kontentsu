@@ -46,9 +46,6 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.kontentsu.cdn.exception.ValidationException;
 import dk.kontentsu.cdn.jpa.AbstractBaseEntity;
 import dk.kontentsu.cdn.model.ExternalFile;
@@ -56,6 +53,8 @@ import dk.kontentsu.cdn.model.Interval;
 import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.Taxon;
 import dk.kontentsu.cdn.repository.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An item that can externalized to the CDN - i.e. a file on the CDN.
@@ -68,7 +67,7 @@ import dk.kontentsu.cdn.repository.Repository;
             @UniqueConstraint(columnNames = {"path_id", "name"})})
 @NamedQueries({
     @NamedQuery(name = Repository.ITEM_FIND_ALL,
-            query = "SELECT DISTINCT i FROM Item i JOIN i.versions v WHERE v.state = :state"),
+            query = "SELECT DISTINCT i FROM Item i JOIN i.versions v WHERE v.state IN :state"),
     @NamedQuery(name = Repository.ITEM_GET,
             query = "SELECT i FROM Item i WHERE i.uuid = :uuid"),
     @NamedQuery(name = Repository.ITEM_FIND_BY_URI,

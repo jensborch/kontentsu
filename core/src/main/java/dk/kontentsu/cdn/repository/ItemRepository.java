@@ -29,8 +29,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.ejb.LocalBean;
@@ -40,8 +42,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.validation.Valid;
-
-import org.hibernate.internal.SessionImpl;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import dk.kontentsu.cdn.model.Content;
@@ -60,6 +60,7 @@ import dk.kontentsu.cdn.model.internal.QReference;
 import dk.kontentsu.cdn.model.internal.QVersion;
 import dk.kontentsu.cdn.model.internal.ReferenceType;
 import dk.kontentsu.cdn.model.internal.Version;
+import org.hibernate.internal.SessionImpl;
 
 /**
  * Repository for performing CRUD operations on CDN items.
@@ -126,11 +127,9 @@ public class ItemRepository extends Repository<Item> {
         criteria.offset.ifPresent(o -> query.offset(o));
         criteria.limit.ifPresent(l -> query.limit(l));
 
-        criteria.state.ifPresent(s -> {
-            QVersion version = QVersion.version;
-            query.join(item.versions, version);
-            query.where(version.state.eq(s));
-        });
+        QVersion version = QVersion.version;
+        query.join(item.versions, version);
+        query.where(version.state.in(criteria.STATES));
 
         return query.fetch();
     }
@@ -138,7 +137,7 @@ public class ItemRepository extends Repository<Item> {
     @Override
     public List<Item> findAll() {
         TypedQuery<Item> query = em.createNamedQuery(ITEM_FIND_ALL, Item.class);
-        query.setParameter("state", State.ACTIVE);
+        query.setParameter("state", new State[]{State.ACTIVE, State.DRAFT});
         return query.getResultList();
     }
 
@@ -211,11 +210,12 @@ public class ItemRepository extends Repository<Item> {
     public static class Criteria {
 
         private static final int DEFAULT_FROM_COMPENSATION_SECONDS = 1;
+        private static final Set<State> STATES = new HashSet<>();
+
         private Optional<ZonedDateTime> at = Optional.empty();
         private Optional<ZonedDateTime> from = Optional.empty();
         private Optional<SemanticUri> reference = Optional.empty();
         private ReferenceType referenceType = ReferenceType.COMPOSITION;
-        private Optional<State> state = Optional.empty();
         private ZonedDateTime to = Interval.INFINIT.plusSeconds(DEFAULT_FROM_COMPENSATION_SECONDS);
         private Optional<SemanticUriPath> path = Optional.empty();
         private Optional<SemanticUri> uri = Optional.empty();
@@ -223,6 +223,10 @@ public class ItemRepository extends Repository<Item> {
         private Optional<Integer> offset = Optional.empty();
         private Optional<Integer> limit = Optional.empty();
         private Optional<String> host = Optional.empty();
+
+        static {
+            STATES.add(State.ACTIVE);
+        }
 
         public static Criteria create() {
             return new Criteria();
@@ -279,8 +283,23 @@ public class ItemRepository extends Repository<Item> {
             return this;
         }
 
-        public Criteria state(final State state) {
-            this.state = Optional.of(state);
+        public Criteria active() {
+            this.STATES.add(State.ACTIVE);
+            return this;
+        }
+
+        public Criteria inactive() {
+            this.STATES.remove(State.ACTIVE);
+            return this;
+        }
+
+        public Criteria draft() {
+            this.STATES.remove(State.DRAFT);
+            return this;
+        }
+
+        public Criteria deleted() {
+            this.STATES.remove(State.DELETED);
             return this;
         }
 

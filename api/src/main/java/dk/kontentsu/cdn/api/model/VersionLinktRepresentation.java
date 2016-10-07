@@ -29,6 +29,7 @@ import javax.ws.rs.core.UriInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import dk.kontentsu.cdn.api.exposure.ItemExposure;
 import dk.kontentsu.cdn.model.Interval;
+import dk.kontentsu.cdn.model.State;
 import dk.kontentsu.cdn.model.internal.Version;
 
 /**
@@ -42,6 +43,8 @@ public class VersionLinktRepresentation {
     @JsonUnwrapped
     private final Interval interval;
 
+    private final State state;
+
     public VersionLinktRepresentation(final Version v, final UriInfo uriInfo) {
         this.version = Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
                 .path(ItemExposure.class)
@@ -49,6 +52,7 @@ public class VersionLinktRepresentation {
                 .rel("version")
                 .build(v.getItem().getUuid(), v.getUuid());
         this.interval = v.getInterval();
+        this.state = v.getState();
     }
 
     public Interval getInterval() {
@@ -57,6 +61,10 @@ public class VersionLinktRepresentation {
 
     public Link getVersion() {
         return version;
+    }
+
+    public State getState() {
+        return state;
     }
 
 }

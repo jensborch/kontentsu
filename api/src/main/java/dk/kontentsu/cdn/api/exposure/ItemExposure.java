@@ -124,7 +124,7 @@ public class ItemExposure {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response find() {
+    public Response list() {
         List<ItemRepresentation> result = repo
                 .find(ItemRepository.Criteria.create())
                 .stream()

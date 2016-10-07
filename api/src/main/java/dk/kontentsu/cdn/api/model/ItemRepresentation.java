@@ -75,7 +75,8 @@ public class ItemRepresentation {
         this.uri = from.getUri();
         this.uuid = from.getUuid();
         this.versions = from.getVersions()
-                .stream().map(v -> new VersionLinktRepresentation(v, uriInfo))
+                .stream()
+                .map(v -> new VersionLinktRepresentation(v, uriInfo))
                 .collect(Collectors.toList());
 
         this.provider = from.getProvider().orElse(null);
