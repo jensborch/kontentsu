@@ -36,11 +36,9 @@ import dk.kontentsu.cdn.model.SemanticUri;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * Class representing the JSON data for uploading an item to the CDN using
- * multipart.
+ * Class representing the JSON data for uploading an item to the CDN using multipart.
  *
- * Mimetype and charset encoding must be specified at part of attachment content
- * type - e.g. <code>application/hal+json;charset=utf-8</code>
+ * Mimetype and charset encoding must be specified at part of attachment content type - e.g. <code>application/hal+json;charset=utf-8</code>
  *
  * @author Jens Borch Christiansen
  */
@@ -66,6 +64,14 @@ public class MultipartUploadItemRepresentation {
     @ApiModelProperty(value = "Destination host for CDN item", example = "Website", required = false, notes = "If not specified item will be uploade to all registred hosts")
     private List<String> hosts = new ArrayList<>();
 
+    public MultipartUploadItemRepresentation(final SemanticUri uri, final Interval interval, final String contentRef) {
+        this.uri = uri;
+        this.interval = interval;
+        this.contentRef = contentRef;
+    }
+
+    public MultipartUploadItemRepresentation() {
+    }
 
     public SemanticUri getUri() {
         return uri;
@@ -86,6 +92,5 @@ public class MultipartUploadItemRepresentation {
     public List<String> getHost() {
         return Collections.unmodifiableList(hosts);
     }
-
 
 }

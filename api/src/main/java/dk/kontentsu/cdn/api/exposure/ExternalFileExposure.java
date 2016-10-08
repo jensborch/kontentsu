@@ -83,7 +83,7 @@ public class ExternalFileExposure {
             @QueryParam("at")
             @DateTimeFormat(DateTimeFormat.Format.UTC)
             final String at) {
-        ZonedDateTime time = (at != null) ? ZonedDateTime.parse(at) : null;
+        ZonedDateTime time = (at == null) ? null : ZonedDateTime.parse(at);
         ExternalFile result = repo.getByUri(SemanticUri.parse(uri), time);
         return getResponse(result, acceptHeader);
     }

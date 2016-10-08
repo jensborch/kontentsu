@@ -60,6 +60,11 @@
     </rule>
     <rule ref="rulesets/java/strictexception.xml"/>
     <rule ref="rulesets/java/strings.xml"/>
+    <rule ref="rulesets/java/strings.xml/AvoidDuplicateLiterals">
+        <properties>
+            <property name="skipAnnotations" value="true"/>
+        </properties>
+    </rule>
     <rule ref="rulesets/java/sunsecure.xml"/>
     <rule ref="rulesets/java/typeresolution.xml"/>
     <rule ref="rulesets/java/unnecessary.xml"/>
