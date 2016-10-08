@@ -42,6 +42,7 @@ import io.swagger.annotations.ApiModelProperty;
  *
  * @author Jens Borch Christiansen
  */
+@SuppressWarnings("PMD.ImmutableField")
 public class MultipartUploadItemRepresentation {
 
     @NotNull
@@ -49,7 +50,7 @@ public class MultipartUploadItemRepresentation {
     private SemanticUri uri;
 
     @ApiModelProperty(value = "Set to true if item should be a draft and thus not uploadet to the CDN", required = false)
-    private boolean draft = false;
+    private boolean draft;
 
     @NotNull
     @Valid
@@ -63,15 +64,6 @@ public class MultipartUploadItemRepresentation {
 
     @ApiModelProperty(value = "Destination host for CDN item", example = "Website", required = false, notes = "If not specified item will be uploade to all registred hosts")
     private List<String> hosts = new ArrayList<>();
-
-    public MultipartUploadItemRepresentation(final SemanticUri uri, final Interval interval, final String contentRef) {
-        this.uri = uri;
-        this.interval = interval;
-        this.contentRef = contentRef;
-    }
-
-    public MultipartUploadItemRepresentation() {
-    }
 
     public SemanticUri getUri() {
         return uri;
@@ -89,7 +81,7 @@ public class MultipartUploadItemRepresentation {
         return contentRef;
     }
 
-    public List<String> getHost() {
+    public List<String> getHosts() {
         return Collections.unmodifiableList(hosts);
     }
 

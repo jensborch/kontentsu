@@ -59,7 +59,7 @@ public class MultipartUploadItemMapper implements Function<MultipartUploadItem, 
             builder.interval(from.item.getInterval());
         }
 
-        from.item.getHost().stream().forEach(h -> builder.host(h));
+        from.item.getHosts().stream().forEach(h -> builder.host(h));
 
         if (from.mimetype.isText()) {
             builder.encoding(from.mimetype.getCharset()
