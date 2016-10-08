@@ -60,6 +60,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.servlet.ServletRequestContext;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.cdn.api.ApiErrorException;
 import dk.kontentsu.cdn.api.configuration.Config;
@@ -74,6 +82,7 @@ import dk.kontentsu.cdn.api.model.VersionRepresentation;
 import dk.kontentsu.cdn.exception.ValidationException;
 import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
 import dk.kontentsu.cdn.model.MimeType;
+import dk.kontentsu.cdn.model.internal.Item.Criteria;
 import dk.kontentsu.cdn.repository.ItemRepository;
 import dk.kontentsu.cdn.upload.UploadItem;
 import dk.kontentsu.cdn.upload.UploadService;
@@ -83,13 +92,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadBase;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.fileupload.servlet.ServletRequestContext;
 
 /**
  * REST resource for listing and manipulating items on the CDN.
@@ -126,7 +128,7 @@ public class ItemExposure {
     @Produces(MediaType.APPLICATION_JSON)
     public Response list() {
         List<ItemRepresentation> result = repo
-                .find(ItemRepository.Criteria.create())
+                .find(Criteria.create(true))
                 .stream()
                 .map(i -> new ItemRepresentation(i, uriInfo))
                 .collect(Collectors.toList());
@@ -384,7 +386,7 @@ public class ItemExposure {
         }
     }
 
-    private static boolean isMultipartContent(HttpServletRequest request) {
+    private static boolean isMultipartContent(final HttpServletRequest request) {
         return FileUploadBase.isMultipartContent(new ServletRequestContext(request));
     }
 

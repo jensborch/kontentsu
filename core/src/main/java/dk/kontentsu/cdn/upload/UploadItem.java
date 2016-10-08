@@ -163,7 +163,7 @@ public class UploadItem {
     /**
      * Builder for CDN upload item.
      */
-    public static class Builder {
+    public static final class Builder {
 
         private Content content;
         private SemanticUri uri;

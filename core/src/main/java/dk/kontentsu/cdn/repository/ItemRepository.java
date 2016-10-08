@@ -28,11 +28,9 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.ZonedDateTime;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.ejb.LocalBean;
@@ -43,24 +41,15 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.validation.Valid;
 
-import com.querydsl.jpa.impl.JPAQuery;
+import org.hibernate.internal.SessionImpl;
+
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.ContentException;
-import dk.kontentsu.cdn.model.Interval;
 import dk.kontentsu.cdn.model.MimeType;
-import dk.kontentsu.cdn.model.QContent;
-import dk.kontentsu.cdn.model.QSemanticUriPath;
 import dk.kontentsu.cdn.model.SemanticUri;
-import dk.kontentsu.cdn.model.SemanticUriPath;
 import dk.kontentsu.cdn.model.State;
 import dk.kontentsu.cdn.model.internal.Item;
-import dk.kontentsu.cdn.model.internal.QHost;
-import dk.kontentsu.cdn.model.internal.QItem;
-import dk.kontentsu.cdn.model.internal.QReference;
-import dk.kontentsu.cdn.model.internal.QVersion;
-import dk.kontentsu.cdn.model.internal.ReferenceType;
 import dk.kontentsu.cdn.model.internal.Version;
-import org.hibernate.internal.SessionImpl;
 
 /**
  * Repository for performing CRUD operations on CDN items.
@@ -72,72 +61,14 @@ import org.hibernate.internal.SessionImpl;
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class ItemRepository extends Repository<Item> {
 
-    public List<Item> find(final Criteria criteria) {
-        QItem item = QItem.item;
-        QSemanticUriPath path = QSemanticUriPath.semanticUriPath;
-        JPAQuery<Item> query = new JPAQuery<>(em);
-        query.distinct().from(item).join(item.uri.path, path);
-
-        if (criteria.reference.isPresent()) {
-            QReference reference = QReference.reference;
-            QVersion version = QVersion.version;
-            query
-                    .join(item.versions, version)
-                    .join(version.references, reference);
-            query.where(reference.type.eq(criteria.referenceType),
-                    reference.itemName.eq(criteria.reference.get().getName()),
-                    reference.itemPath.eq(criteria.reference.get().getPath().toString()));
-        }
-
-        if (criteria.host.isPresent()) {
-            QHost host = QHost.host;
-            query.join(item.hosts, host);
-            query.where(host.name.eq(criteria.host.get()));
-        }
-
-        //At takes precedent over from and to
-        if (criteria.at.isPresent()) {
-            QVersion version = QVersion.version;
-            query.join(item.versions, version);
-            query.where(version.interval.from.loe(criteria.at.get()), version.interval.to.gt(criteria.at.get()));
-        } else if (criteria.from.isPresent()) {
-            QVersion version = QVersion.version;
-            query.join(item.versions, version);
-            query.where(version.interval.to.goe(criteria.from.get()), version.interval.from.loe(criteria.to));
-        }
-
-        //Uri takes precedent over path
-        if (criteria.uri.isPresent()) {
-            criteria.uri.ifPresent(u -> query
-                    .where(item.uri.path.path.eq(u.getPath().toString()),
-                            item.uri.name.eq(u.getName())));
-        } else {
-            criteria.path.ifPresent(p -> query.where(path.path.eq(p.toString())));
-        }
-
-        criteria.mimetype.ifPresent(m -> {
-            QVersion version = QVersion.version;
-            query.join(item.versions, version);
-            QContent content = QContent.content;
-            query
-                    .join(item.versions, version)
-                    .join(version.content, content);
-            query.where(content.mimeType.eq(m));
-        });
-        criteria.offset.ifPresent(o -> query.offset(o));
-        criteria.limit.ifPresent(l -> query.limit(l));
-
-        QVersion version = QVersion.version;
-        query.join(item.versions, version);
-        query.where(version.state.in(criteria.STATES));
-
-        return query.fetch();
+    public List<Item> find(final Item.Criteria criteria) {
+        return criteria.fetch(em);
     }
 
     @Override
     public List<Item> findAll() {
         TypedQuery<Item> query = em.createNamedQuery(ITEM_FIND_ALL, Item.class);
-        query.setParameter("state", new State[]{State.ACTIVE, State.DRAFT});
+        query.setParameter("state", Arrays.asList(new State[]{State.ACTIVE, State.DRAFT}));
         return query.getResultList();
     }
 
@@ -201,118 +132,4 @@ public class ItemRepository extends Repository<Item> {
     private Connection getConnection() {
         return em.unwrap(SessionImpl.class).connection();
     }
-
-    /**
-     * Search criteria for finding items.
-     *
-     * @author Jens Borch Christiansen
-     */
-    public static class Criteria {
-
-        private static final int DEFAULT_FROM_COMPENSATION_SECONDS = 1;
-        private static final Set<State> STATES = new HashSet<>();
-
-        private Optional<ZonedDateTime> at = Optional.empty();
-        private Optional<ZonedDateTime> from = Optional.empty();
-        private Optional<SemanticUri> reference = Optional.empty();
-        private ReferenceType referenceType = ReferenceType.COMPOSITION;
-        private ZonedDateTime to = Interval.INFINIT.plusSeconds(DEFAULT_FROM_COMPENSATION_SECONDS);
-        private Optional<SemanticUriPath> path = Optional.empty();
-        private Optional<SemanticUri> uri = Optional.empty();
-        private Optional<MimeType> mimetype = Optional.empty();
-        private Optional<Integer> offset = Optional.empty();
-        private Optional<Integer> limit = Optional.empty();
-        private Optional<String> host = Optional.empty();
-
-        static {
-            STATES.add(State.ACTIVE);
-        }
-
-        public static Criteria create() {
-            return new Criteria();
-        }
-
-        public Criteria at(final ZonedDateTime at) {
-            this.at = Optional.of(at);
-            return this;
-        }
-
-        public Criteria from(final ZonedDateTime from) {
-            this.from = Optional.of(from);
-            return this;
-        }
-
-        public Criteria to(final ZonedDateTime to) {
-            this.to = to;
-            return this;
-        }
-
-        public Criteria interval(final Interval interval) {
-            this.to = interval.getTo();
-            this.from = Optional.of(interval.getFrom());
-            return this;
-        }
-
-        public Criteria path(final SemanticUriPath path) {
-            this.path = Optional.of(path);
-            return this;
-        }
-
-        public Criteria uri(final SemanticUri uri) {
-            this.uri = Optional.of(uri);
-            return this;
-        }
-
-        public Criteria host(final String host) {
-            this.host = Optional.of(host);
-            return this;
-        }
-
-        public Criteria reference(final SemanticUri uri) {
-            this.reference = Optional.of(uri);
-            return this;
-        }
-
-        public Criteria referenceType(final ReferenceType referenceType) {
-            this.referenceType = referenceType;
-            return this;
-        }
-
-        public Criteria mineType(final MimeType mimeType) {
-            this.mimetype = Optional.of(mimeType);
-            return this;
-        }
-
-        public Criteria active() {
-            this.STATES.add(State.ACTIVE);
-            return this;
-        }
-
-        public Criteria inactive() {
-            this.STATES.remove(State.ACTIVE);
-            return this;
-        }
-
-        public Criteria draft() {
-            this.STATES.remove(State.DRAFT);
-            return this;
-        }
-
-        public Criteria deleted() {
-            this.STATES.remove(State.DELETED);
-            return this;
-        }
-
-        public Criteria offset(final int offecet) {
-            this.offset = Optional.of(offecet);
-            return this;
-        }
-
-        public Criteria limit(final int limit) {
-            this.limit = Optional.of(limit);
-            return this;
-        }
-
-    }
-
 }

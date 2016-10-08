@@ -115,11 +115,10 @@ public class ExternalizerService {
 
     private List<Version> findVersionsToExternalize(final Version version) {
         LOGGER.debug("Externalizing version with uri {} and its references", version.getItem().getUri().toString());
-        List<Item> items = itemRepo.find(ItemRepository.Criteria
+        List<Item> items = itemRepo.find(Item.Criteria
                 .create()
                 .interval(version.getInterval())
-                .referenceType(ReferenceType.COMPOSITION)
-                .reference(version.getItem().getUri())
+                .reference(version.getItem().getUri(), ReferenceType.COMPOSITION)
         );
         LOGGER.info("Found {} reference(s) that also needs to be externalized", items.size());
         List<Version> versions = items

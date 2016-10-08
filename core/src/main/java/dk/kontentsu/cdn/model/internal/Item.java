@@ -24,6 +24,8 @@
  */
 package dk.kontentsu.cdn.model.internal;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +36,7 @@ import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -46,15 +49,22 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.querydsl.jpa.impl.JPAQuery;
 import dk.kontentsu.cdn.exception.ValidationException;
 import dk.kontentsu.cdn.jpa.AbstractBaseEntity;
 import dk.kontentsu.cdn.model.ExternalFile;
 import dk.kontentsu.cdn.model.Interval;
+import dk.kontentsu.cdn.model.MimeType;
+import dk.kontentsu.cdn.model.QContent;
+import dk.kontentsu.cdn.model.QSemanticUriPath;
 import dk.kontentsu.cdn.model.SemanticUri;
+import dk.kontentsu.cdn.model.SemanticUriPath;
+import dk.kontentsu.cdn.model.State;
 import dk.kontentsu.cdn.model.Taxon;
 import dk.kontentsu.cdn.repository.Repository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An item that can externalized to the CDN - i.e. a file on the CDN.
@@ -195,4 +205,138 @@ public class Item extends AbstractBaseEntity {
         getVersions().stream().forEach(v -> v.delete());
     }
 
+    /**
+     * Search criteria for finding items.
+     *
+     * @author Jens Borch Christiansen
+     */
+    public static final class Criteria {
+
+        private static final List<State> STATES = new ArrayList<>();
+        private static final int DEFAULT_FROM_COMPENSATION_SECONDS = 1;
+        private static final ZonedDateTime INFINIT = Interval.INFINIT.plusSeconds(DEFAULT_FROM_COMPENSATION_SECONDS);
+
+        private final QItem item = QItem.item;
+        private final QVersion version = QVersion.version;
+        private final QSemanticUriPath path = QSemanticUriPath.semanticUriPath;
+        private final JPAQuery<Item> query;
+
+        private Optional<ZonedDateTime> from = Optional.empty();
+        private ZonedDateTime to = INFINIT;
+
+        static {
+            STATES.add(State.ACTIVE);
+        }
+
+        private Criteria(final boolean fetch) {
+            query = new JPAQuery<>();
+            query.distinct().from(item).join(item.uri.path, path).fetchJoin().leftJoin(item.versions, version);
+            if (fetch) {
+                query.fetchJoin();
+            }
+        }
+
+        public static Criteria create(final boolean fetch) {
+            return new Criteria(fetch);
+        }
+
+        public static Criteria create() {
+            return new Criteria(false);
+        }
+
+        public Criteria at(final ZonedDateTime at) {
+            query.where(version.interval.from.loe(at), version.interval.to.gt(at));
+            return this;
+        }
+
+        public Criteria from(final ZonedDateTime from) {
+            this.from = Optional.of(from);
+            return this;
+        }
+
+        public Criteria to(final ZonedDateTime to) {
+            this.to = to;
+            return this;
+        }
+
+        public Criteria interval(final Interval interval) {
+            this.from = Optional.of(interval.getFrom());
+            this.to = interval.isInfinit() ? INFINIT : interval.getFrom();
+            return this;
+        }
+
+        public Criteria path(final SemanticUriPath uri) {
+            query.where(path.path.eq(uri.toString()));
+            return this;
+        }
+
+        public Criteria uri(final SemanticUri uri) {
+            query.where(
+                    path.path.eq(uri.getPath().toString()),
+                    item.uri.name.eq(uri.getName())
+            );
+            return this;
+        }
+
+        public Criteria host(final String name) {
+            QHost host = QHost.host;
+            query
+                    .join(item.hosts, host)
+                    .where(host.name.eq(name));
+            return this;
+        }
+
+        public Criteria reference(final SemanticUri uri, final ReferenceType type) {
+            QReference reference = QReference.reference;
+            query
+                    .join(version.references, reference)
+                    .where(reference.type.eq(type),
+                            reference.itemName.eq(uri.getName()),
+                            reference.itemPath.eq(uri.getPath().toString()));
+            return this;
+        }
+
+        public Criteria mineType(final MimeType mimeType) {
+            QContent content = QContent.content;
+            query
+                    .join(version.content, content)
+                    .where(content.mimeType.eq(mimeType));
+            return this;
+        }
+
+        public Criteria inactive() {
+            STATES.remove(State.ACTIVE);
+            return this;
+        }
+
+        public Criteria draft() {
+            STATES.remove(State.DRAFT);
+            return this;
+        }
+
+        public Criteria deleted() {
+            STATES.remove(State.DELETED);
+            return this;
+        }
+
+        public Criteria offset(final int offecet) {
+            query.offset(offecet);
+            return this;
+        }
+
+        public Criteria limit(final int limit) {
+            query.limit(limit);
+            return this;
+        }
+
+        public List<Item> fetch(final EntityManager em) {
+
+            from.ifPresent(f -> query.where(version.interval.to.goe(f), version.interval.from.loe(to)));
+
+            return query.clone(em)
+                    .where(version.state.in(STATES).or(version.state.isNull()))
+                    .orderBy(path.path.asc(), item.uri.name.asc())
+                    .fetch();
+        }
+    }
 }

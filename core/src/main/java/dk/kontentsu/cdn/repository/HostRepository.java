@@ -36,6 +36,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 import dk.kontentsu.cdn.model.internal.Host;
+import dk.kontentsu.cdn.model.internal.Item;
 
 /**
  * Repository for performing CRUD operations on host objects.
@@ -90,7 +91,7 @@ public class HostRepository extends Repository<Host> {
     }
 
     private void removeHostFromItem(final Host host) {
-        itemRepo.find(ItemRepository.Criteria.create().host(host.getName())).forEach(i -> i.removeHost(host));
+        itemRepo.find(Item.Criteria.create().host(host.getName())).forEach(i -> i.removeHost(host));
     }
 
 }

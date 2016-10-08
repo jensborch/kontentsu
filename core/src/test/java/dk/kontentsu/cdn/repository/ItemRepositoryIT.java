@@ -1,8 +1,5 @@
 package dk.kontentsu.cdn.repository;
 
-import dk.kontentsu.cdn.repository.CategoryRepository;
-import dk.kontentsu.cdn.repository.ItemRepository;
-
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.junit.Assert.assertEquals;
@@ -169,13 +166,13 @@ public class ItemRepositoryIT {
     public void testFindByCriteria() throws Exception {
         try {
             userTransaction.begin();
-            List<Item> result = itemRepo.find(ItemRepository.Criteria.create()
+            List<Item> result = itemRepo.find(Item.Criteria.create()
                     .path(new SemanticUriPath("test1", "test2"))
                     .mineType(new MimeType("text", "plain"))
                     .at(NOW.plusDays(1)));
             assertNotNull(result);
             assertEquals(1, result.size());
-            result = itemRepo.find(ItemRepository.Criteria.create().at(NOW.plusSeconds(1)));
+            result = itemRepo.find(Item.Criteria.create().at(NOW.plusSeconds(1)));
             assertNotNull(result);
             assertEquals(1, result.size());
         } finally {
@@ -187,13 +184,13 @@ public class ItemRepositoryIT {
     public void testFindByCriteriaIntervalOverlap() throws Exception {
         try {
             userTransaction.begin();
-            List<Item> result = itemRepo.find(ItemRepository.Criteria.create()
+            List<Item> result = itemRepo.find(Item.Criteria.create()
                     .path(new SemanticUriPath("test1", "test2"))
                     .mineType(new MimeType("text", "plain"))
                     .at(NOW.plusDays(1)));
             assertNotNull(result);
             assertEquals(1, result.size());
-            result = itemRepo.find(ItemRepository.Criteria
+            result = itemRepo.find(Item.Criteria
                     .create()
                     .from(NOW.minusSeconds(60))
                     .to(NOW.plusSeconds(1)));
@@ -208,13 +205,13 @@ public class ItemRepositoryIT {
     public void testFindByCriteriaIntervalIntersects() throws Exception {
         try {
             userTransaction.begin();
-            List<Item> result = itemRepo.find(ItemRepository.Criteria.create()
+            List<Item> result = itemRepo.find(Item.Criteria.create()
                     .path(new SemanticUriPath("test1", "test2"))
                     .mineType(new MimeType("text", "plain"))
                     .at(NOW.plusDays(1)));
             assertNotNull(result);
             assertEquals(1, result.size());
-            result = itemRepo.find(ItemRepository.Criteria
+            result = itemRepo.find(Item.Criteria
                     .create()
                     .from(NOW.plusSeconds(10))
                     .to(NOW.plusSeconds(60)));
@@ -229,14 +226,14 @@ public class ItemRepositoryIT {
     public void testFindItems() throws Exception {
         try {
             userTransaction.begin();
-            List<Item> result = itemRepo.find(ItemRepository.Criteria.create()
+            List<Item> result = itemRepo.find(Item.Criteria.create()
                     .path(new SemanticUriPath("test1", "test2"))
                     .mineType(new MimeType("text", "plain"))
                     .at(NOW.plusDays(1)));
             assertNotNull(result);
             assertEquals(1, result.size());
 
-            result = itemRepo.find(ItemRepository.Criteria.create()
+            result = itemRepo.find(Item.Criteria.create()
                     .uri(new SemanticUri(new SemanticUriPath("test1", "test2"), "test"))
                     .interval(new Interval(NOW.plusSeconds(10), NOW.plusSeconds(60))));
             assertNotNull(result);
@@ -250,13 +247,13 @@ public class ItemRepositoryIT {
     public void testNotFoundByCriteria() throws Exception {
         try {
             userTransaction.begin();
-            List<Item> result = itemRepo.find(ItemRepository.Criteria.create()
+            List<Item> result = itemRepo.find(Item.Criteria.create()
                     .path(new SemanticUriPath("test1", "test2"))
                     .mineType(new MimeType("text", "non"))
                     .at(NOW.plusDays(1)));
             assertNotNull(result);
             assertEquals(0, result.size());
-            result = itemRepo.find(ItemRepository.Criteria.create().at(NOW.minusDays(100)));
+            result = itemRepo.find(Item.Criteria.create().at(NOW.minusDays(100)));
             assertNotNull(result);
             assertEquals(0, result.size());
         } finally {

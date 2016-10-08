@@ -50,8 +50,7 @@ import javax.validation.constraints.NotNull;
 public class Interval implements Serializable {
 
     /**
-     * Max date use when "valid to" has not been set. LocalDateTime.MAX can't be
-     * used as it exceeded the maximum value of SQL Timestamp.
+     * Max date use when "valid to" has not been set. LocalDateTime.MAX can't be used as it exceeded the maximum value of SQL Timestamp.
      */
     public static final ZonedDateTime INFINIT = ZonedDateTime.of(LocalDateTime.of(2099, Month.DECEMBER, 31, 0, 0), ZoneOffset.UTC);
 
@@ -85,6 +84,10 @@ public class Interval implements Serializable {
         return to;
     }
 
+    public boolean isInfinit() {
+        return to.toInstant().equals(INFINIT.toInstant());
+    }
+
     /**
      * Returns true intervals share some part of the time-line.
      *
@@ -101,8 +104,7 @@ public class Interval implements Serializable {
     }
 
     /**
-     * Creates a new interval that is the intersection of this interval and the
-     * other interval.
+     * Creates a new interval that is the intersection of this interval and the other interval.
      *
      * @param other the other interval to create intersection from
      * @return new intersection interval
@@ -118,8 +120,7 @@ public class Interval implements Serializable {
     }
 
     /**
-     * Given a new interval <code>other</code> this method produces list of all
-     * intervals that does not overlap.
+     * Given a new interval <code>other</code> this method produces list of all intervals that does not overlap.
      *
      * @param other interval to use
      * @return a list of intervals

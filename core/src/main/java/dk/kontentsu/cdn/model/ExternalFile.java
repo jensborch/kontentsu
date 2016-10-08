@@ -172,7 +172,7 @@ public class ExternalFile extends AbstractBaseEntity {
     /**
      * Builder for composite version.
      */
-    public static class Builder {
+    public static final class Builder {
 
         private String externalizationId;
         private Item item;

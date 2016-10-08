@@ -71,7 +71,7 @@ public class ItemExposureTest extends JerseyTest {
         List<Item> items = new ArrayList<>();
         Item i = new Item(new SemanticUri(new SemanticUriPath("item", "test"), "test-xl.jpg"));
         items.add(i);
-        Mockito.when(itemRepo.find(Mockito.any(ItemRepository.Criteria.class))).thenReturn(items);
+        Mockito.when(itemRepo.find(Mockito.any(Item.Criteria.class))).thenReturn(items);
     }
 
     @Test

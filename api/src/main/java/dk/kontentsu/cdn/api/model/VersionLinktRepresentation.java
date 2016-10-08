@@ -38,7 +38,7 @@ import dk.kontentsu.cdn.model.internal.Version;
  */
 public class VersionLinktRepresentation {
 
-    private final Link version;
+    private final Link link;
 
     @JsonUnwrapped
     private final Interval interval;
@@ -46,7 +46,7 @@ public class VersionLinktRepresentation {
     private final State state;
 
     public VersionLinktRepresentation(final Version v, final UriInfo uriInfo) {
-        this.version = Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
+        this.link = Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
                 .path(ItemExposure.class)
                 .path(ItemExposure.class, "getVersion"))
                 .rel("version")
@@ -59,8 +59,8 @@ public class VersionLinktRepresentation {
         return interval;
     }
 
-    public Link getVersion() {
-        return version;
+    public Link getLink() {
+        return link;
     }
 
     public State getState() {
