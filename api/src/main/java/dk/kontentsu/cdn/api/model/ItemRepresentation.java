@@ -68,7 +68,7 @@ public class ItemRepresentation {
 
     @NotNull
     @ApiModelProperty(value = "Different versions of the item", required = true)
-    private final List<VersionLinktRepresentation> versions;
+    private final List<VersionLinkRepresentation> versions;
 
     public ItemRepresentation(final Item from, final UriInfo uriInfo) {
 
@@ -76,7 +76,7 @@ public class ItemRepresentation {
         this.uuid = from.getUuid();
         this.versions = from.getVersions()
                 .stream()
-                .map(v -> new VersionLinktRepresentation(v, uriInfo))
+                .map(v -> new VersionLinkRepresentation(v, uriInfo))
                 .collect(Collectors.toList());
 
         this.provider = from.getProvider().orElse(null);
@@ -119,7 +119,7 @@ public class ItemRepresentation {
         return hosts;
     }
 
-    public List<VersionLinktRepresentation> getVersions() {
+    public List<VersionLinkRepresentation> getVersions() {
         return Collections.unmodifiableList(versions);
     }
 

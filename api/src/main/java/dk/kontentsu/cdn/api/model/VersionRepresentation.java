@@ -23,28 +23,49 @@
  */
 package dk.kontentsu.cdn.api.model;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.core.UriInfo;
+
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import dk.kontentsu.cdn.model.Interval;
 import dk.kontentsu.cdn.model.State;
+import dk.kontentsu.cdn.model.internal.Approver;
 import dk.kontentsu.cdn.model.internal.Version;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
+ * Representation of a version of an item in the CDN.
  *
  * @author Jens Borch Christiansen
  */
 public class VersionRepresentation {
 
+    @ApiModelProperty(value = "Mimetype of the version", required = true)
     private final String mimeType;
 
     @JsonUnwrapped
     private final Interval interval;
 
+    @NotNull
+    @ApiModelProperty(value = "The state of this version - e.g. draft", required = true)
     private final State state;
 
-    public VersionRepresentation(final Version v) {
+    @ApiModelProperty(value = "The preson who approved this version", required = false)
+    private final Approver approver;
+
+    @NotNull
+    @ApiModelProperty(value = "List of references", required = false)
+    private final List<ReferenceRepresentation> references;
+
+    public VersionRepresentation(final Version v,  final UriInfo uriInfo) {
         this.mimeType = v.getContent().getMimeType().toString();
         this.interval = v.getInterval();
         this.state = v.getState();
+        this.approver = v.getApprover();
+        this.references = v.getReferences().stream().map(r -> new ReferenceRepresentation(r, uriInfo)).collect(Collectors.toList());
     }
 
     public State getState() {
@@ -57,6 +78,14 @@ public class VersionRepresentation {
 
     public String getMimeType() {
         return mimeType;
+    }
+
+    public Approver getApprover() {
+        return approver;
+    }
+
+    public List<ReferenceRepresentation> getReferences() {
+        return references;
     }
 
 }

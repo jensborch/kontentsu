@@ -36,7 +36,7 @@ import dk.kontentsu.cdn.model.internal.Version;
  *
  * @author Jens Borch Christiansen
  */
-public class VersionLinktRepresentation {
+public class VersionLinkRepresentation {
 
     private final Link link;
 
@@ -45,7 +45,7 @@ public class VersionLinktRepresentation {
 
     private final State state;
 
-    public VersionLinktRepresentation(final Version v, final UriInfo uriInfo) {
+    public VersionLinkRepresentation(final Version v, final UriInfo uriInfo) {
         this.link = Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
                 .path(ItemExposure.class)
                 .path(ItemExposure.class, "getVersion"))

@@ -70,9 +70,6 @@
             <property name="max" value="180"/>
             <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
         </module>
-        <module name="AvoidStarImport">
-            <property name="allowStaticMemberImports" value="true"/>
-        </module>
 
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
@@ -95,7 +92,9 @@
 
         <!-- Checks for imports                              -->
         <!-- See http://checkstyle.sf.net/config_import.html -->
-        <module name="AvoidStarImport"/>
+        <module name="AvoidStarImport">
+            <property name="allowStaticMemberImports" value="true"/>
+        </module>
         <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
         <module name="RedundantImport"/>
         <module name="UnusedImports">
@@ -161,7 +160,7 @@
         <module name="InterfaceIsType"/>
         <module name="VisibilityModifier">
             <property name="packageAllowed" value="true"/>
-            <property name="protectedAllowed" value="false"/>
+            <property name="protectedAllowed" value="true"/>
         </module>
 
         <!-- Miscellaneous other checks.                   -->

@@ -77,7 +77,7 @@ import dk.kontentsu.cdn.api.model.ErrorRepresentation;
 import dk.kontentsu.cdn.api.model.ItemRepresentation;
 import dk.kontentsu.cdn.api.model.MultipartUploadItemRepresentation;
 import dk.kontentsu.cdn.api.model.UploadItemRepresentation;
-import dk.kontentsu.cdn.api.model.VersionLinktRepresentation;
+import dk.kontentsu.cdn.api.model.VersionLinkRepresentation;
 import dk.kontentsu.cdn.api.model.VersionRepresentation;
 import dk.kontentsu.cdn.exception.ValidationException;
 import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
@@ -146,10 +146,10 @@ public class ItemExposure {
     @Path("{id}/versions")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getVersions(@PathParam("id") final String id) {
-        List<VersionLinktRepresentation> result = repo.get(UUID.fromString(id))
+        List<VersionLinkRepresentation> result = repo.get(UUID.fromString(id))
                 .getVersions()
                 .stream()
-                .map(v -> new VersionLinktRepresentation(v, uriInfo))
+                .map(v -> new VersionLinkRepresentation(v, uriInfo))
                 .collect(Collectors.toList());
         return Response.ok().entity(result).build();
     }
@@ -162,7 +162,7 @@ public class ItemExposure {
                 .getVersions()
                 .stream()
                 .filter(v -> v.getUuid().equals(UUID.fromString(version)))
-                .map(v -> new VersionRepresentation(v))
+                .map(v -> new VersionRepresentation(v, uriInfo))
                 .findAny();
         if (!result.isPresent()) {
             throw new ValidationException("Invalid UUID for version");
