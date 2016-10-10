@@ -47,7 +47,7 @@ import javax.validation.constraints.Size;
 @Embeddable
 public class SemanticUri implements Serializable {
 
-    private static final String REGEX = "^(?<elements>([^\\/\\s]+)(\\/(?<element>[^\\/\\s]+))+?)(\\/(?<name>\\k<element>[^\\/\\s]*))?$";
+    private static final String REGEX = "^(?<elements>([^\\/\\s]+)(\\/(?<element>[^\\/\\s\\.]+))+?)(\\/(?<name>\\k<element>[^\\/\\s\\.]*))?(\\.[a-zA-Z]+)?$";
     private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
     private static final long serialVersionUID = -6517163140576869876L;
 

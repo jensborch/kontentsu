@@ -44,6 +44,25 @@ public class SemanticUriTest {
     }
 
     @Test
+    public void testParseWithNameAndExtension() {
+        uri = SemanticUri.parse("test/test/test-xl.jpg");
+        assertEquals("test-xl", uri.getName());
+        assertEquals("test/test", uri.getPath().toString());
+    }
+
+    @Test
+    public void testParseWithExtension() {
+        uri = SemanticUri.parse("test1/test2.json");
+        assertEquals("test2", uri.getName());
+        assertEquals("test1/test2", uri.getPath().toString());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParseWithInvalidExtension() {
+        uri = SemanticUri.parse("test1/test2/test2.42");
+    }
+
+    @Test
     public void testGetElements() {
         assertEquals(6, uri.getElements().length);
         assertEquals("hej1", uri.getElements()[0]);
