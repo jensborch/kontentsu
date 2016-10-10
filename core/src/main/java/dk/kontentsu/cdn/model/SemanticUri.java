@@ -36,7 +36,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -96,7 +95,6 @@ public class SemanticUri implements Serializable {
         return result;
     }
 
-    @Transient
     public java.nio.file.Path toPath(final MimeType mimetype) {
         String[] elements = getElements();
         String[] tail = (elements.length > 1) ? Arrays.copyOfRange(elements, 1, elements.length) : new String[0];
