@@ -42,7 +42,7 @@ import dk.kontentsu.cdn.model.SemanticUri;
  *
  * @author Jens Borch Christiansen
  */
-public class UploadItem {
+public final class UploadItem {
 
     @NotNull
     private final SemanticUri uri;

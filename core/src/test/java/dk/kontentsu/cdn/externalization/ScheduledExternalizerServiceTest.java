@@ -55,7 +55,7 @@ public class ScheduledExternalizerServiceTest {
         path = Files.createTempDirectory("junit");
         Files.createFile(path.resolve("delete"));
         Host host = new Host("test", "desc", path.toString());
-        SemanticUri uri = SemanticUri.parse("test/file/file-xl.json");
+        SemanticUri uri = SemanticUri.parse("test/file/file-xl");
         Item item = new Item(uri);
         item.addHost(host);
         Content content = new Content("{ \"this\": \"is a test\"}".getBytes(), Charset.defaultCharset(), MimeType.APPLICATION_JSON_TYPE);

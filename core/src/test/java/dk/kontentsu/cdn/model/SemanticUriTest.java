@@ -1,8 +1,5 @@
 package dk.kontentsu.cdn.model;
 
-import dk.kontentsu.cdn.model.SemanticUriPath;
-import dk.kontentsu.cdn.model.SemanticUri;
-
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
@@ -54,8 +51,8 @@ public class SemanticUriTest {
 
     @Test
     public void testToPath() {
-        assertEquals("hej1", uri.toPath().getName(0).toString());
-        assertEquals("test", uri.toPath().getName(5).toString());
+        assertEquals("hej1", uri.toPath(MimeType.APPLICATION_HAL_JSON_TYPE).getName(0).toString());
+        assertEquals("test.xml", uri.toPath(MimeType.APPLICATION_XML_TYPE).getName(5).toString());
     }
 
     @Test(expected = NullPointerException.class)

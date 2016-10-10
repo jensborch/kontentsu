@@ -220,6 +220,10 @@ public class MimeType implements Serializable {
         return matches(VIDEO_ANY_TYPE);
     }
 
+    public String getFileExtension() {
+        return isHal() ? "json" : subType;
+    }
+
     public MediaType toMediaType() {
         return new MediaType(getType(), getSubType(), getParams());
     }

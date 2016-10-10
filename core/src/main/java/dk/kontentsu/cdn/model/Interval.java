@@ -40,6 +40,8 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Time interval a given item should be present on the CDN.
  *
@@ -52,6 +54,7 @@ public class Interval implements Serializable {
     /**
      * Max date use when "valid to" has not been set. LocalDateTime.MAX can't be used as it exceeded the maximum value of SQL Timestamp.
      */
+    @JsonIgnore
     public static final ZonedDateTime INFINIT = ZonedDateTime.of(LocalDateTime.of(2099, Month.DECEMBER, 31, 0, 0), ZoneOffset.UTC);
 
     private static final long serialVersionUID = -239839694581153026L;

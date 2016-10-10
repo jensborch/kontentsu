@@ -162,7 +162,7 @@ public class ExternalFile extends AbstractBaseEntity {
     }
 
     public Path resolvePath(final Path path) {
-        return path.resolve(getItem().getUri().toPath());
+        return path.resolve(getItem().getUri().toPath(content.getMimeType()));
     }
 
     public boolean isDifferent(final Version version) {

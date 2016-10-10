@@ -151,7 +151,7 @@ public class ScheduledExternalizerService {
     }
 
     private void publish(final ExternalFile f, final Path hostPath) {
-        Path filePath = hostPath.resolve(f.getItem().getUri().toPath());
+        Path filePath = f.resolvePath(hostPath);
         try {
             LOGGER.debug("Saving content to: " + filePath.toString());
             if (hasParent(filePath)) {
