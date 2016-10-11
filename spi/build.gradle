@@ -1,0 +1,18 @@
+jar {
+    baseName = 'cdn-spi'
+}
+
+dependencies {
+    compile project(':util')
+
+    compile 'org.hashids:hashids:' + hashidsVersion
+
+    compile 'org.apache.tomee:javaee-api:' + javaeeVersion
+    compile 'org.glassfish.jersey.media:jersey-media-json-jackson:' + jerseyVersion
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:' + jacksonVersion
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:' + jacksonVersion
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:' + jacksonVersion
+
+    testCompile project(':test')
+}
+

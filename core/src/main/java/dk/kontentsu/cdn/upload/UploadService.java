@@ -45,6 +45,7 @@ import dk.kontentsu.cdn.model.internal.Host;
 import dk.kontentsu.cdn.model.internal.Item;
 import dk.kontentsu.cdn.model.internal.Version;
 import dk.kontentsu.cdn.parsers.ContentParser;
+import dk.kontentsu.cdn.parsers.ContentParserSupplies;
 import dk.kontentsu.cdn.repository.CategoryRepository;
 import dk.kontentsu.cdn.repository.HostRepository;
 import dk.kontentsu.cdn.repository.ItemRepository;
@@ -74,7 +75,11 @@ public class UploadService {
     @Inject
     private UploadService self;
 
+    @Inject
+    private ContentParserSupplies parserRepo;
+
     @TransactionAttribute(TransactionAttributeType.NEVER)
+
     public UUID upload(@Valid final UploadItem uploadeItem) {
         Version version = self.save(uploadeItem);
         externalizer.externalize(version.getUuid());
@@ -160,16 +165,30 @@ public class UploadService {
                 .from(uploadeItem.getInterval().getFrom())
                 .to(uploadeItem.getInterval().getTo());
 
-        ContentParser.Results parsedContent = ContentParser.create(content).parse();
-        parsedContent.getLinks().stream().forEach(link -> {
+        //ContentParser.Results parsedContent = ContentParser.create(content).parse();
+        parserRepo.get(content).forEach(p -> {
+            ContentParser.Results parsedContent = p.parse();
+            parsedContent.getLinks().stream().forEach(link -> {
+                Item i = itemRepo.findByUri(link.getUri()).orElseGet(() -> {
+                    SemanticUriPath tmpPath = catRepo.findByUri(link.getPath()).orElse(link.getPath());
+                    Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));
+                    return itemRepo.save(tmpItem);
+                });
+                builder.composition(i, link.getType());
+            });
+            parsedContent.getMetadata().forEach((k, v) -> {
+                builder.metadata(k, v);
+            });
+        });
+
+        /*parsedContent.getLinks().stream().forEach(link -> {
             Item i = itemRepo.findByUri(link.getUri()).orElseGet(() -> {
                 SemanticUriPath tmpPath = catRepo.findByUri(link.getPath()).orElse(link.getPath());
                 Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));
                 return itemRepo.save(tmpItem);
             });
             builder.composition(i, link.getType());
-        });
-
+        });*/
         Version version = builder.build();
         LOGGER.debug("Adding newly uploadet version {} to item with interval {}", version.getUuid(), version.getInterval());
         item.addVersion(version);

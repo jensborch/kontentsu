@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.enterprise.context.Dependent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +51,7 @@ import dk.kontentsu.cdn.model.internal.ReferenceType;
  *
  * @author Jens Borch Christiansen
  */
-public class HalJsonParser extends ContentParser {
+public class HalJsonParser implements ContentParser {
 
     public static final String JSON_LINKS = "_links";
     public static final String JSON_HREF = "href";
@@ -133,6 +135,20 @@ public class HalJsonParser extends ContentParser {
             });
         }
         return result;
+    }
+
+    @Dependent
+    public static class Factory implements ContentParser.Factory {
+
+        @Override
+        public Optional<ContentParser> create(Content content) {
+            if (content.getMimeType().isHal()) {
+                return Optional.of(new HalJsonParser(content));
+            } else {
+                return Optional.empty();
+            }
+        }
+
     }
 
 }

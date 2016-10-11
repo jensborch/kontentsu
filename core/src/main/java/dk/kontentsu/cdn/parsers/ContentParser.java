@@ -23,47 +23,49 @@
  */
 package dk.kontentsu.cdn.parsers;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.internal.Metadata;
 
 /**
- * Content parser class responsible for parsing content and thus finding links, compositions and metadata in content. Must be sub-classed to pase a certain content type - e.g.
- * hal+json.
+ * Content parser interface. Class implementing this interface are responsible for parsing content and thus finding links, compositions and metadata in content.
+ *
+ * When uploading content <code>ContentParser</code> class implementing this will be instantiated and used.
  *
  * @author Jens Borch Christiansen
  */
-public class ContentParser {
+public interface ContentParser {
 
-    ContentParser() {
-    }
+    Results parse();
 
-    public static ContentParser create(final Content content) {
-        if (content.getMimeType().isHal()) {
-            return new HalJsonParser(content);
-        } else {
-            return new ContentParser();
-        }
-    }
+    /**
+     * Content parser factory responsible for instantiating new parsers based on the content object.
+     */
+    public interface Factory {
 
-    public Results parse() {
-        return new Results(new ArrayList<>(), new HashMap<>());
+        /**
+         * Create new parser if possible for the given content.
+         *
+         * @param content to create parser for
+         * @return a new content parser
+         */
+        Optional<ContentParser> create(final Content content);
+
     }
 
     /**
      * Result from parsing the content.
      */
-    public static class Results {
+    class Results {
 
         private final List<Link> links;
         private final Map<Metadata.Key, Metadata> metadata;
 
-        Results(final List<Link> links, final Map<Metadata.Key, Metadata> metadata) {
+        public Results(final List<Link> links, final Map<Metadata.Key, Metadata> metadata) {
             this.links = links;
             this.metadata = metadata;
         }
