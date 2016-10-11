@@ -35,6 +35,8 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+import javax.enterprise.context.Dependent;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -49,7 +51,7 @@ import dk.kontentsu.cdn.model.internal.Version;
  *
  * @author Jens Borch Christiansen
  */
-class HalJsonExternalizationVisitor extends ExternalizationVisitor {
+public class HalJsonExternalizationVisitor implements ExternalizationVisitor {
 
     private JsonNode pageNode;
     private JsonNode contentNode;
@@ -74,6 +76,11 @@ class HalJsonExternalizationVisitor extends ExternalizationVisitor {
     public Content getContent() {
         removeComposition(pageNode);
         return new Content(pageNode.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8, version.getMimeType());
+    }
+
+    @Override
+    public Optional<String> getContentId() {
+        return Optional.empty();
     }
 
     private String getErrorMsg(final Version version) {
@@ -194,6 +201,20 @@ class HalJsonExternalizationVisitor extends ExternalizationVisitor {
         int getAndIncrement(final String key) {
             return getAtomic(key).getAndIncrement();
         }
+    }
+
+    @Dependent
+    public static class Factory implements ExternalizationVisitor.Factory {
+
+        @Override
+        public Optional<ExternalizationVisitor> create(Version version) {
+            if (version.getContent().getMimeType().isHal()) {
+                return Optional.of(new ExternalizationIdentifierVisitor(new HalJsonExternalizationVisitor(version)));
+            } else {
+                return Optional.empty();
+            }
+        }
+
     }
 
 }

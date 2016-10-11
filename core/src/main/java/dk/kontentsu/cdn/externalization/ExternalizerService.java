@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.kontentsu.cdn.externalization.visitors.ExternalizationVisitor;
+import dk.kontentsu.cdn.externalization.visitors.ExternalizationVisitorSupplier;
 import dk.kontentsu.cdn.model.ExternalFile;
 import dk.kontentsu.cdn.model.internal.Item;
 import dk.kontentsu.cdn.model.internal.ReferenceProcessor;
@@ -76,6 +77,9 @@ public class ExternalizerService {
 
     @Inject
     private ScheduledExternalizerService scheduleService;
+
+    @Inject
+    private ExternalizationVisitorSupplier visitorSupplier;
 
     private boolean processing(final UUID uuid) {
         synchronized (processing) {
@@ -138,7 +142,7 @@ public class ExternalizerService {
         List<ExternalFile> results = new ArrayList<>(0);
         if (!processing(version.getUuid())) {
             LOGGER.info("Externalizing version {} with uri {}", version.getUuid(), version.getItem().getUri());
-            ReferenceProcessor<ExternalizationVisitor> processor = new ReferenceProcessor<>(version, ExternalizationVisitor.create(version));
+            ReferenceProcessor<ExternalizationVisitor> processor = new ReferenceProcessor<>(version, visitorSupplier.get(version));
             List<TemporalReferenceTree<ExternalizationVisitor>> trees = processor.process();
 
             fileRepo.findAll(version.getInterval())

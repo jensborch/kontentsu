@@ -38,7 +38,7 @@ import dk.kontentsu.cdn.model.Content;
  * @author Jens Borch Christiansen
  */
 @Singleton
-public class ContentParserSupplies {
+public class ContentParserSupplier {
 
     @Inject
     private Instance<ContentParser.Factory> factories;

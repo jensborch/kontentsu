@@ -23,6 +23,8 @@
  */
 package dk.kontentsu.cdn.externalization.visitors;
 
+import java.util.Optional;
+
 import dk.kontentsu.cdn.externalization.ExternalizationException;
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
@@ -33,7 +35,7 @@ import dk.kontentsu.cdn.model.internal.Version;
  *
  * @author Jens Borch Christiansen
  */
-public class DefaultExternalizationVisitor extends ExternalizationVisitor {
+public class DefaultExternalizationVisitor implements ExternalizationVisitor {
 
     private final Version version;
 
@@ -49,6 +51,11 @@ public class DefaultExternalizationVisitor extends ExternalizationVisitor {
     @Override
     public Content getContent() {
         return version.getContent();
+    }
+
+    @Override
+    public Optional<String> getContentId() {
+        return Optional.empty();
     }
 
     @Override

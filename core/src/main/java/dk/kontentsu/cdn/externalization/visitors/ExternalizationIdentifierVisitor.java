@@ -16,7 +16,7 @@ import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
  *
  * @author Jens Borch Christiansen
  */
-public class ExternalizationIdentifierVisitor extends ExternalizationVisitor {
+public class ExternalizationIdentifierVisitor implements ExternalizationVisitor {
 
     private static final String SALT = "Externalization salt";
 

@@ -30,30 +30,24 @@ import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
 import dk.kontentsu.cdn.model.internal.Version;
 
 /**
- * Abstract externalization visitor, from where it is possible to get the content of the externalization.
+ * Externalization visitor interface.
  *
  * @author Jens Borch Christiansen
  */
-public abstract class ExternalizationVisitor implements TemporalReferenceTree.Visitor {
-
-    /**
-     * Factory method for getting correct implementation based on content mime type.
-     */
-    public static ExternalizationVisitor create(final Version version) {
-        if (version.getMimeType().isHal()) {
-            return new ExternalizationIdentifierVisitor(new HalJsonExternalizationVisitor(version));
-        } else {
-            return new DefaultExternalizationVisitor(version);
-        }
-    }
+public interface ExternalizationVisitor extends TemporalReferenceTree.Visitor {
 
     /**
      * @return the contend created by the externalization process.
      */
-    public abstract Content getContent();
+    Content getContent();
 
-    public Optional<String> getContentId() {
-        return Optional.empty();
+    Optional<String> getContentId();
+
+    public interface Factory {
+
+        Optional<ExternalizationVisitor> create(Version version);
+
     }
+
 
 }

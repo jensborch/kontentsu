@@ -24,15 +24,16 @@
 package dk.kontentsu.cdn.api.model;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.UriInfo;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import dk.kontentsu.cdn.model.Interval;
 import dk.kontentsu.cdn.model.State;
 import dk.kontentsu.cdn.model.internal.Approver;
+import dk.kontentsu.cdn.model.internal.Metadata;
 import dk.kontentsu.cdn.model.internal.Version;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -43,20 +44,20 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public class VersionRepresentation {
 
+    private final Map<Metadata.Key, Metadata> metadata;
+
     @ApiModelProperty(value = "Mimetype of the version", required = true)
     private final String mimeType;
 
     @JsonUnwrapped
     private final Interval interval;
 
-    @NotNull
     @ApiModelProperty(value = "The state of this version - e.g. draft", required = true)
     private final State state;
 
     @ApiModelProperty(value = "The preson who approved this version", required = false)
     private final Approver approver;
 
-    @NotNull
     @ApiModelProperty(value = "List of references", required = false)
     private final List<ReferenceRepresentation> references;
 
@@ -66,6 +67,7 @@ public class VersionRepresentation {
         this.state = v.getState();
         this.approver = v.getApprover();
         this.references = v.getReferences().stream().map(r -> new ReferenceRepresentation(r, uriInfo)).collect(Collectors.toList());
+        this.metadata = v.getMetadata();
     }
 
     public State getState() {
