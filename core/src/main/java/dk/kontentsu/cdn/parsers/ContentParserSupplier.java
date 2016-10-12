@@ -26,9 +26,13 @@ package dk.kontentsu.cdn.parsers;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dk.kontentsu.cdn.model.Content;
 
@@ -40,8 +44,15 @@ import dk.kontentsu.cdn.model.Content;
 @Singleton
 public class ContentParserSupplier {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContentParserSupplier.class);
+
     @Inject
     private Instance<ContentParser.Factory> factories;
+
+    @PostConstruct
+    private void init() {
+        factories.forEach(f -> LOGGER.info("Found content parser factory: {}", f.toString()));
+    }
 
     public Set<ContentParser> get(final Content content) {
         Set<ContentParser> results = new HashSet<>();

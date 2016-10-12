@@ -123,7 +123,7 @@ public class Version extends AbstractBaseEntity {
 
     private static Version create(final Builder builder) {
         Version result = new Version(builder);
-        builder.compositions.stream().forEach((i) -> {
+        builder.references.stream().forEach((i) -> {
             result.references.add(new Reference(result, i.composition, i.type));
         });
         return result;
@@ -242,7 +242,7 @@ public class Version extends AbstractBaseEntity {
      */
     public static final class Builder {
 
-        final List<ItemCompositionType> compositions = new ArrayList<>();
+        final Set<ItemCompositionType> references = new HashSet<>();
         private final Map<Metadata.Key, Metadata> metadata = new HashMap<>();
 
         private Content content;
@@ -255,7 +255,7 @@ public class Version extends AbstractBaseEntity {
         }
 
         public Builder version(final Version version) {
-            this.compositions.addAll(version.getReferences()
+            this.references.addAll(version.getReferences()
                     .stream()
                     .map(c -> new ItemCompositionType(c.getItem(), c.getType()))
                     .collect(Collectors.toList()));
@@ -294,8 +294,8 @@ public class Version extends AbstractBaseEntity {
             return this;
         }
 
-        public Builder composition(final Item composition, final ReferenceType type) {
-            compositions.add(new ItemCompositionType(composition, type));
+        public Builder reference(final Item reference, final ReferenceType type) {
+            references.add(new ItemCompositionType(reference, type));
             return this;
         }
 

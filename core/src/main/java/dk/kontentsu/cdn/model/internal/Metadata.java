@@ -23,7 +23,6 @@
  */
 package dk.kontentsu.cdn.model.internal;
 
-
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -31,6 +30,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -42,6 +42,7 @@ public class Metadata implements Serializable {
 
     private static final long serialVersionUID = -3801848852252393124L;
 
+    @NotNull
     @Column(name = "value", length = 2000)
     @Size(min = 1, max = 2000)
     private String value;
@@ -57,6 +58,12 @@ public class Metadata implements Serializable {
     public String getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {
+        return value;
+    }
+
 
     /**
      * Key for metadata values that includes at type.
@@ -117,6 +124,11 @@ public class Metadata implements Serializable {
             }
             Key other = (Key) obj;
             return Objects.equals(this.key, other.key) && this.type == other.type;
+        }
+
+        @Override
+        public String toString() {
+            return "{" + "type=" + type + ", key=" + key + '}';
         }
 
     }

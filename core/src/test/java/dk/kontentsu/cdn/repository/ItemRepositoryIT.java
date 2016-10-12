@@ -273,7 +273,7 @@ public class ItemRepositoryIT {
                     .from(NOW.minusHours(24))
                     .to(NOW)
                     .content(content)
-                    .composition(doNotExistItem, ReferenceType.LINK)
+                    .reference(doNotExistItem, ReferenceType.LINK)
                     .build();
             compItem.addVersion(compVersion);
             itemRepo.save(compItem);

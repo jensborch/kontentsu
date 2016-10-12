@@ -119,8 +119,8 @@ public class ExternalizerServiceIT {
             page = new Item(pageUri);
             pageVersion = Version.builder()
                     .content(new Content(data.getSimplePage(), StandardCharsets.UTF_8, mimeType))
-                    .composition(article1, ReferenceType.COMPOSITION)
-                    .composition(contact, ReferenceType.COMPOSITION)
+                    .reference(article1, ReferenceType.COMPOSITION)
+                    .reference(contact, ReferenceType.COMPOSITION)
                     .from(NOW)
                     .to(NOW.plusDays(100))
                     .build();
@@ -228,8 +228,8 @@ public class ExternalizerServiceIT {
 
             pageVersion = Version.builder()
                     .content(new Content(data.getSimplePage(), StandardCharsets.UTF_8, MimeType.APPLICATION_HAL_JSON_TYPE))
-                    .composition(article1, ReferenceType.COMPOSITION)
-                    .composition(contact, ReferenceType.COMPOSITION)
+                    .reference(article1, ReferenceType.COMPOSITION)
+                    .reference(contact, ReferenceType.COMPOSITION)
                     .from(NOW.plusDays(101))
                     .to(NOW.plusDays(1000))
                     .build();

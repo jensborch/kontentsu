@@ -68,7 +68,7 @@ public class VersionTest {
         Version compVersion = Version.builder()
                 .from(NOW.plusDays(2))
                 .content(content)
-                .composition(item, ReferenceType.COMPOSITION)
+                .reference(item, ReferenceType.COMPOSITION)
                 .build();
         compItem.addVersion(compVersion);
         assertTrue(compVersion.isComplete());
@@ -84,7 +84,7 @@ public class VersionTest {
                 .from(NOW.minusDays(2))
                 .to(NOW.minusSeconds(1))
                 .content(content)
-                .composition(item, ReferenceType.COMPOSITION)
+                .reference(item, ReferenceType.COMPOSITION)
                 .build();
         compItem.addVersion(compVersion);
         assertFalse(compVersion.isComplete());

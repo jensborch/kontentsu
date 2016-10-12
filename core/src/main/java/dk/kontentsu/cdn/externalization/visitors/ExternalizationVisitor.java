@@ -43,6 +43,9 @@ public interface ExternalizationVisitor extends TemporalReferenceTree.Visitor {
 
     Optional<String> getContentId();
 
+    /**
+     * Factory for creating visitors. Must be a dependent CDI bean to be loaded by Kontentsu.
+     */
     public interface Factory {
 
         Optional<ExternalizationVisitor> create(Version version);

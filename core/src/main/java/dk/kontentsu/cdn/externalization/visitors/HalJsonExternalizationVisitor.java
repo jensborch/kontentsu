@@ -203,16 +203,24 @@ public class HalJsonExternalizationVisitor implements ExternalizationVisitor {
         }
     }
 
+    /**
+     * Factory for creating JSON externalization visitors.
+     */
     @Dependent
     public static class Factory implements ExternalizationVisitor.Factory {
 
         @Override
-        public Optional<ExternalizationVisitor> create(Version version) {
+        public Optional<ExternalizationVisitor> create(final Version version) {
             if (version.getContent().getMimeType().isHal()) {
                 return Optional.of(new ExternalizationIdentifierVisitor(new HalJsonExternalizationVisitor(version)));
             } else {
                 return Optional.empty();
             }
+        }
+
+        @Override
+        public String toString() {
+            return this.getClass().getCanonicalName();
         }
 
     }

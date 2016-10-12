@@ -144,7 +144,7 @@ public class ExternalizerService {
             LOGGER.info("Externalizing version {} with uri {}", version.getUuid(), version.getItem().getUri());
             ReferenceProcessor<ExternalizationVisitor> processor = new ReferenceProcessor<>(version, visitorSupplier.get(version));
             List<TemporalReferenceTree<ExternalizationVisitor>> trees = processor.process();
-
+            LOGGER.debug("Found {} files to externalize", trees.size());
             fileRepo.findAll(version.getInterval())
                     .stream()
                     .filter(f -> f.isDifferent(version))

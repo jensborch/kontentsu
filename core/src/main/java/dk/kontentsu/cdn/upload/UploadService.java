@@ -170,12 +170,14 @@ public class UploadService {
             parsedContent.getLinks().stream().forEach(link -> {
                 Item i = itemRepo.findByUri(link.getUri()).orElseGet(() -> {
                     SemanticUriPath tmpPath = catRepo.findByUri(link.getPath()).orElse(link.getPath());
+                    LOGGER.debug("Found link in content with path {} and name {}", tmpPath, link.getUri().getName());
                     Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));
                     return itemRepo.save(tmpItem);
                 });
-                builder.composition(i, link.getType());
+                builder.reference(i, link.getType());
             });
             parsedContent.getMetadata().forEach((k, v) -> {
+                LOGGER.debug("Found metadata in content with key {} and value {}", k, v);
                 builder.metadata(k, v);
             });
         });

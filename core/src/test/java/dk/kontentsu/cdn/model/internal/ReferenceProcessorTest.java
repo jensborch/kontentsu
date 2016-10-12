@@ -1,14 +1,9 @@
 package dk.kontentsu.cdn.model.internal;
 
-import dk.kontentsu.cdn.model.internal.Item;
-import dk.kontentsu.cdn.model.internal.ReferenceType;
-import dk.kontentsu.cdn.model.internal.ReferenceProcessor;
-import dk.kontentsu.cdn.model.internal.Version;
-import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -17,16 +12,16 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.Interval;
 import dk.kontentsu.cdn.model.MimeType;
 import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.SemanticUriPath;
 import dk.kontentsu.cdn.upload.ContentTestData;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Test for {@link ReferenceProcessor}
@@ -74,9 +69,9 @@ public class ReferenceProcessorTest {
         pageVersion = Version.builder()
                 .from(NOW)
                 .content(new Content(data.getSimplePage(), StandardCharsets.UTF_8, new MimeType("application", "hal+json")))
-                .composition(article1, ReferenceType.COMPOSITION)
-                .composition(article2, ReferenceType.COMPOSITION)
-                .composition(contact, ReferenceType.COMPOSITION)
+                .reference(article1, ReferenceType.COMPOSITION)
+                .reference(article2, ReferenceType.COMPOSITION)
+                .reference(contact, ReferenceType.COMPOSITION)
                 .build();
         page.addVersion(pageVersion);
     }
@@ -101,8 +96,8 @@ public class ReferenceProcessorTest {
 
         assertNotEquals(result.get(0), result.get(1));
         assertNotEquals(result.get(0).getInteval(), result.get(1).getInteval());
-        assertEquals(new Interval(NOW, NOW.plusDays(10)), result.get(0).getInteval());
-        assertEquals(new Interval(NOW.plusDays(15)), result.get(1).getInteval());
+        assertTrue(result.stream().filter(n -> n.getInteval().equals(new Interval(NOW, NOW.plusDays(10)))).findAny().isPresent());
+        assertTrue(result.stream().filter(n -> n.getInteval().equals(new Interval(NOW.plusDays(15)))).findAny().isPresent());
     }
 
     private class TestVisitor implements TemporalReferenceTree.Visitor {
