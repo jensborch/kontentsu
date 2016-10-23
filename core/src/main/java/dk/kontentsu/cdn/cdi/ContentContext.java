@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
+import javax.enterprise.context.ContextNotActiveException;
 
 import javax.enterprise.context.spi.AlterableContext;
 import javax.enterprise.context.spi.Contextual;
@@ -20,7 +22,7 @@ public class ContentContext implements AlterableContext, Serializable {
 
     private final ThreadLocal<Map<Contextual<?>, Instance>> instances = new ThreadLocal<>();
 
-    public Object execute(final Supplier task) throws Exception {
+    public <X> X execute(final Supplier<X> task) throws Exception {
         Map<Contextual<?>, Instance> map = instances.get();
         final boolean clean = map == null;
         if (map == null) {
@@ -40,17 +42,27 @@ public class ContentContext implements AlterableContext, Serializable {
 
     @Override
     public void destroy(final Contextual<?> contextual) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Optional.ofNullable(instances.get().get(contextual)).filter(c -> c.instance != null)
+                .ifPresent(Instance::destroy);
     }
 
     @Override
-    public <T> T get(final Contextual<T> component, final CreationalContext<T> creationalContext) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public <T> T get(final Contextual<T> contextual, final CreationalContext<T> creationalContext) {
+        if (!isActive()) {
+            throw new ContextNotActiveException(ContentScoped.class.getName() + " is not active.");
+        }
+        Map<Contextual<?>, Instance> localMap = instances.get();
+        return (T) Optional.ofNullable(localMap.get(contextual))
+                .orElseGet(() -> localMap.computeIfAbsent(contextual, c -> new Instance(contextual, creationalContext)))
+                .create();
     }
 
     @Override
-    public <T> T get(final Contextual<T> component) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public <T> T get(final Contextual<T> contextual) {
+        if (!isActive()) {
+            throw new ContextNotActiveException(ContentScoped.class.getName() + " is not active.");
+        }
+        return (T) Optional.ofNullable(instances.get().get(contextual)).map(i -> i.instance).orElse(null);
     }
 
     @Override
