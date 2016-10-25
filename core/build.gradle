@@ -37,5 +37,5 @@ dependencies {
     }
 
     testCompile project(':test')
-    testCompile group: 'org.jboss.weld.se', name: 'weld-se-core', version: '2.4.0.Final'
+    testCompile 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
 }

@@ -23,27 +23,23 @@
  */
 package dk.kontentsu.cdn.cdi;
 
-import java.io.Serializable;
-
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AfterBeanDiscovery;
-import javax.enterprise.inject.spi.BeforeBeanDiscovery;
-import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessInjectionTarget;
+import dk.kontentsu.cdn.model.Content;
+import javax.enterprise.inject.Default;
+import javax.enterprise.inject.Produces;
 
 /**
+ * Producer making it possible to inject content.
  *
  * @author Jens Borch Christiansen
  */
-public class ContentExtension implements Extension, Serializable {
+@ContentScoped
+public class ContentProducer {
 
-    private static final long serialVersionUID = -2791994163919507379L;
-
-    public void beforeBeanDiscovery(@Observes final BeforeBeanDiscovery event) {
-        event.addScope(ContentScoped.class, true, false);
+    @Produces
+    @ContentScoped
+    @Default
+    public Content getContent() {
+        return ContentContext.getContent();
     }
 
-    public void afterBeanDiscovery(@Observes final AfterBeanDiscovery event) {
-        event.addContext(new ContentContext());
-    }
 }
