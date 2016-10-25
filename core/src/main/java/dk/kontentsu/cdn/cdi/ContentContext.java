@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import javax.enterprise.context.ContextNotActiveException;
-
 import javax.enterprise.context.spi.AlterableContext;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
@@ -44,33 +43,33 @@ public class ContentContext implements AlterableContext, Serializable {
 
     private static final long serialVersionUID = 2249914178328516867L;
 
-    private static final ThreadLocal<Map<Contextual<?>, Instance>> instances = new ThreadLocal<>();
-    private static final ThreadLocal<Content> content = new ThreadLocal<>();
+    private static final ThreadLocal<Map<Contextual<?>, Instance>> INSTANCES = new ThreadLocal<>();
+    private static final ThreadLocal<Content> CONTENT = new ThreadLocal<>();
 
     public static <X> X execute(final Supplier<X> task, final Content content) throws Exception {
-        Map<Contextual<?>, Instance> map = instances.get();
-        ContentContext.content.set(content);
+        Map<Contextual<?>, Instance> map = INSTANCES.get();
+        ContentContext.CONTENT.set(content);
         if (map == null) {
             map = new HashMap<>();
-            instances.set(map);
+            INSTANCES.set(map);
         }
         try {
             return task.get();
         } finally {
-            ContentContext.content.remove();
+            ContentContext.CONTENT.remove();
             map.values().stream().forEach(Instance::destroy);
             map.clear();
-            instances.remove();
+            INSTANCES.remove();
         }
     }
 
     public static Content getContent() {
-        return ContentContext.content.get();
+        return ContentContext.CONTENT.get();
     }
 
     @Override
     public void destroy(final Contextual<?> contextual) {
-        Optional.ofNullable(instances.get().get(contextual)).filter(c -> c.instance != null)
+        Optional.ofNullable(INSTANCES.get().get(contextual)).filter(c -> c.instance != null)
                 .ifPresent(Instance::destroy);
     }
 
@@ -80,7 +79,7 @@ public class ContentContext implements AlterableContext, Serializable {
         if (!isActive()) {
             throw new ContextNotActiveException(ContentScoped.class.getName() + " is not active.");
         }
-        Map<Contextual<?>, Instance> localMap = instances.get();
+        Map<Contextual<?>, Instance> localMap = INSTANCES.get();
         return (T) Optional.ofNullable(localMap.get(contextual)).
                 orElseGet(() -> localMap.computeIfAbsent(contextual, c -> new Instance<T>(contextual, creationalContext)))
                 .create();
@@ -92,7 +91,7 @@ public class ContentContext implements AlterableContext, Serializable {
         if (!isActive()) {
             throw new ContextNotActiveException(ContentScoped.class.getName() + " is not active.");
         }
-        return (T) Optional.ofNullable(instances.get().get(contextual)).map(i -> i.instance).orElse(null);
+        return (T) Optional.ofNullable(INSTANCES.get().get(contextual)).map(i -> i.instance).orElse(null);
     }
 
     @Override
@@ -102,9 +101,9 @@ public class ContentContext implements AlterableContext, Serializable {
 
     @Override
     public boolean isActive() {
-        final boolean initialized = instances.get() != null;
+        final boolean initialized = INSTANCES.get() != null;
         if (!initialized) {
-            instances.remove();
+            INSTANCES.remove();
         }
         return initialized;
     }
