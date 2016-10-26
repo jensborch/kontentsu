@@ -1,7 +1,5 @@
 package dk.kontentsu.cdn.upload;
 
-import dk.kontentsu.cdn.upload.*;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

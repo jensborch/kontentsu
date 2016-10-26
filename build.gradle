@@ -94,6 +94,14 @@ subprojects {
     test {
         finalizedBy jacocoTestReport
     }
+
+    sourceSets {
+        integrationTest {
+            java.srcDir 'src/it/java'
+            resources.srcDir 'src/it/resources'
+        }
+    }
+
     dependencies {
         compile 'org.apache.logging.log4j:log4j-api:' + log4jVersion
         compile 'org.apache.logging.log4j:log4j-slf4j-impl:' + log4jVersion
@@ -103,6 +111,10 @@ subprojects {
         testCompile 'org.apache.logging.log4j:log4j-core:' + log4jVersion
         testCompile 'eu.codearte.catch-exception:catch-exception:' + catchExceptionVersion
         testCompile 'org.mockito:mockito-all:' + mockitoVersion
+
+        integrationTestCompile 'junit:junit:' + junitVersion
+        integrationTestCompile 'org.apache.logging.log4j:log4j-core:' + log4jVersion
+        integrationTestCompile 'eu.codearte.catch-exception:catch-exception:' + catchExceptionVersion
     }
 
     compileJava {
@@ -125,6 +137,15 @@ subprojects {
                 enabled true
                 destination "${buildDir}/reports/jacoco"
             }
+        }
+    }
+
+    task integrationTest(type: Test) {
+        description = 'Run integration tests'
+
+        reports {
+            html.destination = "$buildDir/reports/integration-test"
+            junitXml.destination = "$buildDir/integration-test-results"
         }
     }
 }
