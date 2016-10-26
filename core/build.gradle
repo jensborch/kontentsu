@@ -37,4 +37,5 @@ dependencies {
     }
 
     testCompile project(':test')
+    testCompile 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
 }
