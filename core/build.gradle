@@ -37,5 +37,7 @@ dependencies {
     }
 
     testCompile project(':test')
-    testCompile 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
+    testCompile ('org.jglue.cdi-unit:cdi-unit:' + jglueVersion) {
+        exclude group: 'org.jboss.weld.se'
+    }
 }
