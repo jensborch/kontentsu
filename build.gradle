@@ -107,7 +107,7 @@ subprojects {
             java {
                 compileClasspath += main.output
                 runtimeClasspath += output + main.output
-                //srcDir file('src/integration-test/java')
+                srcDir file('src/it/java')
             }
             output.classesDir = "$buildDir/classes/integration-test"
         }
