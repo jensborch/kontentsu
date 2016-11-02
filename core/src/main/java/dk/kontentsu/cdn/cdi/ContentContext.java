@@ -43,11 +43,11 @@ public class ContentContext implements AlterableContext, Serializable {
 
     private static final long serialVersionUID = 2249914178328516867L;
 
-    private static final ThreadLocal<Map<Contextual<?>, Instance>> INSTANCES = new ThreadLocal<>();
+    private static final ThreadLocal<Map<Contextual<?>, Instance<?>>> INSTANCES = new ThreadLocal<>();
     private static final ThreadLocal<Content> CONTENT = new ThreadLocal<>();
 
     public static <X> X execute(final Supplier<X> task, final Content content) throws Exception {
-        Map<Contextual<?>, Instance> map = INSTANCES.get();
+        Map<Contextual<?>, Instance<?>> map = INSTANCES.get();
         ContentContext.CONTENT.set(content);
         if (map == null) {
             map = new HashMap<>();
@@ -79,10 +79,9 @@ public class ContentContext implements AlterableContext, Serializable {
         if (!isActive()) {
             throw new ContextNotActiveException(ContentScoped.class.getName() + " is not active.");
         }
-        Map<Contextual<?>, Instance> localMap = INSTANCES.get();
-        return (T) Optional.ofNullable(localMap.get(contextual)).
-                orElseGet(() -> localMap.computeIfAbsent(contextual, c -> new Instance<T>(contextual, creationalContext)))
-                .create();
+        Map<Contextual<?>, Instance<?>> localMap = INSTANCES.get();
+
+        return (T) localMap.getOrDefault(contextual, new Instance<T>(contextual, creationalContext)).create();
     }
 
     @Override

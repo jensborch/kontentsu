@@ -56,8 +56,11 @@ allprojects {
         options.encoding = 'UTF-8'
         options.incremental = true
         options.fork = true
-        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
-    }    
+    }
+    
+    tasks.withType(JavaCompile) { 
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" 
+    }
 
     repositories {
         mavenCentral()
