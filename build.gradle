@@ -99,6 +99,8 @@ subprojects {
         integrationTest {
             java.srcDir 'src/it/java'
             resources.srcDir 'src/it/resources'
+            //output.classesDir = "$buildDir/classes/it"
+            //output.resourcesDir = "$buildDir/resources/it"
         }
     }
 
@@ -142,7 +144,8 @@ subprojects {
 
     task integrationTest(type: Test) {
         description = 'Run integration tests'
-
+        testClassesDir = sourceSets.integrationTest.output.classesDir
+        outputs.upToDateWhen { false }
         reports {
             html.destination = "$buildDir/reports/integration-test"
             junitXml.destination = "$buildDir/integration-test-results"
