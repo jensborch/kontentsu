@@ -20,6 +20,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(CdiRunner.class)
 @AdditionalClasses({TestContentParser.class, ContentExtension.class})
+@SuppressWarnings("unchecked")
 public class ScopeTest {
 
     @Test

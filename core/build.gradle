@@ -5,8 +5,11 @@ jar {
 
 sourceSets {
     main {
-        output.resourcesDir = "build/classes/main"
+        output.resourcesDir = "$buildDir/classes/main"
     }
+    integrationTest {
+        resources.srcDir file('src/test/resources')
+    }    
 }
 
 dependencies {
@@ -36,8 +39,9 @@ dependencies {
 
     }
 
-    integrationTestCompile project(':test')
-
     testCompile project(':test')
     testCompile 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
+    
+    integrationTestCompile project(':util')
+    integrationTestCompile project(':test')    
 }

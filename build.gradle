@@ -7,7 +7,7 @@ plugins {
     id 'jacoco'
     id 'pmd'
     id 'project-report'
-    //id 'com.github.ben-manes.versions' version '0.13.0'
+    id 'com.github.ben-manes.versions' version '0.13.0'
 }
 
 ext {
@@ -50,20 +50,26 @@ allprojects {
     group = 'dk.kontentsu.cdn'
     version = '1.0-SNAPSHOT'
 
-    sourceCompatibility = '1.8'
-    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+    compileJava {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+        options.encoding = 'UTF-8'
+        options.incremental = true
+        options.fork = true
+    }
+    
+    tasks.withType(JavaCompile) { 
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" 
+    }
 
     repositories {
-        maven {
-            url "http://maven/nexus/content/groups/public"
-        }
         mavenCentral()
     }
 }
 
 
 subprojects {
-    //apply plugin: 'com.github.ben-manes.versions'
+    apply plugin: 'com.github.ben-manes.versions'
     apply plugin: 'java'
     apply plugin: 'checkstyle'
     apply plugin: 'findbugs'
@@ -76,31 +82,47 @@ subprojects {
         sourceSets = [sourceSets.main]
         configFile = file("$rootProject.projectDir/config/checkstyle/checkstyle.xml")
     }
+
     findbugs {
         toolVersion = findbugsVersion
         ignoreFailures = true
         sourceSets = [sourceSets.main]
         excludeFilter = file("$rootProject.projectDir/config/findbugs/exclude.xml")
     }
+
     jacoco {
         toolVersion = jacocoVersion
     }
+
     pmd {
         toolVersion = pmdVersion
         sourceSets = [sourceSets.main]
         ignoreFailures = true
         ruleSetFiles = files("$rootProject.projectDir/config/pmd/ruleset.xml")
     }
+    
     test {
         finalizedBy jacocoTestReport
     }
-
-    sourceSets {
+    
+    sourceSets {    
         integrationTest {
-            java.srcDir 'src/it/java'
-            resources.srcDir 'src/it/resources'
-            //output.classesDir = "$buildDir/classes/it"
-            //output.resourcesDir = "$buildDir/resources/it"
+            java {
+                compileClasspath += main.output
+                runtimeClasspath += output + main.output
+                srcDir file('src/it/java')
+            }
+            output.classesDir = "$buildDir/classes/integration-test"
+        }
+    }
+    
+    task integrationTest(type: Test) {
+        description = 'Run integration tests'
+        testClassesDir = sourceSets.integrationTest.output.classesDir
+        classpath = sourceSets.main.runtimeClasspath + sourceSets.integrationTest.runtimeClasspath
+        reports {
+            html.destination = "$buildDir/reports/integration-test"
+            junitXml.destination = "$buildDir/integration-test-results"
         }
     }
 
@@ -113,15 +135,10 @@ subprojects {
         testCompile 'org.apache.logging.log4j:log4j-core:' + log4jVersion
         testCompile 'eu.codearte.catch-exception:catch-exception:' + catchExceptionVersion
         testCompile 'org.mockito:mockito-all:' + mockitoVersion
-
+        
         integrationTestCompile 'junit:junit:' + junitVersion
         integrationTestCompile 'org.apache.logging.log4j:log4j-core:' + log4jVersion
         integrationTestCompile 'eu.codearte.catch-exception:catch-exception:' + catchExceptionVersion
-    }
-
-    compileJava {
-        options.encoding = 'UTF-8'
-        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
     }
 
     tasks.withType(FindBugs) {
@@ -139,16 +156,6 @@ subprojects {
                 enabled true
                 destination "${buildDir}/reports/jacoco"
             }
-        }
-    }
-
-    task integrationTest(type: Test) {
-        description = 'Run integration tests'
-        testClassesDir = sourceSets.integrationTest.output.classesDir
-        outputs.upToDateWhen { false }
-        reports {
-            html.destination = "$buildDir/reports/integration-test"
-            junitXml.destination = "$buildDir/integration-test-results"
         }
     }
 }
