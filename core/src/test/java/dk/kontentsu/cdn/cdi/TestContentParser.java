@@ -17,4 +17,8 @@ public class TestContentParser {
         return content;
     }
 
+    public String parse() {
+        return content.getData();
+    }
+
 }

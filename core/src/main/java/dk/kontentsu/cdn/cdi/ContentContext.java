@@ -34,6 +34,8 @@ import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.spi.AlterableContext;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -43,10 +45,13 @@ public class ContentContext implements AlterableContext, Serializable {
 
     private static final long serialVersionUID = 2249914178328516867L;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContentContext.class);
+
     private static final ThreadLocal<Map<Contextual<?>, Instance<?>>> INSTANCES = new ThreadLocal<>();
     private static final ThreadLocal<Content> CONTENT = new ThreadLocal<>();
 
     public static <X> X execute(final Supplier<X> task, final Content content) throws Exception {
+        LOGGER.debug("Starting content CDI context");
         Map<Contextual<?>, Instance<?>> map = INSTANCES.get();
         ContentContext.CONTENT.set(content);
         if (map == null) {
@@ -60,6 +65,7 @@ public class ContentContext implements AlterableContext, Serializable {
             map.values().stream().forEach(Instance::destroy);
             map.clear();
             INSTANCES.remove();
+            LOGGER.debug("Stopping content CDI context");
         }
     }
 
@@ -107,6 +113,11 @@ public class ContentContext implements AlterableContext, Serializable {
         return initialized;
     }
 
+    /**
+     * Class wrapping a CDI bean instance.
+     *
+     * @param <T> type of bean to wrap
+     */
     private static class Instance<T> {
 
         private final CreationalContext<T> context;

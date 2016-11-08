@@ -24,21 +24,27 @@
 package dk.kontentsu.cdn.cdi;
 
 import dk.kontentsu.cdn.model.Content;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Producer making it possible to inject content.
  *
  * @author Jens Borch Christiansen
  */
-@ContentScoped
+@ApplicationScoped
 public class ContentProducer {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContentProducer.class);
+
     @Produces
-    @ContentScoped
     @Default
+    @ContentScoped
     public Content getContent() {
+        LOGGER.debug("Injecting content into class");
         return ContentContext.getContent();
     }
 
