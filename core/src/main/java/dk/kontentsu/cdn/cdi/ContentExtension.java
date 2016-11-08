@@ -31,6 +31,7 @@ import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 
 /**
+ * CDI extension for {@link ContentScoped}.
  *
  * @author Jens Borch Christiansen
  */

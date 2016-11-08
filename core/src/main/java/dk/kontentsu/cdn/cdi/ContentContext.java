@@ -23,21 +23,25 @@
  */
 package dk.kontentsu.cdn.cdi;
 
-import dk.kontentsu.cdn.model.Content;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.spi.AlterableContext;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.kontentsu.cdn.model.Content;
+
 /**
+ * Context implementation for the {@link ContentScoped} scope annotation.
  *
  * @author Jens Borch Christiansen
  */
@@ -50,7 +54,7 @@ public class ContentContext implements AlterableContext, Serializable {
     private static final ThreadLocal<Map<Contextual<?>, Instance<?>>> INSTANCES = new ThreadLocal<>();
     private static final ThreadLocal<Content> CONTENT = new ThreadLocal<>();
 
-    public static <X> X execute(final Supplier<X> task, final Content content) throws Exception {
+    public static <X> X execute(final Supplier<X> task, final Content content) {
         LOGGER.debug("Starting content CDI context");
         Map<Contextual<?>, Instance<?>> map = INSTANCES.get();
         ContentContext.CONTENT.set(content);
@@ -75,7 +79,7 @@ public class ContentContext implements AlterableContext, Serializable {
 
     @Override
     public void destroy(final Contextual<?> contextual) {
-        Optional.ofNullable(INSTANCES.get().get(contextual)).filter(c -> c.instance != null)
+        Optional.ofNullable(INSTANCES.get().get(contextual)).filter(c -> c.bean != null)
                 .ifPresent(Instance::destroy);
     }
 
@@ -96,7 +100,7 @@ public class ContentContext implements AlterableContext, Serializable {
         if (!isActive()) {
             throw new ContextNotActiveException(ContentScoped.class.getName() + " is not active.");
         }
-        return (T) Optional.ofNullable(INSTANCES.get().get(contextual)).map(i -> i.instance).orElse(null);
+        return (T) Optional.ofNullable(INSTANCES.get().get(contextual)).map(i -> i.bean).orElse(null);
     }
 
     @Override
@@ -123,7 +127,7 @@ public class ContentContext implements AlterableContext, Serializable {
         private final CreationalContext<T> context;
         private final Contextual<T> contextual;
 
-        private T instance;
+        private T bean;
 
         Instance(final Contextual<T> contextual, final CreationalContext<T> context) {
             this.contextual = contextual;
@@ -131,19 +135,20 @@ public class ContentContext implements AlterableContext, Serializable {
         }
 
         public T create() {
-            if (instance == null) {
-                this.instance = contextual.create(context);
+            if (bean == null) {
+                this.bean = contextual.create(context);
             }
-            return instance;
+            return bean;
         }
 
+        @SuppressWarnings("PMD.NullAssignment")
         public void destroy() {
-            if (instance == null) {
+            if (bean == null) {
                 return;
             }
 
-            contextual.destroy(instance, context);
-            instance = null;
+            contextual.destroy(bean, context);
+            bean = null;
         }
     }
 

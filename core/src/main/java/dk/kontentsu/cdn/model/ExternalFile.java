@@ -206,6 +206,7 @@ public class ExternalFile extends AbstractBaseEntity {
             return this;
         }
 
+        @SuppressWarnings("PMD.ShortMethodName")
         public Builder to(final ZonedDateTime to) {
             this.to = to;
             return this;

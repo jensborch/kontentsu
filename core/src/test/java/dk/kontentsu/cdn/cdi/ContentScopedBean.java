@@ -1,14 +1,16 @@
 package dk.kontentsu.cdn.cdi;
 
-import dk.kontentsu.cdn.model.Content;
 import javax.inject.Inject;
 
+import dk.kontentsu.cdn.model.Content;
+
 /**
+ * CDI bean for testing <code>ContentScoped</code>.
  *
  * @author Jens Borch Christiansen
  */
 @ContentScoped
-public class TestContentParser {
+public class ContentScopedBean {
 
     @Inject
     private Content content;
@@ -17,8 +19,8 @@ public class TestContentParser {
         return content;
     }
 
-    public String parse() {
-        return content.getData();
+    public String uppercase() {
+        return content.getData().toUpperCase();
     }
 
 }

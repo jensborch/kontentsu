@@ -1,3 +1,9 @@
+buildscript {
+    dependencies {
+        classpath 'org.owasp:dependency-check-gradle:1.4.3'
+    }
+}
+
 plugins {
     id 'java'
     id 'checkstyle'
@@ -57,16 +63,15 @@ allprojects {
         options.incremental = true
         options.fork = true
     }
-    
-    tasks.withType(JavaCompile) { 
-        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation" 
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
     }
 
     repositories {
         mavenCentral()
     }
 }
-
 
 subprojects {
     apply plugin: 'com.github.ben-manes.versions'
@@ -75,6 +80,7 @@ subprojects {
     apply plugin: 'findbugs'
     apply plugin: 'pmd'
     apply plugin: 'jacoco'
+    apply plugin: 'org.owasp.dependencycheck'
 
     checkstyle {
         toolVersion = checkstyleVersion
@@ -100,12 +106,12 @@ subprojects {
         ignoreFailures = true
         ruleSetFiles = files("$rootProject.projectDir/config/pmd/ruleset.xml")
     }
-    
+
     test {
         finalizedBy jacocoTestReport
     }
-    
-    sourceSets {    
+
+    sourceSets {
         integrationTest {
             java {
                 compileClasspath += main.output
@@ -115,7 +121,7 @@ subprojects {
             output.classesDir = "$buildDir/classes/integration-test"
         }
     }
-    
+
     task integrationTest(type: Test) {
         description = 'Run integration tests'
         testClassesDir = sourceSets.integrationTest.output.classesDir
@@ -127,6 +133,7 @@ subprojects {
     }
 
     dependencies {
+
         compile 'org.apache.logging.log4j:log4j-api:' + log4jVersion
         compile 'org.apache.logging.log4j:log4j-slf4j-impl:' + log4jVersion
         compile 'org.apache.logging.log4j:log4j-1.2-api:' + log4jVersion
@@ -135,7 +142,7 @@ subprojects {
         testCompile 'org.apache.logging.log4j:log4j-core:' + log4jVersion
         testCompile 'eu.codearte.catch-exception:catch-exception:' + catchExceptionVersion
         testCompile 'org.mockito:mockito-all:' + mockitoVersion
-        
+
         integrationTestCompile 'junit:junit:' + junitVersion
         integrationTestCompile 'org.apache.logging.log4j:log4j-core:' + log4jVersion
         integrationTestCompile 'eu.codearte.catch-exception:catch-exception:' + catchExceptionVersion

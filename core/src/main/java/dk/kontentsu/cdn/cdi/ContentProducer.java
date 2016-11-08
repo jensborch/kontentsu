@@ -23,15 +23,17 @@
  */
 package dk.kontentsu.cdn.cdi;
 
-import dk.kontentsu.cdn.model.Content;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dk.kontentsu.cdn.model.Content;
+
 /**
- * Producer making it possible to inject content.
+ * Producer for injection content into a CDI bean that is annotated with {@link ContentScoped}.
  *
  * @author Jens Borch Christiansen
  */
