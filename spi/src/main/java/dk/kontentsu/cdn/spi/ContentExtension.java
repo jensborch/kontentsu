@@ -21,23 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.cdn.cdi;
+package dk.kontentsu.cdn.spi;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.io.Serializable;
 
-import javax.inject.Scope;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.AfterBeanDiscovery;
+import javax.enterprise.inject.spi.BeforeBeanDiscovery;
+import javax.enterprise.inject.spi.Extension;
 
 /**
- * Content scope annotation for implementing plug-ins that processes content like a parser.
+ * CDI extension for {@link ContentScoped}.
  *
  * @author Jens Borch Christiansen
  */
-@Scope
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
-public @interface ContentScoped {
+public class ContentExtension implements Extension, Serializable {
 
+    private static final long serialVersionUID = -2791994163919507379L;
+
+    public void beforeBeanDiscovery(@Observes final BeforeBeanDiscovery event) {
+        event.addScope(ContentScoped.class, true, false);
+    }
+
+    public void afterBeanDiscovery(@Observes final AfterBeanDiscovery event) {
+        event.addContext(new ContentContext());
+    }
 }

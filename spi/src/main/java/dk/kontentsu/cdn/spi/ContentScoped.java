@@ -21,33 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.cdn.cdi;
+package dk.kontentsu.cdn.spi;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Default;
-import javax.enterprise.inject.Produces;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import dk.kontentsu.cdn.model.Content;
+import javax.inject.Scope;
 
 /**
- * Producer for injection content into a CDI bean that is annotated with {@link ContentScoped}.
+ * Content scope annotation for implementing plug-ins that processes content like a parser.
  *
  * @author Jens Borch Christiansen
  */
-@ApplicationScoped
-public class ContentProducer {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContentProducer.class);
-
-    @Produces
-    @Default
-    @ContentScoped
-    public Content getContent() {
-        LOGGER.debug("Injecting content into class");
-        return ContentContext.getContent();
-    }
+@Scope
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
+public @interface ContentScoped {
 
 }

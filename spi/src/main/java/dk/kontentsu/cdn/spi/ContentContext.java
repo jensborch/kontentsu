@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.cdn.cdi;
+package dk.kontentsu.cdn.spi;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -38,7 +38,6 @@ import javax.enterprise.context.spi.CreationalContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.kontentsu.cdn.model.Content;
 
 /**
  * Context implementation for the {@link ContentScoped} scope annotation.
@@ -52,9 +51,9 @@ public class ContentContext implements AlterableContext, Serializable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContentContext.class);
 
     private static final ThreadLocal<Map<Contextual<?>, Instance<?>>> INSTANCES = new ThreadLocal<>();
-    private static final ThreadLocal<Content> CONTENT = new ThreadLocal<>();
+    private static final ThreadLocal<Parsable> CONTENT = new ThreadLocal<>();
 
-    public static <X> X execute(final Supplier<X> task, final Content content) {
+    public static <X> X execute(final Supplier<X> task, final Parsable content) {
         LOGGER.debug("Starting content CDI context");
         Map<Contextual<?>, Instance<?>> map = INSTANCES.get();
         ContentContext.CONTENT.set(content);
@@ -73,7 +72,7 @@ public class ContentContext implements AlterableContext, Serializable {
         }
     }
 
-    public static Content getContent() {
+    public static Parsable getContent() {
         return ContentContext.CONTENT.get();
     }
 

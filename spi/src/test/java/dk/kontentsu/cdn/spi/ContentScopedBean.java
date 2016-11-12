@@ -1,8 +1,7 @@
-package dk.kontentsu.cdn.cdi;
+package dk.kontentsu.cdn.spi;
 
 import javax.inject.Inject;
 
-import dk.kontentsu.cdn.model.Content;
 
 /**
  * CDI bean for testing <code>ContentScoped</code>.
@@ -13,9 +12,9 @@ import dk.kontentsu.cdn.model.Content;
 public class ContentScopedBean {
 
     @Inject
-    private Content content;
+    private Parsable content;
 
-    public Content getContent() {
+    public Parsable getContent() {
         return content;
     }
 

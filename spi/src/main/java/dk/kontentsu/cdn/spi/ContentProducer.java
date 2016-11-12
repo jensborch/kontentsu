@@ -21,29 +21,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.cdn.cdi;
+package dk.kontentsu.cdn.spi;
 
-import java.io.Serializable;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Default;
+import javax.enterprise.inject.Produces;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AfterBeanDiscovery;
-import javax.enterprise.inject.spi.BeforeBeanDiscovery;
-import javax.enterprise.inject.spi.Extension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
- * CDI extension for {@link ContentScoped}.
+ * Producer for injection content into a CDI bean that is annotated with {@link ContentScoped}.
  *
  * @author Jens Borch Christiansen
  */
-public class ContentExtension implements Extension, Serializable {
+@ApplicationScoped
+public class ContentProducer {
 
-    private static final long serialVersionUID = -2791994163919507379L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContentProducer.class);
 
-    public void beforeBeanDiscovery(@Observes final BeforeBeanDiscovery event) {
-        event.addScope(ContentScoped.class, true, false);
+    @Produces
+    @Default
+    @ContentScoped
+    public Parsable getContent() {
+        LOGGER.debug("Injecting content into class");
+        return ContentContext.getContent();
     }
 
-    public void afterBeanDiscovery(@Observes final AfterBeanDiscovery event) {
-        event.addContext(new ContentContext());
-    }
 }

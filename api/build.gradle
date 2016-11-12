@@ -15,7 +15,7 @@ configurations {
 }
 
 dependencies {
-    compile (project(':spi')) {
+    compile (project(':core')) {
         exclude group: 'org.glassfish.jersey.media'
         exclude group: 'org.apache.tomee'
         exclude group: 'javax.annotation'

@@ -1,9 +1,11 @@
-package dk.kontentsu.cdn.cdi;
+package dk.kontentsu.cdn.spi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -12,9 +14,6 @@ import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.CdiRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import dk.kontentsu.cdn.model.Content;
-import dk.kontentsu.cdn.model.MimeType;
 
 /**
  * Test for {@link ContentScoped}.
@@ -30,7 +29,25 @@ public class ScopeTest {
 
     @Test
     public void testScope() throws Exception {
-        Content content = new Content("Scope test".getBytes(), StandardCharsets.UTF_8, MimeType.parse("plain/text"));
+        Parsable content = new Parsable() {
+
+            private final static String data = "scope test";
+
+            @Override
+            public String getData() {
+                return data;
+            }
+
+            @Override
+            public byte[] getDataAsBytes() {
+                return data.getBytes();
+            }
+
+            @Override
+            public Optional<Charset> getEncoding() {
+                return Optional.of(StandardCharsets.UTF_8);
+            }
+        };
         Object result = ContentContext.execute(() -> {
             return bean.uppercase();
         }, content);

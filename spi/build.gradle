@@ -3,7 +3,7 @@ jar {
 }
 
 dependencies {
-    compile project(':core')    
+    //compile project(':core')
 
     compile 'org.hashids:hashids:' + hashidsVersion
 
@@ -14,5 +14,7 @@ dependencies {
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:' + jacksonVersion
 
     testCompile project(':test')
+    testCompile 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
+
 }
 
