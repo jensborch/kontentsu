@@ -1,9 +1,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
-<c:set var="angularVersion" value="1.5.7" scope="application" />
-<c:set var="angularMaterialVersion" value="1.0.9" scope="application" />
-<c:set var="swaggerUiVersion" value="2.1.4" scope="application" />
+<c:set var="angularVersion" value="1.5.8" scope="application" />
+<c:set var="angularMaterialVersion" value="1.1.1" scope="application" />
+<c:set var="swaggerUiVersion" value="2.2.6" scope="application" />
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
