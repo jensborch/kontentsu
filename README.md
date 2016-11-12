@@ -1,7 +1,5 @@
 # Kontentsu CDN Publishing Service
 
-![Alt text](doc/uml/internal.png?raw=true "UML internal CDN model")
-
 ## Building
 
 The CDN Publishing Service is build using Gradle.
