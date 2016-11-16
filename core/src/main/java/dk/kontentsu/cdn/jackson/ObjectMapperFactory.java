@@ -28,7 +28,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import dk.kontentsu.cdn.model.MimeType;
 import dk.kontentsu.cdn.model.SemanticUri;
 
@@ -51,7 +50,6 @@ public final class ObjectMapperFactory {
         result.configure(SerializationFeature.INDENT_OUTPUT, true);
         result.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         result.registerModule(new Jdk8Module());
-        result.registerModule(new JSR310Module());
 
         SimpleModule mod = new SimpleModule("Mime type module");
         mod.addSerializer(new MimeTypeSerializer());

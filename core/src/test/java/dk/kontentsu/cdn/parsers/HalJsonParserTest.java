@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.internal.util.reflection.Whitebox;
 
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.MimeType;
@@ -37,7 +38,8 @@ public class HalJsonParserTest {
     @Test
     public void testParse() throws Exception {
         Content content = new Content(data.getFullPage(), StandardCharsets.UTF_8, MimeType.APPLICATION_HAL_JSON_TYPE);
-        HalJsonParser parser = new HalJsonParser(content);
+        HalJsonParser parser = new HalJsonParser();
+        Whitebox.setInternalState(parser, "content", content);
 
         ContentParser.Results result = parser.parse();
 

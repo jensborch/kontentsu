@@ -9,7 +9,6 @@
         <class-name>org.h2.jdbcx.JdbcDataSource</class-name>
         <url>jdbc:h2:~/cdn;AUTO_SERVER=TRUE;MVCC=TRUE</url>
         <user>cdn</user>
-
         <password>cdn</password>
         <property>
             <name>fish.payara.slow-query-threshold-in-seconds</name>

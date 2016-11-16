@@ -26,9 +26,7 @@ package dk.kontentsu.cdn.parsers;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.internal.Metadata;
 
 /**
@@ -45,7 +43,7 @@ public interface ContentParser {
     /**
      * Content parser factory responsible for instantiating new parsers based on the content object. Must be a dependent CDI bean to be loaded by Kontentsu.
      */
-    public interface Factory {
+    /*public interface Factory {
 
         /**
          * Create new parser if possible for the given content.
@@ -53,9 +51,9 @@ public interface ContentParser {
          * @param content to create parser for
          * @return a new content parser
          */
-        Optional<ContentParser> create(Content content);
+        /*Optional<ContentParser> create(Content content);
 
-    }
+    }*/
 
     /**
      * Result from parsing the content.

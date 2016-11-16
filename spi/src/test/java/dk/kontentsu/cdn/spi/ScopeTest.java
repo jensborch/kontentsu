@@ -3,9 +3,11 @@ package dk.kontentsu.cdn.spi;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -31,21 +33,26 @@ public class ScopeTest {
     public void testScope() throws Exception {
         Parsable content = new Parsable() {
 
-            private final static String data = "scope test";
+            private final static String DATA = "scope test";
 
             @Override
             public String getData() {
-                return data;
+                return DATA;
             }
 
             @Override
-            public byte[] getDataAsBytes() {
-                return data.getBytes();
+            public InputStream getDataAsBinaryStream() {
+                throw new UnsupportedOperationException("Not supported for test");
             }
 
             @Override
             public Optional<Charset> getEncoding() {
                 return Optional.of(StandardCharsets.UTF_8);
+            }
+
+            @Override
+            public UUID getUuid() {
+                throw new UnsupportedOperationException("Not supported for test");
             }
         };
         Object result = ContentContext.execute(() -> {

@@ -21,13 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.cdn.spi;
+package dk.kontentsu.cdn.parsers;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dk.kontentsu.cdn.spi.ContentContext;
+import dk.kontentsu.cdn.spi.ContentScoped;
+import dk.kontentsu.cdn.spi.Parsable;
 
 /**
  * Producer for injection content into a CDI bean that is annotated with {@link ContentScoped}.

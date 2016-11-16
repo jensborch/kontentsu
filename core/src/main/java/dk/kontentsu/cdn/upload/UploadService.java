@@ -31,6 +31,8 @@ import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
@@ -45,10 +47,10 @@ import dk.kontentsu.cdn.model.internal.Host;
 import dk.kontentsu.cdn.model.internal.Item;
 import dk.kontentsu.cdn.model.internal.Version;
 import dk.kontentsu.cdn.parsers.ContentParser;
-import dk.kontentsu.cdn.parsers.ContentParserSupplier;
 import dk.kontentsu.cdn.repository.CategoryRepository;
 import dk.kontentsu.cdn.repository.HostRepository;
 import dk.kontentsu.cdn.repository.ItemRepository;
+import dk.kontentsu.cdn.spi.ContentContext;
 
 /**
  * Service facade for performing various operations on CDN items - like uploading new items.
@@ -75,8 +77,11 @@ public class UploadService {
     @Inject
     private UploadService self;
 
+    /*@Inject
+    private ContentParserSupplier parserSupplier;*/
     @Inject
-    private ContentParserSupplier parserSupplier;
+    @Any
+    private Instance<ContentParser> parsers;
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
 
@@ -150,9 +155,9 @@ public class UploadService {
         } else {
             hosts.stream()
                     .filter(h -> uploadeItem.getHosts().stream()
-                            .filter(n -> h.getName().equals(n))
-                            .findAny()
-                            .isPresent())
+                    .filter(n -> h.getName().equals(n))
+                    .findAny()
+                    .isPresent())
                     .forEach(h -> item.addHost(h));
         }
     }
@@ -165,7 +170,27 @@ public class UploadService {
                 .from(uploadeItem.getInterval().getFrom())
                 .to(uploadeItem.getInterval().getTo());
 
-        parserSupplier.get(content).forEach(p -> {
+        ContentContext.execute(() -> {
+            parsers.iterator().forEachRemaining(p -> {
+                ContentParser.Results parsedContent = p.parse();
+                parsedContent.getLinks().stream().forEach(link -> {
+                    Item i = itemRepo.findByUri(link.getUri()).orElseGet(() -> {
+                        SemanticUriPath tmpPath = catRepo.findByUri(link.getPath()).orElse(link.getPath());
+                        LOGGER.debug("Found link in content with path {} and name {}", tmpPath, link.getUri().getName());
+                        Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));
+                        return itemRepo.save(tmpItem);
+                    });
+                    builder.reference(i, link.getType());
+                });
+                parsedContent.getMetadata().forEach((k, v) -> {
+                    LOGGER.debug("Found metadata in content with key {} and value {}", k, v);
+                    builder.metadata(k, v);
+                });
+            });
+            return null;
+        }, content);
+
+        /*parserSupplier.get(content).forEach(p -> {
             ContentParser.Results parsedContent = p.parse();
             parsedContent.getLinks().stream().forEach(link -> {
                 Item i = itemRepo.findByUri(link.getUri()).orElseGet(() -> {
@@ -180,8 +205,7 @@ public class UploadService {
                 LOGGER.debug("Found metadata in content with key {} and value {}", k, v);
                 builder.metadata(k, v);
             });
-        });
-
+        });*/
         Version version = builder.build();
         LOGGER.debug("Adding newly uploadet version {} to item with interval {}", version.getUuid(), version.getInterval());
         item.addVersion(version);

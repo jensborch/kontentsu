@@ -9,10 +9,11 @@ sourceSets {
     }
     integrationTest {
         resources.srcDir file('src/test/resources')
-    }    
+    }
 }
 
 dependencies {
+    compile project(':spi')
     compile project(':util')
 
     compile 'org.hashids:hashids:' + hashidsVersion
@@ -20,7 +21,6 @@ dependencies {
     compile 'org.apache.tomee:javaee-api:' + javaeeVersion
     compile 'org.glassfish.jersey.media:jersey-media-json-jackson:' + jerseyVersion
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:' + jacksonVersion
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:' + jacksonVersion
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:' + jacksonVersion
 
     compile 'com.querydsl:querydsl-apt:' + querydslVersion + ':jpa'
@@ -41,7 +41,7 @@ dependencies {
 
     testCompile project(':test')
     testCompile 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
-    
+
     integrationTestCompile project(':util')
-    integrationTestCompile project(':test')    
+    integrationTestCompile project(':test')
 }

@@ -25,15 +25,13 @@ package dk.kontentsu.cdn.parsers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,34 +39,27 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
-import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.internal.Metadata;
 import dk.kontentsu.cdn.model.internal.ReferenceType;
+import dk.kontentsu.cdn.spi.ContentScoped;
+import dk.kontentsu.cdn.spi.Parsable;
 
 /**
  * Parser for HAL+JSON CDN content. The parser will find metadata and compositions in the data.
  *
  * @author Jens Borch Christiansen
  */
-public class HalJsonParser implements ContentParser {
+@ContentScoped
+public class HalJsonParser implements ContentParser, HalJsonContent {
 
-    public static final String JSON_LINKS = "_links";
-    public static final String JSON_HREF = "href";
-    public static final String JSON_SELF_LINK = "self";
-    public static final String JSON_CONTENT = "content";
-    public static final String JSON_COMPOSITION_TYPE = "composition-type";
-    public static final String JSON_COMPOSITION = "composition";
-    public static final String JSON_REF = "ref";
-    public static final List<String> JSON_METADATA = Collections.unmodifiableList(Arrays.asList(new String[]{"seo"}));
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HalJsonParser.class);
     private final ObjectMapper objectMapper = ObjectMapperFactory.create();
-    private final Content content;
 
-    public HalJsonParser(final Content content) {
-        this.content = content;
-    }
+    @Inject
+    @ContentScoped
+    private Parsable content;
 
     @Override
     public Results parse() {
@@ -140,7 +131,7 @@ public class HalJsonParser implements ContentParser {
     /**
      * Factory for creating JSON content parsers.
      */
-    @Dependent
+    /*@Dependent
     public static class Factory implements ContentParser.Factory {
 
         @Override
@@ -157,6 +148,6 @@ public class HalJsonParser implements ContentParser {
             return this.getClass().getCanonicalName();
         }
 
-    }
+    }*/
 
 }

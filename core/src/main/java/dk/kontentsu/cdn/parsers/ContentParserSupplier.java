@@ -23,28 +23,15 @@
  */
 package dk.kontentsu.cdn.parsers;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import dk.kontentsu.cdn.model.Content;
-
 /**
  * Supplies a list of content parser valid for the give content.
  *
  * @author Jens Borch Christiansen
  */
-@Singleton
+//@Singleton
 public class ContentParserSupplier {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContentParserSupplier.class);
+    /*private static final Logger LOGGER = LoggerFactory.getLogger(ContentParserSupplier.class);
 
     @Inject
     private Instance<ContentParser.Factory> factories;
@@ -58,6 +45,6 @@ public class ContentParserSupplier {
         Set<ContentParser> results = new HashSet<>();
         factories.forEach(f -> f.create(content).ifPresent(p -> results.add(p)));
         return results;
-    }
+    }*/
 
 }

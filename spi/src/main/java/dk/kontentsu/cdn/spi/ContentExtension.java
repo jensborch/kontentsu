@@ -30,6 +30,9 @@ import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * CDI extension for {@link ContentScoped}.
  *
@@ -38,12 +41,19 @@ import javax.enterprise.inject.spi.Extension;
 public class ContentExtension implements Extension, Serializable {
 
     private static final long serialVersionUID = -2791994163919507379L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContentExtension.class);
+
+    static {
+        LOGGER.info("Loading CDI content extension...");
+    }
 
     public void beforeBeanDiscovery(@Observes final BeforeBeanDiscovery event) {
+        LOGGER.info("Adding content CDI scope...");
         event.addScope(ContentScoped.class, true, false);
     }
 
     public void afterBeanDiscovery(@Observes final AfterBeanDiscovery event) {
+        LOGGER.info("Adding content CDI context...");
         event.addContext(new ContentContext());
     }
 }
