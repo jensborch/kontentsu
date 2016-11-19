@@ -90,7 +90,7 @@ public class ContentContext implements AlterableContext, Serializable {
         }
         Map<Contextual<?>, Instance<?>> localMap = INSTANCES.get();
 
-        return (T) localMap.getOrDefault(contextual, new Instance<T>(contextual, creationalContext)).create();
+        return (T) localMap.getOrDefault(contextual, new Instance<>(contextual, creationalContext)).create();
     }
 
     @Override
