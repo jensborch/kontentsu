@@ -38,6 +38,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import dk.kontentsu.cdn.model.internal.Item;
 import dk.kontentsu.cdn.repository.Repository;
 
@@ -68,6 +69,7 @@ public class SemanticUriPath extends Category {
 
     private static final long serialVersionUID = 2921353322551114756L;
 
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, targetEntity = Item.class, mappedBy = "uri.path")
     private Set<Item> items;
 

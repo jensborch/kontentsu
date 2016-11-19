@@ -77,8 +77,6 @@ public class UploadService {
     @Inject
     private UploadService self;
 
-    /*@Inject
-    private ContentParserSupplier parserSupplier;*/
     @Inject
     @Any
     private Instance<ContentParser> parsers;
@@ -190,22 +188,6 @@ public class UploadService {
             return null;
         }, content);
 
-        /*parserSupplier.get(content).forEach(p -> {
-            ContentParser.Results parsedContent = p.parse();
-            parsedContent.getLinks().stream().forEach(link -> {
-                Item i = itemRepo.findByUri(link.getUri()).orElseGet(() -> {
-                    SemanticUriPath tmpPath = catRepo.findByUri(link.getPath()).orElse(link.getPath());
-                    LOGGER.debug("Found link in content with path {} and name {}", tmpPath, link.getUri().getName());
-                    Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));
-                    return itemRepo.save(tmpItem);
-                });
-                builder.reference(i, link.getType());
-            });
-            parsedContent.getMetadata().forEach((k, v) -> {
-                LOGGER.debug("Found metadata in content with key {} and value {}", k, v);
-                builder.metadata(k, v);
-            });
-        });*/
         Version version = builder.build();
         LOGGER.debug("Adding newly uploadet version {} to item with interval {}", version.getUuid(), version.getInterval());
         item.addVersion(version);

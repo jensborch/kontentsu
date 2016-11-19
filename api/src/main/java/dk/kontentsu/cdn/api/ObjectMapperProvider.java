@@ -34,7 +34,7 @@ import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
  *
  * @author Jens Borch Christiansen
  */
-    @Provider
+@Provider
 public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {
 
     private final ObjectMapper defaultObjectMapper;

@@ -59,7 +59,7 @@ public final class ObjectMapperFactory {
         result.registerModule(mod);
 
         mod = new SimpleModule("Semantic URI type module");
-        mod.addSerializer(SemanticUri.class, new SemanticUriSerializer());
+        mod.addSerializer(new SemanticUriSerializer());
         mod.addDeserializer(SemanticUri.class, new SemanticUriDeserializer());
         result.registerModule(mod);
 

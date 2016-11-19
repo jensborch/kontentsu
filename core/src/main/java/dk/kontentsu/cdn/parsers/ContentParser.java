@@ -41,21 +41,6 @@ public interface ContentParser {
     Results parse();
 
     /**
-     * Content parser factory responsible for instantiating new parsers based on the content object. Must be a dependent CDI bean to be loaded by Kontentsu.
-     */
-    /*public interface Factory {
-
-        /**
-         * Create new parser if possible for the given content.
-         *
-         * @param content to create parser for
-         * @return a new content parser
-         */
-        /*Optional<ContentParser> create(Content content);
-
-    }*/
-
-    /**
      * Result from parsing the content.
      */
     class Results {

@@ -64,28 +64,32 @@ public class CdnApplication extends Application {
 
     public CdnApplication() {
 
-        final BeanConfig beanConfig = new BeanConfig();
+        //Swagger
+        BeanConfig beanConfig = new BeanConfig();
         beanConfig.setResourcePackage(RootExposure.class.getPackage().getName());
         beanConfig.setBasePath("cdn" + API_ROOT);
         beanConfig.setScan(true);
+        classes.add(ApiListingResource.class);
+        classes.add(SwaggerSerializers.class);
 
-        classes.add(JacksonFeature.class);
-
+        //Exposures
         classes.add(ExternalFileExposure.class);
         classes.add(ItemExposure.class);
         classes.add(RootExposure.class);
         classes.add(CategoryExposure.class);
         classes.add(HostExposure.class);
 
-        classes.add(ObjectMapperProvider.class);
+        //Filters
         classes.add(CORSFilter.class);
 
-        classes.add(ApiListingResource.class);
-        classes.add(SwaggerSerializers.class);
-
+        //Exception mappers
         classes.add(ApiExceptionMapper.class);
         classes.add(ConstraintViolationExceptionMapper.class);
         classes.add(ContainerExceptionMapper.class);
+
+        //Jackson
+        classes.add(JacksonFeature.class);
+        classes.add(ObjectMapperProvider.class);
     }
 
     @Override

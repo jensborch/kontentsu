@@ -127,27 +127,4 @@ public class HalJsonParser implements ContentParser, HalJsonContent {
         }
         return result;
     }
-
-    /**
-     * Factory for creating JSON content parsers.
-     */
-    /*@Dependent
-    public static class Factory implements ContentParser.Factory {
-
-        @Override
-        public Optional<ContentParser> create(final Content content) {
-            if (content.getMimeType().isHal()) {
-                return Optional.of(new HalJsonParser(content));
-            } else {
-                return Optional.empty();
-            }
-        }
-
-        @Override
-        public String toString() {
-            return this.getClass().getCanonicalName();
-        }
-
-    }*/
-
 }
