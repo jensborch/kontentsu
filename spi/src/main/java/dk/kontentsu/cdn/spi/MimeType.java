@@ -31,6 +31,7 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
+ * Mime type qualifier for content parsers. Use this to specify the mime type a given parser can handle.
  *
  * @author Jens Borch Christiansen
  */
