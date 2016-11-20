@@ -23,6 +23,7 @@
  */
 package dk.kontentsu.cdn.upload;
 
+import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,8 +32,11 @@ import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
@@ -51,6 +55,7 @@ import dk.kontentsu.cdn.repository.CategoryRepository;
 import dk.kontentsu.cdn.repository.HostRepository;
 import dk.kontentsu.cdn.repository.ItemRepository;
 import dk.kontentsu.cdn.spi.ContentContext;
+import dk.kontentsu.cdn.spi.MimeType;
 
 /**
  * Service facade for performing various operations on CDN items - like uploading new items.
@@ -78,8 +83,7 @@ public class UploadService {
     private UploadService self;
 
     @Inject
-    @Any
-    private Instance<ContentParser> parsers;
+    private BeanManager bm;
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
 
@@ -169,20 +173,31 @@ public class UploadService {
                 .to(uploadeItem.getInterval().getTo());
 
         ContentContext.execute(() -> {
-            parsers.iterator().forEachRemaining(p -> {
-                ContentParser.Results parsedContent = p.parse();
-                parsedContent.getLinks().stream().forEach(link -> {
-                    Item i = itemRepo.findByUri(link.getUri()).orElseGet(() -> {
-                        SemanticUriPath tmpPath = catRepo.findByUri(link.getPath()).orElse(link.getPath());
-                        LOGGER.debug("Found link in content with path {} and name {}", tmpPath, link.getUri().getName());
-                        Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));
-                        return itemRepo.save(tmpItem);
-                    });
-                    builder.reference(i, link.getType());
-                });
-                parsedContent.getMetadata().forEach((k, v) -> {
-                    LOGGER.debug("Found metadata in content with key {} and value {}", k, v);
-                    builder.metadata(k, v);
+            Set<Bean<?>> beans = bm.getBeans(ContentParser.class, new AnnotationLiteral<Any>() {});
+            beans.forEach(b -> {
+                Set<Annotation> qualifiers = b.getQualifiers();
+                qualifiers.forEach(q -> {
+                    if (q.annotationType() == MimeType.class) {
+                        String type = ((MimeType) q).type();
+                        if (type.equals(content.getMimeType().toString())) {
+                            CreationalContext<?> ctx = bm.createCreationalContext(b);
+                            ContentParser p = (ContentParser) bm.getReference(b, ContentParser.class, ctx);
+                            ContentParser.Results parsedContent = p.parse();
+                            parsedContent.getLinks().stream().forEach(link -> {
+                                Item i = itemRepo.findByUri(link.getUri()).orElseGet(() -> {
+                                    SemanticUriPath tmpPath = catRepo.findByUri(link.getPath()).orElse(link.getPath());
+                                    LOGGER.debug("Found link in content with path {} and name {}", tmpPath, link.getUri().getName());
+                                    Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));
+                                    return itemRepo.save(tmpItem);
+                                });
+                                builder.reference(i, link.getType());
+                            });
+                            parsedContent.getMetadata().forEach((k, v) -> {
+                                LOGGER.debug("Found metadata in content with key {} and value {}", k, v);
+                                builder.metadata(k, v);
+                            });
+                        }
+                    }
                 });
             });
             return null;

@@ -27,7 +27,6 @@ dependencies {
     compile 'com.querydsl:querydsl-apt:' + querydslVersion + ':jpa'
     compile 'com.querydsl:querydsl-jpa:' + querydslVersion;
     compile 'org.hibernate:hibernate-entitymanager:' + hibernateVersion
-    compile 'org.apache.commons:commons-vfs2:' + commonsVfsVersion
     compile 'org.aeonbits.owner:owner:' + ownerVersion;
     compile 'org.aeonbits.owner:owner-java8:' + ownerVersion;
     compile ('io.swagger:swagger-jersey2-jaxrs:' + swaggerVersion) {
@@ -43,5 +42,6 @@ dependencies {
     testCompile 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
 
     integrationTestCompile project(':util')
+    integrationTestCompile project(':spi')
     integrationTestCompile project(':test')
 }
