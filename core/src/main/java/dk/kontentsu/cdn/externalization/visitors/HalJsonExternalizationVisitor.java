@@ -23,7 +23,7 @@
  */
 package dk.kontentsu.cdn.externalization.visitors;
 
-import static dk.kontentsu.cdn.parsers.HalJsonParser.*;
+import static dk.kontentsu.cdn.parsers.HalJsonContent.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -187,6 +187,7 @@ public class HalJsonExternalizationVisitor implements ExternalizationVisitor {
      */
     private static class Counter {
 
+        @SuppressWarnings("PMD.UseConcurrentHashMap")
         final Map<String, AtomicInteger> counter = new HashMap<>();
 
         AtomicInteger getAtomic(final String key) {

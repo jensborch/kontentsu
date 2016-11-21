@@ -173,7 +173,7 @@ public class UploadService {
                 .to(uploadeItem.getInterval().getTo());
 
         ContentContext.execute(() -> {
-            Set<Bean<?>> beans = bm.getBeans(ContentParser.class, new AnnotationLiteral<Any>() {});
+            Set<Bean<?>> beans = bm.getBeans(ContentParser.class, new AnnotationLiteral<Any>() { });
             beans.forEach(b -> {
                 Set<Annotation> qualifiers = b.getQualifiers();
                 qualifiers.forEach(q -> {

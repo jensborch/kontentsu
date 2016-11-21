@@ -107,6 +107,7 @@ public class ScheduledExternalizerService {
     }
 
     @Timeout
+    @SuppressWarnings("PMD.UseConcurrentHashMap")
     public void execute(final Timer timer) {
         ZonedDateTime time = getZonedDateTimeFromExpression(timer.getSchedule());
         LOGGER.info("Publishing externalised files available at: {}", time.format(DateTimeFormatter.ISO_DATE_TIME));

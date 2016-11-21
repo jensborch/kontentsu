@@ -23,6 +23,8 @@
  */
 package dk.kontentsu.cdn.parsers;
 
+import static dk.kontentsu.cdn.parsers.HalJsonContent.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +55,7 @@ import dk.kontentsu.cdn.spi.Parsable;
  */
 @ContentScoped
 @MimeType(type = "application/hal+json")
-public class HalJsonParser implements ContentParser, HalJsonContent {
+public class HalJsonParser implements ContentParser {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HalJsonParser.class);
