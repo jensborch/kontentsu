@@ -11,14 +11,14 @@ import java.util.List;
  */
 public final class HalJsonContent {
 
-    public final static String JSON_COMPOSITION = "composition";
-    public final static String JSON_COMPOSITION_TYPE = "composition-type";
-    public final static String JSON_CONTENT = "content";
-    public final static String JSON_HREF = "href";
-    public final static String JSON_LINKS = "_links";
-    public final static List<String> JSON_METADATA = Collections.unmodifiableList(Arrays.asList(new String[]{"seo"}));
-    public final static String JSON_REF = "ref";
-    public final static String JSON_SELF_LINK = "self";
+    public static final String JSON_COMPOSITION = "composition";
+    public static final String JSON_COMPOSITION_TYPE = "composition-type";
+    public static final String JSON_CONTENT = "content";
+    public static final String JSON_HREF = "href";
+    public static final String JSON_LINKS = "_links";
+    public static final List<String> JSON_METADATA = Collections.unmodifiableList(Arrays.asList(new String[]{"seo"}));
+    public static final String JSON_REF = "ref";
+    public static final String JSON_SELF_LINK = "self";
 
     private HalJsonContent() {
     }
