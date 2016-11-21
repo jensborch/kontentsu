@@ -28,7 +28,6 @@ import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.spi.AlterableContext;
@@ -53,7 +52,7 @@ public class ContentContext implements AlterableContext, Serializable {
     private static final ThreadLocal<Map<Contextual<?>, Instance<?>>> INSTANCES = new ThreadLocal<>();
     private static final ThreadLocal<Parsable> CONTENT = new ThreadLocal<>();
 
-    public static <X> X execute(final Supplier<X> task, final Parsable content) {
+    public static void execute(final ContentContextTask task, final Parsable content) {
         LOGGER.debug("Starting content CDI context");
         Map<Contextual<?>, Instance<?>> map = INSTANCES.get();
         ContentContext.CONTENT.set(content);
@@ -62,7 +61,7 @@ public class ContentContext implements AlterableContext, Serializable {
             INSTANCES.set(map);
         }
         try {
-            return task.get();
+            task.run();
         } finally {
             ContentContext.CONTENT.remove();
             map.values().stream().forEach(Instance::destroy);

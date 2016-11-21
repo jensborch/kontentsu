@@ -200,7 +200,6 @@ public class UploadService {
                     }
                 });
             });
-            return null;
         }, content);
 
         Version version = builder.build();

@@ -31,6 +31,7 @@ public class ScopeTest {
 
     @Test
     public void testScope() throws Exception {
+
         Parsable content = new Parsable() {
 
             private final static String DATA = "scope test";
@@ -55,11 +56,12 @@ public class ScopeTest {
                 throw new UnsupportedOperationException("Not supported for test");
             }
         };
-        Object result = ContentContext.execute(() -> {
-            return bean.uppercase();
+        final StringBuilder result = new StringBuilder();
+        ContentContext.execute(() -> {
+            result.append(bean.uppercase());
         }, content);
         assertNotNull(result);
-        assertEquals("SCOPE TEST", result);
+        assertEquals("SCOPE TEST", result.toString());
     }
 
     @Test(expected = ContextNotActiveException.class)
