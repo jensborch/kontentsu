@@ -164,6 +164,21 @@ public class UploadService {
         }
     }
 
+    private static boolean isSameMimeType(final Annotation annotation, final dk.kontentsu.cdn.model.MimeType type) {
+        return annotation.annotationType() == MimeType.class && ((MimeType) annotation).type().equals(type.toString());
+    }
+
+    private ContentParser getContentParser(final Bean<?> b) {
+        CreationalContext<?> ctx = bm.createCreationalContext(b);
+        ContentParser p = (ContentParser) bm.getReference(b, ContentParser.class, ctx);
+        return p;
+    }
+
+    private Set<Bean<?>> findAnyContentParserBeans() {
+        return bm.getBeans(ContentParser.class, new AnnotationLiteral<Any>() {
+        });
+    }
+
     private Version addVersion(final Item item, final UploadItem uploadeItem) {
         Content content = itemRepo.saveContent(uploadeItem.getContent(), uploadeItem.getEncoding(), uploadeItem.getMimeType());
 
@@ -173,30 +188,10 @@ public class UploadService {
                 .to(uploadeItem.getInterval().getTo());
 
         ContentContext.execute(() -> {
-            Set<Bean<?>> beans = bm.getBeans(ContentParser.class, new AnnotationLiteral<Any>() { });
-            beans.forEach(b -> {
-                Set<Annotation> qualifiers = b.getQualifiers();
-                qualifiers.forEach(q -> {
-                    if (q.annotationType() == MimeType.class) {
-                        String type = ((MimeType) q).type();
-                        if (type.equals(content.getMimeType().toString())) {
-                            CreationalContext<?> ctx = bm.createCreationalContext(b);
-                            ContentParser p = (ContentParser) bm.getReference(b, ContentParser.class, ctx);
-                            ContentParser.Results parsedContent = p.parse();
-                            parsedContent.getLinks().stream().forEach(link -> {
-                                Item i = itemRepo.findByUri(link.getUri()).orElseGet(() -> {
-                                    SemanticUriPath tmpPath = catRepo.findByUri(link.getPath()).orElse(link.getPath());
-                                    LOGGER.debug("Found link in content with path {} and name {}", tmpPath, link.getUri().getName());
-                                    Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));
-                                    return itemRepo.save(tmpItem);
-                                });
-                                builder.reference(i, link.getType());
-                            });
-                            parsedContent.getMetadata().forEach((k, v) -> {
-                                LOGGER.debug("Found metadata in content with key {} and value {}", k, v);
-                                builder.metadata(k, v);
-                            });
-                        }
+            findAnyContentParserBeans().forEach(bean -> {
+                bean.getQualifiers().forEach(q -> {
+                    if (isSameMimeType(q, content.getMimeType())) {
+                        parse(getContentParser(bean), builder);
                     }
                 });
             });
@@ -208,4 +203,20 @@ public class UploadService {
         return version;
     }
 
+    private void parse(final ContentParser parser, final Version.Builder builder) {
+        ContentParser.Results parsedContent = parser.parse();
+        parsedContent.getLinks().stream().forEach(link -> {
+            Item i = itemRepo.findByUri(link.getUri()).orElseGet(() -> {
+                SemanticUriPath tmpPath = catRepo.findByUri(link.getPath()).orElse(link.getPath());
+                LOGGER.debug("Found link in content with path {} and name {}", tmpPath, link.getUri().getName());
+                Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));
+                return itemRepo.save(tmpItem);
+            });
+            builder.reference(i, link.getType());
+        });
+        parsedContent.getMetadata().forEach((k, v) -> {
+            LOGGER.debug("Found metadata in content with key {} and value {}", k, v);
+            builder.metadata(k, v);
+        });
+    }
 }
