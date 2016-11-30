@@ -28,7 +28,7 @@ import dk.kontentsu.cdn.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.cdn.api.exceptionmappers.ContainerExceptionMapper;
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.ExternalFile;
-import dk.kontentsu.cdn.model.MimeType;
+import dk.kontentsu.cdn.spi.MimeType;
 import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.internal.Item;
 import dk.kontentsu.cdn.repository.ExternalFileRepository;

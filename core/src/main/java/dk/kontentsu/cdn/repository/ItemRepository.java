@@ -45,7 +45,7 @@ import org.hibernate.internal.SessionImpl;
 
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.ContentException;
-import dk.kontentsu.cdn.model.MimeType;
+import dk.kontentsu.cdn.spi.MimeType;
 import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.State;
 import dk.kontentsu.cdn.model.internal.Item;

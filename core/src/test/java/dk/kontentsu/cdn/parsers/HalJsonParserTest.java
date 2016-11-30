@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import dk.kontentsu.cdn.model.Content;
-import dk.kontentsu.cdn.model.MimeType;
+import dk.kontentsu.cdn.spi.MimeType;
 import dk.kontentsu.cdn.model.internal.Metadata;
 import dk.kontentsu.cdn.model.internal.MetadataType;
 import dk.kontentsu.cdn.upload.ContentTestData;

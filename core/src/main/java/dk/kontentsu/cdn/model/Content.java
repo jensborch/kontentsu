@@ -23,6 +23,9 @@
  */
 package dk.kontentsu.cdn.model;
 
+import dk.kontentsu.cdn.repository.Repository;
+import dk.kontentsu.cdn.spi.MimeType;
+import dk.kontentsu.cdn.spi.Parsable;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -33,7 +36,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
-
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,9 +48,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import dk.kontentsu.cdn.repository.Repository;
-import dk.kontentsu.cdn.spi.Parsable;
 
 /**
  * Container for the content distributed to the CDN server.
@@ -94,6 +93,10 @@ public class Content implements Serializable, Parsable {
 
     protected Content() {
         //Needed by JPA
+    }
+
+    public Content(final byte[] content, final Charset encoding, final String mimeType) {
+        this(content, encoding, MimeType.parse(mimeType));
     }
 
     public Content(final byte[] content, final Charset encoding, final MimeType mimeType) {
@@ -156,7 +159,8 @@ public class Content implements Serializable, Parsable {
     }
 
     /**
-     * Hash to hex string - verified using http://hash.online-convert.com/md5-generator
+     * Hash to hex string - verified using
+     * http://hash.online-convert.com/md5-generator
      */
     private static String toHex(final byte[] digest) {
         return String.format("%0" + (digest.length << 1) + "x", new BigInteger(1, digest));

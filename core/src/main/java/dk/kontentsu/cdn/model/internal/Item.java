@@ -57,7 +57,7 @@ import dk.kontentsu.cdn.exception.ValidationException;
 import dk.kontentsu.cdn.jpa.AbstractBaseEntity;
 import dk.kontentsu.cdn.model.ExternalFile;
 import dk.kontentsu.cdn.model.Interval;
-import dk.kontentsu.cdn.model.MimeType;
+import dk.kontentsu.cdn.spi.MimeType;
 import dk.kontentsu.cdn.model.QContent;
 import dk.kontentsu.cdn.model.QSemanticUriPath;
 import dk.kontentsu.cdn.model.SemanticUri;

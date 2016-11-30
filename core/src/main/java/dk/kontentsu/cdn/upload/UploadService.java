@@ -55,7 +55,7 @@ import dk.kontentsu.cdn.repository.CategoryRepository;
 import dk.kontentsu.cdn.repository.HostRepository;
 import dk.kontentsu.cdn.repository.ItemRepository;
 import dk.kontentsu.cdn.spi.ContentContext;
-import dk.kontentsu.cdn.spi.MimeType;
+import dk.kontentsu.cdn.spi.MimeTypeQualifier;
 
 /**
  * Service facade for performing various operations on CDN items - like uploading new items.
@@ -164,8 +164,8 @@ public class UploadService {
         }
     }
 
-    private static boolean isSameMimeType(final Annotation annotation, final dk.kontentsu.cdn.model.MimeType type) {
-        return annotation.annotationType() == MimeType.class && ((MimeType) annotation).type().equals(type.toString());
+    private static boolean isSameMimeType(final Annotation annotation, final dk.kontentsu.cdn.spi.MimeType type) {
+        return annotation.annotationType() == MimeTypeQualifier.class && ((MimeTypeQualifier) annotation).type().equals(type.toString());
     }
 
     private ContentParser getContentParser(final Bean<?> b) {

@@ -6,7 +6,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Interface for CDN content that can be processed by a parser - e.g. a CDI bean using the {@link ContentScoped} scope.
+ * Interface for CDN content that can be processed by a parser - e.g. a CDI bean
+ * using the {@link ContentScoped} scope.
  *
  * @author Jens Borch Christiansen
  */
@@ -19,5 +20,7 @@ public interface Parsable {
     InputStream getDataAsBinaryStream();
 
     String getData();
+
+    MimeType getMimeType();
 
 }

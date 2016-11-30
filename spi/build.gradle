@@ -3,6 +3,7 @@ jar {
 }
 
 dependencies {
+    compile 'com.querydsl:querydsl-apt:' + querydslVersion + ':jpa'
     compile 'org.apache.tomee:javaee-api:' + javaeeVersion
 
     testCompile project(':test')

@@ -24,7 +24,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.ExternalFile;
-import dk.kontentsu.cdn.model.MimeType;
+import dk.kontentsu.cdn.spi.MimeType;
 import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.internal.Host;
 import dk.kontentsu.cdn.model.internal.Item;

@@ -1,19 +1,16 @@
 package dk.kontentsu.cdn.spi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
-
 import javax.inject.Inject;
-
 import org.jboss.weld.context.ContextNotActiveException;
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.CdiRunner;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -54,6 +51,11 @@ public class ScopeTest {
             @Override
             public UUID getUuid() {
                 throw new UnsupportedOperationException("Not supported for test");
+            }
+
+            @Override
+            public MimeType getMimeType() {
+                return MimeType.APPLICATION_JSON_TYPE;
             }
         };
         final StringBuilder result = new StringBuilder();

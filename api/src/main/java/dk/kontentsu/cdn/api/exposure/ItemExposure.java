@@ -81,7 +81,7 @@ import dk.kontentsu.cdn.api.model.VersionLinkRepresentation;
 import dk.kontentsu.cdn.api.model.VersionRepresentation;
 import dk.kontentsu.cdn.exception.ValidationException;
 import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
-import dk.kontentsu.cdn.model.MimeType;
+import dk.kontentsu.cdn.spi.MimeType;
 import dk.kontentsu.cdn.model.internal.Item.Criteria;
 import dk.kontentsu.cdn.repository.ItemRepository;
 import dk.kontentsu.cdn.upload.UploadItem;

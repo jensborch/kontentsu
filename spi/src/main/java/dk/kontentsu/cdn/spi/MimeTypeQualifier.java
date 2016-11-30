@@ -21,32 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.cdn.jackson;
+package dk.kontentsu.cdn.spi;
 
-import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import dk.kontentsu.cdn.spi.MimeType;
+import javax.inject.Qualifier;
 
 /**
- * Jackson serializer for {@link dk.kontentsu.cdn.spi.MimeType} objects.
+ * Mime type qualifier for content parsers. Use this to specify the mime type a given parser can handle.
  *
  * @author Jens Borch Christiansen
  */
-public class MimeTypeSerializer extends StdSerializer<MimeType> {
+@Qualifier
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
+public @interface MimeTypeQualifier {
 
-    private static final long serialVersionUID = 6036713960773087294L;
-
-    public MimeTypeSerializer() {
-        super(MimeType.class);
-    }
-
-    @Override
-    public void serialize(final MimeType value, final JsonGenerator jgen, final SerializerProvider provider) throws IOException, JsonGenerationException {
-        jgen.writeString(value.toString());
-    }
-
+    String type() default "";
 }

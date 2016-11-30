@@ -1,7 +1,7 @@
 package dk.kontentsu.cdn.model;
 
 import dk.kontentsu.cdn.model.SemanticUri;
-import dk.kontentsu.cdn.model.MimeType;
+import dk.kontentsu.cdn.spi.MimeType;
 import dk.kontentsu.cdn.model.Content;
 
 import static org.junit.Assert.assertEquals;

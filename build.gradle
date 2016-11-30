@@ -29,6 +29,7 @@ ext {
     commonsVfsVersion = '2.1'
     cacheApiversion = '1.0.0'
     hashidsVersion = '1.0.1'
+    esapiVersion = '2.1.0.1'
 
     swaggerUiVersion = '2.2.6'
     swaggerVersion = '1.5.10'

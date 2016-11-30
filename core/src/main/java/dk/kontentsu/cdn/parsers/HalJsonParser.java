@@ -45,8 +45,8 @@ import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.internal.Metadata;
 import dk.kontentsu.cdn.model.internal.ReferenceType;
 import dk.kontentsu.cdn.spi.ContentScoped;
-import dk.kontentsu.cdn.spi.MimeType;
 import dk.kontentsu.cdn.spi.Parsable;
+import dk.kontentsu.cdn.spi.MimeTypeQualifier;
 
 /**
  * Parser for HAL+JSON CDN content. The parser will find metadata and compositions in the data.
@@ -54,7 +54,7 @@ import dk.kontentsu.cdn.spi.Parsable;
  * @author Jens Borch Christiansen
  */
 @ContentScoped
-@MimeType(type = "application/hal+json")
+@MimeTypeQualifier(type = "application/hal+json")
 public class HalJsonParser implements ContentParser {
 
 

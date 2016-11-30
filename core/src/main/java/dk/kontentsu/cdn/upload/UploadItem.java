@@ -34,7 +34,7 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import dk.kontentsu.cdn.model.Interval;
-import dk.kontentsu.cdn.model.MimeType;
+import dk.kontentsu.cdn.spi.MimeType;
 import dk.kontentsu.cdn.model.SemanticUri;
 
 /**

@@ -37,6 +37,17 @@ dependencies {
         exclude group: 'com.fasterxml.jackson.datatype'
         exclude group: 'com.fasterxml.jackson.core'
     }
+    
+    compile 'org.apache.logging.log4j:log4j-1.2-api:' + log4jVersion
+    compile ('org.owasp.esapi:esapi:' + esapiVersion) {
+          exclude group: 'log4j'
+          exclude group: 'xom'
+          exclude group: 'xml-apis'
+          exclude group: 'xerces'
+          exclude group: 'org.apache.xmlgraphics'
+          exclude group: 'commons-logging'
+          exclude group: 'commons-io'
+    }
 
     testCompile project(':test')
     testCompile 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
