@@ -1,20 +1,17 @@
-package dk.kontentsu.cdn.model;
+package dk.kontentsu.cdn.spi;
 
-import dk.kontentsu.cdn.spi.MimeType;
-import static org.junit.Assert.*;
-
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.ws.rs.core.MediaType;
-
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
- * Test of {@link dk.kontentsu.cdn.model.MimeType}
+ * Test of {@link MimeType}
  */
 public class MimeTypeTest {
 
@@ -73,20 +70,50 @@ public class MimeTypeTest {
     }
 
     @Test
-    public void match() {
+    public void matches() {
+        String test = "text/*";
+        assertFalse(MimeType.parse("application/pdf").matches(test));
+        assertFalse(MimeType.parse("application/*").matches(test));
+        assertTrue(MimeType.parse("text/html").matches(test));
+        assertTrue(MimeType.parse("text/*").matches(test));
+        assertFalse(MimeType.parse("text/*").matches((MimeType) null));
+        assertFalse(MimeType.parse("text/*").matches("invalid"));
+    }
+
+    @Test
+    public void matchesAnnotation() {
+        ContentProcessingMimeType annotation = new ContentProcessingMimeType() {
+            @Override
+            public String[] value() {
+                return new String[]{"application/json", "text/*"};
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return ContentProcessingMimeType.class;
+            }
+        };
+        assertFalse(MimeType.parse("application/pdf").matches(annotation));
+        assertTrue(MimeType.parse("application/*").matches(annotation));
+        assertTrue(MimeType.parse("application/json").matches(annotation));
+        assertTrue(MimeType.parse("text/css").matches(annotation));
+    }
+
+    @Test
+    public void matchHeader() {
         String test = "text/css,*/*;q=0.1";
         assertTrue(MimeType.parse("application/pdf").matchesHeader(test));
     }
 
     @Test
-    public void goodMatch() {
+    public void goodMatchHeader() {
         String test = "text/css,*/*;q=0.1";
         assertTrue(MimeType.parse("text/css").matchesHeader(test));
     }
 
     @Test
-    public void noMatch() {
-        String test = "text/css,applocation/*;q=0.1";
+    public void noMatchHeader() {
+        String test = "text/css,application/*;q=0.1";
         assertFalse(MimeType.parse("text/html").matchesHeader(test));
     }
 

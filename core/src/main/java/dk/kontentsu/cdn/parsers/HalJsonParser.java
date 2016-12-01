@@ -23,8 +23,16 @@
  */
 package dk.kontentsu.cdn.parsers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
+import dk.kontentsu.cdn.model.SemanticUri;
+import dk.kontentsu.cdn.model.internal.Metadata;
+import dk.kontentsu.cdn.model.internal.ReferenceType;
 import static dk.kontentsu.cdn.parsers.HalJsonContent.*;
-
+import dk.kontentsu.cdn.spi.ContentProcessingMimeType;
+import dk.kontentsu.cdn.spi.ContentProcessingScoped;
+import dk.kontentsu.cdn.spi.Parsable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,29 +40,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
-import dk.kontentsu.cdn.model.SemanticUri;
-import dk.kontentsu.cdn.model.internal.Metadata;
-import dk.kontentsu.cdn.model.internal.ReferenceType;
-import dk.kontentsu.cdn.spi.ContentScoped;
-import dk.kontentsu.cdn.spi.Parsable;
-import dk.kontentsu.cdn.spi.MimeTypeQualifier;
 
 /**
  * Parser for HAL+JSON CDN content. The parser will find metadata and compositions in the data.
  *
  * @author Jens Borch Christiansen
  */
-@ContentScoped
-@MimeTypeQualifier(type = "application/hal+json")
+@ContentProcessingScoped
+@ContentProcessingMimeType({"application/hal+json"})
 public class HalJsonParser implements ContentParser {
 
 
@@ -62,7 +58,7 @@ public class HalJsonParser implements ContentParser {
     private final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
     @Inject
-    @ContentScoped
+    @ContentProcessingScoped
     private Parsable content;
 
     @Override

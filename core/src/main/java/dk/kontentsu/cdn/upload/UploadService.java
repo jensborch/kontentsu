@@ -23,26 +23,6 @@
  */
 package dk.kontentsu.cdn.upload;
 
-import java.lang.annotation.Annotation;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Inject;
-import javax.validation.Valid;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dk.kontentsu.cdn.externalization.ExternalizerService;
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.SemanticUri;
@@ -55,10 +35,24 @@ import dk.kontentsu.cdn.repository.CategoryRepository;
 import dk.kontentsu.cdn.repository.HostRepository;
 import dk.kontentsu.cdn.repository.ItemRepository;
 import dk.kontentsu.cdn.spi.ContentContext;
-import dk.kontentsu.cdn.spi.MimeTypeQualifier;
+import dk.kontentsu.cdn.spi.ContentProcessingMimeType;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Service facade for performing various operations on CDN items - like uploading new items.
+ * Service facade for performing various operations on CDN items - like
+ * uploading new items.
  *
  * @author Jens Borch Christiansen
  */
@@ -83,7 +77,7 @@ public class UploadService {
     private UploadService self;
 
     @Inject
-    private BeanManager bm;
+    private Instance<ContentParser> parsers;
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
 
@@ -164,21 +158,6 @@ public class UploadService {
         }
     }
 
-    private static boolean isSameMimeType(final Annotation annotation, final dk.kontentsu.cdn.spi.MimeType type) {
-        return annotation.annotationType() == MimeTypeQualifier.class && ((MimeTypeQualifier) annotation).type().equals(type.toString());
-    }
-
-    private ContentParser getContentParser(final Bean<?> b) {
-        CreationalContext<?> ctx = bm.createCreationalContext(b);
-        ContentParser p = (ContentParser) bm.getReference(b, ContentParser.class, ctx);
-        return p;
-    }
-
-    private Set<Bean<?>> findAnyContentParserBeans() {
-        return bm.getBeans(ContentParser.class, new AnnotationLiteral<Any>() {
-        });
-    }
-
     private Version addVersion(final Item item, final UploadItem uploadeItem) {
         Content content = itemRepo.saveContent(uploadeItem.getContent(), uploadeItem.getEncoding(), uploadeItem.getMimeType());
 
@@ -188,10 +167,10 @@ public class UploadService {
                 .to(uploadeItem.getInterval().getTo());
 
         ContentContext.execute(() -> {
-            findAnyContentParserBeans().forEach(bean -> {
-                bean.getQualifiers().forEach(q -> {
-                    if (isSameMimeType(q, content.getMimeType())) {
-                        parse(getContentParser(bean), builder);
+            parsers.iterator().forEachRemaining(p -> {
+                Arrays.stream(p.getClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
+                    if (content.getMimeType().matches(a)) {
+                        parse(p, builder);
                     }
                 });
             });

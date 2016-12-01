@@ -32,6 +32,8 @@ import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
 import dk.kontentsu.cdn.model.internal.Version;
 import static dk.kontentsu.cdn.parsers.HalJsonContent.*;
+import dk.kontentsu.cdn.spi.ContentProcessingMimeType;
+import dk.kontentsu.cdn.spi.ContentProcessingScoped;
 import dk.kontentsu.cdn.spi.Parsable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -50,6 +52,8 @@ import javax.inject.Inject;
  *
  * @author Jens Borch Christiansen
  */
+@ContentProcessingScoped
+@ContentProcessingMimeType({"application/hal+json"})
 public class CdiHalJsonExternalizationVisitor implements ExternalizationVisitor {
 
     private JsonNode pageNode;

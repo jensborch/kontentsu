@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Context implementation for the {@link ContentScoped} scope annotation.
+ * Context implementation for the {@link ContentProcessingScoped} scope annotation.
  *
  * @author Jens Borch Christiansen
  */
@@ -85,7 +85,7 @@ public class ContentContext implements AlterableContext, Serializable {
     @SuppressWarnings("unchecked")
     public <T> T get(final Contextual<T> contextual, final CreationalContext<T> creationalContext) {
         if (!isActive()) {
-            throw new ContextNotActiveException(ContentScoped.class.getName() + " is not active.");
+            throw new ContextNotActiveException(ContentProcessingScoped.class.getName() + " is not active.");
         }
         Map<Contextual<?>, Instance<?>> localMap = INSTANCES.get();
 
@@ -96,14 +96,14 @@ public class ContentContext implements AlterableContext, Serializable {
     @SuppressWarnings("unchecked")
     public <T> T get(final Contextual<T> contextual) {
         if (!isActive()) {
-            throw new ContextNotActiveException(ContentScoped.class.getName() + " is not active.");
+            throw new ContextNotActiveException(ContentProcessingScoped.class.getName() + " is not active.");
         }
         return (T) Optional.ofNullable(INSTANCES.get().get(contextual)).map(i -> i.bean).orElse(null);
     }
 
     @Override
     public Class<? extends Annotation> getScope() {
-        return ContentScoped.class;
+        return ContentProcessingScoped.class;
     }
 
     @Override

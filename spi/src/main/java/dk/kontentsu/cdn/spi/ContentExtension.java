@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * CDI extension for {@link ContentScoped}.
+ * CDI extension for {@link ContentProcessingScoped}.
  *
  * @author Jens Borch Christiansen
  */
@@ -49,7 +49,7 @@ public class ContentExtension implements Extension, Serializable {
 
     public void beforeBeanDiscovery(@Observes final BeforeBeanDiscovery event) {
         LOGGER.info("Adding content CDI scope...");
-        event.addScope(ContentScoped.class, true, false);
+        event.addScope(ContentProcessingScoped.class, true, false);
     }
 
     public void afterBeanDiscovery(@Observes final AfterBeanDiscovery event) {

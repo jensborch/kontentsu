@@ -20,11 +20,11 @@ import org.junit.runner.RunWith;
  * @author Jens Borch Christiansen
  */
 @RunWith(CdiRunner.class)
-@AdditionalClasses({ContentScopedBean.class, ContentExtension.class, ContentProducer.class})
+@AdditionalClasses({ContentProcessingScopedBean.class, ContentExtension.class, ContentProducer.class})
 public class ScopeTest {
 
     @Inject
-    private ContentScopedBean bean;
+    private ContentProcessingScopedBean bean;
 
     @Test
     public void testScope() throws Exception {

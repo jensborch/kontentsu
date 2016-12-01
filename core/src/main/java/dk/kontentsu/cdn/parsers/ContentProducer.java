@@ -30,11 +30,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.kontentsu.cdn.spi.ContentContext;
-import dk.kontentsu.cdn.spi.ContentScoped;
 import dk.kontentsu.cdn.spi.Parsable;
+import dk.kontentsu.cdn.spi.ContentProcessingScoped;
 
 /**
- * Producer for injection content into a CDI bean that is annotated with {@link ContentScoped}.
+ * Producer for injection content into a CDI bean that is annotated with {@link ContentProcessingScoped}.
  *
  * @author Jens Borch Christiansen
  */
@@ -48,7 +48,7 @@ public class ContentProducer {
     }
 
     @Produces
-    @ContentScoped
+    @ContentProcessingScoped
     public Parsable getContent() {
         LOGGER.debug("Injecting content into class");
         return ContentContext.getContent();

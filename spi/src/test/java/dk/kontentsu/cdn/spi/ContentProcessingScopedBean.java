@@ -8,8 +8,8 @@ import javax.inject.Inject;
  *
  * @author Jens Borch Christiansen
  */
-@ContentScoped
-public class ContentScopedBean {
+@ContentProcessingScoped
+public class ContentProcessingScopedBean {
 
     @Inject
     private Parsable content;

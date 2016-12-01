@@ -24,9 +24,11 @@
 package dk.kontentsu.cdn.spi;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +37,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
@@ -43,11 +44,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.core.MediaType;
 
-
 /**
- * Class representing the content Mime Type of a item in the CDN, but also serves the purpose of parsing accept headers.
+ * Class representing the content Mime Type of a item in the CDN, but also
+ * serves the purpose of parsing accept headers.
  *
- * @see <a href="http://tools.ietf.org/html/rfc6838">RFC Media Type Specification</a>
+ * @see <a href="http://tools.ietf.org/html/rfc6838">RFC Media Type
+ * Specification</a>
  *
  * @author Jens Borch Christiansen
  */
@@ -116,8 +118,9 @@ public class MimeType implements Serializable {
     }
 
     /**
-     * Parses a mime type including media range and returns a MediaType object. For example, the media range 'application/*;q=0.5' would get parsed into: ('application', '*', {'q',
-     * '0.5'}).
+     * Parses a mime type string including media range and returns a MimeType
+     * object. For example, the media range 'application/*;q=0.5' would get
+     * parsed into: ('application', '*', {'q', '0.5'}).
      *
      * @param mimeType the mime type to parse
      * @return a MimeType object
@@ -180,14 +183,44 @@ public class MimeType implements Serializable {
         return (charset == null) ? Optional.empty() : Optional.of(Charset.forName(charset));
     }
 
-    public boolean matches(final String type, final String typeFromRange) {
-        return type.equals(typeFromRange) || "*".equals(typeFromRange) || "*".equals(type);
+    private boolean matches(final String type1, final String type2) {
+        return type1.equals(type2) || "*".equals(type2) || "*".equals(type1);
     }
 
-    public boolean matches(final MimeType range) {
-        return range != null && matches(getType(), range.getType()) && matches(getSubType(), range.getSubType());
+    public boolean matches(final String type) {
+        try {
+            return type != null && matches(MimeType.parse(type));
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
+    /**
+     * Check if this mime type matches another mime type. This will perform a
+     * match using wildcards, thus application&#47* will match
+     * application&#47json and *&#47* will match everything.
+     *
+     * @param other the mim type to match
+     * @return true if the types matches
+     */
+    public boolean matches(final MimeType other) {
+        return other != null && matches(getType(), other.getType()) && matches(getSubType(), other.getSubType());
+    }
+
+    public boolean matches(final Annotation annotation) {
+        return annotation.annotationType() == ContentProcessingMimeType.class
+                && Arrays.stream(((ContentProcessingMimeType) annotation).value())
+                        .filter(t -> matches(t))
+                        .findAny()
+                        .isPresent();
+    }
+
+    /**
+     * Check if a request header matches the given mime type.
+     *
+     * @param header the header string to check
+     * @return true if the header matches the mime type
+     */
     public boolean matchesHeader(final String header) {
         if (header == null || header.trim().isEmpty()) {
             return true;
