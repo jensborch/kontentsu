@@ -44,7 +44,11 @@ import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.inject.Instance;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import org.slf4j.Logger;
@@ -77,7 +81,7 @@ public class UploadService {
     private UploadService self;
 
     @Inject
-    private Instance<ContentParser> parsers;
+    private BeanManager bm;
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
 
@@ -158,6 +162,17 @@ public class UploadService {
         }
     }
 
+    private ContentParser getContentParser(final Bean<?> b) {
+        CreationalContext<?> ctx = bm.createCreationalContext(b);
+        ContentParser p = (ContentParser) bm.getReference(b, ContentParser.class, ctx);
+        return p;
+    }
+
+    private Set<Bean<?>> findAnyContentParserBeans() {
+        return bm.getBeans(ContentParser.class, new AnnotationLiteral<Any>() {
+        });
+    }
+
     private Version addVersion(final Item item, final UploadItem uploadeItem) {
         Content content = itemRepo.saveContent(uploadeItem.getContent(), uploadeItem.getEncoding(), uploadeItem.getMimeType());
 
@@ -167,10 +182,10 @@ public class UploadService {
                 .to(uploadeItem.getInterval().getTo());
 
         ContentContext.execute(() -> {
-            parsers.iterator().forEachRemaining(p -> {
-                Arrays.stream(p.getClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
+            findAnyContentParserBeans().forEach(bean -> {
+                Arrays.stream(bean.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
                     if (content.getMimeType().matches(a)) {
-                        parse(p, builder);
+                        parse(getContentParser(bean), builder);
                     }
                 });
             });

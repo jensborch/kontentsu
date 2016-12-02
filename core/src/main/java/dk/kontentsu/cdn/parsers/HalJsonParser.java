@@ -58,7 +58,6 @@ public class HalJsonParser implements ContentParser {
     private final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
     @Inject
-    @ContentProcessingScoped
     private Parsable content;
 
     @Override
