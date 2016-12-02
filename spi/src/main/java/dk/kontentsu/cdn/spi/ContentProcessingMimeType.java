@@ -29,8 +29,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Mime type qualifier for content parsers. Use this to specify the mime type a
- * given parser can handle.
+ * Used for specifying the Mime type for content parsing - i.e. use this to
+ * specify the mime type a given parser can handle.
  *
  * @author Jens Borch Christiansen
  */

@@ -24,6 +24,19 @@
  */
 package dk.kontentsu.cdn.model.internal;
 
+import com.querydsl.jpa.impl.JPAQuery;
+import dk.kontentsu.cdn.exception.ValidationException;
+import dk.kontentsu.cdn.jpa.AbstractBaseEntity;
+import dk.kontentsu.cdn.model.ExternalFile;
+import dk.kontentsu.cdn.model.Interval;
+import dk.kontentsu.cdn.model.QContent;
+import dk.kontentsu.cdn.model.QSemanticUriPath;
+import dk.kontentsu.cdn.model.SemanticUri;
+import dk.kontentsu.cdn.model.SemanticUriPath;
+import dk.kontentsu.cdn.model.State;
+import dk.kontentsu.cdn.model.Taxon;
+import dk.kontentsu.cdn.repository.Repository;
+import dk.kontentsu.cdn.spi.MimeType;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +45,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -48,23 +60,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.querydsl.jpa.impl.JPAQuery;
-import dk.kontentsu.cdn.exception.ValidationException;
-import dk.kontentsu.cdn.jpa.AbstractBaseEntity;
-import dk.kontentsu.cdn.model.ExternalFile;
-import dk.kontentsu.cdn.model.Interval;
-import dk.kontentsu.cdn.spi.MimeType;
-import dk.kontentsu.cdn.model.QContent;
-import dk.kontentsu.cdn.model.QSemanticUriPath;
-import dk.kontentsu.cdn.model.SemanticUri;
-import dk.kontentsu.cdn.model.SemanticUriPath;
-import dk.kontentsu.cdn.model.State;
-import dk.kontentsu.cdn.model.Taxon;
-import dk.kontentsu.cdn.repository.Repository;
 
 /**
  * An item that can externalized to the CDN - i.e. a file on the CDN.
