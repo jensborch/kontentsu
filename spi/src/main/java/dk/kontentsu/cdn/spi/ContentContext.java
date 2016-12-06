@@ -25,21 +25,20 @@ package dk.kontentsu.cdn.spi;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.spi.AlterableContext;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * Context implementation for the {@link ContentProcessingScoped} scope annotation.
+ * Context implementation for the {@link ContentProcessingScoped} scope
+ * annotation.
  *
  * @author Jens Borch Christiansen
  */
@@ -49,16 +48,22 @@ public class ContentContext implements AlterableContext, Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContentContext.class);
 
-    private static final ThreadLocal<Map<Contextual<?>, Instance<?>>> INSTANCES = new ThreadLocal<>();
+    private static final ThreadLocal<ArrayDeque<Map<Contextual<?>, Instance<?>>>> INSTANCES = new ThreadLocal<>();
     private static final ThreadLocal<Parsable> CONTENT = new ThreadLocal<>();
+
+    private static void initInstances() {
+        if (INSTANCES.get() == null) {
+            INSTANCES.set(new ArrayDeque<>());
+        }
+    }
 
     public static void execute(final ContentContextTask task, final Parsable content) {
         LOGGER.debug("Starting content CDI context");
-        Map<Contextual<?>, Instance<?>> map = INSTANCES.get();
-        ContentContext.CONTENT.set(content);
-        if (map == null) {
-            map = new HashMap<>();
-            INSTANCES.set(map);
+        initInstances();
+        Map<Contextual<?>, Instance<?>> map = new HashMap<>();
+        INSTANCES.get().push(map);
+        if (CONTENT.get() == null && content != null) {
+            CONTENT.set(content);
         }
         try {
             task.run();
@@ -66,9 +71,13 @@ public class ContentContext implements AlterableContext, Serializable {
             ContentContext.CONTENT.remove();
             map.values().stream().forEach(Instance::destroy);
             map.clear();
-            INSTANCES.remove();
+            INSTANCES.get().pop();
             LOGGER.debug("Stopping content CDI context");
         }
+    }
+
+    public static void execute(final ContentContextTask task) {
+        execute(task, null);
     }
 
     public static Parsable getContent() {
@@ -77,7 +86,7 @@ public class ContentContext implements AlterableContext, Serializable {
 
     @Override
     public void destroy(final Contextual<?> contextual) {
-        Optional.ofNullable(INSTANCES.get().get(contextual)).filter(c -> c.bean != null)
+        Optional.ofNullable(INSTANCES.get().peek().get(contextual)).filter(c -> c.bean != null)
                 .ifPresent(Instance::destroy);
     }
 
@@ -87,8 +96,7 @@ public class ContentContext implements AlterableContext, Serializable {
         if (!isActive()) {
             throw new ContextNotActiveException(ContentProcessingScoped.class.getName() + " is not active.");
         }
-        Map<Contextual<?>, Instance<?>> localMap = INSTANCES.get();
-
+        Map<Contextual<?>, Instance<?>> localMap = INSTANCES.get().peek();
         return (T) localMap.getOrDefault(contextual, new Instance<>(contextual, creationalContext)).create();
     }
 
@@ -98,7 +106,7 @@ public class ContentContext implements AlterableContext, Serializable {
         if (!isActive()) {
             throw new ContextNotActiveException(ContentProcessingScoped.class.getName() + " is not active.");
         }
-        return (T) Optional.ofNullable(INSTANCES.get().get(contextual)).map(i -> i.bean).orElse(null);
+        return (T) Optional.ofNullable(INSTANCES.get().peek().get(contextual)).map(i -> i.bean).orElse(null);
     }
 
     @Override
@@ -108,11 +116,7 @@ public class ContentContext implements AlterableContext, Serializable {
 
     @Override
     public boolean isActive() {
-        final boolean initialized = INSTANCES.get() != null;
-        if (!initialized) {
-            INSTANCES.remove();
-        }
-        return initialized;
+        return INSTANCES.get() != null && !INSTANCES.get().isEmpty();
     }
 
     /**
@@ -144,7 +148,6 @@ public class ContentContext implements AlterableContext, Serializable {
             if (bean == null) {
                 return;
             }
-
             contextual.destroy(bean, context);
             bean = null;
         }

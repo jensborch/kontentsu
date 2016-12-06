@@ -10,7 +10,9 @@ import org.jboss.weld.context.ContextNotActiveException;
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.CdiRunner;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -26,12 +28,15 @@ public class ScopeTest {
     @Inject
     private ContentProcessingScopedBean bean;
 
-    @Test
-    public void testScope() throws Exception {
+    private Parsable content;
 
-        Parsable content = new Parsable() {
+    @Before
+    public void setUp() {
+        content = new Parsable() {
 
             private final static String DATA = "scope test";
+
+            private UUID id = UUID.randomUUID();
 
             @Override
             public String getData() {
@@ -50,7 +55,7 @@ public class ScopeTest {
 
             @Override
             public UUID getUuid() {
-                throw new UnsupportedOperationException("Not supported for test");
+                return id;
             }
 
             @Override
@@ -58,12 +63,29 @@ public class ScopeTest {
                 return MimeType.APPLICATION_JSON_TYPE;
             }
         };
+    }
+
+    @Test
+    public void testScope() throws Exception {
         final StringBuilder result = new StringBuilder();
         ContentContext.execute(() -> {
             result.append(bean.uppercase());
         }, content);
         assertNotNull(result);
         assertEquals("SCOPE TEST", result.toString());
+    }
+
+    @Test
+    public void testNestedScope() throws Exception {
+        ContentContext.execute(() -> {
+            final int count = bean.getCount();
+            UUID outer = bean.getContent().getUuid();
+            assertNotEquals(1, count);
+            ContentContext.execute(() -> {
+                assertEquals(outer, bean.getContent().getUuid());
+                assertNotEquals(2, bean.getCount());
+            });
+        }, content);
     }
 
     @Test(expected = ContextNotActiveException.class)

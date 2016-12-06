@@ -2,7 +2,6 @@ package dk.kontentsu.cdn.spi;
 
 import javax.inject.Inject;
 
-
 /**
  * CDI bean for testing <code>ContentScoped</code>.
  *
@@ -11,8 +10,18 @@ import javax.inject.Inject;
 @ContentProcessingScoped
 public class ContentProcessingScopedBean {
 
+    private static int count = 1;
+
     @Inject
     private Parsable content;
+
+    public ContentProcessingScopedBean() {
+        count++;
+    }
+
+    public int getCount() {
+        return count;
+    }
 
     public Parsable getContent() {
         return content;

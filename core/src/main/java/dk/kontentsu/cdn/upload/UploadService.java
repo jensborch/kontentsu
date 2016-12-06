@@ -168,7 +168,7 @@ public class UploadService {
         return p;
     }
 
-    private Set<Bean<?>> findAnyContentParserBeans() {
+    private Set<Bean<?>> findAllContentParserBeans() {
         return bm.getBeans(ContentParser.class, new AnnotationLiteral<Any>() {
         });
     }
@@ -182,7 +182,7 @@ public class UploadService {
                 .to(uploadeItem.getInterval().getTo());
 
         ContentContext.execute(() -> {
-            findAnyContentParserBeans().forEach(bean -> {
+            findAllContentParserBeans().forEach(bean -> {
                 Arrays.stream(bean.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
                     if (content.getMimeType().matches(a)) {
                         parse(getContentParser(bean), builder);
