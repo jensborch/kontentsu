@@ -65,17 +65,9 @@ public class CdiHalJsonExternalizationVisitor implements ExternalizationVisitor 
     @Inject
     private Parsable content;
 
-    private Parsable tmpContent;
-
     public CdiHalJsonExternalizationVisitor() {
         this.counter = new Counter();
         this.mapper = ObjectMapperFactory.create();
-    }
-
-    private CdiHalJsonExternalizationVisitor(Parsable content) {
-        //TODO: Remove and use new cdi scope
-        this();
-        this.tmpContent = content;
     }
 
     @PostConstruct
@@ -83,10 +75,6 @@ public class CdiHalJsonExternalizationVisitor implements ExternalizationVisitor 
         try {
             pageNode = mapper.readTree(content.getDataAsBinaryStream());
             contentNode = findOrCreateExternalContentNode(pageNode);
-            if (this.tmpContent != null) {
-                //Todo: remove hack
-                this.content = tmpContent;
-            }
         } catch (IOException ex) {
             throw new ExternalizationException(getErrorMsg(), ex);
         }
@@ -105,12 +93,6 @@ public class CdiHalJsonExternalizationVisitor implements ExternalizationVisitor 
 
     private String getErrorMsg() {
         return "Error externalizing content for with id: " + content.getUuid();
-    }
-
-    @Override
-    public TemporalReferenceTree.Visitor copy() {
-        //TODO: Remove this method
-        return new CdiHalJsonExternalizationVisitor(content);
     }
 
     @Override

@@ -206,10 +206,10 @@ public class ExternalizerService {
     private ExternalFile createExternalFile(final TemporalReferenceTree<ExternalizationVisitor> t, final Version version) {
         ExternalFile.Builder builder = ExternalFile.builder()
                 .item(version.getItem())
-                .content(t.getVisitor().getContent())
+                .content(t.getContent())
                 .interval(t.getInteval())
                 .state(version.getState());
-        t.getVisitor().getContentId().ifPresent(i -> builder.externalizationId(i));
+        t.getContentId().ifPresent(i -> builder.externalizationId(i));
         return builder.build();
     }
 

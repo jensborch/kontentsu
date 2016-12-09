@@ -28,6 +28,7 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.spi.AlterableContext;
@@ -68,10 +69,12 @@ public class ContentContext implements AlterableContext, Serializable {
         try {
             task.run();
         } finally {
-            ContentContext.CONTENT.remove();
             map.values().stream().forEach(Instance::destroy);
             map.clear();
             INSTANCES.get().pop();
+            if (INSTANCES.get().isEmpty()) {
+                CONTENT.remove();
+            }
             LOGGER.debug("Stopping content CDI context");
         }
     }
@@ -86,7 +89,8 @@ public class ContentContext implements AlterableContext, Serializable {
 
     @Override
     public void destroy(final Contextual<?> contextual) {
-        Optional.ofNullable(INSTANCES.get().peek().get(contextual)).filter(c -> c.bean != null)
+        Optional.ofNullable(INSTANCES.get().peek().get(contextual))
+                .filter(Objects::nonNull)
                 .ifPresent(Instance::destroy);
     }
 
@@ -96,8 +100,14 @@ public class ContentContext implements AlterableContext, Serializable {
         if (!isActive()) {
             throw new ContextNotActiveException(ContentProcessingScoped.class.getName() + " is not active.");
         }
-        Map<Contextual<?>, Instance<?>> localMap = INSTANCES.get().peek();
-        return (T) localMap.getOrDefault(contextual, new Instance<>(contextual, creationalContext)).create();
+        Map<Contextual<?>, Instance<?>> map = INSTANCES.get().peek();
+        if (map.containsKey(contextual)) {
+            return (T) map.get(contextual);
+        } else {
+            Instance<T> i = new Instance<>(contextual, creationalContext);
+            map.put(contextual, i);
+            return i.create();
+        }
     }
 
     @Override

@@ -23,17 +23,20 @@
  */
 package dk.kontentsu.cdn.model.internal;
 
+import dk.kontentsu.cdn.externalization.visitors.ExternalizationVisitor;
+import dk.kontentsu.cdn.model.Content;
+import dk.kontentsu.cdn.model.Interval;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import dk.kontentsu.cdn.model.Interval;
-
 /**
- * Representation of a item that can be externalized - i.e. an page on the CDN valid in a certain interval.
+ * Representation of a item that can be externalized - i.e. an page on the CDN
+ * valid in a certain interval.
  *
- * To create actual external content, implement a Visitor to build the content when traversing the tree.
+ * To create actual external content, implement a Visitor to build the content
+ * when traversing the tree.
  *
  * @author Jens Borch Christiansen
  * @param <V> type of the visitor use when processing the tree
@@ -43,12 +46,16 @@ public class TemporalReferenceTree<V extends TemporalReferenceTree.Visitor> {
     private Interval inteval;
     private final Node root;
     private V visitor;
+    private Optional<String> id;
+    private Content content;
 
     public TemporalReferenceTree(final Version version, final V visitor) {
         this.inteval = version.getInterval();
         this.visitor = visitor;
         this.root = new Node(version, this);
         visitor.visit(root);
+        //this.id = ((ExternalizationVisitor) visitor).getContentId();
+        //this.content = ((ExternalizationVisitor) visitor).getContent();
     }
 
     /**
@@ -60,9 +67,19 @@ public class TemporalReferenceTree<V extends TemporalReferenceTree.Visitor> {
     @SuppressWarnings("unchecked")
     public TemporalReferenceTree(final TemporalReferenceTree tree, final Interval interval) {
         this.inteval = interval;
-        this.visitor = (V) tree.visitor.copy();
+        //this.visitor = (V) tree.visitor.copy();
+        this.visitor = (V) tree.visitor;
         this.root = new Node(tree.getRoot().getVersion(), this);
+        //ContentContext.execute(() -> {
         visitor.visit(root);
+        //this.id = ((ExternalizationVisitor) visitor).getContentId();
+        //this.content = ((ExternalizationVisitor) visitor).getContent();
+        //});
+    }
+
+    public void finalizeResults() {
+        this.id = ((ExternalizationVisitor) visitor).getContentId();
+        this.content = ((ExternalizationVisitor) visitor).getContent();
     }
 
     public Interval getInteval() {
@@ -73,8 +90,15 @@ public class TemporalReferenceTree<V extends TemporalReferenceTree.Visitor> {
         this.inteval = inteval;
     }
 
-    public V getVisitor() {
+    /*public V getVisitor() {
         return visitor;
+    }*/
+    public Content getContent() {
+        return content;
+    }
+
+    public Optional<String> getContentId() {
+        return id;
     }
 
     public Node getRoot() {
@@ -138,13 +162,6 @@ public class TemporalReferenceTree<V extends TemporalReferenceTree.Visitor> {
          * @param node the node visited
          */
         void visit(Node node);
-
-        /**
-         * When a new temporal reference tree is created based on a new interval combination this method will be called to create a new visitor instance for the tree.
-         *
-         * @return a copy of the visitor with new interval
-         */
-        Visitor copy();
 
     }
 

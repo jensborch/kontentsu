@@ -23,12 +23,11 @@
  */
 package dk.kontentsu.cdn.externalization.visitors;
 
-import java.util.Optional;
-
 import dk.kontentsu.cdn.externalization.ExternalizationException;
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
 import dk.kontentsu.cdn.model.internal.Version;
+import java.util.Optional;
 
 /**
  * Default externalization visitor for content thats should not be processed. Will throw a {@link ExternalizationException} if the content have a composition.
@@ -41,11 +40,6 @@ public class DefaultExternalizationVisitor implements ExternalizationVisitor {
 
     public DefaultExternalizationVisitor(final Version version) {
         this.version = version;
-    }
-
-    @Override
-    public TemporalReferenceTree.Visitor copy() {
-        throw new ExternalizationException("Item version with UUID " + version.getUuid() + " is not procesd for externalization and shuld thus not have a composition");
     }
 
     @Override

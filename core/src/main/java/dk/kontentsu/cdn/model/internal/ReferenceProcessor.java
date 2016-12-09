@@ -23,6 +23,10 @@
  */
 package dk.kontentsu.cdn.model.internal;
 
+import dk.kontentsu.cdn.model.Interval;
+import dk.kontentsu.cdn.model.SemanticUri;
+import dk.kontentsu.cdn.model.internal.TemporalReferenceTree.Node;
+import dk.kontentsu.cdn.spi.ContentContext;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,10 +34,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import dk.kontentsu.cdn.model.Interval;
-import dk.kontentsu.cdn.model.SemanticUri;
-import dk.kontentsu.cdn.model.internal.TemporalReferenceTree.Node;
 
 /**
  * Breadth-first tree processor for finding all temporal versions of items that
@@ -55,34 +55,42 @@ public class ReferenceProcessor<V extends TemporalReferenceTree.Visitor> {
 
     public List<TemporalReferenceTree<V>> process() {
         while (!processing.isEmpty()) {
-            TemporalReferenceTree<V> tree = processing.pop();
-            nodes.push(tree.getRoot());
-            while (!nodes.isEmpty()) {
-                Node current = nodes.pop();
-                Map<SemanticUri, List<Version>> comps = current.getVersion().getComposition();
-                if (comps.isEmpty() && !processed.contains(tree)) {
-                    processed.add(tree);
-                }
-                for (Map.Entry<SemanticUri, List<Version>> versions : comps.entrySet()) {
-                    boolean first = true;
-                    Interval startInterval = tree.getInteval();
-                    for (Version child : versions.getValue()) {
-                        Optional<Interval> i = child.getInterval().intersection(startInterval);
-                        if (i.isPresent()) {
-                            if (first) {
-                                tree.setInteval(i.get());
-                                Node childNode = current.addChild(child);
-                                nodes.push(childNode);
-                                first = false;
-                            } else {
-                                processing.push(new TemporalReferenceTree<>(tree, i.get()));
-                            }
+            ContentContext.execute(() -> {
+                processInScope();
+            });
+            //processInScope();
+        };
+
+        return Collections.unmodifiableList(processed);
+    }
+
+    public void processInScope() {
+        TemporalReferenceTree<V> tree = processing.pop();
+        nodes.push(tree.getRoot());
+        while (!nodes.isEmpty()) {
+            Node current = nodes.pop();
+            Map<SemanticUri, List<Version>> comps = current.getVersion().getComposition();
+            if (comps.isEmpty() && !processed.contains(tree)) {
+                processed.add(tree);
+            }
+            for (Map.Entry<SemanticUri, List<Version>> versions : comps.entrySet()) {
+                boolean first = true;
+                Interval startInterval = tree.getInteval();
+                for (Version child : versions.getValue()) {
+                    Optional<Interval> i = child.getInterval().intersection(startInterval);
+                    if (i.isPresent()) {
+                        if (first) {
+                            tree.setInteval(i.get());
+                            Node childNode = current.addChild(child);
+                            nodes.push(childNode);
+                            first = false;
+                        } else {
+                            processing.push(new TemporalReferenceTree<>(tree, i.get()));
                         }
                     }
                 }
             }
         }
-        return Collections.unmodifiableList(processed);
+        tree.finalizeResults();
     }
-
 }

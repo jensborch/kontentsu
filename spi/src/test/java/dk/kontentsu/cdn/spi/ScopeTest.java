@@ -79,11 +79,13 @@ public class ScopeTest {
     public void testNestedScope() throws Exception {
         ContentContext.execute(() -> {
             final int count = bean.getCount();
-            UUID outer = bean.getContent().getUuid();
+            UUID outerContentId = bean.getContent().getUuid();
+            UUID outerId = bean.getId();
             assertNotEquals(1, count);
             ContentContext.execute(() -> {
-                assertEquals(outer, bean.getContent().getUuid());
+                assertEquals(outerContentId, bean.getContent().getUuid());
                 assertNotEquals(2, bean.getCount());
+                assertNotEquals(outerId, bean.getId());
             });
         }, content);
     }

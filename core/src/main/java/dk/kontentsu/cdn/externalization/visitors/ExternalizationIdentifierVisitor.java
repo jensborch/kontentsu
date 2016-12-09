@@ -1,13 +1,11 @@
 package dk.kontentsu.cdn.externalization.visitors;
 
+import dk.kontentsu.cdn.model.Content;
+import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.hashids.Hashids;
-
-import dk.kontentsu.cdn.model.Content;
-import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
 
 /**
  * Visitor for generating a unique id for a give combination of versions that makes up a temporal reference tree.
@@ -27,11 +25,6 @@ public class ExternalizationIdentifierVisitor implements ExternalizationVisitor 
     public ExternalizationIdentifierVisitor(final ExternalizationVisitor nested) {
         this.nested = nested;
         this.identifiers = new ArrayList<>();
-    }
-
-    @Override
-    public TemporalReferenceTree.Visitor copy() {
-        return new ExternalizationIdentifierVisitor((ExternalizationVisitor) nested.copy());
     }
 
     @Override

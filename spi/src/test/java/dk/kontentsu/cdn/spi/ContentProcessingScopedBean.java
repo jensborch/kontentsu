@@ -1,5 +1,6 @@
 package dk.kontentsu.cdn.spi;
 
+import java.util.UUID;
 import javax.inject.Inject;
 
 /**
@@ -12,15 +13,22 @@ public class ContentProcessingScopedBean {
 
     private static int count = 1;
 
+    private UUID id;
+
     @Inject
     private Parsable content;
 
     public ContentProcessingScopedBean() {
         count++;
+        this.id = UUID.randomUUID();
     }
 
     public int getCount() {
         return count;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public Parsable getContent() {
