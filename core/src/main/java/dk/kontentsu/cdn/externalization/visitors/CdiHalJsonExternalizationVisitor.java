@@ -54,7 +54,7 @@ import javax.inject.Inject;
  */
 @ContentProcessingScoped
 @ContentProcessingMimeType({"application/hal+json"})
-public class CdiHalJsonExternalizationVisitor implements ExternalizationVisitor {
+public class CdiHalJsonExternalizationVisitor implements TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults> {
 
     private JsonNode pageNode;
     private JsonNode contentNode;
@@ -81,14 +81,10 @@ public class CdiHalJsonExternalizationVisitor implements ExternalizationVisitor 
     }
 
     @Override
-    public Content getContent() {
+    public TemporalReferenceTree.DefaultResults getResults() {
         removeComposition(pageNode);
-        return new Content(pageNode.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8, content.getMimeType());
-    }
-
-    @Override
-    public Optional<String> getContentId() {
-        return Optional.empty();
+        Content result = new Content(pageNode.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8, content.getMimeType());
+        return new TemporalReferenceTree.DefaultResults(result);
     }
 
     private String getErrorMsg() {

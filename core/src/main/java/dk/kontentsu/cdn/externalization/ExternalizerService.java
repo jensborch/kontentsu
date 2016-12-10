@@ -23,8 +23,6 @@
  */
 package dk.kontentsu.cdn.externalization;
 
-import dk.kontentsu.cdn.externalization.visitors.ExternalizationVisitor;
-import dk.kontentsu.cdn.externalization.visitors.ExternalizationVisitorSupplier;
 import dk.kontentsu.cdn.model.ExternalFile;
 import dk.kontentsu.cdn.model.internal.Item;
 import dk.kontentsu.cdn.model.internal.ReferenceProcessor;
@@ -82,9 +80,6 @@ public class ExternalizerService {
 
     @Inject
     private ScheduledExternalizerService scheduleService;
-
-    @Inject
-    private ExternalizationVisitorSupplier visitorSupplier;
 
     @Inject
     private BeanManager bm;
@@ -146,14 +141,15 @@ public class ExternalizerService {
         return versions;
     }
 
-    private ExternalizationVisitor getExternalizationVisitor(final Bean<?> b) {
+    private TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults> getExternalizationVisitor(final Bean<?> b) {
         CreationalContext<?> ctx = bm.createCreationalContext(b);
-        ExternalizationVisitor v = (ExternalizationVisitor) bm.getReference(b, ExternalizationVisitor.class, ctx);
+        //TODO: Check for class cast exception
+        TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults> v = (TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults>) bm.getReference(b, TemporalReferenceTree.Visitor.class, ctx);
         return v;
     }
 
     private Bean<?> findAnyExternalizationVisitorBeans() {
-        return bm.getBeans(ExternalizationVisitor.class, new AnnotationLiteral<Any>() {
+        return bm.getBeans(TemporalReferenceTree.Visitor.class, new AnnotationLiteral<Any>() {
         }).stream()
                 .findAny()
                 .orElseThrow(() -> new ExternalizationException("No externalization visitor found - a class implementing ExternalizationVisitor must "
@@ -164,12 +160,12 @@ public class ExternalizerService {
         List<ExternalFile> results = new ArrayList<>(0);
         if (!processing(version.getUuid())) {
             LOGGER.info("Externalizing version {} with uri {}", version.getUuid(), version.getItem().getUri());
-            List<TemporalReferenceTree<ExternalizationVisitor>> trees = new ArrayList<>();
+            List<TemporalReferenceTree<TemporalReferenceTree.DefaultResults, TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults>>> trees = new ArrayList<>();
             ContentContext.execute(() -> {
                 Bean<?> bean = findAnyExternalizationVisitorBeans();
                 Arrays.stream(bean.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
                     if (version.getMimeType().matches(a)) {
-                        ReferenceProcessor<ExternalizationVisitor> processor = new ReferenceProcessor<>(version, getExternalizationVisitor(bean));
+                        ReferenceProcessor<TemporalReferenceTree.DefaultResults, TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults>> processor = new ReferenceProcessor<>(version, getExternalizationVisitor(bean));
                         trees.addAll(processor.process());
                     }
                 });
@@ -203,13 +199,13 @@ public class ExternalizerService {
         return results;
     }
 
-    private ExternalFile createExternalFile(final TemporalReferenceTree<ExternalizationVisitor> t, final Version version) {
+    private ExternalFile createExternalFile(final TemporalReferenceTree<TemporalReferenceTree.DefaultResults, TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults>> t, final Version version) {
         ExternalFile.Builder builder = ExternalFile.builder()
                 .item(version.getItem())
-                .content(t.getContent())
+                .content(t.getResult().getContent())
                 .interval(t.getInteval())
                 .state(version.getState());
-        t.getContentId().ifPresent(i -> builder.externalizationId(i));
+        t.getResult().getId().ifPresent(i -> builder.externalizationId(i));
         return builder.build();
     }
 

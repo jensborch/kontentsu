@@ -42,30 +42,28 @@ import java.util.Optional;
  * @author Jens Borch Christiansen
  * @param <V> the type of the visitor used by the processor
  */
-public class ReferenceProcessor<V extends TemporalReferenceTree.Visitor> {
+public class ReferenceProcessor<R extends TemporalReferenceTree.Results, V extends TemporalReferenceTree.Visitor<R>> {
 
     private final Deque<Node> nodes = new ArrayDeque<>();
-    private final Deque<TemporalReferenceTree<V>> processing = new ArrayDeque<>();
-    private final List<TemporalReferenceTree<V>> processed = new ArrayList<>();
+    private final Deque<TemporalReferenceTree<R, V>> processing = new ArrayDeque<>();
+    private final List<TemporalReferenceTree<R, V>> processed = new ArrayList<>();
 
     public ReferenceProcessor(final Version root, final V visitor) {
-        TemporalReferenceTree<V> tree = new TemporalReferenceTree<>(root, visitor);
+        TemporalReferenceTree<R, V> tree = new TemporalReferenceTree<>(root, visitor);
         processing.push(tree);
     }
 
-    public List<TemporalReferenceTree<V>> process() {
+    public List<TemporalReferenceTree<R, V>> process() {
         while (!processing.isEmpty()) {
             ContentContext.execute(() -> {
                 processInScope();
             });
-            //processInScope();
         };
-
         return Collections.unmodifiableList(processed);
     }
 
     public void processInScope() {
-        TemporalReferenceTree<V> tree = processing.pop();
+        TemporalReferenceTree<R, V> tree = processing.pop();
         nodes.push(tree.getRoot());
         while (!nodes.isEmpty()) {
             Node current = nodes.pop();

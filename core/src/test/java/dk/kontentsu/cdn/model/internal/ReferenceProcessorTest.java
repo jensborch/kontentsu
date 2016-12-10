@@ -79,8 +79,8 @@ public class ReferenceProcessorTest {
     @Test
     public void testVisitor() {
         TestVisitor visitor = new TestVisitor();
-        ReferenceProcessor<TestVisitor> processor = new ReferenceProcessor<>(pageVersion, visitor);
-        List<TemporalReferenceTree<TestVisitor>> result = processor.process();
+        ReferenceProcessor<Results, TestVisitor> processor = new ReferenceProcessor<>(pageVersion, visitor);
+        List<TemporalReferenceTree<Results, TestVisitor>> result = processor.process();
         assertEquals(2, result.size());
         //TODO: Fix
         //assertEquals(3, ((TestVisitor) result.get(0).getVisitor()).names.size());
@@ -97,7 +97,15 @@ public class ReferenceProcessorTest {
         assertTrue(result.stream().filter(n -> n.getInteval().equals(new Interval(NOW.plusDays(15)))).findAny().isPresent());
     }
 
-    private class TestVisitor implements TemporalReferenceTree.Visitor {
+    private class Results implements TemporalReferenceTree.Results {
+        List<String> names;
+
+        public Results(List<String> names) {
+            this.names = names;
+        }
+    }
+
+    private class TestVisitor implements TemporalReferenceTree.Visitor<Results> {
 
         List<String> names = new ArrayList<>();
 
@@ -105,6 +113,11 @@ public class ReferenceProcessorTest {
         @Override
         public void visit(TemporalReferenceTree.Node node) {
             names.add(node.getVersion().getItem().getName());
+        }
+
+        @Override
+        public Results getResults() {
+            return new Results(names);
         }
 
     }
