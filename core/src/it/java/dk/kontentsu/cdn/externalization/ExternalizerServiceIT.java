@@ -1,7 +1,5 @@
 package dk.kontentsu.cdn.externalization;
 
-import static com.googlecode.catchexception.CatchException.catchException;
-import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -10,10 +8,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
-import javax.ejb.EJBException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -184,15 +180,6 @@ public class ExternalizerServiceIT {
         external = result.get(1).getContent().getData();
         assertEquals(data.getSimplePageResults(2), external);
         assertEquals(new Interval(NOW.plusDays(15), NOW.plusDays(20)), result.get(1).getInterval());
-    }
-
-    @Test
-    public void testWrongMimeTypeShouldNotBeExternalized() throws Exception {
-        createItems(MimeType.APPLICATION_XML_TYPE);
-        catchException(service.externalize(pageVersion.getUuid())).get();
-        assertTrue(caughtException() instanceof ExecutionException);
-        assertTrue(caughtException().getCause() instanceof EJBException);
-        assertTrue(caughtException().getCause().getCause() instanceof ExternalizationException);
     }
 
     @Test

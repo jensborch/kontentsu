@@ -1,17 +1,20 @@
 package dk.kontentsu.cdn.spi;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
+
 import javax.inject.Inject;
+
 import org.jboss.weld.context.ContextNotActiveException;
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.CdiRunner;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +39,7 @@ public class ScopeTest {
 
             private final static String DATA = "scope test";
 
-            private UUID id = UUID.randomUUID();
+            private final UUID id = UUID.randomUUID();
 
             @Override
             public String getData() {
