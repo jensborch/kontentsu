@@ -23,18 +23,8 @@
  */
 package dk.kontentsu.cdn.externalization.visitors;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import dk.kontentsu.cdn.externalization.ExternalizationException;
-import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
-import dk.kontentsu.cdn.model.Content;
-import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
-import dk.kontentsu.cdn.model.internal.Version;
 import static dk.kontentsu.cdn.parsers.HalJsonContent.*;
-import dk.kontentsu.cdn.spi.ContentProcessingMimeType;
-import dk.kontentsu.cdn.spi.ContentProcessingScoped;
-import dk.kontentsu.cdn.spi.Parsable;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -44,8 +34,21 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import dk.kontentsu.cdn.externalization.ExternalizationException;
+import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
+import dk.kontentsu.cdn.model.Content;
+import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
+import dk.kontentsu.cdn.model.internal.Version;
+import dk.kontentsu.cdn.spi.ContentProcessingMimeType;
+import dk.kontentsu.cdn.spi.ContentProcessingScoped;
+import dk.kontentsu.cdn.spi.Parsable;
 
 /**
  * Tree visitor for creating external HAL+JSON page content.
@@ -54,7 +57,7 @@ import javax.inject.Inject;
  */
 @ContentProcessingScoped
 @ContentProcessingMimeType({"application/hal+json"})
-public class HalJsonExternalizationVisitor implements TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults> {
+public class HalJsonExternalizationVisitor extends ExternalizationVisitor {
 
     private JsonNode pageNode;
     private JsonNode contentNode;
@@ -81,10 +84,10 @@ public class HalJsonExternalizationVisitor implements TemporalReferenceTree.Visi
     }
 
     @Override
-    public TemporalReferenceTree.DefaultResults getResults() {
+    public ExternalizationVisitor.Results getResults() {
         removeComposition(pageNode);
         Content result = new Content(pageNode.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8, content.getMimeType());
-        return new TemporalReferenceTree.DefaultResults(result);
+        return new ExternalizationVisitor.Results(result);
     }
 
     private String getErrorMsg() {

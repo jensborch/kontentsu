@@ -1,32 +1,47 @@
 package dk.kontentsu.cdn.model.internal;
 
-import dk.kontentsu.cdn.model.Content;
-import dk.kontentsu.cdn.model.Interval;
-import dk.kontentsu.cdn.model.SemanticUri;
-import dk.kontentsu.cdn.model.SemanticUriPath;
-import dk.kontentsu.cdn.spi.MimeType;
-import dk.kontentsu.cdn.upload.ContentTestData;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
+
+import org.jglue.cdiunit.AdditionalClasses;
+import org.jglue.cdiunit.CdiRunner;
 import org.junit.After;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import dk.kontentsu.cdn.model.Content;
+import dk.kontentsu.cdn.model.Interval;
+import dk.kontentsu.cdn.model.SemanticUri;
+import dk.kontentsu.cdn.model.SemanticUriPath;
+import dk.kontentsu.cdn.spi.ContentContext;
+import dk.kontentsu.cdn.spi.ContentExtension;
+import dk.kontentsu.cdn.spi.MimeType;
+import dk.kontentsu.cdn.upload.ContentTestData;
 
 /**
  * Test for {@link ReferenceProcessor}
  *
  * @author Jens Borch Christiansen
  */
+@RunWith(CdiRunner.class)
+@AdditionalClasses({TestVisitor.class, ContentExtension.class})
 public class ReferenceProcessorTest {
 
     private static final ZonedDateTime NOW = ZonedDateTime.now();
+
+    @Inject
+    private TestVisitor visitor;
 
     private ContentTestData data;
     private Item page;
@@ -78,48 +93,20 @@ public class ReferenceProcessorTest {
 
     @Test
     public void testVisitor() {
-        TestVisitor visitor = new TestVisitor();
-        ReferenceProcessor<Results, TestVisitor> processor = new ReferenceProcessor<>(pageVersion, visitor);
-        List<TemporalReferenceTree<Results, TestVisitor>> result = processor.process();
-        assertEquals(2, result.size());
-        //TODO: Fix
-        //assertEquals(3, ((TestVisitor) result.get(0).getVisitor()).names.size());
+        ContentContext.execute(() -> {
+            ReferenceProcessor<TestVisitor.TestResults, TestVisitor> processor = new ReferenceProcessor<>(pageVersion, visitor);
+            List<TemporalReferenceTree<TestVisitor.TestResults, TestVisitor>> result = processor.process();
 
-        //assertArrayEquals(new String[]{"page-simple", "contact", "article2"}, ((TestVisitor) result.get(0).getVisitor()).names.toArray(new String[2]));
-
-        //assertEquals(3, ((TestVisitor) result.get(1).getVisitor()).names.size());
-
-        //assertArrayEquals(new String[]{"page-simple", "contact", "article2"}, ((TestVisitor) result.get(1).getVisitor()).names.toArray(new String[2]));
-
-        assertNotEquals(result.get(0), result.get(1));
-        assertNotEquals(result.get(0).getInteval(), result.get(1).getInteval());
-        assertTrue(result.stream().filter(n -> n.getInteval().equals(new Interval(NOW, NOW.plusDays(10)))).findAny().isPresent());
-        assertTrue(result.stream().filter(n -> n.getInteval().equals(new Interval(NOW.plusDays(15)))).findAny().isPresent());
-    }
-
-    private class Results implements TemporalReferenceTree.Results {
-        List<String> names;
-
-        public Results(List<String> names) {
-            this.names = names;
-        }
-    }
-
-    private class TestVisitor implements TemporalReferenceTree.Visitor<Results> {
-
-        List<String> names = new ArrayList<>();
-
-
-        @Override
-        public void visit(TemporalReferenceTree.Node node) {
-            names.add(node.getVersion().getItem().getName());
-        }
-
-        @Override
-        public Results getResults() {
-            return new Results(names);
-        }
-
+            assertEquals(2, result.size());
+            assertEquals(2, result.get(0).getResult().names.size());
+            assertArrayEquals(new String[]{"contact", "article2"}, result.get(0).getResult().names.toArray(new String[2]));
+            assertEquals(2, result.get(1).getResult().names.size());
+            assertArrayEquals(new String[]{"contact", "article2"}, result.get(1).getResult().names.toArray(new String[2]));
+            assertNotEquals(result.get(0), result.get(1));
+            assertNotEquals(result.get(0).getInteval(), result.get(1).getInteval());
+            assertTrue(result.stream().filter(n -> n.getInteval().equals(new Interval(NOW, NOW.plusDays(10)))).findAny().isPresent());
+            assertTrue(result.stream().filter(n -> n.getInteval().equals(new Interval(NOW.plusDays(15)))).findAny().isPresent());
+        });
     }
 
 }

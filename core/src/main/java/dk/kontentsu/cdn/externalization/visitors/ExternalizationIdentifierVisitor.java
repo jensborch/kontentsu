@@ -1,8 +1,10 @@
 package dk.kontentsu.cdn.externalization.visitors;
 
 import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.hashids.Hashids;
 
 /**
@@ -12,15 +14,15 @@ import org.hashids.Hashids;
  *
  * @author Jens Borch Christiansen
  */
-public class ExternalizationIdentifierVisitor implements TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults> {
+public class ExternalizationIdentifierVisitor extends ExternalizationVisitor {
 
     private static final String SALT = "Externalization salt";
 
-    private final TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults> nested;
+    private final ExternalizationVisitor nested;
 
     private final List<Integer> identifiers;
 
-    public ExternalizationIdentifierVisitor(final TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults> nested) {
+    public ExternalizationIdentifierVisitor(final ExternalizationVisitor nested) {
         this.nested = nested;
         this.identifiers = new ArrayList<>();
     }
@@ -36,8 +38,8 @@ public class ExternalizationIdentifierVisitor implements TemporalReferenceTree.V
     }
 
     @Override
-    public TemporalReferenceTree.DefaultResults getResults() {
-        return new TemporalReferenceTree.DefaultResults(getContentId(), nested.getResults().getContent());
+    public ExternalizationVisitor.Results getResults() {
+        return new ExternalizationVisitor.Results(getContentId(), nested.getResults().getContent());
     }
 
 }

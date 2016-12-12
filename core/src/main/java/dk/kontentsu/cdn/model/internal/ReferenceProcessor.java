@@ -23,10 +23,6 @@
  */
 package dk.kontentsu.cdn.model.internal;
 
-import dk.kontentsu.cdn.model.Interval;
-import dk.kontentsu.cdn.model.SemanticUri;
-import dk.kontentsu.cdn.model.internal.TemporalReferenceTree.Node;
-import dk.kontentsu.cdn.spi.ContentContext;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,14 +31,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import dk.kontentsu.cdn.model.Interval;
+import dk.kontentsu.cdn.model.SemanticUri;
+import dk.kontentsu.cdn.model.internal.TemporalReferenceTree.Node;
+import dk.kontentsu.cdn.spi.ContentContext;
+
 /**
  * Breadth-first tree processor for finding all temporal versions of items that
  * can become an external pages.
  *
  * @author Jens Borch Christiansen
+ *
+ * @param <R> the type of result to return when all nodes has been visited
  * @param <V> the type of the visitor used by the processor
  */
-public class ReferenceProcessor<R extends TemporalReferenceTree.Results, V extends TemporalReferenceTree.Visitor<R>> {
+public class ReferenceProcessor<R extends TemporalReferenceTreeVisitor.Results, V extends TemporalReferenceTreeVisitor<R>> {
 
     private final Deque<Node> nodes = new ArrayDeque<>();
     private final Deque<TemporalReferenceTree<R, V>> processing = new ArrayDeque<>();
@@ -58,7 +61,7 @@ public class ReferenceProcessor<R extends TemporalReferenceTree.Results, V exten
             ContentContext.execute(() -> {
                 processInScope();
             });
-        };
+        }
         return Collections.unmodifiableList(processed);
     }
 

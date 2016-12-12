@@ -6,6 +6,7 @@
 package dk.kontentsu.cdn.model;
 
 import dk.kontentsu.cdn.spi.MimeType;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 

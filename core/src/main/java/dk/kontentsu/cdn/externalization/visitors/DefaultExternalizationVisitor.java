@@ -39,7 +39,7 @@ import dk.kontentsu.cdn.spi.Parsable;
  */
 @ContentProcessingScoped
 @ContentProcessingMimeType({"*/*"})
-public class DefaultExternalizationVisitor implements TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults> {
+public class DefaultExternalizationVisitor extends ExternalizationVisitor {
 
     @Inject
     private Parsable content;
@@ -52,8 +52,8 @@ public class DefaultExternalizationVisitor implements TemporalReferenceTree.Visi
     }
 
     @Override
-    public TemporalReferenceTree.DefaultResults getResults() {
-        return new TemporalReferenceTree.DefaultResults((Content)content);
+    public ExternalizationVisitor.Results getResults() {
+        return new ExternalizationVisitor.Results((Content) content);
     }
 
 }

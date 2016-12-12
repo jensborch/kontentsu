@@ -23,24 +23,24 @@
  */
 package dk.kontentsu.cdn.model.internal;
 
-import dk.kontentsu.cdn.model.Content;
-import dk.kontentsu.cdn.model.Interval;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import dk.kontentsu.cdn.model.Interval;
+
 /**
- * Representation of a item that can be externalized - i.e. an page on the CDN
- * valid in a certain interval.
+ * Representation of a item that can be externalized - i.e. an page on the CDN valid in a certain interval.
  *
- * To create actual external content, implement a Visitor to build the content
- * when traversing the tree.
+ * To create actual external content, implement a Visitor to build the content when traversing the tree.
  *
  * @author Jens Borch Christiansen
+ *
+ * @param <R> the type of result to return when all nodes has been visited
  * @param <V> type of the visitor use when processing the tree
  */
-public class TemporalReferenceTree<R extends TemporalReferenceTree.Results, V extends TemporalReferenceTree.Visitor<R>> {
+public class TemporalReferenceTree<R extends TemporalReferenceTreeVisitor.Results, V extends TemporalReferenceTreeVisitor<R>> {
 
     private Interval inteval;
     private final Node root;
@@ -132,52 +132,4 @@ public class TemporalReferenceTree<R extends TemporalReferenceTree.Results, V ex
         }
 
     }
-
-    /**
-     * Results from visiting the temporal reference tree.
-     */
-    public interface Results {
-
-    }
-
-    public static class DefaultResults implements Results {
-
-        private Optional<String> id;
-        private Content content;
-
-        public DefaultResults(String id, Content content) {
-            this.id = Optional.of(id);
-            this.content = content;
-        }
-
-        public DefaultResults(Content content) {
-            this.id = Optional.empty();
-            this.content = content;
-        }
-
-        public Optional<String> getId() {
-            return id;
-        }
-
-        public Content getContent() {
-            return content;
-        }
-    }
-
-    /**
-     * Node visitor for temporal reference tree.
-     */
-    public interface Visitor<R extends Results> {
-
-        /**
-         * Called when a new node is reached.
-         *
-         * @param node the node visited
-         */
-        void visit(Node node);
-
-        R getResults();
-
-    }
-
 }
