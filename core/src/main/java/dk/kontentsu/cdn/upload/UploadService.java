@@ -23,6 +23,26 @@
  */
 package dk.kontentsu.cdn.upload;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.util.AnnotationLiteral;
+import javax.inject.Inject;
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.kontentsu.cdn.externalization.ExternalizerService;
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.SemanticUri;
@@ -36,23 +56,6 @@ import dk.kontentsu.cdn.repository.HostRepository;
 import dk.kontentsu.cdn.repository.ItemRepository;
 import dk.kontentsu.cdn.spi.ContentContext;
 import dk.kontentsu.cdn.spi.ContentProcessingMimeType;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Inject;
-import javax.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Service facade for performing various operations on CDN items - like
@@ -184,7 +187,7 @@ public class UploadService {
         ContentContext.execute(() -> {
             findAllContentParserBeans().forEach(bean -> {
                 Arrays.stream(bean.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
-                    if (content.getMimeType().matches(a)) {
+                    if (content.getMimeType().matches(a).isMatch()) {
                         parse(getContentParser(bean), builder);
                     }
                 });

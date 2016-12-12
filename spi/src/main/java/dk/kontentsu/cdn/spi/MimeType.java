@@ -37,6 +37,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
@@ -45,11 +46,9 @@ import javax.validation.constraints.Size;
 import javax.ws.rs.core.MediaType;
 
 /**
- * Class representing the content Mime Type of a item in the CDN, but also
- * serves the purpose of parsing accept headers.
+ * Class representing the content Mime Type of a item in the CDN, but also serves the purpose of parsing accept headers.
  *
- * @see <a href="http://tools.ietf.org/html/rfc6838">RFC Media Type
- * Specification</a>
+ * @see <a href="http://tools.ietf.org/html/rfc6838">RFC Media Type Specification</a>
  *
  * @author Jens Borch Christiansen
  */
@@ -95,13 +94,13 @@ public class MimeType implements Serializable {
     }
 
     public MimeType(final String type) {
-        this.type = type;
+        this.type = type.trim().toLowerCase();
         this.subType = "*";
     }
 
     public MimeType(final String type, final String subtype) {
-        this.type = type;
-        this.subType = subtype;
+        this.type = type.trim().toLowerCase();
+        this.subType = subtype.trim().toLowerCase();
     }
 
     public MimeType(final String type, final String subtype, final Map<String, String> params) {
@@ -118,9 +117,8 @@ public class MimeType implements Serializable {
     }
 
     /**
-     * Parses a mime type string including media range and returns a MimeType
-     * object. For example, the media range 'application/*;q=0.5' would get
-     * parsed into: ('application', '*', {'q', '0.5'}).
+     * Parses a mime type string including media range and returns a MimeType object. For example, the media range 'application/*;q=0.5' would get parsed into: ('application', '*',
+     * {'q', '0.5'}).
      *
      * @param mimeType the mime type to parse
      * @return a MimeType object
@@ -183,36 +181,61 @@ public class MimeType implements Serializable {
         return (charset == null) ? Optional.empty() : Optional.of(Charset.forName(charset));
     }
 
-    private boolean matches(final String type1, final String type2) {
-        return type1.equals(type2) || "*".equals(type2) || "*".equals(type1);
+    private Match matches(final String type, final String subType) {
+        if (this.type.equals(type) && this.subType.equals(subType)) {
+            return Match.EXACT;
+        } else if (this.type.equals(type) && ("*".equals(this.subType) || "*".equals(subType))) {
+            return Match.SUBTYPE_WILDCARD;
+        } else if ("*".equals(this.type) || "*".equals(type)) {
+            return Match.WILDCARD;
+        } else {
+            return Match.NONE;
+        }
     }
 
-    public boolean matches(final String type) {
+    public Match matches(final String type) {
         try {
-            return type != null && matches(MimeType.parse(type));
+            return matches(MimeType.parse(type));
         } catch (IllegalArgumentException e) {
-            return false;
+            return Match.NONE;
         }
     }
 
     /**
-     * Check if this mime type matches another mime type. This will perform a
-     * match using wildcards, thus application&#47* will match
-     * application&#47json and *&#47* will match everything.
+     * Check if this mime type matches another mime type. This will perform a match using wildcards, thus application&#47* will match application&#47json and *&#47* will match
+     * everything.
      *
      * @param other the mim type to match
      * @return true if the types matches
      */
-    public boolean matches(final MimeType other) {
-        return other != null && matches(getType(), other.getType()) && matches(getSubType(), other.getSubType());
+    public Match matches(final MimeType other) {
+        if (other == null) {
+            return Match.NONE;
+        } else {
+            return matches(other.getType(), other.getSubType());
+        }
     }
 
-    public boolean matches(final Annotation annotation) {
-        return annotation.annotationType() == ContentProcessingMimeType.class
-                && Arrays.stream(((ContentProcessingMimeType) annotation).value())
-                        .filter(t -> matches(t))
-                        .findAny()
-                        .isPresent();
+    public static List<MimeType> create(final Annotation annotation) {
+        if (annotation != null && annotation.annotationType() == ContentProcessingMimeType.class) {
+            return Arrays.stream(((ContentProcessingMimeType) annotation).value())
+                    .map(s -> MimeType.parse(s))
+                    .collect(Collectors.toList());
+        } else {
+            throw new IllegalArgumentException("");
+        }
+    }
+
+    public Match matches(final Annotation annotation) {
+        if (annotation != null && annotation.annotationType() == ContentProcessingMimeType.class) {
+            return Arrays.stream(((ContentProcessingMimeType) annotation).value())
+                    .map(t -> matches(t))
+                    .filter(m -> m != Match.NONE)
+                    .findAny()
+                    .orElse(Match.NONE);
+        } else {
+            return Match.NONE;
+        }
     }
 
     /**
@@ -225,7 +248,7 @@ public class MimeType implements Serializable {
         if (header == null || header.trim().isEmpty()) {
             return true;
         } else {
-            return Pattern.compile(",").splitAsStream(header).filter(h -> matches(MimeType.parse(h))).findAny().isPresent();
+            return Pattern.compile(",").splitAsStream(header).filter(h -> matches(h).isMatch()).findAny().isPresent();
         }
     }
 
@@ -246,11 +269,11 @@ public class MimeType implements Serializable {
     }
 
     public boolean isImage() {
-        return matches(IMAGE_ANY_TYPE);
+        return matches(IMAGE_ANY_TYPE).isMatch();
     }
 
     public boolean isVideo() {
-        return matches(VIDEO_ANY_TYPE);
+        return matches(VIDEO_ANY_TYPE).isMatch();
     }
 
     public String getFileExtension() {
@@ -298,5 +321,29 @@ public class MimeType implements Serializable {
                         .map(e -> e.getKey() + "=" + e.getValue())
                         .collect(Collectors.joining(";")));
         return s.toString();
+
+    }
+
+    /**
+     * Representation of how a set of mime types matches.
+     */
+    public enum Match {
+
+        NONE(0), WILDCARD(1), SUBTYPE_WILDCARD(2), EXACT(3);
+
+        private final int priority;
+
+        Match(final int priority) {
+            this.priority = priority;
+        }
+
+        public int getPriority() {
+            return priority;
+        }
+
+        public boolean isMatch() {
+            return this == WILDCARD || this == SUBTYPE_WILDCARD || this == EXACT;
+        }
+
     }
 }

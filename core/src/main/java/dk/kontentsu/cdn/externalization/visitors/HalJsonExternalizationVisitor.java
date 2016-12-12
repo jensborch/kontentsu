@@ -54,7 +54,7 @@ import javax.inject.Inject;
  */
 @ContentProcessingScoped
 @ContentProcessingMimeType({"application/hal+json"})
-public class CdiHalJsonExternalizationVisitor implements TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults> {
+public class HalJsonExternalizationVisitor implements TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults> {
 
     private JsonNode pageNode;
     private JsonNode contentNode;
@@ -65,7 +65,7 @@ public class CdiHalJsonExternalizationVisitor implements TemporalReferenceTree.V
     @Inject
     private Parsable content;
 
-    public CdiHalJsonExternalizationVisitor() {
+    public HalJsonExternalizationVisitor() {
         this.counter = new Counter();
         this.mapper = ObjectMapperFactory.create();
     }

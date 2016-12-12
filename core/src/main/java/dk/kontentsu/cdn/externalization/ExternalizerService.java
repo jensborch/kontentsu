@@ -23,24 +23,18 @@
  */
 package dk.kontentsu.cdn.externalization;
 
-import dk.kontentsu.cdn.model.ExternalFile;
-import dk.kontentsu.cdn.model.internal.Item;
-import dk.kontentsu.cdn.model.internal.ReferenceProcessor;
-import dk.kontentsu.cdn.model.internal.ReferenceType;
-import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
-import dk.kontentsu.cdn.model.internal.Version;
-import dk.kontentsu.cdn.repository.ExternalFileRepository;
-import dk.kontentsu.cdn.repository.ItemRepository;
-import dk.kontentsu.cdn.spi.ContentContext;
-import dk.kontentsu.cdn.spi.ContentProcessingMimeType;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.ConcurrencyManagement;
@@ -55,8 +49,21 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import dk.kontentsu.cdn.model.ExternalFile;
+import dk.kontentsu.cdn.model.internal.Item;
+import dk.kontentsu.cdn.model.internal.ReferenceProcessor;
+import dk.kontentsu.cdn.model.internal.ReferenceType;
+import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
+import dk.kontentsu.cdn.model.internal.Version;
+import dk.kontentsu.cdn.repository.ExternalFileRepository;
+import dk.kontentsu.cdn.repository.ItemRepository;
+import dk.kontentsu.cdn.spi.ContentContext;
+import dk.kontentsu.cdn.spi.ContentProcessingMimeType;
+import dk.kontentsu.cdn.spi.MimeType;
 
 /**
  * Service facade for externalizing internal content.
@@ -141,6 +148,7 @@ public class ExternalizerService {
         return versions;
     }
 
+    @SuppressWarnings("unchecked")
     private TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults> getExternalizationVisitor(final Bean<?> b) {
         CreationalContext<?> ctx = bm.createCreationalContext(b);
         //TODO: Check for class cast exception
@@ -156,20 +164,41 @@ public class ExternalizerService {
                 + "be pressent and annotated with ContentProcessingScoped abnd ContentProcessingMimeType"));
     }
 
+    private Set<Bean<?>> findAllExternalizationVisitorBeans() {
+        return bm.getBeans(TemporalReferenceTree.Visitor.class, new AnnotationLiteral<Any>() {
+        });
+    }
+
     private List<ExternalFile> externalizeVersion(final Version version) {
         List<ExternalFile> results = new ArrayList<>(0);
         if (!processing(version.getUuid())) {
             LOGGER.info("Externalizing version {} with uri {}", version.getUuid(), version.getItem().getUri());
             List<TemporalReferenceTree<TemporalReferenceTree.DefaultResults, TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults>>> trees = new ArrayList<>();
             ContentContext.execute(() -> {
-                Bean<?> bean = findAnyExternalizationVisitorBeans();
-                Arrays.stream(bean.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
-                    if (version.getMimeType().matches(a)) {
-                        ReferenceProcessor<TemporalReferenceTree.DefaultResults, TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults>> processor = new ReferenceProcessor<>(version, getExternalizationVisitor(bean));
-                        trees.addAll(processor.process());
-                    }
+                Set<Bean<?>> all = findAllExternalizationVisitorBeans();
+                Map<MimeType.Match, Bean<?>> matches = new HashMap<>();
+                all.stream().forEach(b -> {
+                    Arrays.stream(b.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
+                        MimeType.Match m = version.getMimeType().matches(a);
+                        if (m.isMatch()) {
+                            matches.put(m, b);
+                        }
+                    });
                 });
+                Optional<Bean<?>> bean = matches.entrySet()
+                        .stream()
+                        .sorted((e1, e2) -> Integer.compare(e1.getKey().getPriority(), e2.getKey().getPriority()))
+                        .findFirst()
+                        .map(e -> e.getValue());
 
+                if (bean.isPresent()) {
+                    TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults> visitor = getExternalizationVisitor(bean.get());
+                    LOGGER.info("Using visitor {} to externalize version {} with mime type {}", bean.get().getBeanClass().getCanonicalName(), version.getUuid(), version.getMimeType());
+                    ReferenceProcessor<TemporalReferenceTree.DefaultResults, TemporalReferenceTree.Visitor<TemporalReferenceTree.DefaultResults>> processor = new ReferenceProcessor<>(version,  visitor);
+                    trees.addAll(processor.process());
+                } else {
+                    LOGGER.warn("No visitor found to externalizr version {} with mime type {}", version.getUuid(), version.getMimeType());
+                }
             }, version.getContent());
             LOGGER.debug("Found {} files to externalize", trees.size());
             fileRepo.findAll(version.getInterval())

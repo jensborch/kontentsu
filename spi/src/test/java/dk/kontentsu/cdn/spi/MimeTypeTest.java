@@ -1,13 +1,16 @@
 package dk.kontentsu.cdn.spi;
 
+import static org.junit.Assert.*;
+
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.ws.rs.core.MediaType;
-import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 /**
@@ -46,7 +49,7 @@ public class MimeTypeTest {
     public void wildcard() {
         assertTrue("Equals should work", MimeType.parse("*/*").equals(new MimeType("*", "*")));
         assertTrue("Single wildcard should work", MimeType.parse("*").equals(MimeType.parse("*/*")));
-        assertTrue("Wildcarde should match type and subtype", MimeType.parse("*/*").matches(MimeType.parse("application/json")));
+        assertTrue("Wildcarde should match type and subtype", MimeType.parse("*/*").matches(MimeType.parse("application/json")).isMatch());
     }
 
     @Test
@@ -72,12 +75,12 @@ public class MimeTypeTest {
     @Test
     public void matches() {
         String test = "text/*";
-        assertFalse(MimeType.parse("application/pdf").matches(test));
-        assertFalse(MimeType.parse("application/*").matches(test));
-        assertTrue(MimeType.parse("text/html").matches(test));
-        assertTrue(MimeType.parse("text/*").matches(test));
-        assertFalse(MimeType.parse("text/*").matches((MimeType) null));
-        assertFalse(MimeType.parse("text/*").matches("invalid"));
+        assertFalse(MimeType.parse("application/pdf").matches(test).isMatch());
+        assertFalse(MimeType.parse("application/*").matches(test).isMatch());
+        assertTrue(MimeType.parse("text/html").matches(test).isMatch());
+        assertTrue(MimeType.parse("text/*").matches(test).isMatch());
+        assertFalse(MimeType.parse("text/*").matches((MimeType) null).isMatch());
+        assertFalse(MimeType.parse("text/*").matches("invalid").isMatch());
     }
 
     @Test
@@ -93,10 +96,10 @@ public class MimeTypeTest {
                 return ContentProcessingMimeType.class;
             }
         };
-        assertFalse(MimeType.parse("application/pdf").matches(annotation));
-        assertTrue(MimeType.parse("application/*").matches(annotation));
-        assertTrue(MimeType.parse("application/json").matches(annotation));
-        assertTrue(MimeType.parse("text/css").matches(annotation));
+        assertFalse(MimeType.parse("application/pdf").matches(annotation).isMatch());
+        assertTrue(MimeType.parse("application/*").matches(annotation).isMatch());
+        assertTrue(MimeType.parse("application/json").matches(annotation).isMatch());
+        assertTrue(MimeType.parse("text/css").matches(annotation).isMatch());
     }
 
     @Test
