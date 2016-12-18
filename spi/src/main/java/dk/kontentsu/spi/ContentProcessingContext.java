@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.cdn.spi;
+package dk.kontentsu.spi;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -43,11 +43,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jens Borch Christiansen
  */
-public class ContentContext implements AlterableContext, Serializable {
+public class ContentProcessingContext implements AlterableContext, Serializable {
 
     private static final long serialVersionUID = 2249914178328516867L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContentContext.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContentProcessingContext.class);
 
     private static final ThreadLocal<ArrayDeque<Map<Contextual<?>, Instance<?>>>> INSTANCES = new ThreadLocal<>();
     private static final ThreadLocal<Parsable> CONTENT = new ThreadLocal<>();
@@ -58,7 +58,7 @@ public class ContentContext implements AlterableContext, Serializable {
         }
     }
 
-    public static void execute(final ContentContextTask task, final Parsable content) {
+    public static void execute(final ContentProcessingTask task, final Parsable content) {
         LOGGER.debug("Starting content CDI context");
         initInstances();
         Map<Contextual<?>, Instance<?>> map = new HashMap<>();
@@ -79,12 +79,12 @@ public class ContentContext implements AlterableContext, Serializable {
         }
     }
 
-    public static void execute(final ContentContextTask task) {
+    public static void execute(final ContentProcessingTask task) {
         execute(task, null);
     }
 
     public static Parsable getContent() {
-        return ContentContext.CONTENT.get();
+        return ContentProcessingContext.CONTENT.get();
     }
 
     @Override

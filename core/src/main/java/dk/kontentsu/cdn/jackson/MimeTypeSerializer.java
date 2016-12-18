@@ -29,10 +29,10 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import dk.kontentsu.cdn.spi.MimeType;
+import dk.kontentsu.spi.MimeType;
 
 /**
- * Jackson serializer for {@link dk.kontentsu.cdn.spi.MimeType} objects.
+ * Jackson serializer for {@link dk.kontentsu.spi.MimeType} objects.
  *
  * @author Jens Borch Christiansen
  */

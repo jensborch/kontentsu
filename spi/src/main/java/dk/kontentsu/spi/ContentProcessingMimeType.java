@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.cdn.spi;
+package dk.kontentsu.spi;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

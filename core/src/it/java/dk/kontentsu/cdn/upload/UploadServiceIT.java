@@ -25,7 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import dk.kontentsu.cdn.model.Interval;
-import dk.kontentsu.cdn.spi.MimeType;
+import dk.kontentsu.spi.MimeType;
 import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.internal.Host;
 import dk.kontentsu.cdn.model.internal.Item;

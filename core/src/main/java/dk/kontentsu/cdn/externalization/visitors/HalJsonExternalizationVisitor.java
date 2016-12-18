@@ -46,9 +46,9 @@ import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
 import dk.kontentsu.cdn.model.internal.Version;
-import dk.kontentsu.cdn.spi.ContentProcessingMimeType;
-import dk.kontentsu.cdn.spi.ContentProcessingScoped;
-import dk.kontentsu.cdn.spi.Parsable;
+import dk.kontentsu.spi.ContentProcessingMimeType;
+import dk.kontentsu.spi.ContentProcessingScoped;
+import dk.kontentsu.spi.Parsable;
 
 /**
  * Tree visitor for creating external HAL+JSON page content.

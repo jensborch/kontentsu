@@ -21,39 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.cdn.spi;
+package dk.kontentsu.spi;
 
-import java.io.Serializable;
-
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AfterBeanDiscovery;
-import javax.enterprise.inject.spi.BeforeBeanDiscovery;
-import javax.enterprise.inject.spi.Extension;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
- * CDI extension for {@link ContentProcessingScoped}.
+ * Interface describing content items in Kontentsu that processed by a parser - e.g. a CDI bean
+ * using the {@link ContentScoped} scope.
  *
  * @author Jens Borch Christiansen
  */
-public class ContentExtension implements Extension, Serializable {
+public interface Parsable {
 
-    private static final long serialVersionUID = -2791994163919507379L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContentExtension.class);
+    UUID getUuid();
 
-    static {
-        LOGGER.info("Loading CDI content extension...");
-    }
+    Optional<Charset> getEncoding();
 
-    public void beforeBeanDiscovery(@Observes final BeforeBeanDiscovery event) {
-        LOGGER.info("Adding content CDI scope...");
-        event.addScope(ContentProcessingScoped.class, true, false);
-    }
+    InputStream getDataAsBinaryStream();
 
-    public void afterBeanDiscovery(@Observes final AfterBeanDiscovery event) {
-        LOGGER.info("Adding content CDI context...");
-        event.addContext(new ContentContext());
-    }
+    String getData();
+
+    MimeType getMimeType();
+
 }

@@ -1,5 +1,7 @@
-package dk.kontentsu.cdn.spi;
+package dk.kontentsu.spi;
 
+import dk.kontentsu.spi.ContentProcessingScoped;
+import dk.kontentsu.spi.Parsable;
 import java.util.UUID;
 import javax.inject.Inject;
 

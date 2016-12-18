@@ -54,8 +54,8 @@ import dk.kontentsu.cdn.parsers.ContentParser;
 import dk.kontentsu.cdn.repository.CategoryRepository;
 import dk.kontentsu.cdn.repository.HostRepository;
 import dk.kontentsu.cdn.repository.ItemRepository;
-import dk.kontentsu.cdn.spi.ContentContext;
-import dk.kontentsu.cdn.spi.ContentProcessingMimeType;
+import dk.kontentsu.spi.ContentProcessingContext;
+import dk.kontentsu.spi.ContentProcessingMimeType;
 
 /**
  * Service facade for performing various operations on CDN items - like
@@ -184,7 +184,7 @@ public class UploadService {
                 .from(uploadeItem.getInterval().getFrom())
                 .to(uploadeItem.getInterval().getTo());
 
-        ContentContext.execute(() -> {
+        ContentProcessingContext.execute(() -> {
             findAllContentParserBeans().forEach(bean -> {
                 Arrays.stream(bean.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
                     if (content.getMimeType().matches(a).isMatch()) {

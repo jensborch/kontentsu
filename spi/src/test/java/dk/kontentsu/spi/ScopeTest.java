@@ -1,20 +1,17 @@
-package dk.kontentsu.cdn.spi;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+package dk.kontentsu.spi;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
-
 import javax.inject.Inject;
-
 import org.jboss.weld.context.ContextNotActiveException;
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.CdiRunner;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +22,7 @@ import org.junit.runner.RunWith;
  * @author Jens Borch Christiansen
  */
 @RunWith(CdiRunner.class)
-@AdditionalClasses({ContentProcessingScopedBean.class, ContentExtension.class, ContentProducer.class})
+@AdditionalClasses({ContentProcessingScopedBean.class, ContentProcessingExtension.class, ContentProducer.class})
 public class ScopeTest {
 
     @Inject
@@ -71,7 +68,7 @@ public class ScopeTest {
     @Test
     public void testScope() throws Exception {
         final StringBuilder result = new StringBuilder();
-        ContentContext.execute(() -> {
+        ContentProcessingContext.execute(() -> {
             result.append(bean.uppercase());
         }, content);
         assertNotNull(result);
@@ -80,12 +77,12 @@ public class ScopeTest {
 
     @Test
     public void testNestedScope() throws Exception {
-        ContentContext.execute(() -> {
+        ContentProcessingContext.execute(() -> {
             final int count = bean.getCount();
             UUID outerContentId = bean.getContent().getUuid();
             UUID outerId = bean.getId();
             assertNotEquals(1, count);
-            ContentContext.execute(() -> {
+            ContentProcessingContext.execute(() -> {
                 assertEquals(outerContentId, bean.getContent().getUuid());
                 assertNotEquals(2, bean.getCount());
                 assertNotEquals(outerId, bean.getId());

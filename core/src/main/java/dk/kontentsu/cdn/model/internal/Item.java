@@ -36,7 +36,7 @@ import dk.kontentsu.cdn.model.SemanticUriPath;
 import dk.kontentsu.cdn.model.State;
 import dk.kontentsu.cdn.model.Taxon;
 import dk.kontentsu.cdn.repository.Repository;
-import dk.kontentsu.cdn.spi.MimeType;
+import dk.kontentsu.spi.MimeType;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;

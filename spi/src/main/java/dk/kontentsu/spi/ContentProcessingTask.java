@@ -21,33 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.cdn.spi;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package dk.kontentsu.spi;
 
 /**
- * Producer for injection content into a CDI bean that is annotated with {@link ContentProcessingScoped}.
+ * Run some code in the content processing scope.
  *
  * @author Jens Borch Christiansen
  */
-@ApplicationScoped
-public class ContentProducer {
+@FunctionalInterface
+public interface ContentProcessingTask {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContentProducer.class);
-
-    static {
-        LOGGER.info("Loading CDI content producer...");
-    }
-
-    @Produces
-    @ContentProcessingScoped
-    public Parsable getContent() {
-        LOGGER.debug("Injecting content into class");
-        return ContentContext.getContent();
-    }
+    void run();
 
 }

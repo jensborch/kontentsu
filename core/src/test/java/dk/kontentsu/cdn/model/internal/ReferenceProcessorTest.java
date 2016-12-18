@@ -1,33 +1,29 @@
 package dk.kontentsu.cdn.model.internal;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-
+import dk.kontentsu.cdn.model.Content;
+import dk.kontentsu.cdn.model.Interval;
+import dk.kontentsu.cdn.model.SemanticUri;
+import dk.kontentsu.cdn.model.SemanticUriPath;
+import dk.kontentsu.cdn.upload.ContentTestData;
+import dk.kontentsu.spi.ContentProcessingContext;
+import dk.kontentsu.spi.ContentProcessingExtension;
+import dk.kontentsu.spi.MimeType;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.CdiRunner;
 import org.junit.After;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import dk.kontentsu.cdn.model.Content;
-import dk.kontentsu.cdn.model.Interval;
-import dk.kontentsu.cdn.model.SemanticUri;
-import dk.kontentsu.cdn.model.SemanticUriPath;
-import dk.kontentsu.cdn.spi.ContentContext;
-import dk.kontentsu.cdn.spi.ContentExtension;
-import dk.kontentsu.cdn.spi.MimeType;
-import dk.kontentsu.cdn.upload.ContentTestData;
 
 /**
  * Test for {@link ReferenceProcessor}
@@ -35,7 +31,7 @@ import dk.kontentsu.cdn.upload.ContentTestData;
  * @author Jens Borch Christiansen
  */
 @RunWith(CdiRunner.class)
-@AdditionalClasses({TestVisitor.class, ContentExtension.class})
+@AdditionalClasses({TestVisitor.class, ContentProcessingExtension.class})
 public class ReferenceProcessorTest {
 
     private static final ZonedDateTime NOW = ZonedDateTime.now();
@@ -93,7 +89,7 @@ public class ReferenceProcessorTest {
 
     @Test
     public void testVisitor() {
-        ContentContext.execute(() -> {
+        ContentProcessingContext.execute(() -> {
             ReferenceProcessor<TestVisitor.TestResults, TestVisitor> processor = new ReferenceProcessor<>(pageVersion, visitor);
             List<TemporalReferenceTree<TestVisitor.TestResults, TestVisitor>> result = processor.process();
 

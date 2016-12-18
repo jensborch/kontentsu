@@ -3,7 +3,7 @@ package dk.kontentsu.cdn.model.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import dk.kontentsu.cdn.spi.ContentProcessingScoped;
+import dk.kontentsu.spi.ContentProcessingScoped;
 
 @ContentProcessingScoped
 public class TestVisitor implements TemporalReferenceTreeVisitor<TestVisitor.TestResults> {

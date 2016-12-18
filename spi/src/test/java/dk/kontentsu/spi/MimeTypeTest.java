@@ -1,5 +1,7 @@
-package dk.kontentsu.cdn.spi;
+package dk.kontentsu.spi;
 
+import dk.kontentsu.spi.MimeType;
+import dk.kontentsu.spi.ContentProcessingMimeType;
 import static org.junit.Assert.*;
 
 import java.lang.annotation.Annotation;

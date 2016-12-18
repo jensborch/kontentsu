@@ -29,10 +29,10 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import dk.kontentsu.cdn.spi.MimeType;
+import dk.kontentsu.spi.MimeType;
 
 /**
- * Jackson deserializer for {@link dk.kontentsu.cdn.spi.MimeType} objects.
+ * Jackson deserializer for {@link dk.kontentsu.spi.MimeType} objects.
  *
  * @author Jens Borch Christiansen
  */

@@ -24,8 +24,8 @@
 package dk.kontentsu.cdn.model;
 
 import dk.kontentsu.cdn.repository.Repository;
-import dk.kontentsu.cdn.spi.MimeType;
-import dk.kontentsu.cdn.spi.Parsable;
+import dk.kontentsu.spi.MimeType;
+import dk.kontentsu.spi.Parsable;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
