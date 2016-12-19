@@ -2,7 +2,7 @@ package dk.kontentsu.scope;
 
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.spi.ContentProcessingExtension;
-import dk.kontentsu.spi.MimeType;
+import dk.kontentsu.cdn.model.MimeType;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import javax.inject.Inject;

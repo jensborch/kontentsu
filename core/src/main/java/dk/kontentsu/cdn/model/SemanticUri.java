@@ -23,7 +23,6 @@
  */
 package dk.kontentsu.cdn.model;
 
-import dk.kontentsu.spi.MimeType;
 import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.Arrays;

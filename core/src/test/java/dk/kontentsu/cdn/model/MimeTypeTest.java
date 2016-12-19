@@ -1,18 +1,14 @@
-package dk.kontentsu.spi;
+package dk.kontentsu.cdn.model;
 
-import dk.kontentsu.spi.MimeType;
 import dk.kontentsu.spi.ContentProcessingMimeType;
-import static org.junit.Assert.*;
-
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.ws.rs.core.MediaType;
-
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**

@@ -7,7 +7,7 @@ import dk.kontentsu.cdn.model.SemanticUriPath;
 import dk.kontentsu.cdn.upload.ContentTestData;
 import dk.kontentsu.scope.InjectableContentProcessingScope;
 import dk.kontentsu.spi.ContentProcessingExtension;
-import dk.kontentsu.spi.MimeType;
+import dk.kontentsu.cdn.model.MimeType;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;

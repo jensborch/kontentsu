@@ -33,7 +33,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import dk.kontentsu.cdn.model.Interval;
-import dk.kontentsu.spi.MimeType;
+import dk.kontentsu.cdn.model.MimeType;
 import dk.kontentsu.cdn.model.SemanticUri;
 import io.swagger.annotations.ApiModelProperty;
 

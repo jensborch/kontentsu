@@ -21,8 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.spi;
+package dk.kontentsu.cdn.model;
 
+import dk.kontentsu.spi.ContentProcessingMimeType;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -37,7 +38,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;

@@ -33,7 +33,7 @@ import dk.kontentsu.cdn.api.mappers.MultipartUploadItemMapper.MultipartUploadIte
 import dk.kontentsu.cdn.api.model.MultipartUploadItemRepresentation;
 import dk.kontentsu.cdn.exception.ValidationException;
 import dk.kontentsu.cdn.model.Interval;
-import dk.kontentsu.spi.MimeType;
+import dk.kontentsu.cdn.model.MimeType;
 import dk.kontentsu.cdn.upload.UploadItem;
 
 /**

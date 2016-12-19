@@ -43,7 +43,7 @@ public class ContentProcessingContext implements AlterableContext, Serializable 
 
     private static final long serialVersionUID = 2249914178328516867L;
 
-    private ContentProcessingScope scope;
+    private final transient ContentProcessingScope scope;
 
     public ContentProcessingContext() {
         this.scope = new ContentProcessingScope();

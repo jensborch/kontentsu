@@ -55,7 +55,7 @@ import javax.validation.constraints.NotNull;
 import dk.kontentsu.cdn.jpa.AbstractBaseEntity;
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.Interval;
-import dk.kontentsu.spi.MimeType;
+import dk.kontentsu.cdn.model.MimeType;
 import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.State;
 import dk.kontentsu.cdn.repository.Repository;

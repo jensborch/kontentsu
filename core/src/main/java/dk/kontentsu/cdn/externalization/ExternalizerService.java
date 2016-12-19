@@ -23,6 +23,18 @@
  */
 package dk.kontentsu.cdn.externalization;
 
+import dk.kontentsu.cdn.externalization.visitors.ExternalizationVisitor;
+import dk.kontentsu.cdn.model.ExternalFile;
+import dk.kontentsu.cdn.model.internal.Item;
+import dk.kontentsu.cdn.model.internal.ReferenceProcessor;
+import dk.kontentsu.cdn.model.internal.ReferenceType;
+import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
+import dk.kontentsu.cdn.model.internal.Version;
+import dk.kontentsu.cdn.repository.ExternalFileRepository;
+import dk.kontentsu.cdn.repository.ItemRepository;
+import dk.kontentsu.scope.InjectableContentProcessingScope;
+import dk.kontentsu.spi.ContentProcessingMimeType;
+import dk.kontentsu.cdn.model.MimeType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,7 +46,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.ConcurrencyManagement;
@@ -49,22 +60,8 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import dk.kontentsu.cdn.externalization.visitors.ExternalizationVisitor;
-import dk.kontentsu.cdn.model.ExternalFile;
-import dk.kontentsu.cdn.model.internal.Item;
-import dk.kontentsu.cdn.model.internal.ReferenceProcessor;
-import dk.kontentsu.cdn.model.internal.ReferenceType;
-import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
-import dk.kontentsu.cdn.model.internal.Version;
-import dk.kontentsu.cdn.repository.ExternalFileRepository;
-import dk.kontentsu.cdn.repository.ItemRepository;
-import dk.kontentsu.scope.InjectableContentProcessingScope;
-import dk.kontentsu.spi.ContentProcessingMimeType;
-import dk.kontentsu.spi.MimeType;
 
 /**
  * Service facade for externalizing internal content.
@@ -163,7 +160,7 @@ public class ExternalizerService {
     private Set<Bean<?>> findAllExternalizationVisitorBeans() {
         return bm.getBeans(ExternalizationVisitor.class,
                 new AnnotationLiteral<Any>() {
-        });
+                });
     }
 
     private Map<MimeType.Match, Bean<?>> findMatchingExternalizationVisitorBeans(final Version version, final Set<Bean<?>> all) {
@@ -183,31 +180,13 @@ public class ExternalizerService {
 
     private List<ExternalFile> externalizeVersion(final Version version) {
         List<ExternalFile> results = new ArrayList<>(0);
-        if (!processing(version.getUuid())) {
+        if (processing(version.getUuid())) {
+            LOGGER.info("Version {} with uri {} has already been externalized", version.getUuid(), version.getItem().getUri());
+        } else {
             LOGGER.info("Externalizing version {} with uri {}", version.getUuid(), version.getItem().getUri());
             List<TemporalReferenceTree<ExternalizationVisitor.Results, ExternalizationVisitor>> trees = new ArrayList<>();
             InjectableContentProcessingScope.execute(() -> {
-                Set<Bean<?>> all = findAllExternalizationVisitorBeans();
-                LOGGER.debug("Found {} CDI externalization visitors", all.size());
-                Map<MimeType.Match, Bean<?>> matches = findMatchingExternalizationVisitorBeans(version, all);
-                Optional<Bean<?>> bean = matches.entrySet()
-                        .stream()
-                        .sorted((e1, e2) -> Integer.compare(e2.getKey().getPriority(), e1.getKey().getPriority()))
-                        .findFirst()
-                        .map(e -> e.getValue());
-
-                if (bean.isPresent()) {
-                    ExternalizationVisitor visitor = getExternalizationVisitor(bean.get());
-                    LOGGER.info("Using visitor {} to externalize version {} with mime type {}",
-                            bean.get().getBeanClass().getCanonicalName(),
-                            version.getUuid(),
-                            version.getMimeType());
-                    ReferenceProcessor<ExternalizationVisitor.Results, ExternalizationVisitor> processor
-                            = new ReferenceProcessor<>(version, visitor);
-                    trees.addAll(processor.process());
-                } else {
-                    LOGGER.warn("No visitor found to externalizr version {} with mime type {}", version.getUuid(), version.getMimeType());
-                }
+                trees.addAll(externalizeVersionInScope(version));
             }, version.getContent());
             LOGGER.debug("Found {} files to externalize", trees.size());
             fileRepo.findAll(version.getInterval())
@@ -230,11 +209,34 @@ public class ExternalizerService {
 
             processed(version.getUuid());
             scheduleService.reschedule();
-        } else {
-            LOGGER.info("Version {} with uri {} has already been externalized", version.getUuid(), version.getItem().getUri());
         }
-
         return results;
+    }
+
+    private List<TemporalReferenceTree<ExternalizationVisitor.Results, ExternalizationVisitor>> externalizeVersionInScope(final Version version) {
+        List<TemporalReferenceTree<ExternalizationVisitor.Results, ExternalizationVisitor>> trees = new ArrayList<>();
+        Set<Bean<?>> all = findAllExternalizationVisitorBeans();
+        LOGGER.debug("Found {} CDI externalization visitors", all.size());
+        Map<MimeType.Match, Bean<?>> matches = findMatchingExternalizationVisitorBeans(version, all);
+        Optional<Bean<?>> bean = matches.entrySet()
+                .stream()
+                .sorted((e1, e2) -> Integer.compare(e2.getKey().getPriority(), e1.getKey().getPriority()))
+                .findFirst()
+                .map(e -> e.getValue());
+
+        if (bean.isPresent()) {
+            ExternalizationVisitor visitor = getExternalizationVisitor(bean.get());
+            LOGGER.info("Using visitor {} to externalize version {} with mime type {}",
+                    bean.get().getBeanClass().getCanonicalName(),
+                    version.getUuid(),
+                    version.getMimeType());
+            ReferenceProcessor<ExternalizationVisitor.Results, ExternalizationVisitor> processor
+                    = new ReferenceProcessor<>(version, visitor);
+            trees.addAll(processor.process());
+        } else {
+            LOGGER.warn("No visitor found to externalizr version {} with mime type {}", version.getUuid(), version.getMimeType());
+        }
+        return trees;
     }
 
     private ExternalFile createExternalFile(final TemporalReferenceTree<ExternalizationVisitor.Results, ExternalizationVisitor> t, final Version version) {
