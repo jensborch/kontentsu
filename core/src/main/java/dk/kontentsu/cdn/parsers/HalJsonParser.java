@@ -26,13 +26,13 @@ package dk.kontentsu.cdn.parsers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
+import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.internal.Metadata;
 import dk.kontentsu.cdn.model.internal.ReferenceType;
 import static dk.kontentsu.cdn.parsers.HalJsonContent.*;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
-import dk.kontentsu.spi.Parsable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +58,7 @@ public class HalJsonParser implements ContentParser {
     private final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
     @Inject
-    private Parsable content;
+    private Content content;
 
     @Override
     public Results parse() {

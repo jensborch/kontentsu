@@ -25,7 +25,6 @@ package dk.kontentsu.cdn.model;
 
 import dk.kontentsu.cdn.repository.Repository;
 import dk.kontentsu.spi.MimeType;
-import dk.kontentsu.spi.Parsable;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -36,6 +35,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
+import javax.enterprise.inject.Alternative;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,14 +54,13 @@ import javax.validation.constraints.NotNull;
  *
  * @author Jens Borch Christiansen
  */
-//@Alternative
-//@Default
+@Alternative
 @Entity
 @Table(name = "content")
 @NamedQueries({
     @NamedQuery(name = Repository.CONTENT_GET,
             query = "SELECT c FROM Content c WHERE c.uuid = :uuid")})
-public class Content implements Serializable, Parsable {
+public class Content implements Serializable {
 
     private static final long serialVersionUID = 2169103680138791403L;
     private static final String HASH_ALGORITHM = "MD5";
@@ -143,7 +142,6 @@ public class Content implements Serializable, Parsable {
         }
     }
 
-    @Override
     public InputStream getDataAsBinaryStream() {
         return new ByteArrayInputStream(data);
     }
@@ -152,7 +150,6 @@ public class Content implements Serializable, Parsable {
         return data;
     }
 
-    @Override
     public String getData() {
         Charset e = getEncoding().orElseThrow(() -> new ContentException("Encoding is null"));
         return new String(getDataAsBytes(), e);

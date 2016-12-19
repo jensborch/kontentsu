@@ -5,7 +5,7 @@ import dk.kontentsu.cdn.model.Interval;
 import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.SemanticUriPath;
 import dk.kontentsu.cdn.upload.ContentTestData;
-import dk.kontentsu.spi.ContentProcessingContext;
+import dk.kontentsu.scope.InjectableContentProcessingScope;
 import dk.kontentsu.spi.ContentProcessingExtension;
 import dk.kontentsu.spi.MimeType;
 import java.nio.charset.StandardCharsets;
@@ -89,7 +89,7 @@ public class ReferenceProcessorTest {
 
     @Test
     public void testVisitor() {
-        ContentProcessingContext.execute(() -> {
+        InjectableContentProcessingScope.execute(() -> {
             ReferenceProcessor<TestVisitor.TestResults, TestVisitor> processor = new ReferenceProcessor<>(pageVersion, visitor);
             List<TemporalReferenceTree<TestVisitor.TestResults, TestVisitor>> result = processor.process();
 

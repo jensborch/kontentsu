@@ -23,14 +23,12 @@
  */
 package dk.kontentsu.cdn.externalization.visitors;
 
-import javax.inject.Inject;
-
 import dk.kontentsu.cdn.externalization.ExternalizationException;
 import dk.kontentsu.cdn.model.Content;
 import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
-import dk.kontentsu.spi.Parsable;
+import javax.inject.Inject;
 
 /**
  * Default externalization visitor for content thats should not be processed. Will throw a {@link ExternalizationException} if the content have a composition.
@@ -42,7 +40,7 @@ import dk.kontentsu.spi.Parsable;
 public class DefaultExternalizationVisitor extends ExternalizationVisitor {
 
     @Inject
-    private Parsable content;
+    private Content content;
 
     @Override
     public void visit(final TemporalReferenceTree.Node node) {

@@ -54,7 +54,7 @@ import dk.kontentsu.cdn.parsers.ContentParser;
 import dk.kontentsu.cdn.repository.CategoryRepository;
 import dk.kontentsu.cdn.repository.HostRepository;
 import dk.kontentsu.cdn.repository.ItemRepository;
-import dk.kontentsu.spi.ContentProcessingContext;
+import dk.kontentsu.scope.InjectableContentProcessingScope;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 
 /**
@@ -184,7 +184,7 @@ public class UploadService {
                 .from(uploadeItem.getInterval().getFrom())
                 .to(uploadeItem.getInterval().getTo());
 
-        ContentProcessingContext.execute(() -> {
+        InjectableContentProcessingScope.execute(() -> {
             findAllContentParserBeans().forEach(bean -> {
                 Arrays.stream(bean.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
                     if (content.getMimeType().matches(a).isMatch()) {

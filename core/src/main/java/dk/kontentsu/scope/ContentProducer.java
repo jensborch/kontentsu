@@ -21,16 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.cdn.parsers;
+package dk.kontentsu.scope;
 
+import dk.kontentsu.cdn.model.Content;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.kontentsu.spi.ContentProcessingContext;
-import dk.kontentsu.spi.Parsable;
 import dk.kontentsu.spi.ContentProcessingScoped;
 
 /**
@@ -49,9 +48,9 @@ public class ContentProducer {
 
     @Produces
     @ContentProcessingScoped
-    public Parsable getContent() {
+    public Content getContent() {
         LOGGER.debug("Injecting content into class");
-        return ContentProcessingContext.getContent();
+        return new InjectableContentProcessingScope().retrive();
     }
 
 }

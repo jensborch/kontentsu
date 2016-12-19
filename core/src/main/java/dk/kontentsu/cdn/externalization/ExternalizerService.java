@@ -62,7 +62,7 @@ import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
 import dk.kontentsu.cdn.model.internal.Version;
 import dk.kontentsu.cdn.repository.ExternalFileRepository;
 import dk.kontentsu.cdn.repository.ItemRepository;
-import dk.kontentsu.spi.ContentProcessingContext;
+import dk.kontentsu.scope.InjectableContentProcessingScope;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.MimeType;
 
@@ -186,7 +186,7 @@ public class ExternalizerService {
         if (!processing(version.getUuid())) {
             LOGGER.info("Externalizing version {} with uri {}", version.getUuid(), version.getItem().getUri());
             List<TemporalReferenceTree<ExternalizationVisitor.Results, ExternalizationVisitor>> trees = new ArrayList<>();
-            ContentProcessingContext.execute(() -> {
+            InjectableContentProcessingScope.execute(() -> {
                 Set<Bean<?>> all = findAllExternalizationVisitorBeans();
                 LOGGER.debug("Found {} CDI externalization visitors", all.size());
                 Map<MimeType.Match, Bean<?>> matches = findMatchingExternalizationVisitorBeans(version, all);

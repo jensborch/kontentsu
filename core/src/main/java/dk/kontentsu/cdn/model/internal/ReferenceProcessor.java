@@ -34,7 +34,7 @@ import java.util.Optional;
 import dk.kontentsu.cdn.model.Interval;
 import dk.kontentsu.cdn.model.SemanticUri;
 import dk.kontentsu.cdn.model.internal.TemporalReferenceTree.Node;
-import dk.kontentsu.spi.ContentProcessingContext;
+import dk.kontentsu.scope.InjectableContentProcessingScope;
 
 /**
  * Breadth-first tree processor for finding all temporal versions of items that
@@ -58,7 +58,7 @@ public class ReferenceProcessor<R extends TemporalReferenceTreeVisitor.Results, 
 
     public List<TemporalReferenceTree<R, V>> process() {
         while (!processing.isEmpty()) {
-            ContentProcessingContext.execute(() -> {
+            InjectableContentProcessingScope.execute(() -> {
                 processInScope();
             });
         }

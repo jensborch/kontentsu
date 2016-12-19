@@ -23,8 +23,17 @@
  */
 package dk.kontentsu.cdn.externalization.visitors;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import dk.kontentsu.cdn.externalization.ExternalizationException;
+import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
+import dk.kontentsu.cdn.model.Content;
+import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
+import dk.kontentsu.cdn.model.internal.Version;
 import static dk.kontentsu.cdn.parsers.HalJsonContent.*;
-
+import dk.kontentsu.spi.ContentProcessingMimeType;
+import dk.kontentsu.spi.ContentProcessingScoped;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -34,21 +43,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import dk.kontentsu.cdn.externalization.ExternalizationException;
-import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
-import dk.kontentsu.cdn.model.Content;
-import dk.kontentsu.cdn.model.internal.TemporalReferenceTree;
-import dk.kontentsu.cdn.model.internal.Version;
-import dk.kontentsu.spi.ContentProcessingMimeType;
-import dk.kontentsu.spi.ContentProcessingScoped;
-import dk.kontentsu.spi.Parsable;
 
 /**
  * Tree visitor for creating external HAL+JSON page content.
@@ -66,7 +62,7 @@ public class HalJsonExternalizationVisitor extends ExternalizationVisitor {
     private final ObjectMapper mapper;
 
     @Inject
-    private Parsable content;
+    private Content content;
 
     public HalJsonExternalizationVisitor() {
         this.counter = new Counter();
