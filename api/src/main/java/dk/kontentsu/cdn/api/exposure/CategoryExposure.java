@@ -43,10 +43,10 @@ import javax.ws.rs.core.UriInfo;
 
 import dk.kontentsu.cdn.api.model.CategoryRepresentation;
 import dk.kontentsu.cdn.api.model.ErrorRepresentation;
-import dk.kontentsu.cdn.model.Taxon;
-import dk.kontentsu.cdn.model.Taxonomy;
-import dk.kontentsu.cdn.repository.CategoryRepository;
-import dk.kontentsu.cdn.repository.TaxonomyRepository;
+import dk.kontentsu.model.Taxon;
+import dk.kontentsu.model.Taxonomy;
+import dk.kontentsu.repository.CategoryRepository;
+import dk.kontentsu.repository.TaxonomyRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

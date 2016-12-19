@@ -3,7 +3,7 @@ package dk.kontentsu.cdn.api.exposure;
 import javax.ws.rs.core.Response;
 
 import dk.kontentsu.cdn.api.ApiErrorException;
-import dk.kontentsu.cdn.exception.ErrorCode;
+import dk.kontentsu.exception.ErrorCode;
 
 /**
  *

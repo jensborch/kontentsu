@@ -27,7 +27,7 @@ import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dk.kontentsu.cdn.jackson.ObjectMapperFactory;
+import dk.kontentsu.jackson.ObjectMapperFactory;
 
 /**
  * Configuration of JSON object mapper.

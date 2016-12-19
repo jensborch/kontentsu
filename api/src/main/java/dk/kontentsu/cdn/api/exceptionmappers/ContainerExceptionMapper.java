@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import dk.kontentsu.cdn.api.model.ErrorRepresentation;
 import dk.kontentsu.cdn.api.model.ValidationErrorRepresentation;
-import dk.kontentsu.cdn.exception.ErrorCode;
+import dk.kontentsu.exception.ErrorCode;
 
 /**
  * Exception mapper for Throwable. If Throwable is an EJBException, a nested NoResultException will be mapped to at HTTP 404 and a nested ConstraintViolationException will be

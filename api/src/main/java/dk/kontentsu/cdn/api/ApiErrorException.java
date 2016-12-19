@@ -25,8 +25,8 @@ package dk.kontentsu.cdn.api;
 
 import javax.ws.rs.core.Response;
 
-import dk.kontentsu.cdn.exception.ApplicationException;
-import dk.kontentsu.cdn.exception.ErrorCode;
+import dk.kontentsu.exception.ApplicationException;
+import dk.kontentsu.exception.ErrorCode;
 
 /**
  *

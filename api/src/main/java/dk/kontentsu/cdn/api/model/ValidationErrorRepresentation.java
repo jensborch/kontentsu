@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import javax.validation.ConstraintViolationException;
 
-import dk.kontentsu.cdn.exception.ErrorCode;
+import dk.kontentsu.exception.ErrorCode;
 import io.swagger.annotations.ApiModelProperty;
 
 /**

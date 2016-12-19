@@ -1,6 +1,6 @@
 package dk.kontentsu.scope;
 
-import dk.kontentsu.cdn.model.Content;
+import dk.kontentsu.model.Content;
 import dk.kontentsu.spi.ContentProcessingScoped;
 import javax.inject.Inject;
 

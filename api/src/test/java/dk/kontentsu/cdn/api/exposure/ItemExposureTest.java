@@ -24,11 +24,11 @@ import dk.kontentsu.cdn.api.configuration.Config;
 import dk.kontentsu.cdn.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.cdn.api.exceptionmappers.ContainerExceptionMapper;
 import dk.kontentsu.cdn.api.exceptionmappers.PersistenceExceptionMapper;
-import dk.kontentsu.cdn.model.SemanticUri;
-import dk.kontentsu.cdn.model.SemanticUriPath;
-import dk.kontentsu.cdn.model.internal.Item;
-import dk.kontentsu.cdn.repository.ItemRepository;
-import dk.kontentsu.cdn.upload.UploadService;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.SemanticUriPath;
+import dk.kontentsu.model.internal.Item;
+import dk.kontentsu.repository.ItemRepository;
+import dk.kontentsu.upload.UploadService;
 
 /**
  * Test for {@link ItemExposure}.

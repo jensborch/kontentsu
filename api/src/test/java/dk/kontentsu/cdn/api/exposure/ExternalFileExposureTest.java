@@ -26,12 +26,12 @@ import org.mockito.MockitoAnnotations;
 
 import dk.kontentsu.cdn.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.cdn.api.exceptionmappers.ContainerExceptionMapper;
-import dk.kontentsu.cdn.model.Content;
-import dk.kontentsu.cdn.model.ExternalFile;
-import dk.kontentsu.cdn.model.MimeType;
-import dk.kontentsu.cdn.model.SemanticUri;
-import dk.kontentsu.cdn.model.internal.Item;
-import dk.kontentsu.cdn.repository.ExternalFileRepository;
+import dk.kontentsu.model.Content;
+import dk.kontentsu.model.ExternalFile;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.internal.Item;
+import dk.kontentsu.repository.ExternalFileRepository;
 
 /**
  * Test for {@link ExternalFileExposure}.

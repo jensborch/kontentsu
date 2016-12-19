@@ -44,8 +44,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import dk.kontentsu.cdn.api.model.ErrorRepresentation;
-import dk.kontentsu.cdn.model.internal.Host;
-import dk.kontentsu.cdn.repository.HostRepository;
+import dk.kontentsu.model.internal.Host;
+import dk.kontentsu.repository.HostRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

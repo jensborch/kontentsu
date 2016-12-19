@@ -28,9 +28,9 @@ import javax.ws.rs.core.UriInfo;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import dk.kontentsu.cdn.api.exposure.ItemExposure;
-import dk.kontentsu.cdn.model.Interval;
-import dk.kontentsu.cdn.model.State;
-import dk.kontentsu.cdn.model.internal.Version;
+import dk.kontentsu.model.Interval;
+import dk.kontentsu.model.State;
+import dk.kontentsu.model.internal.Version;
 
 /**
  *

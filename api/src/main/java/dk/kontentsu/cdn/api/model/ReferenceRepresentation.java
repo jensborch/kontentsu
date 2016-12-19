@@ -27,8 +27,8 @@ import javax.ws.rs.core.Link;
 import javax.ws.rs.core.UriInfo;
 
 import dk.kontentsu.cdn.api.exposure.ItemExposure;
-import dk.kontentsu.cdn.model.internal.Reference;
-import dk.kontentsu.cdn.model.internal.ReferenceType;
+import dk.kontentsu.model.internal.Reference;
+import dk.kontentsu.model.internal.ReferenceType;
 
 /**
  * Representation of a reference between versions - e.g. a link or a composition.

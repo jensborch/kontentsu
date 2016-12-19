@@ -30,7 +30,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import dk.kontentsu.cdn.api.model.ErrorRepresentation;
-import dk.kontentsu.cdn.exception.ErrorCode;
+import dk.kontentsu.exception.ErrorCode;
 
 /**
  * Exception mapper for ConstraintViolationException.

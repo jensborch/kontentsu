@@ -31,8 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.kontentsu.cdn.api.model.ErrorRepresentation;
-import dk.kontentsu.cdn.exception.ApplicationException;
-import dk.kontentsu.cdn.exception.ValidationException;
+import dk.kontentsu.exception.ApplicationException;
+import dk.kontentsu.exception.ValidationException;
 
 /**
  *

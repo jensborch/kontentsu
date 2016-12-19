@@ -30,8 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dk.kontentsu.cdn.api.model.UploadItemRepresentation;
-import dk.kontentsu.cdn.model.Interval;
-import dk.kontentsu.cdn.upload.UploadItem;
+import dk.kontentsu.model.Interval;
+import dk.kontentsu.upload.UploadItem;
 
 /**
  * Map upload item from REST API to domain object.

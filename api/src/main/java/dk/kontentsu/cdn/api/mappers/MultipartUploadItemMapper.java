@@ -31,10 +31,10 @@ import org.slf4j.LoggerFactory;
 
 import dk.kontentsu.cdn.api.mappers.MultipartUploadItemMapper.MultipartUploadItem;
 import dk.kontentsu.cdn.api.model.MultipartUploadItemRepresentation;
-import dk.kontentsu.cdn.exception.ValidationException;
-import dk.kontentsu.cdn.model.Interval;
-import dk.kontentsu.cdn.model.MimeType;
-import dk.kontentsu.cdn.upload.UploadItem;
+import dk.kontentsu.exception.ValidationException;
+import dk.kontentsu.model.Interval;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.upload.UploadItem;
 
 /**
  * Map upload item from REST API to domain object.

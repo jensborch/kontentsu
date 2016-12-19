@@ -28,7 +28,7 @@ import javax.ws.rs.core.Link;
 import javax.ws.rs.core.UriInfo;
 
 import dk.kontentsu.cdn.api.exposure.CategoryExposure;
-import dk.kontentsu.cdn.model.Category;
+import dk.kontentsu.model.Category;
 
 /**
  *

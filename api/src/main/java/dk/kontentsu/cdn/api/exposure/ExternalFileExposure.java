@@ -40,9 +40,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import dk.kontentsu.cdn.api.model.ErrorRepresentation;
-import dk.kontentsu.cdn.model.ExternalFile;
-import dk.kontentsu.cdn.model.SemanticUri;
-import dk.kontentsu.cdn.repository.ExternalFileRepository;
+import dk.kontentsu.model.ExternalFile;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.repository.ExternalFileRepository;
 import dk.kontentsu.util.DateTimeFormat;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

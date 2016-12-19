@@ -25,7 +25,7 @@ package dk.kontentsu.cdn.api.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import dk.kontentsu.cdn.exception.ErrorCode;
+import dk.kontentsu.exception.ErrorCode;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
