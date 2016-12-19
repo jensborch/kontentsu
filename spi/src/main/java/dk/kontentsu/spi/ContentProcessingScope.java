@@ -57,7 +57,7 @@ public class ContentProcessingScope implements AutoCloseable {
         return INSTANCES.get().peek();
     }
 
-    public void pop(Map<Contextual<?>, ContentProcessingContext.Instance<?>> map) {
+    public void push(final Map<Contextual<?>, ContentProcessingContext.Instance<?>> map) {
         INSTANCES.get().push(map);
     }
 

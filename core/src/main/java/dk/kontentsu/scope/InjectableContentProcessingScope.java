@@ -44,12 +44,12 @@ public class InjectableContentProcessingScope implements AutoCloseable {
         this.scope = new ContentProcessingScope();
     }
 
-    public InjectableContentProcessingScope(Content content) {
+    public InjectableContentProcessingScope(final Content content) {
         this();
         inject(content);
     }
 
-    public void inject(Content content) {
+    public void inject(final Content content) {
         CONTENT.set(content);
     }
 
