@@ -30,7 +30,7 @@ import dk.kontentsu.model.Taxon;
 import dk.kontentsu.model.Taxonomy;
 import dk.kontentsu.model.internal.Item;
 import dk.kontentsu.model.internal.Version;
-import dk.kontentsu.cdn.test.TestEJBContainer;
+import dk.kontentsu.test.TestEJBContainer;
 
 /**
  * Integration test for {@link CategoryRepository}.

@@ -1,28 +1,23 @@
 package dk.kontentsu.parsers;
 
-
-import dk.kontentsu.parsers.ContentParser;
-import dk.kontentsu.parsers.HalJsonParser;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.nio.charset.StandardCharsets;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.internal.util.reflection.Whitebox;
 
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.internal.Metadata;
 import dk.kontentsu.model.internal.MetadataType;
-import dk.kontentsu.upload.ContentTestData;
+import dk.kontentsu.test.ContentTestData;
+import java.nio.charset.StandardCharsets;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.internal.util.reflection.Whitebox;
 
 /**
  * Test for {@link HalJsonParser}
  *
- * @author JensBorch
+ * @author Jens Borch Christiansen
  */
 public class HalJsonParserTest {
 

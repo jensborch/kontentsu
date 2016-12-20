@@ -1,18 +1,18 @@
 package dk.kontentsu.model.internal;
 
-import dk.kontentsu.model.internal.TemporalReferenceTree;
-import dk.kontentsu.model.internal.ReferenceType;
-import dk.kontentsu.model.internal.Item;
-import dk.kontentsu.model.internal.Version;
-import dk.kontentsu.model.internal.ReferenceProcessor;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.Interval;
+import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.upload.ContentTestData;
 import dk.kontentsu.scope.InjectableContentProcessingScope;
 import dk.kontentsu.spi.ContentProcessingExtension;
-import dk.kontentsu.model.MimeType;
+import dk.kontentsu.test.ContentTestData;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -22,10 +22,6 @@ import javax.inject.Inject;
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.CdiRunner;
 import org.junit.After;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

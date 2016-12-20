@@ -34,7 +34,7 @@ import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.SemanticUriPath;
 import dk.kontentsu.model.internal.Item;
-import dk.kontentsu.cdn.test.TestEJBContainer;
+import dk.kontentsu.test.TestEJBContainer;
 
 /**
  * Integration test for {@link ExternalFileRepository}

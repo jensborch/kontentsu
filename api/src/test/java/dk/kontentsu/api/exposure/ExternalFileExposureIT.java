@@ -3,7 +3,7 @@ package dk.kontentsu.api.exposure;
 import dk.kontentsu.api.exposure.ExternalFileExposure;
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
-import dk.kontentsu.cdn.test.TestEJBContainer;
+import dk.kontentsu.test.TestEJBContainer;
 import java.time.LocalDateTime;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;

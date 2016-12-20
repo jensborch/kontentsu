@@ -1,31 +1,8 @@
 package dk.kontentsu.upload;
 
-import dk.kontentsu.upload.ContentTestData;
-import dk.kontentsu.upload.UploadService;
-import dk.kontentsu.upload.UploadItem;
 import static com.googlecode.catchexception.CatchException.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-import javax.ejb.embeddable.EJBContainer;
-import javax.inject.Inject;
-import javax.transaction.UserTransaction;
-import javax.validation.ConstraintViolationException;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.MimeType;
@@ -34,7 +11,25 @@ import dk.kontentsu.model.internal.Host;
 import dk.kontentsu.model.internal.Item;
 import dk.kontentsu.repository.HostRepository;
 import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.cdn.test.TestEJBContainer;
+import dk.kontentsu.test.ContentTestData;
+import dk.kontentsu.test.TestEJBContainer;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
+import javax.ejb.embeddable.EJBContainer;
+import javax.inject.Inject;
+import javax.transaction.UserTransaction;
+import javax.validation.ConstraintViolationException;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Test for {@link dk.kontentsu.cdn.service.UploadService}

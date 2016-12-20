@@ -38,7 +38,7 @@ import dk.kontentsu.model.internal.Metadata;
 import dk.kontentsu.model.internal.MetadataType;
 import dk.kontentsu.model.internal.ReferenceType;
 import dk.kontentsu.model.internal.Version;
-import dk.kontentsu.cdn.test.TestEJBContainer;
+import dk.kontentsu.test.TestEJBContainer;
 
 /**
  * Integration test for {@link ItemRepository}

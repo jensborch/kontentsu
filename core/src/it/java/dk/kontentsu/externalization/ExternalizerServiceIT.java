@@ -1,26 +1,8 @@
 package dk.kontentsu.externalization;
 
-import dk.kontentsu.externalization.ExternalizerService;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.ejb.embeddable.EJBContainer;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.transaction.UserTransaction;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.ExternalFile;
@@ -32,9 +14,23 @@ import dk.kontentsu.model.internal.Item;
 import dk.kontentsu.model.internal.ReferenceType;
 import dk.kontentsu.model.internal.Version;
 import dk.kontentsu.repository.ExternalFileRepository;
-import dk.kontentsu.cdn.test.TestEJBContainer;
-import dk.kontentsu.upload.ContentTestData;
+import dk.kontentsu.test.ContentTestData;
+import dk.kontentsu.test.TestEJBContainer;
 import dk.kontentsu.util.Transactions;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.util.List;
+import javax.annotation.Resource;
+import javax.ejb.embeddable.EJBContainer;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.transaction.UserTransaction;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Test for {@link ExternalizerService}.

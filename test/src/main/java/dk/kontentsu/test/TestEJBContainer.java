@@ -1,4 +1,4 @@
-package dk.kontentsu.cdn.test;
+package dk.kontentsu.test;
 
 import java.util.Properties;
 

@@ -1,5 +1,4 @@
-package dk.kontentsu.upload;
-
+package dk.kontentsu.test;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -9,13 +8,14 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
-
 /**
- * Class encapsulating test CDN content.
+ * Class encapsulating test content for Kontentsu.
  *
  * @author Jens Borch Christiansen
  */
 public class ContentTestData {
+
+    private static final int BUFFER = 1024;
 
     private byte[] getDate(final String file) throws IOException {
         return getData(getStream(file));
@@ -73,7 +73,7 @@ public class ContentTestData {
 
     private byte[] getData(final InputStream content) throws IOException {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[BUFFER];
             int length;
             while ((length = content.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, length);
@@ -81,5 +81,4 @@ public class ContentTestData {
             return outputStream.toByteArray();
         }
     }
-
 }
