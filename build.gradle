@@ -14,6 +14,7 @@ plugins {
     id 'pmd'
     id 'project-report'
     id 'com.github.ben-manes.versions' version '0.13.0'
+    id 'de.aaschmid.cpd' version '1.0'  
 }
 
 ext {
@@ -41,7 +42,7 @@ ext {
 
     checkstyleVersion = "7.1.1"
     findbugsVersion =  "3.0.1"
-    pmdVersion = "5.5.1"
+    pmdVersion = "5.5.2"
     openejbVersion = '7.0.1'
     junitVersion = '4.12'
     jacocoVersion = "0.7.7.201606060606"
@@ -64,6 +65,10 @@ allprojects {
         options.incremental = true
         options.fork = true
     }
+    
+    plugins.withType(JavaBasePlugin) {
+        check.dependsOn(rootProject.cpdCheck)
+    }
 
     tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
@@ -82,7 +87,8 @@ subprojects {
     apply plugin: 'pmd'
     apply plugin: 'jacoco'
     apply plugin: 'org.owasp.dependencycheck'
-
+    //apply plugin: 'cpd'
+     
     checkstyle {
         toolVersion = checkstyleVersion
         ignoreFailures = true
@@ -107,6 +113,12 @@ subprojects {
         ignoreFailures = true
         ruleSetFiles = files("$rootProject.projectDir/config/pmd/ruleset.xml")
     }
+    
+    cpd {
+        toolVersion = pmdVersion
+        ignoreFailures = true
+    }
+
 
     test {
         finalizedBy jacocoTestReport
