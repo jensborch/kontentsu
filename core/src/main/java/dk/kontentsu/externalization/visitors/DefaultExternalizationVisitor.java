@@ -51,7 +51,7 @@ public class DefaultExternalizationVisitor extends ExternalizationVisitor {
 
     @Override
     public ExternalizationVisitor.Results getResults() {
-        return new ExternalizationVisitor.Results((Content) content);
+        return new ExternalizationVisitor.Results(content);
     }
 
 }

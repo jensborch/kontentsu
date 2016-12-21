@@ -23,8 +23,10 @@
  */
 package dk.kontentsu.externalization;
 
+import dk.kontentsu.externalization.visitors.ExternalizationIdentifierVisitor;
 import dk.kontentsu.externalization.visitors.ExternalizationVisitor;
 import dk.kontentsu.model.ExternalFile;
+import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.internal.Item;
 import dk.kontentsu.model.internal.ReferenceProcessor;
 import dk.kontentsu.model.internal.ReferenceType;
@@ -34,7 +36,6 @@ import dk.kontentsu.repository.ExternalFileRepository;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.scope.InjectableContentProcessingScope;
 import dk.kontentsu.spi.ContentProcessingMimeType;
-import dk.kontentsu.model.MimeType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -184,7 +185,7 @@ public class ExternalizerService {
             LOGGER.info("Version {} with uri {} has already been externalized", version.getUuid(), version.getItem().getUri());
         } else {
             LOGGER.info("Externalizing version {} with uri {}", version.getUuid(), version.getItem().getUri());
-            List<TemporalReferenceTree<ExternalizationVisitor.Results, ExternalizationVisitor>> trees = new ArrayList<>();
+            List<TemporalReferenceTree<ExternalizationIdentifierVisitor.Results, ExternalizationIdentifierVisitor>> trees = new ArrayList<>();
             InjectableContentProcessingScope.execute(() -> {
                 trees.addAll(externalizeVersionInScope(version));
             }, version.getContent());
@@ -213,8 +214,8 @@ public class ExternalizerService {
         return results;
     }
 
-    private List<TemporalReferenceTree<ExternalizationVisitor.Results, ExternalizationVisitor>> externalizeVersionInScope(final Version version) {
-        List<TemporalReferenceTree<ExternalizationVisitor.Results, ExternalizationVisitor>> trees = new ArrayList<>();
+    private List<TemporalReferenceTree<ExternalizationIdentifierVisitor.Results, ExternalizationIdentifierVisitor>> externalizeVersionInScope(final Version version) {
+        List<TemporalReferenceTree<ExternalizationIdentifierVisitor.Results, ExternalizationIdentifierVisitor>> trees = new ArrayList<>();
         Set<Bean<?>> all = findAllExternalizationVisitorBeans();
         LOGGER.debug("Found {} CDI externalization visitors", all.size());
         Map<MimeType.Match, Bean<?>> matches = findMatchingExternalizationVisitorBeans(version, all);
@@ -225,12 +226,12 @@ public class ExternalizerService {
                 .map(e -> e.getValue());
 
         if (bean.isPresent()) {
-            ExternalizationVisitor visitor = getExternalizationVisitor(bean.get());
+            ExternalizationIdentifierVisitor visitor = new ExternalizationIdentifierVisitor(getExternalizationVisitor(bean.get()));
             LOGGER.info("Using visitor {} to externalize version {} with mime type {}",
                     bean.get().getBeanClass().getCanonicalName(),
                     version.getUuid(),
                     version.getMimeType());
-            ReferenceProcessor<ExternalizationVisitor.Results, ExternalizationVisitor> processor
+            ReferenceProcessor<ExternalizationIdentifierVisitor.Results, ExternalizationIdentifierVisitor> processor
                     = new ReferenceProcessor<>(version, visitor);
             trees.addAll(processor.process());
         } else {
@@ -239,13 +240,13 @@ public class ExternalizerService {
         return trees;
     }
 
-    private ExternalFile createExternalFile(final TemporalReferenceTree<ExternalizationVisitor.Results, ExternalizationVisitor> t, final Version version) {
+    private ExternalFile createExternalFile(final TemporalReferenceTree<ExternalizationIdentifierVisitor.Results, ExternalizationIdentifierVisitor> t, final Version version) {
         ExternalFile.Builder builder = ExternalFile.builder()
                 .item(version.getItem())
                 .content(t.getResult().getContent())
                 .interval(t.getInteval())
+                .externalizationId(t.getResult().getId())
                 .state(version.getState());
-        t.getResult().getId().ifPresent(i -> builder.externalizationId(i));
         return builder.build();
     }
 

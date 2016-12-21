@@ -1,7 +1,5 @@
 package dk.kontentsu.externalization.visitors;
 
-import java.util.Optional;
-
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.internal.TemporalReferenceTreeVisitor;
 
@@ -16,21 +14,10 @@ public abstract class ExternalizationVisitor implements TemporalReferenceTreeVis
      */
     public static class Results implements TemporalReferenceTreeVisitor.Results {
 
-        final Optional<String> id;
         final Content content;
 
-        public Results(final String id, final Content content) {
-            this.id = Optional.of(id);
-            this.content = content;
-        }
-
         public Results(final Content content) {
-            this.id = Optional.empty();
             this.content = content;
-        }
-
-        public Optional<String> getId() {
-            return id;
         }
 
         public Content getContent() {

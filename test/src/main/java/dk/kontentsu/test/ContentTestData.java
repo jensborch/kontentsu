@@ -1,5 +1,7 @@
 package dk.kontentsu.test;
 
+import static junit.framework.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -64,11 +66,16 @@ public class ContentTestData {
     }
 
     public String getResults(final String file) {
-        return new BufferedReader(new InputStreamReader(getStream(file), StandardCharsets.UTF_8))
-                .lines()
-                .parallel()
-                .collect(Collectors.joining(""))
-                .replaceAll("\\s\\s+", "");
+        String result = null;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getStream(file), StandardCharsets.UTF_8))) {
+            result = reader.lines()
+                    .parallel()
+                    .collect(Collectors.joining(""))
+                    .replaceAll("\\s\\s+", "");
+        } catch (IOException e) {
+            fail("Could not read test data: " + file);
+        }
+        return result;
     }
 
     private byte[] getData(final InputStream content) throws IOException {
