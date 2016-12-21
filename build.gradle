@@ -87,7 +87,6 @@ subprojects {
     apply plugin: 'pmd'
     apply plugin: 'jacoco'
     apply plugin: 'org.owasp.dependencycheck'
-    //apply plugin: 'cpd'
      
     checkstyle {
         toolVersion = checkstyleVersion
@@ -118,7 +117,10 @@ subprojects {
         toolVersion = pmdVersion
         ignoreFailures = true
     }
-
+    
+    cpdCheck {
+        source = sourceSets.main.java
+    }
 
     test {
         finalizedBy jacocoTestReport
