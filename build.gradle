@@ -119,7 +119,7 @@ subprojects {
     }
     
     cpdCheck {
-        source = sourceSets.main.java
+        source = sourceSets.main.allJava
     }
 
     test {
