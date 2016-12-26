@@ -23,10 +23,13 @@
  */
 package dk.kontentsu.api.configuration;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  *
  * @author Jens Borch Christiansen
  */
+@SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
 public interface Config extends org.aeonbits.owner.Config {
 
     @Key("upload.write.to.disk.size.threshold")

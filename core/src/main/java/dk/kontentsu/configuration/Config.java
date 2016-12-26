@@ -23,11 +23,14 @@
  */
 package dk.kontentsu.configuration;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Configuration for CDN core module.
  *
  * @author Jens Borch Christiansen
  */
+@SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
 public interface Config extends org.aeonbits.owner.Config {
 
     @Key("db.encryption.key")
