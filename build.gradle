@@ -122,8 +122,8 @@ subprojects {
     
     cpdCheck {
         reports {
-            text.enabled = true
-            xml.enabled = false
+            text.enabled = false
+            xml.enabled = true
         }
     }
 
