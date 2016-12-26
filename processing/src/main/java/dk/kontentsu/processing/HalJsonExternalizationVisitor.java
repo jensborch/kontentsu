@@ -21,17 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.externalization.visitors;
+package dk.kontentsu.processing;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import dk.kontentsu.externalization.ExternalizationException;
+import dk.kontentsu.externalization.visitors.ExternalizationVisitor;
 import dk.kontentsu.jackson.ObjectMapperFactory;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.internal.TemporalReferenceTree;
 import dk.kontentsu.model.internal.Version;
-import static dk.kontentsu.parsers.HalJsonContent.*;
+
+import static dk.kontentsu.processing.HalJsonContent.*;
+
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
 import java.io.IOException;

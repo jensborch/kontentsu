@@ -1,4 +1,6 @@
-package dk.kontentsu.parsers;
+package dk.kontentsu.processing;
+
+import dk.kontentsu.processing.HalJsonParser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -7,6 +9,7 @@ import dk.kontentsu.model.Content;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.internal.Metadata;
 import dk.kontentsu.model.internal.MetadataType;
+import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.test.ContentTestData;
 import java.nio.charset.StandardCharsets;
 import org.junit.After;

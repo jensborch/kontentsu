@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.parsers;
+package dk.kontentsu.processing;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +30,12 @@ import dk.kontentsu.model.Content;
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.internal.Metadata;
 import dk.kontentsu.model.internal.ReferenceType;
-import static dk.kontentsu.parsers.HalJsonContent.*;
+import dk.kontentsu.parsers.ContentParser;
+import dk.kontentsu.parsers.ContentParserException;
+import dk.kontentsu.parsers.Link;
+
+import static dk.kontentsu.processing.HalJsonContent.*;
+
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
 import java.io.IOException;

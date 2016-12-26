@@ -13,6 +13,8 @@ import dk.kontentsu.repository.HostRepository;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.test.ContentTestData;
 import dk.kontentsu.test.TestEJBContainer;
+import dk.kontentsu.upload.UploadItem;
+import dk.kontentsu.upload.UploadService;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
@@ -87,7 +89,7 @@ public class UploadServiceIT {
         }
     }
 
-    private Item getItem(UUID id) throws Exception {
+    private Item getItem(final UUID id) throws Exception {
         try {
             userTransaction.begin();
             return itemRepo.get(id);

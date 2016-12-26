@@ -55,7 +55,7 @@ ext {
 defaultTasks 'build'
 
 allprojects {
-    group = 'dk.kontentsu.cdn'
+    group = 'dk.kontentsu'
     version = '1.0-SNAPSHOT'
 
     compileJava {
