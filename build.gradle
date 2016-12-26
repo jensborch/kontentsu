@@ -66,10 +66,6 @@ allprojects {
         options.fork = true
     }
     
-    plugins.withType(JavaBasePlugin) {
-        check.dependsOn(rootProject.cpdCheck)
-    }
-
     tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
     }
@@ -113,13 +109,22 @@ subprojects {
         ruleSetFiles = files("$rootProject.projectDir/config/pmd/ruleset.xml")
     }
     
+    plugins.withType(JavaBasePlugin) {
+        check.dependsOn(rootProject.cpdCheck)
+    }    
+    
     cpd {
         toolVersion = pmdVersion
         ignoreFailures = true
+        ignoreAnnotations = true
+        minimumTokenCount = 50
     }
     
     cpdCheck {
-        source = sourceSets.main.allJava
+        reports {
+            text.enabled = true
+            xml.enabled = false
+        }
     }
 
     test {
