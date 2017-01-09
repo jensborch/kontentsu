@@ -62,18 +62,24 @@ dependencies {
 def payaraJar = configurations.payara.find { it.name == "payara-micro-" + payaraVersion + ".jar" }
 def payaraPort = 9090
 
+task payaraConf(type: Copy) {
+    from 'src/main/config/payara'
+    into 'build/payara'
+}
+
 task startPayara(type:Exec) {
-    commandLine 'java' ,'-jar', "${payaraJar}", '--port', "${payaraPort}", '--deploy', "build/libs/${warFile}"
+    commandLine 'java' ,'-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--port', "${payaraPort}", '--deploy', "build/libs/${warFile}"
 }
 
 task startPayaraDebug(type:Exec) {
-    commandLine 'java', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=9009', '-jar', "${payaraJar}", '--port', "${payaraPort}", '--deploy', "build/libs/${warFile}"
+    commandLine 'java', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=9009', '-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--port', "${payaraPort}", '--deploy', "build/libs/${warFile}"
 }
 
 task uberJar(type: Exec) {
-    commandLine 'java', '-jar', "${payaraJar}", '--deploy', "build/libs/${warFile}", '--outputUberJar', 'build/cdn.jar'
+    commandLine 'java', '-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--deploy', "build/libs/${warFile}", '--outputUberJar', 'build/cdn.jar'
 }
 
+war.dependsOn payaraConf
 uberJar.dependsOn war
 startPayaraDebug.dependsOn war
 startPayara.dependsOn war

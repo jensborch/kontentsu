@@ -19,49 +19,59 @@ public class ContentTestData {
 
     private static final int BUFFER = 1024;
 
+    private final Type type;
+
+    public ContentTestData() {
+        this.type = Type.HAL;
+    }
+
+    public ContentTestData(final Type type) {
+        this.type = type;
+    }
+
     private byte[] getDate(final String file) throws IOException {
         return getData(getStream(file));
     }
 
     private InputStream getStream(final String file) {
-        return this.getClass().getClassLoader().getResourceAsStream(file);
+        return this.getClass().getClassLoader().getResourceAsStream(type.getPath() + file);
     }
 
     public byte[] getArticle(final int index) throws IOException {
         switch (index) {
             case 1:
-                return getDate("content/article1.json");
+                return getDate("article1.json");
             case 2:
-                return getDate("content/article2.json");
+                return getDate("article2.json");
             default:
-                return getDate("content/article1.json");
+                return getDate("article1.json");
         }
     }
 
     public byte[] getContact() throws IOException {
-        return getDate("content/contact.json");
+        return getDate("contact.json");
     }
 
     public byte[] getFooter() throws IOException {
-        return getDate("content/footer.json");
+        return getDate("footer.json");
     }
 
     public byte[] getFullPage() throws IOException {
-        return getDate("content/page-full.json");
+        return getDate("page-full.json");
     }
 
     public byte[] getSimplePage() throws IOException {
-        return getDate("content/page-simple.json");
+        return getDate("page-simple.json");
     }
 
     public String getSimplePageResults(final int index) {
         switch (index) {
             case 1:
-                return getResults("content/page-simple-results1.json");
+                return getResults("page-simple-results1.json");
             case 2:
-                return getResults("content/page-simple-results2.json");
+                return getResults("page-simple-results2.json");
             default:
-                return getResults("content/page-simple-results1.json");
+                return getResults("page-simple-results1.json");
         }
     }
 
@@ -86,6 +96,17 @@ public class ContentTestData {
                 outputStream.write(buffer, 0, length);
             }
             return outputStream.toByteArray();
+        }
+    }
+
+    /**
+     * Different content types supported.
+     */
+    public enum Type {
+        HAL, JSON;
+
+        public String getPath() {
+            return "content/" + name().toLowerCase() + "/";
         }
     }
 }
