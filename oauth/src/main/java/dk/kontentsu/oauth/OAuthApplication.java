@@ -23,20 +23,38 @@
  */
 package dk.kontentsu.oauth;
 
+import java.util.HashSet;
+import java.util.Set;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 /**
+ * The application class for the REST exposure.
  *
  * @author Jens Borch Christiansen
  */
-public class TokenRepresentation {
+@ApplicationPath(OAuthApplication.API_ROOT)
+public class OAuthApplication extends Application {
 
-    private final String accessToken;
+    public static final String API_ROOT = "/oauth";
 
-    public TokenRepresentation(final String accessToken) {
-        this.accessToken = accessToken;
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuthApplication.class);
+    private final Set<Class<?>> classes = new HashSet<>();
+
+    static {
+        LOGGER.info("Loading CDN REST publiching application...");
     }
 
-    public String getAccessToken() {
-        return accessToken;
+    public OAuthApplication() {
+    }
+
+    @Override
+    public Set<Class<?>> getClasses() {
+        classes.add(TokenExposure.class);
+        return classes;
     }
 
 }

@@ -23,39 +23,34 @@
  */
 package dk.kontentsu.oauth;
 
+import java.security.Principal;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
- * The application class for the REST exposure.
  *
  * @author Jens Borch Christiansen
  */
-@ApplicationPath(OauthApplication.API_ROOT)
-public class OauthApplication extends Application {
+public class User implements Principal {
 
-    public static final String API_ROOT = "/oauth";
+    private String name;
+    private Set<String> roles;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OauthApplication.class);
-    private final Set<Class<?>> classes = new HashSet<>();
-
-    static {
-        LOGGER.info("Loading CDN REST publiching application...");
+    public User(final String name, final Collection<String> roles) {
+        this.name = name;
+        this.roles = new HashSet<>();
+        this.roles.addAll(roles);
     }
 
-    public OauthApplication() {
-
-
+    public Set<String> getRoles() {
+        return Collections.unmodifiableSet(roles);
     }
 
     @Override
-    public Set<Class<?>> getClasses() {
-        return classes;
+    public String getName() {
+        return name;
     }
 
 }
