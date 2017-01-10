@@ -1,0 +1,10 @@
+
+jar {
+    baseName = 'kontentsu-oauth'
+}
+
+dependencies {
+    compile 'io.jsonwebtoken:jjwt:0.7.0'
+    compile 'org.apache.tomee:javaee-api:' + javaeeVersion
+    compile 'org.glassfish.jersey.media:jersey-media-json-jackson:' + jerseyVersion
+}
