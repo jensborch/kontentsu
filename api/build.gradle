@@ -25,6 +25,13 @@ dependencies {
         exclude group: 'org.javassist'
     }
 
+    compile (project(':oauth')) {
+        exclude group: 'org.glassfish.jersey.media'
+        exclude group: 'javax.annotation'
+        exclude group: 'javax.inject'
+        exclude group: 'javax.enterprise'
+    }
+
     compile('com.fasterxml.jackson.datatype:jackson-datatype-jdk8:' + jacksonVersion) {
         transitive = false
     }

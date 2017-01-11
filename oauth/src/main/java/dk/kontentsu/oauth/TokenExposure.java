@@ -23,13 +23,13 @@
  */
 package dk.kontentsu.oauth;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
@@ -47,6 +47,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.crypto.MacProvider;
 
 /**
  * Get OAuth2 access token - i.e. a JWT token.
@@ -79,13 +83,12 @@ public class TokenExposure {
                     .map(p -> p.getName())
                     //.filter(n -> request.isUserInRole(n))
                     .collect(Collectors.toSet());
-            byte[] key = getSignatureKey();
             Date expirationDate = Date.from(LocalDateTime.now().plusMinutes(TIMEOUT).toInstant(ZoneOffset.UTC));
             String jwt = Jwts.builder().setIssuer("Kontentsu")
                     .setSubject(username)
                     .setExpiration(expirationDate)
                     .claim("groups", groups)
-                    .signWith(SignatureAlgorithm.HS256, key)
+                    .signWith(SignatureAlgorithm.HS512, getSignatureKey())
                     .compact();
             return Response.ok(new TokenRepresentation(jwt)).build();
         } catch (ServletException | PolicyContextException ex) {
@@ -93,8 +96,8 @@ public class TokenExposure {
         }
     }
 
-    private byte[] getSignatureKey() {
-        return new byte[0];
+    private Key getSignatureKey() {
+        return MacProvider.generateKey();
     }
 
 }

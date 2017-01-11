@@ -25,11 +25,12 @@ package dk.kontentsu.oauth;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * The application class for the REST exposure.
@@ -45,15 +46,15 @@ public class OAuthApplication extends Application {
     private final Set<Class<?>> classes = new HashSet<>();
 
     static {
-        LOGGER.info("Loading CDN REST publiching application...");
+        LOGGER.info("Loading OAuth application...");
     }
 
     public OAuthApplication() {
+        classes.add(TokenExposure.class);
     }
 
     @Override
     public Set<Class<?>> getClasses() {
-        classes.add(TokenExposure.class);
         return classes;
     }
 
