@@ -45,8 +45,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -57,23 +61,23 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
  *
  * @author Jens Borch Christiansen
  */
-@Path("token")
+@Path("/token")
 @Stateless
 public class TokenExposure {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TokenExposure.class);
     private static final int TIMEOUT = 30;
 
-    @Resource SessionContext ctx;
-
-    @Context
-    private HttpServletRequest request;
+    @Resource
+    SessionContext ctx;
 
     @POST
-    @Consumes("application/x-www-form-urlencoded")
-    @Produces("application/json")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getToken(@FormParam("grant_type") final String grantType,
             @FormParam("username") final String username,
             @FormParam("password") final String password,
+            @Context HttpServletRequest request,
             @HeaderParam("Authorization") final String authorization) {
         try {
             request.login(username, password);
@@ -92,6 +96,7 @@ public class TokenExposure {
                     .compact();
             return Response.ok(new TokenRepresentation(jwt)).build();
         } catch (ServletException | PolicyContextException ex) {
+            LOGGER.info("Login failed for user: " + username, ex);
             return Response.status(Status.UNAUTHORIZED).build();
         }
     }

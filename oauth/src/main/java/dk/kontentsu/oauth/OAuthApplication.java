@@ -29,6 +29,7 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +52,7 @@ public class OAuthApplication extends Application {
 
     public OAuthApplication() {
         classes.add(TokenExposure.class);
+        classes.add(JacksonFeature.class);
     }
 
     @Override

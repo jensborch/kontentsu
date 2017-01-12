@@ -85,11 +85,11 @@ Portions Copyright [2016] [Payara Foundation and/or its affiliates]
             <iiop-service>
                 <orb use-thread-pool-ids="thread-pool-1"></orb>
                 <iiop-listener id="orb-listener-1" enabled="false" address="0.0.0.0"></iiop-listener>
-            </iiop-service>    
+            </iiop-service>
             <admin-service system-jmx-connector-name="system">
                 <jmx-connector port="8686" address="0.0.0.0" security-enabled="false" auth-realm-name="admin-realm" name="system" enabled="false"></jmx-connector>
                 <das-config></das-config>
-            </admin-service>     
+            </admin-service>
             <connector-service shutdown-timeout-in-seconds="30">
             </connector-service>
             <ejb-container steady-pool-size="0" max-pool-size="32" session-store="${com.sun.aas.instanceRoot}/session-store" pool-resize-quantity="8">
@@ -100,11 +100,11 @@ Portions Copyright [2016] [Payara Foundation and/or its affiliates]
             </log-service>
             <security-service activate-default-principal-to-role-mapping="true" jacc="simple">
                 <auth-realm classname="com.sun.enterprise.security.auth.realm.file.FileRealm" name="admin-realm">
-                    <property value="${com.sun.aas.instanceRoot}/config/admin-keyfile" name="file" />
+                    <property value="build/payara/admin-keyfile" name="file" />
                     <property value="fileRealm" name="jaas-context" />
                 </auth-realm>
                 <auth-realm classname="com.sun.enterprise.security.auth.realm.file.FileRealm" name="file">
-                    <property value="${com.sun.aas.instanceRoot}/config/keyfile" name="file" />
+                    <property value="build/payara/keyfile" name="file" />
                     <property value="fileRealm" name="jaas-context" />
                 </auth-realm>
                 <auth-realm classname="com.sun.enterprise.security.auth.realm.certificate.CertificateRealm" name="certificate" />
@@ -170,7 +170,7 @@ Portions Copyright [2016] [Payara Foundation and/or its affiliates]
                     <protocol name="http-listener">
                         <http default-virtual-server="server" xpowered-by="false" max-connections="250"  comet-support-enabled="true">
                             <file-cache enabled="false"></file-cache>
-                        </http>       
+                        </http>
                     </protocol>
                     <protocol security-enabled="true" name="https-listener">
                         <http default-virtual-server="server" xpowered-by="false" comet-support-enabled="true" max-connections="250">
@@ -191,7 +191,7 @@ Portions Copyright [2016] [Payara Foundation and/or its affiliates]
                 <thread-pool name="http-thread-pool" min-thread-pool-size="10" max-thread-pool-size="200" max-queue-size="4096"></thread-pool>
                 <thread-pool name="thread-pool-1" min-thread-pool-size="2" max-thread-pool-size="200"/>
             </thread-pools>
-        </config> 
+        </config>
     </configs>
     <property name="administrative.domain.name" value="domain1"/>
 </domain>
