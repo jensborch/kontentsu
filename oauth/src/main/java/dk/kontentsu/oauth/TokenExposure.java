@@ -23,38 +23,22 @@
  */
 package dk.kontentsu.oauth;
 
-import java.security.Key;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.security.auth.Subject;
-import javax.security.jacc.PolicyContext;
-import javax.security.jacc.PolicyContextException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.crypto.MacProvider;
 
 /**
  * Get OAuth2 access token - i.e. a JWT token.
@@ -65,11 +49,11 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 @Stateless
 public class TokenExposure {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TokenExposure.class);
-    private static final int TIMEOUT = 30;
+    @Inject
+    private Config config;
 
-    @Resource
-    SessionContext ctx;
+    @Inject
+    private LoginProvider loginProvider;
 
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -77,32 +61,22 @@ public class TokenExposure {
     public Response getToken(@FormParam("grant_type") final String grantType,
             @FormParam("username") final String username,
             @FormParam("password") final String password,
-            @Context HttpServletRequest request,
             @HeaderParam("Authorization") final String authorization) {
         try {
-            request.login(username, password);
-            //Use JACC API to get groups from realm... might not work in all containers
-            Subject subject = (Subject) PolicyContext.getContext("javax.security.auth.Subject.container");
-            Set<String> groups = subject.getPrincipals().stream()
-                    .map(p -> p.getName())
-                    //.filter(n -> request.isUserInRole(n))
-                    .collect(Collectors.toSet());
-            Date expirationDate = Date.from(LocalDateTime.now().plusMinutes(TIMEOUT).toInstant(ZoneOffset.UTC));
+            User user = loginProvider.login(username, password);
             String jwt = Jwts.builder().setIssuer("Kontentsu")
                     .setSubject(username)
-                    .setExpiration(expirationDate)
-                    .claim("groups", groups)
-                    .signWith(SignatureAlgorithm.HS512, getSignatureKey())
+                    .setExpiration(getExpirationDate())
+                    .claim("groups", user.getRoles())
+                    .signWith(SignatureAlgorithm.HS512, config.signatureKey().getBytes())
                     .compact();
             return Response.ok(new TokenRepresentation(jwt)).build();
-        } catch (ServletException | PolicyContextException ex) {
-            LOGGER.info("Login failed for user: " + username, ex);
+        } catch (LoginException ex) {
             return Response.status(Status.UNAUTHORIZED).build();
         }
     }
 
-    private Key getSignatureKey() {
-        return MacProvider.generateKey();
+    private Date getExpirationDate() {
+        return Date.from(LocalDateTime.now().plusMinutes(config.timeout()).toInstant(ZoneOffset.UTC));
     }
-
 }
