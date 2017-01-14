@@ -23,16 +23,17 @@
  */
 package dk.kontentsu.oauth2;
 
+import java.security.Principal;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.security.auth.Subject;
 import javax.security.jacc.PolicyContext;
 import javax.security.jacc.PolicyContextException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.core.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,26 +46,54 @@ import org.slf4j.LoggerFactory;
 @RequestScoped
 public class LoginProvider {
 
+    private static final String JAVAX_SUBJECT_CONTAINER = "javax.security.auth.Subject.container";
     private static final Logger LOGGER = LoggerFactory.getLogger(TokenExposure.class);
 
-    @Context
-    HttpServletRequest request;
+    @Inject
+    private HttpServletRequest request;
 
+    /**
+     * Perform login using
+     * {@link HttpServletRequest#login(java.lang.String, java.lang.String)} and
+     * retrieve roles for authenticated user.
+     *
+     * @param username name of user
+     * @param password for user
+     * @return a {@link Principal} containing user roles.
+     */
     public User login(final String username, final String password) {
         try {
             request.login(username, password);
-            //Use JACC API to get groups from realm... might not work in all containers
-            Subject subject = (Subject) PolicyContext.getContext("javax.security.auth.Subject.container");
-            Set<String> roles = subject.getPrincipals().stream()
-                    .map(p -> p.getName())
-                    //.filter(n -> request.isUserInRole(n))
-                    .collect(Collectors.toSet());
-            return new User(username, roles);
+            return new User(username, getRoles());
         } catch (PolicyContextException | ServletException ex) {
             String msg = "Login failed for user: " + username;
             LOGGER.info(msg);
             throw new NotAuthorizedException(msg, ex);
         }
+    }
+
+    /**
+     * Use JACC API to get <code>Subject</code> for current authenticated user
+     * from realm.
+     *
+     * @return the <code>Subject</code> for current user
+     * @throws PolicyContextException if an error occurs
+     */
+    public Subject getSubject() throws PolicyContextException {
+        return (Subject) PolicyContext.getContext(JAVAX_SUBJECT_CONTAINER);
+    }
+
+    /**
+     * Use JACC API to get list for roles for current authenticated user from
+     * realm.
+     *
+     * @return list of roles
+     * @throws PolicyContextException if an error occurs
+     */
+    public Set<String> getRoles() throws PolicyContextException {
+        return getSubject().getPrincipals().stream()
+                .map(p -> p.getName())
+                .collect(Collectors.toSet());
     }
 
 }
