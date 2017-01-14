@@ -21,22 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth;
+package dk.kontentsu.oauth2;
+
+import java.util.HashSet;
+import java.util.Set;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
+ * The application class for the REST exposure.
  *
  * @author Jens Borch Christiansen
  */
-public class TokenRepresentation {
+@ApplicationPath(OAuth2Application.API_ROOT)
+public class OAuth2Application extends Application {
 
-    private final String accessToken;
+    public static final String API_ROOT = "/oauth";
 
-    public TokenRepresentation(final String accessToken) {
-        this.accessToken = accessToken;
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2Application.class);
+    private final Set<Class<?>> classes = new HashSet<>();
+
+    static {
+        LOGGER.info("Loading OAuth application...");
     }
 
-    public String getAccessToken() {
-        return accessToken;
+    public OAuth2Application() {
+        classes.add(TokenExposure.class);
+        classes.add(JacksonFeature.class);
+    }
+
+    @Override
+    public Set<Class<?>> getClasses() {
+        return classes;
     }
 
 }

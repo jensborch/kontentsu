@@ -21,34 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth;
+package dk.kontentsu.oauth2;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * OAuth2 configuration.
+ * Response containing an OAuth2 access token.
  *
  * @author Jens Borch Christiansen
  */
-@SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
-public interface Config extends org.aeonbits.owner.Config {
+public class TokenRepresentation {
 
-    /**
-     * JWT signature key used in OAuth2 bearer token.
-     *
-     * @return a signature key string.
-     */
-    @Key("oauth2.jwt.signature.key")
-    @DefaultValue("kontentsujwtkey")
-    String signatureKey();
+    @JsonProperty("access_token")
+    private final String accessToken;
 
-    /**
-     * JWT token timeout in minutes.
-     *
-     * @return the timeout value.
-     */
-    @Key("oauth2.token.timeout")
-    @DefaultValue("30")
-    int timeout();
+    @JsonProperty("token_type")
+    private final String tokenType = "BearerToken";
+
+    @JsonProperty("expires_in")
+    private final int expiresIn;
+
+    public TokenRepresentation(final String accessToken, final Config config) {
+        this.accessToken = accessToken;
+        this.expiresIn = config.timeout() * 60;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getTokenType() {
+        return tokenType;
+    }
+
+    public int getExpiresIn() {
+        return expiresIn;
+    }
 
 }

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth;
+package dk.kontentsu.oauth2;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;

@@ -21,17 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth;
+package dk.kontentsu.oauth2;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Thrown if a login error occurs.
+ * OAuth2 configuration.
  *
  * @author Jens Borch Christiansen
  */
-public class LoginException extends Exception {
+@SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
+public interface Config extends org.aeonbits.owner.Config {
 
-    public LoginException(final String msg, final Exception ex) {
-        super(msg, ex);
-    }
+    /**
+     * JWT signature key used in OAuth2 bearer token.
+     *
+     * @return a signature key string.
+     */
+    @Key("oauth2.jwt.signature.key")
+    @DefaultValue("kontentsujwtkey")
+    String signatureKey();
+
+    /**
+     * JWT token timeout in minutes.
+     *
+     * @return the timeout value.
+     */
+    @Key("oauth2.token.timeout")
+    @DefaultValue("30")
+    int timeout();
+
+    /**
+     * The name of the token issuer.
+     *
+     * @return the issuer.
+     */
+    @Key("oauth2.token.issuer")
+    @DefaultValue("Kontentsu")
+    String issuer();
 
 }

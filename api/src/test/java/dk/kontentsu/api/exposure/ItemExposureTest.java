@@ -1,24 +1,7 @@
 package dk.kontentsu.api.exposure;
 
-import dk.kontentsu.api.exposure.ItemExposure;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.CoreMatchers.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import javax.persistence.NoResultException;
-import javax.ws.rs.core.Application;
-
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 
 import dk.kontentsu.api.ObjectMapperProvider;
 import dk.kontentsu.api.configuration.Config;
@@ -30,6 +13,19 @@ import dk.kontentsu.model.SemanticUriPath;
 import dk.kontentsu.model.internal.Item;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.upload.UploadService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import javax.persistence.NoResultException;
+import javax.ws.rs.core.Application;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.JerseyTest;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 /**
  * Test for {@link ItemExposure}.

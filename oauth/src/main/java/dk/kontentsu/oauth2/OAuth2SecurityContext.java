@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth;
+package dk.kontentsu.oauth2;
 
 import java.security.Principal;
 
@@ -31,12 +31,12 @@ import javax.ws.rs.core.SecurityContext;
  *
  * @author Jens Borch Christiansen
  */
-public class OAuthSecurityContext implements SecurityContext {
+public class OAuth2SecurityContext implements SecurityContext {
 
     private final User user;
     private final String scheme;
 
-    public OAuthSecurityContext(final User user, final String scheme) {
+    public OAuth2SecurityContext(final User user, final String scheme) {
         this.user = user;
         this.scheme = scheme;
     }

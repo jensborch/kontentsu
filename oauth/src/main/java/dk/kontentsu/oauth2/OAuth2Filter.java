@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth;
+package dk.kontentsu.oauth2;
 
 import java.io.IOException;
 import java.util.Set;
@@ -39,7 +39,7 @@ import io.jsonwebtoken.Jwts;
  *
  * @author Jens Borch Christiansen
  */
-public class OAuthFilter implements ContainerRequestFilter {
+public class OAuth2Filter implements ContainerRequestFilter {
 
     @Override
     public void filter(final ContainerRequestContext context) throws IOException {
@@ -57,7 +57,7 @@ public class OAuthFilter implements ContainerRequestFilter {
         Set<String> groups = (Set<String>) claims.getBody().get("groups", Set.class);
 
         String scheme = context.getUriInfo().getRequestUri().getScheme();
-        context.setSecurityContext(new OAuthSecurityContext(new User(user, groups), scheme));
+        context.setSecurityContext(new OAuth2SecurityContext(new User(user, groups), scheme));
 
     }
 

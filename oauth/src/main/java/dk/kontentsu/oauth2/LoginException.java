@@ -21,36 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth;
-
-import java.security.Principal;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+package dk.kontentsu.oauth2;
 
 /**
+ * Thrown if a login error occurs.
  *
  * @author Jens Borch Christiansen
  */
-public class User implements Principal {
+public class LoginException extends Exception {
 
-    private String name;
-    private Set<String> roles;
-
-    public User(final String name, final Collection<String> roles) {
-        this.name = name;
-        this.roles = new HashSet<>();
-        this.roles.addAll(roles);
-    }
-
-    public Set<String> getRoles() {
-        return Collections.unmodifiableSet(roles);
-    }
-
-    @Override
-    public String getName() {
-        return name;
+    public LoginException(final String msg, final Exception ex) {
+        super(msg, ex);
     }
 
 }

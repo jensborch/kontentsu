@@ -21,43 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth;
+package dk.kontentsu.oauth2;
 
+import java.security.Principal;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * The application class for the REST exposure.
  *
  * @author Jens Borch Christiansen
  */
-@ApplicationPath(OAuthApplication.API_ROOT)
-public class OAuthApplication extends Application {
+public class User implements Principal {
 
-    public static final String API_ROOT = "/oauth";
+    private String name;
+    private Set<String> roles;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuthApplication.class);
-    private final Set<Class<?>> classes = new HashSet<>();
-
-    static {
-        LOGGER.info("Loading OAuth application...");
+    public User(final String name, final Collection<String> roles) {
+        this.name = name;
+        this.roles = new HashSet<>();
+        this.roles.addAll(roles);
     }
 
-    public OAuthApplication() {
-        classes.add(TokenExposure.class);
-        classes.add(JacksonFeature.class);
+    public Set<String> getRoles() {
+        return Collections.unmodifiableSet(roles);
     }
 
     @Override
-    public Set<Class<?>> getClasses() {
-        return classes;
+    public String getName() {
+        return name;
     }
 
 }

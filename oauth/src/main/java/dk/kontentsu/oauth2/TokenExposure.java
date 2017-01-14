@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth;
+package dk.kontentsu.oauth2;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -32,7 +32,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -60,23 +59,33 @@ public class TokenExposure {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getToken(@FormParam("grant_type") final String grantType,
             @FormParam("username") final String username,
-            @FormParam("password") final String password,
-            @HeaderParam("Authorization") final String authorization) {
+            @FormParam("password") final String password) {
         try {
-            User user = loginProvider.login(username, password);
-            String jwt = Jwts.builder().setIssuer("Kontentsu")
-                    .setSubject(username)
-                    .setExpiration(getExpirationDate())
-                    .claim("groups", user.getRoles())
-                    .signWith(SignatureAlgorithm.HS512, config.signatureKey().getBytes())
-                    .compact();
-            return Response.ok(new TokenRepresentation(jwt)).build();
+            if (GrantType.isSupported(grantType)) {
+                User user = loginProvider.login(username, password);
+                LocalDateTime now = LocalDateTime.now();
+                String token = Jwts.builder().setIssuer("Kontentsu")
+                        .setSubject(username)
+                        .setIssuer(config.issuer())
+                        .setIssuedAt(toDate(now))
+                        .setExpiration(getExpirationDate(now))
+                        .claim("groups", user.getRoles())
+                        .signWith(SignatureAlgorithm.HS512, config.signatureKey().getBytes())
+                        .compact();
+                return Response.ok(new TokenRepresentation(token, config)).build();
+            } else {
+                return Response.status(Status.UNAUTHORIZED).build();
+            }
         } catch (LoginException ex) {
             return Response.status(Status.UNAUTHORIZED).build();
         }
     }
 
-    private Date getExpirationDate() {
-        return Date.from(LocalDateTime.now().plusMinutes(config.timeout()).toInstant(ZoneOffset.UTC));
+    private Date getExpirationDate(final LocalDateTime now) {
+        return toDate(now.plusMinutes(config.timeout()));
+    }
+
+    private static Date toDate(final LocalDateTime date) {
+        return Date.from(date.toInstant(ZoneOffset.UTC));
     }
 }
