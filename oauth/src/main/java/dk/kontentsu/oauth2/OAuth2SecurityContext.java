@@ -24,10 +24,10 @@
 package dk.kontentsu.oauth2;
 
 import java.security.Principal;
-
 import javax.ws.rs.core.SecurityContext;
 
 /**
+ * OAuth2 security context.
  *
  * @author Jens Borch Christiansen
  */
@@ -58,7 +58,7 @@ public class OAuth2SecurityContext implements SecurityContext {
 
     @Override
     public String getAuthenticationScheme() {
-        return null;
+        return "OAUTH2";
     }
 
 }

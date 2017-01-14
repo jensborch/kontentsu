@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -54,7 +55,7 @@ public class TokenExposureTest extends JerseyTest {
         when(config.timeout()).thenReturn(10);
         when(config.signatureKey()).thenReturn("junit");
         when(login.login("user", "password")).thenReturn(new User("uesr", roles));
-        when(login.login("unknown", "password")).thenThrow(new LoginException("junit", new Exception()));
+        when(login.login("unknown", "password")).thenThrow(new NotAuthorizedException("junit", new Exception()));
     }
 
     @Test

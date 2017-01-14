@@ -30,14 +30,15 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 /**
  * Get OAuth2 access token - i.e. a JWT token.
@@ -57,27 +58,23 @@ public class TokenExposure {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getToken(@FormParam("grant_type") final String grantType,
-            @FormParam("username") final String username,
-            @FormParam("password") final String password) {
-        try {
-            if (GrantType.isSupported(grantType)) {
-                User user = loginProvider.login(username, password);
-                LocalDateTime now = LocalDateTime.now();
-                String token = Jwts.builder().setIssuer("Kontentsu")
-                        .setSubject(username)
-                        .setIssuer(config.issuer())
-                        .setIssuedAt(toDate(now))
-                        .setExpiration(getExpirationDate(now))
-                        .claim("groups", user.getRoles())
-                        .signWith(SignatureAlgorithm.HS512, config.signatureKey().getBytes())
-                        .compact();
-                return Response.ok(new TokenRepresentation(token, config)).build();
-            } else {
-                return Response.status(Status.UNAUTHORIZED).build();
-            }
-        } catch (LoginException ex) {
-            return Response.status(Status.UNAUTHORIZED).build();
+    public Response getToken(@FormParam("grant_type") @NotNull final String grantType,
+            @FormParam("username") @NotNull final String username,
+            @FormParam("password") @NotNull final String password) {
+        if (GrantType.isSupported(grantType)) {
+            User user = loginProvider.login(username, password);
+            LocalDateTime now = LocalDateTime.now();
+            String token = Jwts.builder().setIssuer("Kontentsu")
+                    .setSubject(username)
+                    .setIssuer(config.issuer())
+                    .setIssuedAt(toDate(now))
+                    .setExpiration(getExpirationDate(now))
+                    .claim("groups", user.getRoles())
+                    .signWith(SignatureAlgorithm.HS512, config.signatureKey().getBytes())
+                    .compact();
+            return Response.ok(new TokenRepresentation(token, config)).build();
+        } else {
+            throw new NotAuthorizedException("Unknown grant type: " + grantType);
         }
     }
 

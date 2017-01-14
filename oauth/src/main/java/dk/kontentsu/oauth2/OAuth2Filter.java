@@ -23,46 +23,44 @@
  */
 package dk.kontentsu.oauth2;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import java.io.IOException;
-import java.util.Set;
-
+import javax.inject.Inject;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-
 /**
+ * Filter for retrieving and validating OAuth2 bearer token and setting security
+ * context.
  *
  * @author Jens Borch Christiansen
  */
 public class OAuth2Filter implements ContainerRequestFilter {
 
+    @Inject
+    private Config config;
+
     @Override
     public void filter(final ContainerRequestContext context) throws IOException {
-        String authHeader = context.getHeaderString(HttpHeaders.AUTHORIZATION);
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new NotAuthorizedException("Authorization header must be provided");
-        }
-
-        String jwt = authHeader.substring("Bearer".length()).trim();
-
-        Jws<Claims> claims = Jwts.parser().setSigningKey(getSignatureKey()).parseClaimsJws(jwt);
-
-        String user = claims.getBody().getSubject();
-        Set<String> groups = (Set<String>) claims.getBody().get("groups", Set.class);
+        String token = getBearerToken(context.getHeaderString(HttpHeaders.AUTHORIZATION));
+        Jws<Claims> claims = Jwts.parser()
+                .setSigningKey(config.signatureKey().getBytes())
+                .parseClaimsJws(token);
 
         String scheme = context.getUriInfo().getRequestUri().getScheme();
-        context.setSecurityContext(new OAuth2SecurityContext(new User(user, groups), scheme));
+        context.setSecurityContext(new OAuth2SecurityContext(new User(claims), scheme));
 
     }
 
-    private byte[] getSignatureKey() {
-        return new byte[0];
+    private String getBearerToken(final String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new NotAuthorizedException("Authorization header must be provided");
+        }
+        return authHeader.substring("Bearer".length()).trim();
     }
 
 }

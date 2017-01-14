@@ -31,6 +31,7 @@ import javax.security.jacc.PolicyContext;
 import javax.security.jacc.PolicyContextException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ public class LoginProvider {
     @Context
     HttpServletRequest request;
 
-    public User login(final String username, final String password) throws LoginException {
+    public User login(final String username, final String password) {
         try {
             request.login(username, password);
             //Use JACC API to get groups from realm... might not work in all containers
@@ -62,7 +63,7 @@ public class LoginProvider {
         } catch (PolicyContextException | ServletException ex) {
             String msg = "Login failed for user: " + username;
             LOGGER.info(msg);
-            throw new LoginException(msg, ex);
+            throw new NotAuthorizedException(msg, ex);
         }
     }
 
