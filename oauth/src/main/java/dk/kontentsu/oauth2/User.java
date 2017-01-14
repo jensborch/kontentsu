@@ -52,9 +52,9 @@ public class User implements Principal {
     }
 
     @SuppressWarnings("unchecked")
-    private static Set<String> getRoles(final Jws<Claims> claims) {
+    private static Collection<String> getRoles(final Jws<Claims> claims) {
         try {
-            return (Set<String>) claims.getBody().get("groups", Set.class);
+            return (Collection<String>) claims.getBody().get("groups", Collection.class);
         } catch (ClassCastException ex) {
             return new HashSet<>();
         }

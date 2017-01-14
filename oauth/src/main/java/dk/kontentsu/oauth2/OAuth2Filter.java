@@ -27,11 +27,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import java.io.IOException;
-import javax.inject.Inject;
+import javax.annotation.Priority;
 import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.ext.Provider;
+import org.aeonbits.owner.ConfigCache;
 
 /**
  * Filter for retrieving and validating OAuth2 bearer token and setting security
@@ -39,10 +42,11 @@ import javax.ws.rs.core.HttpHeaders;
  *
  * @author Jens Borch Christiansen
  */
+@Provider
+@Priority(Priorities.AUTHORIZATION)
 public class OAuth2Filter implements ContainerRequestFilter {
 
-    @Inject
-    private Config config;
+    private Config config = ConfigCache.getOrCreate(Config.class);
 
     @Override
     public void filter(final ContainerRequestContext context) throws IOException {
