@@ -54,7 +54,7 @@ public class TokenExposureTest extends JerseyTest {
         when(config.timeout()).thenReturn(10);
         when(config.signatureKey()).thenReturn("junit");
         when(login.login("user", "password")).thenReturn(new User("uesr", roles));
-        //when(login.login("unknown", "password")).thenThrow(new ServletException("junit"));
+        when(login.login("unknown", "password")).thenThrow(new LoginException("junit", new Exception()));
     }
 
     @Test
@@ -67,8 +67,17 @@ public class TokenExposureTest extends JerseyTest {
                 .then()
                 .statusCode(200)
                 .body("token_type", is("BearerToken"));
-        //Response response = exposure.getToken("password", "user", "password");
-        //assertEquals(200, response.getStatus());
+    }
+
+    @Test
+    public void testUnknown() {
+        given().contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .formParam("grant_type", "password")
+                .formParam("username", "unknown")
+                .formParam("password", "password")
+                .post(target("token").getUri())
+                .then()
+                .statusCode(401);
     }
 
 }
