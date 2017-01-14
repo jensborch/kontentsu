@@ -36,7 +36,7 @@ public class TokenRepresentation {
     private final String accessToken;
 
     @JsonProperty("token_type")
-    private final String tokenType = "BearerToken";
+    private final String tokenType;
 
     @JsonProperty("expires_in")
     private final int expiresIn;
@@ -44,6 +44,7 @@ public class TokenRepresentation {
     public TokenRepresentation(final String accessToken, final Config config) {
         this.accessToken = accessToken;
         this.expiresIn = config.timeout() * 60;
+        this.tokenType = "BearerToken";
     }
 
     public String getAccessToken() {

@@ -56,10 +56,10 @@ public class ServletRequestProducingListener implements ServletRequestListener {
     @Produces
     private HttpServletRequest getServletRequest() {
         ServletRequest request = SERVLET_REQUESTS.get();
-        if (request != null && request instanceof HttpServletRequest) {
+        if (request instanceof HttpServletRequest) {
             return (HttpServletRequest) request;
         } else {
-            throw new RuntimeException("HttpServletRequest not avaible for injection");
+            throw new IllegalStateException("HttpServletRequest not avaible for injection");
         }
     }
 }
