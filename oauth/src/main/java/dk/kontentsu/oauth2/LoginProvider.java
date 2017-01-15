@@ -23,7 +23,6 @@
  */
 package dk.kontentsu.oauth2;
 
-import java.security.Principal;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
@@ -47,7 +46,7 @@ import org.slf4j.LoggerFactory;
 public class LoginProvider {
 
     private static final String JAVAX_SUBJECT_CONTAINER = "javax.security.auth.Subject.container";
-    private static final Logger LOGGER = LoggerFactory.getLogger(TokenExposure.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoginProvider.class);
 
     @Inject
     private HttpServletRequest request;

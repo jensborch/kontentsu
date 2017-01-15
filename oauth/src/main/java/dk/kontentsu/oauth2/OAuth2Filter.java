@@ -25,16 +25,19 @@ package dk.kontentsu.oauth2;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import java.io.IOException;
+import java.util.Optional;
 import javax.annotation.Priority;
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
 import org.aeonbits.owner.ConfigCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Filter for retrieving and validating OAuth2 bearer token and setting security
@@ -46,25 +49,31 @@ import org.aeonbits.owner.ConfigCache;
 @Priority(Priorities.AUTHORIZATION)
 public class OAuth2Filter implements ContainerRequestFilter {
 
-    private Config config = ConfigCache.getOrCreate(Config.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2Filter.class);
+    private final Config config = ConfigCache.getOrCreate(Config.class);
 
     @Override
     public void filter(final ContainerRequestContext context) throws IOException {
-        String token = getBearerToken(context.getHeaderString(HttpHeaders.AUTHORIZATION));
-        Jws<Claims> claims = Jwts.parser()
-                .setSigningKey(config.signatureKey().getBytes())
-                .parseClaimsJws(token);
+        Optional<String> token = getBearerToken(context.getHeaderString(HttpHeaders.AUTHORIZATION));
+        if (token.isPresent()) {
+            try {
+                Jws<Claims> claims = Jwts.parser()
+                        .setSigningKey(config.signatureKey().getBytes())
+                        .parseClaimsJws(token.get());
 
-        String scheme = context.getUriInfo().getRequestUri().getScheme();
-        context.setSecurityContext(new OAuth2SecurityContext(new User(claims), scheme));
-
+                String scheme = context.getUriInfo().getRequestUri().getScheme();
+                context.setSecurityContext(new OAuth2SecurityContext(new User(claims), scheme));
+            } catch (JwtException e) {
+                LOGGER.warn("Error in JWT token retrived from authorization header", e);
+            }
+        }
     }
 
-    private String getBearerToken(final String authHeader) {
+    private Optional<String> getBearerToken(final String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new NotAuthorizedException("Authorization header must be provided");
+            return Optional.empty();
         }
-        return authHeader.substring("Bearer".length()).trim();
+        return Optional.of(authHeader.substring("Bearer".length()).trim());
     }
 
 }
