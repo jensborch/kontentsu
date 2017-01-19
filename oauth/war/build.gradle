@@ -1,0 +1,29 @@
+plugins {
+    id 'war'
+}
+
+apply plugin: 'war'
+
+def warFile = 'oauth.war'
+
+war {
+    archiveName = "${warFile}"
+}
+
+dependencies {
+    compile (project(':oauth:authorization')) {
+        exclude group: 'org.glassfish.jersey.media'
+        exclude group: 'javax.annotation'
+        exclude group: 'javax.inject'
+        exclude group: 'javax.enterprise'
+    }
+
+    compile 'org.apache.logging.log4j:log4j-web:' + log4jVersion
+    compile 'org.aeonbits.owner:owner:' + ownerVersion;
+    compile 'org.aeonbits.owner:owner-java8:' + ownerVersion;
+
+    providedCompile 'org.apache.tomee:javaee-api:' + javaeeVersion
+    providedCompile 'com.fasterxml.jackson.core:jackson-databind:' + jacksonVersion
+    providedCompile 'org.glassfish.jersey.media:jersey-media-json-jackson:' + jerseyVersion
+}
+

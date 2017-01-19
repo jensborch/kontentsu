@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth2;
+package dk.kontentsu.oauth2.auth;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -80,8 +80,7 @@ public class OAuth2ServerAuthConfig implements ServerAuthConfig {
 
     @Override
     public String getAuthContextID(final MessageInfo messageInfo) throws IllegalArgumentException {
-        Object isMandatory = messageInfo.getMap().get("javax.security.auth.message.MessagePolicy.isMandatory");
-        if (isMandatory != null && isMandatory instanceof String && Boolean.valueOf((String) isMandatory)) {
+        if (new AuthOptions(messageInfo.getMap()).isMandatory()) {
             return messageInfo.toString();
         }
         return null;

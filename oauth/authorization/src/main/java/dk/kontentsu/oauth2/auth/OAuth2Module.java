@@ -21,8 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth2;
+package dk.kontentsu.oauth2.auth;
 
+import dk.kontentsu.oauth2.Config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -34,6 +35,7 @@ import java.util.Optional;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.message.AuthException;
 import javax.security.auth.message.AuthStatus;
@@ -72,7 +74,9 @@ public class OAuth2Module implements ServerAuthModule, ServerAuthContext {
     public void initialize(final MessagePolicy requestPolicy,
             final MessagePolicy responsePolicy,
             final CallbackHandler handler,
-            final Map options) throws AuthException {
+            @SuppressWarnings("rawtypes") final Map options) throws AuthException {
+        //AuthOptions authOptions = new AuthOptions(options);
+        //options.get("javax.security.auth.login.LoginContext");
         this.handler = handler;
     }
 
@@ -100,7 +104,9 @@ public class OAuth2Module implements ServerAuthModule, ServerAuthContext {
                         .setSigningKey(config.signatureKey().getBytes())
                         .parseClaimsJws(token.get());
 
-                handler.handle(new Callback[]{new CallerPrincipalCallback(clientSubject, claims.getBody().getSubject()),
+                handler.handle(new Callback[]{
+                    new PasswordCallback("prompt", false),
+                    new CallerPrincipalCallback(clientSubject, claims.getBody().getSubject()),
                     new GroupPrincipalCallback(clientSubject, getRoles(claims))});
 
             } catch (JwtException e) {

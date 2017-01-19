@@ -1,0 +1,66 @@
+plugins {
+    id 'war'
+}
+
+apply plugin: 'war'
+
+def warFile = 'kontentsu.war'
+
+war {
+    archiveName = "${warFile}"
+}
+
+configurations {
+    payara
+    all*.exclude group: 'javax.annotation'
+    all*.exclude group: 'javax.cache'
+    all*.exclude group: 'javax.enterprise'
+    all*.exclude group: 'javax.inject'
+    all*.exclude group: 'javax.validation'
+    all*.exclude group: 'org.glassfish.jersey.media'
+    all*.exclude group: 'org.apache.tomee'
+    all*.exclude group: 'org.apache.geronimo.specs'
+    all*.exclude group: 'org.javassist'
+    all*.exclude group: 'com.fasterxml.jackson.core'
+    all*.exclude group: 'com.fasterxml.jackson.jaxrs'
+}
+
+dependencies {
+    compile(project(':oauth:authorization'))
+    compile project(':api')
+    compile project(':processing')
+
+    compile 'org.apache.logging.log4j:log4j-web:' + log4jVersion
+    compile 'com.h2database:h2:' + h2Version
+        
+    compile 'org.webjars:angular-material:' + angularMaterialVersion
+    compile 'org.webjars:angularjs:' + angularVersion
+    compile 'org.webjars:swagger-ui:' + swaggerUiVersion
+
+    payara 'fish.payara.extras:payara-micro:' + payaraVersion
+}
+
+def payaraJar = configurations.payara.find { it.name == "payara-micro-" + payaraVersion + ".jar" }
+def payaraPort = 9090
+
+task payaraConf(type: Copy) {
+    from 'src/main/config/payara'
+    into 'build/payara'
+}
+
+task startPayara(type:Exec) {
+    commandLine 'java' ,'-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--port', "${payaraPort}", '--deploy', "build/libs/${warFile}"
+}
+
+task startPayaraDebug(type:Exec) {
+    commandLine 'java', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=9009', '-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--port', "${payaraPort}", '--deploy', "build/libs/${warFile}"
+}
+
+task uberJar(type: Exec) {
+    commandLine 'java', '-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--deploy', "build/libs/${warFile}", '--outputUberJar', 'build/cdn.jar'
+}
+
+war.dependsOn payaraConf
+uberJar.dependsOn war
+startPayaraDebug.dependsOn war
+startPayara.dependsOn war

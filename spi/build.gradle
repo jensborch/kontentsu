@@ -1,5 +1,5 @@
 jar {
-    baseName = 'cdn-spi'
+    baseName = 'kontentsu-spi'
 }
 
 dependencies {

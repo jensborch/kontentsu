@@ -31,7 +31,6 @@ import dk.kontentsu.api.exposure.ExternalFileExposure;
 import dk.kontentsu.api.exposure.HostExposure;
 import dk.kontentsu.api.exposure.ItemExposure;
 import dk.kontentsu.api.exposure.RootExposure;
-import dk.kontentsu.oauth2.OAuth2Filter;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
@@ -79,8 +78,6 @@ public class CdnApplication extends Application {
 
         //Filters
         classes.add(CORSFilter.class);
-        classes.add(OAuth2Filter.class);
-        classes.add(dk.kontentsu.oauth2.ConfigProvider.class);
 
         //Exception mappers
         classes.add(ApiExceptionMapper.class);
