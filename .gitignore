@@ -15,3 +15,5 @@
 /processing/build/
 /oauth/build/
 /oauth/core1/build/
+/oauth/authorization/build
+/oauth/war/build
