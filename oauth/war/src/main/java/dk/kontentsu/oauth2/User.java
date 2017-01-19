@@ -23,20 +23,17 @@
  */
 package dk.kontentsu.oauth2;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * User principal with roles.
+ * Authenticated user with roles.
  *
  * @author Jens Borch Christiansen
  */
-public class User implements Principal {
+public class User {
 
     private String name;
     private Set<String> roles;
@@ -47,24 +44,10 @@ public class User implements Principal {
         this.roles.addAll(roles);
     }
 
-    public User(final Jws<Claims> claims) {
-        this(claims.getBody().getSubject(), getRoles(claims));
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Collection<String> getRoles(final Jws<Claims> claims) {
-        try {
-            return (Collection<String>) claims.getBody().get("groups", Collection.class);
-        } catch (ClassCastException ex) {
-            return new HashSet<>();
-        }
-    }
-
     public Set<String> getRoles() {
         return Collections.unmodifiableSet(roles);
     }
 
-    @Override
     public String getName() {
         return name;
     }

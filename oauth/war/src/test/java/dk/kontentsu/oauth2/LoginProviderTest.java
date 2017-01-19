@@ -1,5 +1,7 @@
 package dk.kontentsu.oauth2;
 
+import dk.kontentsu.oauth2.User;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doNothing;
