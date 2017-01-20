@@ -38,12 +38,12 @@ dependencies {
     compile 'org.webjars:swagger-ui:' + swaggerUiVersion
 
     payara 'fish.payara.extras:payara-micro:' + payaraVersion
-    payara project(':oauth:war')
 }
 
 def payaraJar = configurations.payara.find { it.name == "payara-micro-" + payaraVersion + ".jar" }
-def oauth2Jar = configurations.payara.find { it.name.endsWith('war') }
+def oauth2War = new File("${project(':oauth:war').projectDir}/build/libs/oauth.war")
 def payaraPort = 9090
+
 
 task payaraConf(type: Copy) {
     from 'src/main/config/payara'
@@ -51,15 +51,15 @@ task payaraConf(type: Copy) {
 }
 
 task startPayara(type:Exec) {
-    commandLine 'java' ,'-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--port', "${payaraPort}", '--deploy', "build/libs/${warFile}", '--deploy', "${oauth2Jar}"
+    commandLine 'java' ,'-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--port', "${payaraPort}", '--deploy', "build/libs/${warFile}", '--deploy', "${oauth2War}"
 }
 
 task startPayaraDebug(type:Exec) {
-    commandLine 'java', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=9009', '-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--port', "${payaraPort}", '--deploy', "build/libs/${warFile}", '--deploy', "${oauth2Jar}"
+    commandLine 'java', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=9009', '-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--port', "${payaraPort}", '--deploy', "build/libs/${warFile}", '--deploy', "${oauth2War}"
 }
 
 task uberJar(type: Exec) {
-    commandLine 'java', '-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--deploy', "build/libs/${warFile}", '--deploy', "${oauth2Jar}", '--outputUberJar', 'build/kontentsu.jar'
+    commandLine 'java', '-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--deploy', "build/libs/${warFile}", '--deploy', "${oauth2War}", '--outputUberJar', 'build/kontentsu.jar'
 }
 
 war.dependsOn payaraConf
