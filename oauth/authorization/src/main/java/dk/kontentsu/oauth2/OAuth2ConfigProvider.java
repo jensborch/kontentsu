@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth2.auth;
+package dk.kontentsu.oauth2;
 
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthException;

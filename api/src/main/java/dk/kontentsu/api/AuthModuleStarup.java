@@ -1,11 +1,13 @@
 package dk.kontentsu.api;
 
-import dk.kontentsu.oauth2.auth.OAuth2Module;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+import dk.kontentsu.oauth2.OAuth2Module;
+
 /**
+ * Register OAuth2 server authorization module, securing all API calls.
  *
  * @author Jens Borch Christiansen
  */

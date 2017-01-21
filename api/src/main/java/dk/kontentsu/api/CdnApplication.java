@@ -23,6 +23,16 @@
  */
 package dk.kontentsu.api;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dk.kontentsu.api.exceptionmappers.ApiExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
@@ -34,13 +44,6 @@ import dk.kontentsu.api.exposure.RootExposure;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
-import java.util.HashSet;
-import java.util.Set;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The application class for the REST exposure.
@@ -83,8 +86,6 @@ public class CdnApplication extends Application {
         classes.add(ApiExceptionMapper.class);
         classes.add(ConstraintViolationExceptionMapper.class);
         classes.add(ContainerExceptionMapper.class);
-
-
 
         //Jackson
         classes.add(JacksonFeature.class);

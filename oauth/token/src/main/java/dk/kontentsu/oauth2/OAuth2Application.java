@@ -25,8 +25,10 @@ package dk.kontentsu.oauth2;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +41,7 @@ import org.slf4j.LoggerFactory;
 @ApplicationPath(OAuth2Application.API_ROOT)
 public class OAuth2Application extends Application {
 
-    public static final String API_ROOT = "/oauth";
+    public static final String API_ROOT = "/";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2Application.class);
     private final Set<Class<?>> classes = new HashSet<>();

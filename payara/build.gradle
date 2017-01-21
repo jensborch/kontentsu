@@ -32,7 +32,7 @@ dependencies {
 
     compile 'org.apache.logging.log4j:log4j-web:' + log4jVersion
     compile 'com.h2database:h2:' + h2Version
-        
+
     compile 'org.webjars:angular-material:' + angularMaterialVersion
     compile 'org.webjars:angularjs:' + angularVersion
     compile 'org.webjars:swagger-ui:' + swaggerUiVersion
@@ -41,7 +41,8 @@ dependencies {
 }
 
 def payaraJar = configurations.payara.find { it.name == "payara-micro-" + payaraVersion + ".jar" }
-def oauth2War = new File("${project(':oauth:war').projectDir}/build/libs/oauth.war")
+def oauth2War = new File("${project(':oauth:token').libsDir}/oauth.war")
+def kontentsuWar = new File("${libsDir}/${warFile}")
 def payaraPort = 9090
 
 

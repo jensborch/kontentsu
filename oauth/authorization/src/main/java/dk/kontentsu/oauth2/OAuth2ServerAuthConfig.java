@@ -21,10 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth2.auth;
+package dk.kontentsu.oauth2;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthException;
@@ -57,7 +58,7 @@ public class OAuth2ServerAuthConfig implements ServerAuthConfig {
     @Override
     public ServerAuthContext getAuthContext(final String authContextID,
             final Subject serviceSubject,
-            final Map properties) throws AuthException {
+            @SuppressWarnings("rawtypes") final Map properties) throws AuthException {
         Map initOptions = new ConcurrentHashMap();
         if (properties != null) {
             initOptions.putAll(properties);
@@ -80,7 +81,7 @@ public class OAuth2ServerAuthConfig implements ServerAuthConfig {
 
     @Override
     public String getAuthContextID(final MessageInfo messageInfo) throws IllegalArgumentException {
-        if (new AuthOptions(messageInfo.getMap()).isMandatory()) {
+        if (new Options(messageInfo.getMap()).isMandatory()) {
             return messageInfo.toString();
         }
         return null;
@@ -100,6 +101,25 @@ public class OAuth2ServerAuthConfig implements ServerAuthConfig {
     @Override
     public void refresh() {
         ///Do nothng...
+    }
+
+    /**
+     * Configurations options.
+     */
+    public static class Options {
+
+        private final Map options;
+
+        public Options(@SuppressWarnings(value = "rawtypes") final Map options) {
+            super();
+            this.options = options;
+        }
+
+        public boolean isMandatory() {
+            Object isMandatory = options.get("javax.security.auth.message.MessagePolicy.isMandatory");
+            return isMandatory != null && isMandatory instanceof String && Boolean.valueOf((String) isMandatory);
+        }
+
     }
 
 }
