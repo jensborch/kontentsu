@@ -29,8 +29,10 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -98,10 +100,13 @@ public class AuthModule implements ServerAuthModule, ServerAuthContext {
                         .setSigningKey(config.getSignatureKey())
                         .parseClaimsJws(token.get());
 
+                String username = claims.getBody().getSubject();
                 handler.handle(new Callback[]{
-                    new CallerPrincipalCallback(clientSubject, claims.getBody().getSubject()),
+                    new CallerPrincipalCallback(clientSubject, username),
                     new GroupPrincipalCallback(clientSubject, getRoles(claims))});
 
+                LOGGER.debug("Subject after invoking callbacks: {}", clientSubject);
+                LOGGER.debug("Principal: " + username);
             } catch (JwtException e) {
                 LOGGER.warn("Error in JWT token retrived from authorization header", e);
             } catch (UnsupportedCallbackException | IOException e) {
@@ -114,11 +119,12 @@ public class AuthModule implements ServerAuthModule, ServerAuthContext {
 
     @SuppressWarnings("unchecked")
     private static String[] getRoles(final Jws<Claims> claims) {
-        try {
-            return (String[]) (claims.getBody().get("groups", Collection.class)).toArray();
-        } catch (ClassCastException ex) {
-            return new String[0];
-        }
+        List<String> groups = (List<String>) claims.getBody().get("groups", Collection.class)
+                .stream()
+                .filter(String.class::isInstance)
+                .map(String.class::cast)
+                .collect(Collectors.toList());
+        return groups.toArray(new String[0]);
     }
 
     private Optional<String> getBearerToken(final String authHeader) {

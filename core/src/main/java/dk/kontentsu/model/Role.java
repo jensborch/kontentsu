@@ -31,5 +31,4 @@ package dk.kontentsu.model;
 public class Role {
 
     public static final String ADMIN = "kontentsuadms";
-
 }
