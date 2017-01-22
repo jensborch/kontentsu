@@ -23,9 +23,9 @@
  */
 package dk.kontentsu.oauth2;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthException;
@@ -40,36 +40,37 @@ import javax.security.auth.message.config.ServerAuthContext;
  *
  * @author Jens Borch Christiansen
  */
-public class OAuth2ServerAuthConfig implements ServerAuthConfig {
+public class AuthConfig implements ServerAuthConfig {
 
     private final String appContext;
     private final String messageLayer;
     private final CallbackHandler handler;
+    private final AuthConfig.Options options;
 
-    public OAuth2ServerAuthConfig(
+    public AuthConfig(
             final String appContext,
             final String messageLayer,
-            final CallbackHandler handler) {
+            final CallbackHandler handler,
+            final Options options) {
+        this.options = options;
         this.appContext = appContext;
         this.messageLayer = messageLayer;
         this.handler = handler;
     }
 
     @Override
-    public ServerAuthContext getAuthContext(final String authContextID,
+    public ServerAuthContext getAuthContext(
+            final String authContextID,
             final Subject serviceSubject,
             @SuppressWarnings("rawtypes") final Map properties) throws AuthException {
-        Map initOptions = new ConcurrentHashMap();
-        if (properties != null) {
-            initOptions.putAll(properties);
-        }
-        OAuth2Module module = new OAuth2Module();
+        options.augment(properties);
+        AuthModule module = new AuthModule();
         if (authContextID == null) {
             module.initialize(new MessagePolicy(new TargetPolicy[0], false),
-                    new MessagePolicy(new TargetPolicy[0], false), handler, initOptions);
+                    new MessagePolicy(new TargetPolicy[0], false), handler, options.asMap());
         } else {
             module.initialize(new MessagePolicy(new TargetPolicy[0], true),
-                    new MessagePolicy(new TargetPolicy[0], true), handler, initOptions);
+                    new MessagePolicy(new TargetPolicy[0], true), handler, options.asMap());
         }
         return module;
     }
@@ -108,16 +109,50 @@ public class OAuth2ServerAuthConfig implements ServerAuthConfig {
      */
     public static class Options {
 
-        private final Map options;
+        public static final String IS_MANDATORY = "javax.security.auth.message.MessagsePolicy.isMandatory";
+        public static final String OAUTH2_JWT_SIGNATURE_KEY = "oauth2.jwt.signature.key";
 
-        public Options(@SuppressWarnings(value = "rawtypes") final Map options) {
-            super();
-            this.options = options;
+        private final Map<String, String> options;
+
+        public Options() {
+            this.options = new ConcurrentHashMap<>(2);
+        }
+
+        @SuppressWarnings("unchecked")
+        Options(final Map options) {
+            this();
+            this.options.putAll(options);
+        }
+
+        @SuppressWarnings("unchecked")
+        public Options augment(final Map options) {
+            this.options.putAll(options);
+            return this;
+        }
+
+        private String get(final String key) {
+            return options.get(key);
+        }
+
+        private void set(final String key, final String option) {
+            options.put(key, option);
         }
 
         public boolean isMandatory() {
-            Object isMandatory = options.get("javax.security.auth.message.MessagePolicy.isMandatory");
-            return isMandatory != null && isMandatory instanceof String && Boolean.valueOf((String) isMandatory);
+            return Boolean.valueOf(options.get(IS_MANDATORY));
+        }
+
+        public byte[] getSignatureKey() {
+            return get(OAUTH2_JWT_SIGNATURE_KEY).getBytes();
+        }
+
+        public Options setSignatureKey(final String value) {
+            set(OAUTH2_JWT_SIGNATURE_KEY, value);
+            return this;
+        }
+
+        public Map asMap() {
+            return Collections.unmodifiableMap(options);
         }
 
     }

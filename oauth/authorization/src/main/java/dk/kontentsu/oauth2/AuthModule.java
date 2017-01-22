@@ -23,11 +23,14 @@
  */
 package dk.kontentsu.oauth2;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -38,32 +41,23 @@ import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.MessagePolicy;
 import javax.security.auth.message.callback.CallerPrincipalCallback;
 import javax.security.auth.message.callback.GroupPrincipalCallback;
-import javax.security.auth.message.config.AuthConfigFactory;
 import javax.security.auth.message.config.ServerAuthContext;
 import javax.security.auth.message.module.ServerAuthModule;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
-
-import org.aeonbits.owner.ConfigCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
 
 /**
  * OAauth2 Java EE server authentication module.
  *
  * @author Jens Borch Christiansen
  */
-public class OAuth2Module implements ServerAuthModule, ServerAuthContext {
+public class AuthModule implements ServerAuthModule, ServerAuthContext {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2Module.class);
-    private final Config config = ConfigCache.getOrCreate(Config.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthModule.class);
+    private AuthConfig.Options config;
     private CallbackHandler handler;
 
     @Override
@@ -77,6 +71,7 @@ public class OAuth2Module implements ServerAuthModule, ServerAuthContext {
             final CallbackHandler handler,
             @SuppressWarnings("rawtypes") final Map options) throws AuthException {
         this.handler = handler;
+        this.config = new AuthConfig.Options(options);
     }
 
     @Override
@@ -100,7 +95,7 @@ public class OAuth2Module implements ServerAuthModule, ServerAuthContext {
         if (token.isPresent()) {
             try {
                 Jws<Claims> claims = Jwts.parser()
-                        .setSigningKey(config.signatureKey().getBytes())
+                        .setSigningKey(config.getSignatureKey())
                         .parseClaimsJws(token.get());
 
                 handler.handle(new Callback[]{
@@ -131,19 +126,6 @@ public class OAuth2Module implements ServerAuthModule, ServerAuthContext {
             return Optional.empty();
         }
         return Optional.of(authHeader.substring("Bearer".length()).trim());
-    }
-
-    public static void register(final ServletContext context) {
-        AuthConfigFactory.getFactory().registerConfigProvider(
-                new OAuth2ConfigProvider(),
-                "HttpServlet",
-                getAppContextID(context),
-                "OAuth2 SAM authentication config provider"
-        );
-    }
-
-    public static String getAppContextID(final ServletContext context) {
-        return context.getVirtualServerName() + " " + context.getContextPath();
     }
 
 }

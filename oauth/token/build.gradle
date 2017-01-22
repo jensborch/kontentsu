@@ -4,10 +4,8 @@ plugins {
 
 apply plugin: 'war'
 
-def warFile = 'oauth.war'
-
 war {
-    archiveName = "${warFile}"
+    archiveName = "oauth.war"
 }
 
 dependencies {

@@ -23,18 +23,52 @@
  */
 package dk.kontentsu.oauth2;
 
+import java.util.Map;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthException;
-import javax.security.auth.message.config.AuthConfigProvider;
+import javax.security.auth.message.config.AuthConfigFactory;
 import javax.security.auth.message.config.ClientAuthConfig;
 import javax.security.auth.message.config.ServerAuthConfig;
+import javax.servlet.ServletContext;
 
 /**
  * Configuration provider for the OAuth2 Java EE server authentication module.
  *
  * @author Jens Borch Christiansen
  */
-public class OAuth2ConfigProvider implements AuthConfigProvider {
+public class AuthConfigProvider implements javax.security.auth.message.config.AuthConfigProvider {
+
+    private static final String LAYER = "HttpServlet";
+    private static final String DESCRIPTION = "OAuth2 SAM authentication config provider";
+
+    private final AuthConfig.Options options;
+
+    private AuthConfigProvider(final AuthConfig.Options options) {
+        this.options = options;
+    }
+
+    /**
+     * Required constructor according to specifications.
+     */
+    public AuthConfigProvider(final Map<String, String> options, final AuthConfigFactory factory) {
+        this(new AuthConfig.Options(options));
+        if (factory != null) {
+            factory.registerConfigProvider(this, LAYER, null, DESCRIPTION);
+        }
+    }
+
+    public static void register(final AuthConfig.Options options, final ServletContext context) {
+        AuthConfigFactory.getFactory().registerConfigProvider(
+                new AuthConfigProvider(options),
+                LAYER,
+                getAppContextID(context),
+                DESCRIPTION
+        );
+    }
+
+    public static String getAppContextID(final ServletContext context) {
+        return context.getVirtualServerName() + " " + context.getContextPath();
+    }
 
     @Override
     public ClientAuthConfig getClientAuthConfig(final String layer,
@@ -47,7 +81,7 @@ public class OAuth2ConfigProvider implements AuthConfigProvider {
     public ServerAuthConfig getServerAuthConfig(final String layer,
             final String appContext,
             final CallbackHandler handler) throws AuthException, SecurityException {
-        return new OAuth2ServerAuthConfig(appContext, layer, handler);
+        return new AuthConfig(appContext, layer, handler, options);
     }
 
     @Override

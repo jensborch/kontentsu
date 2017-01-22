@@ -36,4 +36,13 @@ public interface Config extends org.aeonbits.owner.Config {
     @DefaultValue("100")
     int write2diskSizeThreshold();
 
+    /**
+     * JWT signature key used in OAuth2 bearer token.
+     *
+     * @return a signature key string.
+     */
+    @Key("oauth2.jwt.signature.key")
+    @DefaultValue("kontentsujwtkey")
+    String signatureKey();
+
 }
