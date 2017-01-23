@@ -33,7 +33,7 @@ import javax.security.auth.message.config.ServerAuthConfig;
 import javax.servlet.ServletContext;
 
 /**
- * Configuration provider for the OAuth2 Java EE server authentication module.
+ * Configuration provider for the OAuth2 JASPIC authentication module.
  *
  * @author Jens Borch Christiansen
  */

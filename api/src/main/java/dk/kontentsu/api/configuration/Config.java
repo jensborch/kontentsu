@@ -26,6 +26,7 @@ package dk.kontentsu.api.configuration;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
+ * Configuration for the Kontentsu API.
  *
  * @author Jens Borch Christiansen
  */

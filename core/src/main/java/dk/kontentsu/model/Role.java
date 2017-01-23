@@ -30,7 +30,7 @@ package dk.kontentsu.model;
  */
 public final class Role {
 
-    public final static String ADMIN = "kontentsuadms";
+    public static final String ADMIN = "kontentsuadms";
 
     private Role() {
     }
