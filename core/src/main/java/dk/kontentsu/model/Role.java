@@ -28,7 +28,10 @@ package dk.kontentsu.model;
  *
  * @author Jens Borch Christinsen
  */
-public class Role {
+public final class Role {
 
-    public static final String ADMIN = "kontentsuadms";
+    public final static String ADMIN = "kontentsuadms";
+
+    private Role() {
+    }
 }

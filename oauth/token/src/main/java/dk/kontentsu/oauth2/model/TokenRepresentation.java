@@ -42,6 +42,7 @@ public class TokenRepresentation {
     @JsonProperty("expires_in")
     private final int expiresIn;
 
+    @SuppressWarnings("magicnumber")
     public TokenRepresentation(final String accessToken, final Config config) {
         this.accessToken = accessToken;
         this.expiresIn = config.timeout() * 60;

@@ -23,13 +23,10 @@
  */
 package dk.kontentsu.oauth2;
 
-import dk.kontentsu.oauth2.Config;
-import dk.kontentsu.oauth2.GrantType;
-import dk.kontentsu.oauth2.LoginProvider;
 import dk.kontentsu.oauth2.model.TokenRepresentation;
-import dk.kontentsu.oauth2.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -75,7 +72,7 @@ public class TokenExposure {
                     .setIssuedAt(toDate(now))
                     .setExpiration(getExpirationDate(now))
                     .claim("groups", user.getRoles())
-                    .signWith(SignatureAlgorithm.HS512, config.signatureKey().getBytes())
+                    .signWith(SignatureAlgorithm.HS512, config.signatureKey().getBytes(StandardCharsets.UTF_8))
                     .compact();
             return Response.ok(new TokenRepresentation(token, config)).build();
         } else {

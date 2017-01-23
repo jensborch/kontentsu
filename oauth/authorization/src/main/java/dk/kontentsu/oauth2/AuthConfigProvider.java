@@ -23,6 +23,7 @@
  */
 package dk.kontentsu.oauth2;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthException;
@@ -36,6 +37,7 @@ import javax.servlet.ServletContext;
  *
  * @author Jens Borch Christiansen
  */
+@SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
 public class AuthConfigProvider implements javax.security.auth.message.config.AuthConfigProvider {
 
     private static final String LAYER = "HttpServlet";

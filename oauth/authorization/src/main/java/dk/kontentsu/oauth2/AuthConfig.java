@@ -23,6 +23,7 @@
  */
 package dk.kontentsu.oauth2;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +37,7 @@ import javax.security.auth.message.config.ServerAuthConfig;
 import javax.security.auth.message.config.ServerAuthContext;
 
 /**
- * Configuration for the OAuth2 Java EE server authentication module.
+ * Configuration for the OAuth2 JASPIC server authentication module.
  *
  * @author Jens Borch Christiansen
  */
@@ -80,6 +81,19 @@ public class AuthConfig implements ServerAuthConfig {
         return appContext;
     }
 
+    /**
+     * Will as defined by the JASPIC specifications return a authentication
+     * context identifier if
+     * <code>javax.security.auth.message.MessagsePolicy.isMandatory</code> is
+     * true, otherwise null will be returned.
+     *
+     * @param messageInfo A contextual Object that encapsulates the client
+     * request and server response objects.
+     * @return an identifier or null
+     * @throws IllegalArgumentException if the type of the message objects
+     * incorporated in messageInfo are not compatible with the message type
+     * supported
+     */
     @Override
     public String getAuthContextID(final MessageInfo messageInfo) throws IllegalArgumentException {
         if (new Options(messageInfo.getMap()).isMandatory()) {
@@ -95,7 +109,6 @@ public class AuthConfig implements ServerAuthConfig {
 
     @Override
     public boolean isProtected() {
-        //TODO: Check spec
         return false;
     }
 
@@ -105,7 +118,7 @@ public class AuthConfig implements ServerAuthConfig {
     }
 
     /**
-     * Configurations options.
+     * Configurations options for OAuth2 JASPIC
      */
     public static class Options {
 
@@ -143,7 +156,7 @@ public class AuthConfig implements ServerAuthConfig {
         }
 
         public byte[] getSignatureKey() {
-            return get(OAUTH2_JWT_SIGNATURE_KEY).getBytes();
+            return get(OAUTH2_JWT_SIGNATURE_KEY).getBytes(StandardCharsets.UTF_8);
         }
 
         public Options setSignatureKey(final String value) {
