@@ -23,6 +23,11 @@
  */
 package dk.kontentsu.oauth2;
 
+import dk.kontentsu.oauth2.Config;
+import dk.kontentsu.oauth2.GrantType;
+import dk.kontentsu.oauth2.LoginProvider;
+import dk.kontentsu.oauth2.model.TokenRepresentation;
+import dk.kontentsu.oauth2.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.time.LocalDateTime;

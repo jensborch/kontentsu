@@ -4,12 +4,16 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.when;
 
+import dk.kontentsu.oauth2.exceptionmappers.ConstraintViolationExceptionMapper;
+import dk.kontentsu.oauth2.exceptionmappers.ContainerExceptionMapper;
+import dk.kontentsu.oauth2.exceptionmappers.NotAuthorizedExceptionMapper;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Before;
@@ -38,6 +42,10 @@ public class TokenExposureTest extends JerseyTest {
 
         return new ResourceConfig()
                 .register(TokenExposure.class)
+                .register(JacksonFeature.class)
+                .register(NotAuthorizedExceptionMapper.class)
+                .register(ContainerExceptionMapper.class)
+                .register(ConstraintViolationExceptionMapper.class)
                 .register(new AbstractBinder() {
                     @Override
                     protected void configure() {
@@ -78,7 +86,31 @@ public class TokenExposureTest extends JerseyTest {
                 .formParam("password", "password")
                 .post(target("token").getUri())
                 .then()
-                .statusCode(401);
+                .statusCode(401)
+                .body("error", is("unauthorized_client"));
+    }
+
+    @Test
+    public void testUnsupportedGrantType() {
+        given().contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .formParam("grant_type", "junit")
+                .formParam("username", "user")
+                .formParam("password", "password")
+                .post(target("token").getUri())
+                .then()
+                .statusCode(401)
+                .body("error", is("unauthorized_client"));
+    }
+
+    @Test
+    public void testInvalidRequest() {
+        given().contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .formParam("grant_type", "password")
+                .formParam("password", "password")
+                .post(target("token").getUri())
+                .then()
+                .statusCode(400)
+                .body("error", is("invalid_request"));
     }
 
 }

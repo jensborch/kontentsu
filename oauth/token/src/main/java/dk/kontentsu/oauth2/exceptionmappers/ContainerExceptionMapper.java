@@ -21,47 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth2;
+package dk.kontentsu.oauth2.exceptionmappers;
 
-import dk.kontentsu.oauth2.exceptionmappers.ConstraintViolationExceptionMapper;
-import dk.kontentsu.oauth2.exceptionmappers.NotAuthorizedExceptionMapper;
-import dk.kontentsu.oauth2.exceptionmappers.ContainerExceptionMapper;
-import java.util.HashSet;
-import java.util.Set;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-import org.glassfish.jersey.jackson.JacksonFeature;
+import dk.kontentsu.oauth2.model.ErrorRepresentation;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
- * The application class for the REST exposure.
+ * Exception mapper for OAuth2 endpoint.
  *
  * @author Jens Borch Christiansen
  */
-@ApplicationPath(OAuth2Application.API_ROOT)
-public class OAuth2Application extends Application {
+@Provider
+public class ContainerExceptionMapper implements ExceptionMapper<Exception> {
 
-    public static final String API_ROOT = "/";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2Application.class);
-    private final Set<Class<?>> classes = new HashSet<>();
-
-    static {
-        LOGGER.info("Loading OAuth application...");
-    }
-
-    public OAuth2Application() {
-        classes.add(TokenExposure.class);
-        classes.add(JacksonFeature.class);
-        classes.add(NotAuthorizedExceptionMapper.class);
-        classes.add(ContainerExceptionMapper.class);
-        classes.add(ConstraintViolationExceptionMapper.class);
-    }
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContainerExceptionMapper .class);
 
     @Override
-    public Set<Class<?>> getClasses() {
-        return classes;
+    public Response toResponse(final Exception ex) {
+        LOGGER.info("Error occured in CDN application REST API", ex);
+        return Response
+                .status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(new ErrorRepresentation("server_error", ex.getMessage()))
+                .build();
     }
 
 }

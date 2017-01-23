@@ -92,6 +92,7 @@ public class LoginProvider {
     public Set<String> getRoles() throws PolicyContextException {
         return getSubject().getPrincipals().stream()
                 .map(p -> p.getName())
+                .filter(r -> request.isUserInRole(r))
                 .collect(Collectors.toSet());
     }
 

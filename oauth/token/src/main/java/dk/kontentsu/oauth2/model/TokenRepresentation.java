@@ -21,9 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth2;
+package dk.kontentsu.oauth2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dk.kontentsu.oauth2.Config;
 
 /**
  * Response containing an OAuth2 access token.
