@@ -165,6 +165,6 @@
         <module name="FinalParameters"/>
         <module name="TodoComment"/>
         <module name="UpperEll"/>
-        <module name="SuppressWarningsFilter"/>
     </module>
+    <module name="SuppressWarningsFilter"/>
 </module>
