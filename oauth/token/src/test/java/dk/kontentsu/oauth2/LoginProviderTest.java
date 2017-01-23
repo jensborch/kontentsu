@@ -1,10 +1,10 @@
 package dk.kontentsu.oauth2;
 
-import dk.kontentsu.oauth2.User;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 import java.security.Principal;
 import java.util.HashSet;
@@ -34,6 +34,7 @@ public class LoginProviderTest {
     @Before
     public void setup() throws Exception {
         doNothing().when(request).login("username", "password");
+        when(request.isUserInRole(any(String.class))).thenReturn(true);
     }
 
     @Test

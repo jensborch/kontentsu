@@ -24,8 +24,8 @@
 package dk.kontentsu.oauth2;
 
 import dk.kontentsu.oauth2.exceptionmappers.ConstraintViolationExceptionMapper;
-import dk.kontentsu.oauth2.exceptionmappers.NotAuthorizedExceptionMapper;
 import dk.kontentsu.oauth2.exceptionmappers.ContainerExceptionMapper;
+import dk.kontentsu.oauth2.exceptionmappers.NotAuthorizedExceptionMapper;
 import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.ApplicationPath;
@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The application class for the REST exposure.
+ * The application class for the OAuth2 REST exposure.
  *
  * @author Jens Borch Christiansen
  */

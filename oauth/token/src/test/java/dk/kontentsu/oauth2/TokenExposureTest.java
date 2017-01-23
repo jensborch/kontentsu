@@ -18,7 +18,6 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -32,9 +31,6 @@ public class TokenExposureTest extends JerseyTest {
 
     @Mock
     private Config config;
-
-    @InjectMocks
-    private TokenExposure exposure;
 
     @Override
     protected Application configure() {
