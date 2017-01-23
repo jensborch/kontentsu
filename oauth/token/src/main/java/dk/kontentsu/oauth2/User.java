@@ -35,8 +35,8 @@ import java.util.Set;
  */
 public class User {
 
-    private String name;
-    private Set<String> roles;
+    private final String name;
+    private final Set<String> roles;
 
     public User(final String name, final Collection<String> roles) {
         this.name = name;
