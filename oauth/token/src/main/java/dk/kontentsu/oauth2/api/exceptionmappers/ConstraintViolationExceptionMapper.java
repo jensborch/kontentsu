@@ -21,35 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth2;
+package dk.kontentsu.oauth2.api.exceptionmappers;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import dk.kontentsu.oauth2.api.model.ErrorRepresentation;
+import javax.validation.ConstraintViolationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 /**
- * Authenticated user with roles.
+ * Exception mapper for ConstraintViolationException.
  *
  * @author Jens Borch Christiansen
  */
-public class User {
+@Provider
+public class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
 
-    private final String name;
-    private final Set<String> roles;
-
-    public User(final String name, final Collection<String> roles) {
-        this.name = name;
-        this.roles = new HashSet<>();
-        this.roles.addAll(roles);
-    }
-
-    public Set<String> getRoles() {
-        return Collections.unmodifiableSet(roles);
-    }
-
-    public String getName() {
-        return name;
+    @Override
+    public Response toResponse(final ConstraintViolationException ex) {
+        return Response
+                .status(Response.Status.BAD_REQUEST)
+                .entity(new ErrorRepresentation("invalid_request", ex.getMessage()))
+                .build();
     }
 
 }

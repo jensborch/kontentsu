@@ -1,4 +1,4 @@
-package dk.kontentsu.oauth2;
+package dk.kontentsu.oauth2.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

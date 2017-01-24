@@ -1,4 +1,4 @@
-package dk.kontentsu.oauth2;
+package dk.kontentsu.oauth2.api;
 
 import java.util.Arrays;
 import java.util.Map;

@@ -21,34 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth2.model;
+package dk.kontentsu.oauth2.api.exceptionmappers;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import dk.kontentsu.oauth2.api.model.ErrorRepresentation;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 /**
- * Oauth2 error response containing an error code and description.
+ * Exception mapper for NotAuthorizedException.
  *
  * @author Jens Borch Christiansen
  */
-public class ErrorRepresentation {
+@Provider
+public class NotAuthorizedExceptionMapper implements ExceptionMapper<NotAuthorizedException> {
 
-    @JsonProperty("error")
-    private final String error;
-
-    @JsonProperty("error_description")
-    private final String description;
-
-    public ErrorRepresentation(final String error, final String description) {
-        this.error = error;
-        this.description = description;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public String getDescription() {
-        return description;
+    @Override
+    public Response toResponse(final NotAuthorizedException ex) {
+        return Response
+                .status(Response.Status.UNAUTHORIZED)
+                .entity(new ErrorRepresentation("unauthorized_client", ex.getMessage()))
+                .build();
     }
 
 }

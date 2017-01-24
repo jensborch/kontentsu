@@ -26,7 +26,7 @@ configurations {
 }
 
 dependencies {
-    compile project(':oauth:authorization')
+    compile project(':oauth:authentication')
     compile project(':api')
     compile project(':processing')
 

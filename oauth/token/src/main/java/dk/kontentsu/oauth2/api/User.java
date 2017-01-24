@@ -21,44 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth2.model;
+package dk.kontentsu.oauth2.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import dk.kontentsu.oauth2.Config;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Response containing an OAuth2 access token.
+ * Authenticated user with roles.
  *
  * @author Jens Borch Christiansen
  */
-public class TokenRepresentation {
+public class User {
 
-    @JsonProperty("access_token")
-    private final String accessToken;
+    private final String name;
+    private final Set<String> roles;
 
-    @JsonProperty("token_type")
-    private final String tokenType;
-
-    @JsonProperty("expires_in")
-    private final int expiresIn;
-
-    @SuppressWarnings("checkstyle:magicnumber")
-    public TokenRepresentation(final String accessToken, final Config config) {
-        this.accessToken = accessToken;
-        this.expiresIn = config.timeout() * 60;
-        this.tokenType = "BearerToken";
+    public User(final String name, final Collection<String> roles) {
+        this.name = name;
+        this.roles = new HashSet<>();
+        this.roles.addAll(roles);
     }
 
-    public String getAccessToken() {
-        return accessToken;
+    public Set<String> getRoles() {
+        return Collections.unmodifiableSet(roles);
     }
 
-    public String getTokenType() {
-        return tokenType;
-    }
-
-    public int getExpiresIn() {
-        return expiresIn;
+    public String getName() {
+        return name;
     }
 
 }

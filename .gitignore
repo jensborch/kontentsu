@@ -18,3 +18,4 @@
 /oauth/authorization/build
 /oauth/war/build
 /oauth/token/build/
+/oauth/authentication/build/

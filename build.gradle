@@ -8,7 +8,6 @@ plugins {
     id 'java'
     id 'checkstyle'
     id 'findbugs'
-    id 'build-dashboard'
     id 'idea'
     id 'jacoco'
     id 'pmd'
@@ -165,6 +164,7 @@ subprojects {
         compile 'org.apache.logging.log4j:log4j-api:' + log4jVersion
         compile 'org.apache.logging.log4j:log4j-slf4j-impl:' + log4jVersion
         compile 'org.apache.logging.log4j:log4j-1.2-api:' + log4jVersion
+        compile 'com.google.code.findbugs:annotations:' + findbugsAnnotationsVersion
 
         testCompile 'junit:junit:' + junitVersion
         testCompile 'org.apache.logging.log4j:log4j-core:' + log4jVersion
@@ -199,6 +199,7 @@ apply plugin: 'project-report'
 htmlDependencyReport {
     projects = project.subprojects
 }
+
 
 idea {
     module {

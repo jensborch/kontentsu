@@ -21,28 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth2.exceptionmappers;
+package dk.kontentsu.oauth2.api.model;
 
-import dk.kontentsu.oauth2.model.ErrorRepresentation;
-import javax.validation.ConstraintViolationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Exception mapper for ConstraintViolationException.
+ * Oauth2 error response containing an error code and description.
  *
  * @author Jens Borch Christiansen
  */
-@Provider
-public class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
+public class ErrorRepresentation {
 
-    @Override
-    public Response toResponse(final ConstraintViolationException ex) {
-        return Response
-                .status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorRepresentation("invalid_request", ex.getMessage()))
-                .build();
+    @JsonProperty("error")
+    private final String error;
+
+    @JsonProperty("error_description")
+    private final String description;
+
+    public ErrorRepresentation(final String error, final String description) {
+        this.error = error;
+        this.description = description;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
 }

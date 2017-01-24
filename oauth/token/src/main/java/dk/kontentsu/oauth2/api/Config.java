@@ -21,28 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth2.exceptionmappers;
+package dk.kontentsu.oauth2.api;
 
-import dk.kontentsu.oauth2.model.ErrorRepresentation;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Exception mapper for NotAuthorizedException.
+ * OAuth2 configuration.
  *
  * @author Jens Borch Christiansen
  */
-@Provider
-public class NotAuthorizedExceptionMapper implements ExceptionMapper<NotAuthorizedException> {
+@SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
+public interface Config extends org.aeonbits.owner.Config {
 
-    @Override
-    public Response toResponse(final NotAuthorizedException ex) {
-        return Response
-                .status(Response.Status.UNAUTHORIZED)
-                .entity(new ErrorRepresentation("unauthorized_client", ex.getMessage()))
-                .build();
-    }
+    /**
+     * JWT signature key used in OAuth2 bearer token.
+     *
+     * @return a signature key string.
+     */
+    @Key("oauth2.jwt.signature.key")
+    @DefaultValue("kontentsujwtkey")
+    String signatureKey();
+
+    /**
+     * JWT token timeout in minutes.
+     *
+     * @return the timeout value.
+     */
+    @Key("oauth2.token.timeout")
+    @DefaultValue("30")
+    int timeout();
+
+    /**
+     * The name of the token issuer.
+     *
+     * @return the issuer.
+     */
+    @Key("oauth2.token.issuer")
+    @DefaultValue("Kontentsu")
+    String issuer();
 
 }

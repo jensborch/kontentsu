@@ -4,7 +4,7 @@ jar {
 }
 
 dependencies {
-    compile project(':oauth:authorization')
+    compile project(':oauth:authentication')
     compile project(':core')
     compile project(':processing')
 
@@ -25,8 +25,6 @@ dependencies {
     compile 'javax.cache:cache-api:' + cacheApiversion
     compile 'org.apache.tomee:javaee-api:' + javaeeVersion
     compile 'org.glassfish.jersey.media:jersey-media-json-jackson:' + jerseyVersion
-
-    compile 'com.google.code.findbugs:annotations:' + findbugsAnnotationsVersion
 
     testCompile project(':test')
     testCompile 'org.glassfish.jersey.ext:jersey-bean-validation:'  + jerseyVersion

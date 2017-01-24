@@ -1,12 +1,12 @@
-package dk.kontentsu.oauth2;
+package dk.kontentsu.oauth2.api;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.when;
 
-import dk.kontentsu.oauth2.exceptionmappers.ConstraintViolationExceptionMapper;
-import dk.kontentsu.oauth2.exceptionmappers.ContainerExceptionMapper;
-import dk.kontentsu.oauth2.exceptionmappers.NotAuthorizedExceptionMapper;
+import dk.kontentsu.oauth2.api.exceptionmappers.ConstraintViolationExceptionMapper;
+import dk.kontentsu.oauth2.api.exceptionmappers.ContainerExceptionMapper;
+import dk.kontentsu.oauth2.api.exceptionmappers.NotAuthorizedExceptionMapper;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.ws.rs.NotAuthorizedException;
