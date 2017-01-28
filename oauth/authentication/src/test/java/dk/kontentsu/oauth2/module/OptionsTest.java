@@ -2,6 +2,7 @@ package dk.kontentsu.oauth2.module;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
@@ -29,5 +30,19 @@ public class OptionsTest {
         Options options = new Options().setSignatureKey("junit");
         assertArrayEquals("junit".getBytes(), (byte[]) options.getSignatureKey());
         assertEquals("junit", options.asMap().get("oauth2.jwt.signature.key"));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testAgument() {
+        Options options = new Options().setSignatureKey("junit");
+        Map map = new HashMap();
+        map.put("javax.security.auth.message.MessagsePolicy.isMandatory", "wrong");
+        map.put("test", "junit");
+        options.augment(map);
+        assertArrayEquals("junit".getBytes(), (byte[]) options.getSignatureKey());
+        assertFalse(options.isMandatory());
+        assertEquals("junit", options.asMap().get("test"));
+
     }
 }
