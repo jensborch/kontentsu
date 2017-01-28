@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth2;
+package dk.kontentsu.oauth2.module;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -43,7 +43,9 @@ import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.MessagePolicy;
 import javax.security.auth.message.callback.CallerPrincipalCallback;
 import javax.security.auth.message.callback.GroupPrincipalCallback;
+import javax.security.auth.message.config.ClientAuthContext;
 import javax.security.auth.message.config.ServerAuthContext;
+import javax.security.auth.message.module.ClientAuthModule;
 import javax.security.auth.message.module.ServerAuthModule;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,10 +58,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author Jens Borch Christiansen
  */
-public class AuthModule implements ServerAuthModule, ServerAuthContext {
+public class AuthModule implements ServerAuthModule, ServerAuthContext, ClientAuthContext, ClientAuthModule {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthModule.class);
-    private AuthConfig.Options config;
+    private Options config;
     private CallbackHandler handler;
 
     @Override
@@ -73,7 +75,7 @@ public class AuthModule implements ServerAuthModule, ServerAuthContext {
             final CallbackHandler handler,
             @SuppressWarnings("rawtypes") final Map options) throws AuthException {
         this.handler = handler;
-        this.config = new AuthConfig.Options(options);
+        this.config = new Options(options);
     }
 
     @Override
@@ -132,6 +134,16 @@ public class AuthModule implements ServerAuthModule, ServerAuthContext {
             return Optional.empty();
         }
         return Optional.of(authHeader.substring("Bearer".length()).trim());
+    }
+
+    @Override
+    public AuthStatus secureRequest(final MessageInfo messageInfo, final Subject clientSubject) throws AuthException {
+        return AuthStatus.SUCCESS;
+    }
+
+    @Override
+    public AuthStatus validateResponse(final MessageInfo messageInfo, final Subject clientSubject, final Subject serviceSubject) throws AuthException {
+        return AuthStatus.SUCCESS;
     }
 
 }

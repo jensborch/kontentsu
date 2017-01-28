@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth2;
+package dk.kontentsu.oauth2.module;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
@@ -43,9 +43,9 @@ public class AuthConfigProvider implements javax.security.auth.message.config.Au
     private static final String LAYER = "HttpServlet";
     private static final String DESCRIPTION = "OAuth2 SAM authentication config provider";
 
-    private final AuthConfig.Options options;
+    private final Options options;
 
-    private AuthConfigProvider(final AuthConfig.Options options) {
+    private AuthConfigProvider(final Options options) {
         this.options = options;
     }
 
@@ -53,15 +53,14 @@ public class AuthConfigProvider implements javax.security.auth.message.config.Au
      * Required constructor according to specifications.
      */
     public AuthConfigProvider(final Map<String, String> options, final AuthConfigFactory factory) {
-        this(new AuthConfig.Options(options));
+        this(new Options(options));
         if (factory != null) {
             factory.registerConfigProvider(this, LAYER, null, DESCRIPTION);
         }
     }
 
-    public static void register(final AuthConfig.Options options, final ServletContext context) {
-        AuthConfigFactory.getFactory().registerConfigProvider(
-                new AuthConfigProvider(options),
+    public static void register(final Options options, final ServletContext context) {
+        AuthConfigFactory.getFactory().registerConfigProvider(new AuthConfigProvider(options),
                 LAYER,
                 getAppContextID(context),
                 DESCRIPTION
@@ -76,7 +75,7 @@ public class AuthConfigProvider implements javax.security.auth.message.config.Au
     public ClientAuthConfig getClientAuthConfig(final String layer,
             final String appContext,
             final CallbackHandler handler) throws AuthException, SecurityException {
-        return null;
+        return new AuthConfig(appContext, layer, handler, options);
     }
 
     @Override

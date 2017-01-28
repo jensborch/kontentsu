@@ -132,6 +132,7 @@ subprojects {
             text.enabled = false
             xml.enabled = true
         }
+        source = sourceSets.main.allJava
     }
 
     test {
