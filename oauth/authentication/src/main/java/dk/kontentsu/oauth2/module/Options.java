@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.security.auth.message.AuthException;
+
 /**
  * Configurations options for OAuth2 JASPIC
  *
@@ -45,8 +47,13 @@ public class Options {
         return Boolean.valueOf(options.get(IS_MANDATORY));
     }
 
-    public byte[] getSignatureKey() {
-        return get(OAUTH2_JWT_SIGNATURE_KEY).getBytes(StandardCharsets.UTF_8);
+    public byte[] getSignatureKey() throws AuthException {
+        String key = get(OAUTH2_JWT_SIGNATURE_KEY);
+        if (key != null && !key.isEmpty()) {
+            return get(OAUTH2_JWT_SIGNATURE_KEY).getBytes(StandardCharsets.UTF_8);
+        } else {
+            throw new AuthException("JWT signature key is not defined");
+        }
     }
 
     public Options setSignatureKey(final String value) {

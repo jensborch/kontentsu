@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.junit.Test;
 
 /**
@@ -26,7 +27,7 @@ public class OptionsTest {
     }
 
     @Test
-    public void testSignatureKey() {
+    public void testSignatureKey() throws Exception {
         Options options = new Options().setSignatureKey("junit");
         assertArrayEquals("junit".getBytes(), (byte[]) options.getSignatureKey());
         assertEquals("junit", options.asMap().get("oauth2.jwt.signature.key"));
@@ -34,7 +35,7 @@ public class OptionsTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testAgument() {
+    public void testAgument() throws Exception {
         Options options = new Options().setSignatureKey("junit");
         Map map = new HashMap();
         map.put("javax.security.auth.message.MessagsePolicy.isMandatory", "wrong");

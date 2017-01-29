@@ -1,7 +1,13 @@
 package dk.kontentsu.oauth2.module;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.HashSet;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -10,11 +16,15 @@ import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.MessagePolicy;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 /**
  * Test for {@link AuthModule}
@@ -50,7 +60,7 @@ public class AuthModuleTest {
     @Before
     public void setup() throws Exception {
         module = new AuthModule();
-        options = new Options();
+        options = new Options().setSignatureKey("signature_key");
         clientSubject = new Subject();
         serviceSubject = new Subject();
         module.initialize(requestPolicy, responsePolicy, handler, options.asMap());
@@ -60,10 +70,28 @@ public class AuthModuleTest {
 
     @Test
     public void testInvalidToken() throws Exception {
-        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearere token");
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer token");
         AuthStatus result = module.validateRequest(messageInfo, clientSubject, serviceSubject);
         assertEquals(AuthStatus.SUCCESS, result);
-        assertEquals(0, clientSubject.getPrincipals().size());
+        verify(handler, times(0)).handle(any());
+    }
+
+    @Test
+    public void testValidToken() throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        String token = Jwts.builder().setIssuer("Junit")
+                .setSubject("test")
+                .setIssuer("test")
+                .setIssuedAt(Date.from(now.toInstant(ZoneOffset.UTC)))
+                .setExpiration(Date.from(now.plusHours(2).toInstant(ZoneOffset.UTC)))
+                .claim("groups", new HashSet<>())
+                .signWith(SignatureAlgorithm.HS512, "signature_key".getBytes(StandardCharsets.UTF_8))
+                .compact();
+
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + token);
+        AuthStatus result = module.validateRequest(messageInfo, clientSubject, serviceSubject);
+        assertEquals(AuthStatus.SUCCESS, result);
+        verify(handler).handle(any());
     }
 
 }
