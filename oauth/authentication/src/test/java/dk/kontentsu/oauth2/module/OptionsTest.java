@@ -43,6 +43,5 @@ public class OptionsTest {
         assertArrayEquals("junit".getBytes(), (byte[]) options.getSignatureKey());
         assertFalse(options.isMandatory());
         assertEquals("junit", options.asMap().get("test"));
-
     }
 }
