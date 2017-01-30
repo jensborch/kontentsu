@@ -3,28 +3,28 @@ package dk.kontentsu.oauth2.module;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.HashSet;
-
 import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthStatus;
 import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.MessagePolicy;
+import javax.security.auth.message.callback.CallerPrincipalCallback;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 /**
  * Test for {@link AuthModule}
@@ -65,7 +65,13 @@ public class AuthModuleTest {
         serviceSubject = new Subject();
         module.initialize(requestPolicy, responsePolicy, handler, options.asMap());
         when(messageInfo.getRequestMessage()).thenReturn(request);
-        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearere token");
+    }
+
+    @Test
+    public void testNoToken() throws Exception {
+        AuthStatus result = module.validateRequest(messageInfo, clientSubject, serviceSubject);
+        assertEquals(AuthStatus.SUCCESS, result);
+        verify(handler, times(0)).handle(any());
     }
 
     @Test
@@ -91,7 +97,28 @@ public class AuthModuleTest {
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + token);
         AuthStatus result = module.validateRequest(messageInfo, clientSubject, serviceSubject);
         assertEquals(AuthStatus.SUCCESS, result);
-        verify(handler).handle(any());
+        ArgumentCaptor<Callback[]> callbacks = ArgumentCaptor.forClass(Callback[].class);
+        verify(handler).handle(callbacks.capture());
+        assertEquals(2, callbacks.getAllValues().get(0).length);
+        assertEquals("test", ((CallerPrincipalCallback) callbacks.getAllValues().get(0)[0]).getName());
+    }
+
+    @Test
+    public void testOldToken() throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        String token = Jwts.builder().setIssuer("Junit")
+                .setSubject("test")
+                .setIssuer("test")
+                .setIssuedAt(Date.from(now.minusHours(5).toInstant(ZoneOffset.UTC)))
+                .setExpiration(Date.from(now.minusHours(2).toInstant(ZoneOffset.UTC)))
+                .claim("groups", new HashSet<>())
+                .signWith(SignatureAlgorithm.HS512, "signature_key".getBytes(StandardCharsets.UTF_8))
+                .compact();
+
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + token);
+        AuthStatus result = module.validateRequest(messageInfo, clientSubject, serviceSubject);
+        assertEquals(AuthStatus.SUCCESS, result);
+        verify(handler, times(0)).handle(any());
     }
 
 }
