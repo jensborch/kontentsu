@@ -3,6 +3,7 @@ package dk.kontentsu.oauth2.module;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.nio.charset.StandardCharsets;
@@ -13,6 +14,7 @@ import java.util.HashSet;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.message.AuthStatus;
 import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.MessagePolicy;
@@ -57,6 +59,8 @@ public class AuthModuleTest {
 
     private AuthModule module;
 
+    private JwtBuilder token;
+
     @Before
     public void setup() throws Exception {
         module = new AuthModule();
@@ -65,6 +69,14 @@ public class AuthModuleTest {
         serviceSubject = new Subject();
         module.initialize(requestPolicy, responsePolicy, handler, options.asMap());
         when(messageInfo.getRequestMessage()).thenReturn(request);
+        LocalDateTime now = LocalDateTime.now();
+        token = Jwts.builder().setIssuer("Junit")
+                .setSubject("test")
+                .setIssuer("test")
+                .setIssuedAt(Date.from(now.toInstant(ZoneOffset.UTC)))
+                .setExpiration(Date.from(now.plusHours(2).toInstant(ZoneOffset.UTC)))
+                .claim("groups", new HashSet<>())
+                .signWith(SignatureAlgorithm.HS512, "signature_key".getBytes(StandardCharsets.UTF_8));
     }
 
     @Test
@@ -83,18 +95,16 @@ public class AuthModuleTest {
     }
 
     @Test
-    public void testValidToken() throws Exception {
-        LocalDateTime now = LocalDateTime.now();
-        String token = Jwts.builder().setIssuer("Junit")
-                .setSubject("test")
-                .setIssuer("test")
-                .setIssuedAt(Date.from(now.toInstant(ZoneOffset.UTC)))
-                .setExpiration(Date.from(now.plusHours(2).toInstant(ZoneOffset.UTC)))
-                .claim("groups", new HashSet<>())
-                .signWith(SignatureAlgorithm.HS512, "signature_key".getBytes(StandardCharsets.UTF_8))
-                .compact();
+    public void testUnsupportedCallbackException() throws Exception {
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + token.compact());
+        doThrow(new UnsupportedCallbackException(null)).when(handler).handle(any());
+        AuthStatus result = module.validateRequest(messageInfo, clientSubject, serviceSubject);
+        assertEquals(AuthStatus.SEND_FAILURE, result);
+    }
 
-        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + token);
+    @Test
+    public void testValidToken() throws Exception {
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + token.compact());
         AuthStatus result = module.validateRequest(messageInfo, clientSubject, serviceSubject);
         assertEquals(AuthStatus.SUCCESS, result);
         ArgumentCaptor<Callback[]> callbacks = ArgumentCaptor.forClass(Callback[].class);
@@ -106,16 +116,11 @@ public class AuthModuleTest {
     @Test
     public void testOldToken() throws Exception {
         LocalDateTime now = LocalDateTime.now();
-        String token = Jwts.builder().setIssuer("Junit")
-                .setSubject("test")
-                .setIssuer("test")
-                .setIssuedAt(Date.from(now.minusHours(5).toInstant(ZoneOffset.UTC)))
+        String t = token.setIssuedAt(Date.from(now.minusHours(5).toInstant(ZoneOffset.UTC)))
                 .setExpiration(Date.from(now.minusHours(2).toInstant(ZoneOffset.UTC)))
-                .claim("groups", new HashSet<>())
-                .signWith(SignatureAlgorithm.HS512, "signature_key".getBytes(StandardCharsets.UTF_8))
                 .compact();
 
-        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + token);
+        when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer " + t);
         AuthStatus result = module.validateRequest(messageInfo, clientSubject, serviceSubject);
         assertEquals(AuthStatus.SUCCESS, result);
         verify(handler, times(0)).handle(any());

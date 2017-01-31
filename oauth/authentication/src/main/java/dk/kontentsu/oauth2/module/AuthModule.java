@@ -54,7 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * OAauth2 Java EE server authentication module.
+ * OAauth2 JASPIC server authentication module.
  *
  * @author Jens Borch Christiansen
  */
@@ -126,7 +126,7 @@ public class AuthModule implements ServerAuthModule, ServerAuthContext, ClientAu
                 .filter(String.class::isInstance)
                 .map(String.class::cast)
                 .collect(Collectors.toList());
-        return groups.toArray(new String[0]);
+        return groups.toArray(new String[groups.size()]);
     }
 
     private Optional<String> getBearerToken(final String authHeader) {
