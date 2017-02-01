@@ -93,7 +93,7 @@ public class AuthConfig implements ServerAuthConfig, ClientAuthConfig {
      */
     @Override
     public String getAuthContextID(final MessageInfo messageInfo) throws IllegalArgumentException {
-        if (new Options(messageInfo.getMap()).isMandatory()) {
+        if (Options.parse(messageInfo).isMandatory()) {
             return messageInfo.toString();
         }
         return null;

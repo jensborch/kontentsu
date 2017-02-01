@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.security.auth.message.AuthException;
+import javax.security.auth.message.MessageInfo;
 
 /**
  * Configurations options for OAuth2 JASPIC server authentication module. This
@@ -29,6 +30,10 @@ public class Options {
     Options(final Map options) {
         this();
         this.values.putAll(options);
+    }
+
+    static Options parse(final MessageInfo messageInfo) {
+        return new Options(messageInfo.getMap());
     }
 
     @SuppressWarnings("unchecked")
