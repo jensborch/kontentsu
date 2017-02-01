@@ -28,8 +28,6 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthException;
 import javax.security.auth.message.MessageInfo;
-import javax.security.auth.message.MessagePolicy;
-import javax.security.auth.message.MessagePolicy.TargetPolicy;
 import javax.security.auth.message.config.ClientAuthConfig;
 import javax.security.auth.message.config.ServerAuthConfig;
 
@@ -63,13 +61,7 @@ public class AuthConfig implements ServerAuthConfig, ClientAuthConfig {
             @SuppressWarnings("rawtypes") final Map properties) throws AuthException {
         options.augment(properties);
         AuthModule module = new AuthModule();
-        if (authContextID == null) {
-            module.initialize(new MessagePolicy(new TargetPolicy[0], false),
-                    new MessagePolicy(new TargetPolicy[0], false), handler, options.asMap());
-        } else {
-            module.initialize(new MessagePolicy(new TargetPolicy[0], true),
-                    new MessagePolicy(new TargetPolicy[0], true), handler, options.asMap());
-        }
+        module.initialize(null, null, handler, options.asMap());
         return module;
     }
 
