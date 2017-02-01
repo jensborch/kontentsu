@@ -23,10 +23,19 @@
  */
 package dk.kontentsu.api.exposure;
 
+import dk.kontentsu.api.model.ErrorRepresentation;
+import dk.kontentsu.model.Role;
+import dk.kontentsu.model.internal.Host;
+import dk.kontentsu.repository.HostRepository;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -43,20 +52,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import dk.kontentsu.api.model.ErrorRepresentation;
-import dk.kontentsu.model.internal.Host;
-import dk.kontentsu.repository.HostRepository;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-
 /**
  * REST resource for listing and manipulating host - i.e. destinations CDN items can be distributed to.
  *
  * @author Jens Borch Christiansen
  */
 @Path("/hosts")
+@DeclareRoles(Role.ADMIN)
+@RolesAllowed(Role.ADMIN)
 @Stateless
 @Api(tags = {"hosts"})
 public class HostExposure {

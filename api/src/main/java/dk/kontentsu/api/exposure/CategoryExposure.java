@@ -23,9 +23,21 @@
  */
 package dk.kontentsu.api.exposure;
 
+import dk.kontentsu.api.model.CategoryRepresentation;
+import dk.kontentsu.api.model.ErrorRepresentation;
+import dk.kontentsu.model.Role;
+import dk.kontentsu.model.Taxon;
+import dk.kontentsu.model.Taxonomy;
+import dk.kontentsu.repository.CategoryRepository;
+import dk.kontentsu.repository.TaxonomyRepository;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import java.util.stream.Collectors;
-
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -41,17 +53,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import dk.kontentsu.api.model.CategoryRepresentation;
-import dk.kontentsu.api.model.ErrorRepresentation;
-import dk.kontentsu.model.Taxon;
-import dk.kontentsu.model.Taxonomy;
-import dk.kontentsu.repository.CategoryRepository;
-import dk.kontentsu.repository.TaxonomyRepository;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-
 /**
  * REST resource for listing and manipulating categories for items on the CDN.
  *
@@ -59,6 +60,8 @@ import io.swagger.annotations.ApiResponses;
  */
 @Path("/categories")
 @Stateless
+@DeclareRoles(Role.ADMIN)
+@RolesAllowed(Role.ADMIN)
 @Api(tags = {"categories"})
 public class CategoryExposure {
 
