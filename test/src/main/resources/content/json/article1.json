@@ -1,9 +1,10 @@
 {
-    "links": [{
+    "links": [
+        {
             "href": "items/article1",
             "rel": "self"
         },
-        {    
+        {
             "href": "components/templates/article-picture-right.tpl.html",
             "rel": "template"
         }

@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "items/article1"
+            "href": "items/article"
         },
         "article-picture-right-template": {
             "href": "components/templates/article-picture-right.tpl.html"
@@ -9,7 +9,7 @@
         "book-responsive": {
             "href": "images/book"
         },
-        "page2": {
+        "page-simple": {
             "href": "items/page2"
         }
     },

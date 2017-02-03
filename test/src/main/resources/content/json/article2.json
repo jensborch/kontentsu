@@ -1,18 +1,15 @@
 {
-    "_links": {
-        "self": {
-            "href": "items/article"
+    "links": [
+        {
+            "href": "items/article2",
+            "rel": "self"
         },
-        "article-picture-right-template": {
-            "href": "components/templates/article-picture-right.tpl.html"
-        },
-        "book": {
-            "href": "images/book/book.jpg"
+        {
+            "href": "components/templates/article-picture-right.tpl.html",
+            "rel": "tempalte"
         }
-    },
-    "template": {
-        "ref": "article-picture-right-template"
-    },
+
+    ],
     "heading": "Heading article 2",
     "summary": "Summary article 2",
     "sections": [
@@ -31,7 +28,10 @@
             "picture": {
                 "title": "Book",
                 "alt": "Book",
-                "ref": "book",
+                "link": {
+                    "href": "images/book/book.jpg",
+                    "rel": "image"
+                },
                 "useMetadata": "true"
             }
         },

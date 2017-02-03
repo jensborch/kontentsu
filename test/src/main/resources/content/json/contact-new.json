@@ -1,0 +1,19 @@
+{
+    "links": [
+        {
+            "href": "items/contact",
+            "rel": "self"
+        }
+    ],
+    "heading": "New Contact us",
+    "telephone": {
+        "legend": "New Call",
+        "text": "New Call us:",
+        "number": "campaign"
+    },
+    "mail": {
+        "legend": "New Email us",
+        "text": "New Send an email:",
+        "address": "campaign"
+    }
+}

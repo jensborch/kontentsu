@@ -1,11 +1,27 @@
 package dk.kontentsu.externalization;
 
-import dk.kontentsu.externalization.ExternalizerService;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.embeddable.EJBContainer;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.transaction.UserTransaction;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.Interval;
@@ -19,20 +35,6 @@ import dk.kontentsu.repository.ExternalFileRepository;
 import dk.kontentsu.test.ContentTestData;
 import dk.kontentsu.test.TestEJBContainer;
 import dk.kontentsu.util.Transactions;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.util.List;
-import javax.annotation.Resource;
-import javax.ejb.embeddable.EJBContainer;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.transaction.UserTransaction;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  * Test for {@link ExternalizerService}.
@@ -52,6 +54,7 @@ public class ExternalizerServiceIT {
     private Item page;
     private SemanticUri pageUri;
     private Version pageVersion;
+    private ObjectMapper mapper;
 
     @Inject
     private ExternalizerService service;
@@ -67,6 +70,7 @@ public class ExternalizerServiceIT {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+
         container = TestEJBContainer.create();
     }
 
@@ -80,6 +84,7 @@ public class ExternalizerServiceIT {
     @Before
     public void setUp() throws Exception {
         TestEJBContainer.inject(container, this);
+        mapper = new ObjectMapper();
     }
 
     public void createItems(final MimeType mimeType) throws Exception {
@@ -173,7 +178,8 @@ public class ExternalizerServiceIT {
 
         assertEquals(2, result.size());
         String external = result.get(0).getContent().getData();
-        assertEquals(data.getSimplePageResults(1), external);
+
+        assertEquals(mapper.readTree(data.getSimplePageResults(1)), mapper.readTree(external));
         assertEquals(new Interval(NOW, NOW.plusDays(10)), result.get(0).getInterval());
 
         external = result.get(1).getContent().getData();

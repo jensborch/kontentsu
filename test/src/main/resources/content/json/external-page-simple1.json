@@ -1,33 +1,38 @@
 {
-    "_links": {
-        "self": {
-            "href": "pages/page-simple"
+    "links": [
+        {
+            "href": "pages/page-simple",
+            "rel": "self"
         },
-        "template": {
-            "href": "components/templates/responsive-one-article.tpl.html"
+        {
+            "href": "components/templates/responsive-one-article.tpl.html",
+            "rel": "template"
+        }
+    ],
+    "composition": {
+        "link": {
+            "href": "compositiontypes/default/page-one-article.json",
+            "rel": "composition-type"
         },
-        "composition-type": {
-            "href": "compositiontypes/default/page-one-article.json"
-        },
-        "composition": {
-            "articles": [{
-                    "href": "items/article2"
-                }],
-            "contact": {
-                "href": "items/contact"
+        "articles": [
+            {
+                "links": [{
+                        "href": "items/article2",
+                        "rel": "article"
+                    },
+                    {
+                        "href": "components/templates/article-picture-right.tpl.html",
+                        "rel": "template"
+                    }]
             }
-        },
-        "book-responsive": {
-            "href": "images/book"
-        },
-        "page-simple": {
-            "href": "items/page2"
-        },
-        "articles1-article-picture-right-template": {
-            "href": "components/templates/article-picture-right.tpl.html"
-        },
-        "articles1-halvtreds-kroner-seddel-moenter": {
-            "href": "images/halvtreds-kroner-seddel-moenter"
+        ],
+        "contacts": {
+            "links": [
+                {
+                    "href": "items/contact",
+                    "rel": "contact"
+                }
+            ]
         }
     },
     "seo": {
@@ -42,8 +47,9 @@
     "content": {
         "heading": "Lorem Ipsum",
         "articles": [{
-                "template": {
-                    "ref": "article-picture-right-template"
+                "link": {
+                    "href": "components/templates/article-picture-right.tpl.html",
+                    "rel": "template"
                 },
                 "heading": "Lorem Ipsum 1",
                 "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tortor quam, dapibus eu leo quis, feugiat vulputate ligula.",
@@ -58,7 +64,10 @@
                         "picture": {
                             "title": "Book",
                             "alt": "Book",
-                            "ref": "book-responsive",
+                            "link": {
+                                "href": "images/book",
+                                "rel": "image"
+                            },
                             "useMetadata": "false"
                         }
                     },
@@ -69,7 +78,8 @@
                         ],
                         "link": {
                             "title": "Simple page",
-                            "ref": "page-simple"
+                            "href": "items/page2",
+                            "rel": "page"
                         }
                     },
                     {
