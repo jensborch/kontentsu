@@ -43,7 +43,7 @@ public final class BeanValidator {
 
     private BeanValidator() {
     }
-    
+
     /**
      * Validate method manually.
      */
@@ -54,8 +54,8 @@ public final class BeanValidator {
             Method m = obj.getClass().getMethod(method, params);
             return validator.validateParameters(obj, m, values, Default.class);
         } catch (NoSuchMethodException | SecurityException ex) {
-            throw new ValidationException("Error validating method " + method + " on class " + obj.getClass().getName() + " with parmeters: " + Arrays.toString(values), ex);
+            throw new ValidationException("Error validating method "
+                    + method + " on class " + obj.getClass().getName() + " with parmeters: " + Arrays.toString(values), ex);
         }
     }
-
 }
