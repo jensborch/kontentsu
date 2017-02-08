@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
+ * Spliterator for streaming the results of a regular expression group match.
  *
  * @author Jens Borch Christiansen
  */
@@ -44,15 +45,15 @@ public class MatcherSpliterator extends AbstractSpliterator<String[]> {
 
     @Override
     public boolean tryAdvance(final Consumer<? super String[]> action) {
-        boolean result = false;
-        if (!matcher.find()) {
+        boolean found = matcher.find();
+        if (found) {
             final String[] groups = new String[matcher.groupCount() + 1];
             for (int i = 0; i <= matcher.groupCount(); i++) {
                 groups[i] = matcher.group(i);
             }
             action.accept(groups);
         }
-        return result;
+        return found;
     }
 
     public static Stream<String[]> stream(final Matcher matcher) {

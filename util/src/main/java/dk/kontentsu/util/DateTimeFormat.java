@@ -36,15 +36,17 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
 
-import dk.kontentsu.util.DateTimeFormat.DateTimeFormatValidator;
+import dk.kontentsu.util.DateTimeFormat.Validator;
 
 /**
+ * Validate that a give string is a date time having a particular format e.g.
+ * UTC.
  *
  * @author Jens Borch Christiansen
  */
 @Target({ElementType.TYPE, ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {DateTimeFormatValidator.class})
+@Constraint(validatedBy = {Validator.class})
 @Documented
 public @interface DateTimeFormat {
 
@@ -59,7 +61,7 @@ public @interface DateTimeFormat {
     /**
      * Validator for DateTimeFormatvalidation annotation.
      */
-    class DateTimeFormatValidator implements ConstraintValidator<DateTimeFormat, String> {
+    class Validator implements ConstraintValidator<DateTimeFormat, String> {
 
         private DateTimeFormatter formatter;
 
