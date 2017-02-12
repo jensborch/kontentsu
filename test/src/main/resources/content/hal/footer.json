@@ -1,9 +1,10 @@
 {
-    "_links": {
-        "self": {
-            "href": "items/footer"
+    "links": [
+        {
+            "href": "items/footer",
+            "rel": "self"
         }
-    },
+    ],
     "heading": "I am a footer heading",
     "text": "I am the footer text"
 }
