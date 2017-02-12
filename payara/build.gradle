@@ -29,6 +29,8 @@ dependencies {
     compile project(':oauth:authentication')
     compile project(':api')
     compile project(':processing')
+    
+    runtime files("${project(':core').libsDir}/kontentsu-core-javadoc-${version}.jar")
 
     compile 'org.apache.logging.log4j:log4j-web:' + log4jVersion
     compile 'com.h2database:h2:' + h2Version

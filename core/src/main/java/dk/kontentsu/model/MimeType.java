@@ -46,9 +46,11 @@ import javax.validation.constraints.Size;
 import javax.ws.rs.core.MediaType;
 
 /**
- * Class representing the content Mime Type of a item in the CDN, but also serves the purpose of parsing accept headers.
+ * Class representing the content Mime Type of a item in the CDN, but also
+ * serves the purpose of parsing accept headers.
  *
- * @see <a href="http://tools.ietf.org/html/rfc6838">RFC Media Type Specification</a>
+ * @see <a href="http://tools.ietf.org/html/rfc6838">RFC Media Type
+ * Specification</a>
  *
  * @author Jens Borch Christiansen
  */
@@ -117,8 +119,9 @@ public class MimeType implements Serializable {
     }
 
     /**
-     * Parses a mime type string including media range and returns a MimeType object. For example, the media range 'application/*;q=0.5' would get parsed into: ('application', '*',
-     * {'q', '0.5'}).
+     * Parses a mime type string including media range and returns a MimeType
+     * object. For example, the media range 'application/*;q=0.5' would get
+     * parsed into: ('application', '*', {'q', '0.5'}).
      *
      * @param mimeType the mime type to parse
      * @return a MimeType object
@@ -202,8 +205,9 @@ public class MimeType implements Serializable {
     }
 
     /**
-     * Check if this mime type matches another mime type. This will perform a match using wildcards, thus application&#47* will match application&#47json and *&#47* will match
-     * everything.
+     * Check if this mime type matches another mime type. This will perform a
+     * match using wildcards, thus application&#47;* will match
+     * application&#47;json and *&#47;* will match everything.
      *
      * @param other the mim type to match
      * @return true if the types matches

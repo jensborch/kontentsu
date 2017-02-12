@@ -24,25 +24,36 @@
             angular.module('CdnApp', ['ngMaterial']);
         </script>
 
-        <md-toolbar class="md-hue-2">
-            <div class="md-toolbar-tools">
-                <h1>CDN Publishing REST Service</h1>
-            </div>
-        </md-toolbar>
-        <md-content felx>
-            <md-list>
-                <md-list-item class="md-2-line">
-                    <md-button class="md-fab" aria-label="Swagger" href="${pageContext.request.contextPath}/webjars/swagger-ui/${swaggerUiVersion}/?url=${pageContext.request.contextPath}/api/swagger.json">
-                        <md-icon md-font-set="material-icons">info</md-icon>
-                    </md-button>
-                    <div class="md-list-item-text">
-                        <h3>Swagger</h3>
-                        <p>
-                            Documentation for the CDN REST API
-                        </p>
-                    </div>
-                </md-list-item>
-            </md-list>
-        </md-content>
-    </body>
+    <md-toolbar class="md-hue-2">
+        <div class="md-toolbar-tools">
+            <h1>CDN Publishing REST Service</h1>
+        </div>
+    </md-toolbar>
+    <md-content felx>
+        <md-list>
+            <md-list-item class="md-2-line">
+                <md-button class="md-fab" aria-label="Swagger" href="${pageContext.request.contextPath}/webjars/swagger-ui/${swaggerUiVersion}/?url=${pageContext.request.contextPath}/api/swagger.json">
+                    <md-icon md-font-set="material-icons">info</md-icon>
+                </md-button>
+                <div class="md-list-item-text">
+                    <h3>Swagger</h3>
+                    <p>
+                        Documentation for the Kontentsu REST API
+                    </p>
+                </div>
+            </md-list-item>
+            <md-list-item class="md-2-line">
+                <md-button class="md-fab" aria-label="Swagger" href="${pageContext.request.contextPath}/webjars/index.html">
+                    <md-icon md-font-set="material-icons">info</md-icon>
+                </md-button>
+                <div class="md-list-item-text">
+                    <h3>Core Javadoc</h3>
+                    <p>
+                        Core Javadoc for Kontentsu
+                    </p>
+                </div>
+            </md-list-item>     
+        </md-list>
+    </md-content>
+</body>
 </html>

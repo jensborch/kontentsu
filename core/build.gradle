@@ -3,6 +3,10 @@ jar {
     baseName = 'kontentsu-core'
 }
 
+javadocJar {
+    baseName = 'kontentsu-core'
+}
+
 sourceSets {
     integrationTest {
         resources.srcDir file('src/test/resources')
@@ -56,3 +60,5 @@ dependencies {
     integrationTestCompile project(':spi')
     integrationTestCompile project(':test')
 }
+
+jar.dependsOn javadocJar

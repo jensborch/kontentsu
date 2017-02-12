@@ -159,6 +159,13 @@ subprojects {
             junitXml.destination = "$buildDir/integration-test-results"
         }
     }
+    
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        appendix = 'javadoc'
+        from(javadoc.destinationDir) { 
+            into 'META-INF/resources/webjars'
+        }
+    }
 
     dependencies {
 
