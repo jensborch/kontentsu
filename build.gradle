@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath 'org.owasp:dependency-check-gradle:1.4.4.1'
+        classpath 'org.owasp:dependency-check-gradle:1.4.5'
     }
 }
 
@@ -12,17 +12,17 @@ plugins {
     id 'jacoco'
     id 'pmd'
     id 'project-report'
-    id 'com.github.ben-manes.versions' version '0.13.0'
+    id 'com.github.ben-manes.versions' version '0.14.0'
     id 'de.aaschmid.cpd' version '1.0'  
 }
 
 ext {
-    log4jVersion = '2.7'
+    log4jVersion = '2.8'
     javaeeVersion = '7.0-1'
     h2Version = '1.4.193'
     jacksonVersion = '2.8.1'
     jerseyVersion = '2.22.2'
-    hibernateVersion = '5.2.4.Final'
+    hibernateVersion = '5.2.7.Final'
     querydslVersion = "4.1.4"
     fileuploadVersion = "1.3.2"
     ownerVersion = '1.0.9'
@@ -33,10 +33,10 @@ ext {
     jjwtVersion = '0.7.0'
     findbugsAnnotationsVersion = '3.0.1u2';
 
-    swaggerUiVersion = '2.2.6'
-    swaggerVersion = '1.5.10'
-    angularMaterialVersion = '1.1.1'
-    angularVersion = '1.5.8'
+    swaggerUiVersion = '2.2.10-1'
+    swaggerVersion = '1.5.12'
+    angularMaterialVersion = '1.1.3'
+    angularVersion = '1.6.1'
     materialDesignIconsVersions = '2.2.0'
 
     payaraVersion = '4.1.1.164'
@@ -49,7 +49,7 @@ ext {
     jacocoVersion = "0.7.7.201606060606"
     mockitoVersion = '1.10.19'
     catchExceptionVersion = '1.4.4'
-    restAssuredVersion = '3.0.1'
+    restAssuredVersion = '3.0.2'
     jglueVersion = '3.1.4'
 }
 
