@@ -35,8 +35,8 @@ ext {
 
     swaggerUiVersion = '2.2.10-1'
     swaggerVersion = '1.5.12'
-    angularMaterialVersion = '1.1.1'
-    angularVersion = '1.5.8'
+    angularMaterialVersion = '1.1.3'
+    angularVersion = '1.6.1'
     materialDesignIconsVersions = '2.2.0'
 
     payaraVersion = '4.1.1.164'
