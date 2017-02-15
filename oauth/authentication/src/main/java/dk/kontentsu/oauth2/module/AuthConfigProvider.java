@@ -38,7 +38,7 @@ import javax.servlet.ServletContext;
  * @author Jens Borch Christiansen
  */
 @SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
-public class AuthConfigProvider implements javax.security.auth.message.config.AuthConfigProvider {
+public final class AuthConfigProvider implements javax.security.auth.message.config.AuthConfigProvider {
 
     private static final String LAYER = "HttpServlet";
     private static final String DESCRIPTION = "OAuth2 SAM authentication config provider";
@@ -50,7 +50,14 @@ public class AuthConfigProvider implements javax.security.auth.message.config.Au
     }
 
     /**
-     * Required constructor according to specifications.
+     * Required constructor according to specifications. Creates a new OAuth
+     * configuration provider. If <code>AuthConfigFactory</code> is non-null the
+     * configuration provider will be registered as required by the JASPIC
+     * specifications.
+     *
+     * @param options to parse to the configuration provider
+     * @param factory for registration or null
+     *
      */
     public AuthConfigProvider(final Map<String, String> options, final AuthConfigFactory factory) {
         this(new Options(options));
@@ -59,6 +66,13 @@ public class AuthConfigProvider implements javax.security.auth.message.config.Au
         }
     }
 
+    /**
+     * Convenience method for registering a OAuth2 configuration provider in
+     * your web application.
+     *
+     * @param options to parse to the configuration provider
+     * @param context the servlet context used application context id
+     */
     public static void register(final Options options, final ServletContext context) {
         AuthConfigFactory.getFactory().registerConfigProvider(new AuthConfigProvider(options),
                 LAYER,

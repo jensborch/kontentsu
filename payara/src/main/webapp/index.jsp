@@ -26,7 +26,7 @@
 
     <md-toolbar class="md-hue-2">
         <div class="md-toolbar-tools">
-            <h1>CDN Publishing REST Service</h1>
+            <h1>Kontentsu</h1>
         </div>
     </md-toolbar>
     <md-content felx>
@@ -43,7 +43,7 @@
                 </div>
             </md-list-item>
             <md-list-item class="md-2-line">
-                <md-button class="md-fab" aria-label="Swagger" href="${pageContext.request.contextPath}/webjars/index.html">
+                <md-button class="md-fab" aria-label="Javadoc" href="${pageContext.request.contextPath}/webjars/core/index.html">
                     <md-icon md-font-set="material-icons">info</md-icon>
                 </md-button>
                 <div class="md-list-item-text">

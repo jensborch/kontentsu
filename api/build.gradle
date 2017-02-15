@@ -22,7 +22,6 @@ dependencies {
     compile 'io.swagger:swagger-models:'  + swaggerVersion
     compile 'io.swagger:swagger-annotations:'  + swaggerVersion
 
-    compile 'javax.cache:cache-api:' + cacheApiversion
     compile 'org.apache.tomee:javaee-api:' + javaeeVersion
     compile 'org.glassfish.jersey.media:jersey-media-json-jackson:' + jerseyVersion
 

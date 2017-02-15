@@ -77,7 +77,13 @@ public class SemanticUriPath extends Category {
     }
 
     /**
-     * Needed by JPA query... should not be use.
+     * Needed by JPA query to create a <code>SemanticUriPath</code> with a count
+     * of the version for that particular URI path. <b>Should not be use
+     * directly</b>.
+     *
+     * @param path the path of the URI
+     * @param versions number of versions found
+     *
      */
     public SemanticUriPath(final String path, final Long versions) {
         this(split(path));

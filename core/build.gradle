@@ -27,6 +27,8 @@ dependencies {
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:' + jacksonVersion
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:' + jacksonVersion
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:' + jacksonVersion
+    
+    compile 'com.pastdev:jsch-nio:' + jschNioVersion
 
     compile 'com.querydsl:querydsl-apt:' + querydslVersion + ':jpa'
     compile 'com.querydsl:querydsl-jpa:' + querydslVersion;

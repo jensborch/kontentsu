@@ -26,7 +26,6 @@ package dk.kontentsu.util;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Set;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.ValidationException;
@@ -46,6 +45,14 @@ public final class BeanValidator {
 
     /**
      * Validate method manually.
+     *
+     * @param <T> the type of the object to validate
+     * @param obj the object to preform validation on
+     * @param method the method to validate
+     * @param params types in method signature
+     * @param values the values to validate
+     *
+     * @return a set of the constraint violations found
      */
     public static <T> Set<ConstraintViolation<T>> validate(final T obj, final String method, final Class<?>[] params, final Object[] values) {
         try {

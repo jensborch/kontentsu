@@ -2,7 +2,6 @@ package dk.kontentsu.util;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
-
 import javax.transaction.UserTransaction;
 
 /**
@@ -44,17 +43,17 @@ public final class Transactions {
     public static final class Parameter<T> {
 
         private final UserTransaction userTransaction;
-        private final T parameter;
+        private final T param;
 
         private Parameter(final UserTransaction transaction, final T parameter) {
-            this.parameter = parameter;
+            this.param = parameter;
             this.userTransaction = transaction;
         }
 
         public <R> R apply(final Function<T, R> function) throws Exception {
             try {
                 userTransaction.begin();
-                return function.apply(parameter);
+                return function.apply(param);
             } finally {
                 userTransaction.commit();
             }
