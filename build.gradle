@@ -80,6 +80,11 @@ allprojects {
         }
     }
     
+    task findbugs(
+        group: "Verification", 
+        description: "Marker task to enabled findbugs."
+    )
+    
     repositories {
         jcenter()
         mavenCentral()
@@ -94,6 +99,16 @@ subprojects {
     apply plugin: 'pmd'
     apply plugin: 'jacoco'
     apply plugin: 'org.owasp.dependencycheck'
+    
+    
+    gradle.taskGraph.whenReady { taskGraph ->
+        tasks.findbugsMain.onlyIf { 
+            taskGraph.hasTask((tasks.findbugs))
+        }
+        tasks.findbugsTest.onlyIf {  
+            taskGraph.hasTask((tasks.findbugs)) 
+        }
+    }
      
     checkstyle {
         toolVersion = checkstyleVersion
