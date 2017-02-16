@@ -68,6 +68,7 @@ allprojects {
     
     apply plugin: 'nebula.lint'
     gradleLint.rules = ['unused-dependency'] 
+    gradleLint.alwaysRun = false    
     
     tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
