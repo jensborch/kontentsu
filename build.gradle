@@ -82,7 +82,17 @@ allprojects {
     
     task findbugs(
         group: "Verification", 
-        description: "Marker task to enabled findbugs."
+        description: "Marker task to enabled Findbugs."
+    )
+    
+    task pmd(
+        group: "Verification", 
+        description: "Marker task to enabled PMD."
+    )    
+    
+    task checkstyle(
+        group: "Verification", 
+        description: "Marker task to enabled Checkstyle."
     )
     
     repositories {
@@ -109,7 +119,25 @@ subprojects {
             taskGraph.hasTask((tasks.findbugs)) 
         }
     }
+    
+    gradle.taskGraph.whenReady { taskGraph ->
+        tasks.pmdMain.onlyIf { 
+            taskGraph.hasTask((tasks.pmd))
+        }
+        tasks.pmdTest.onlyIf {  
+            taskGraph.hasTask((tasks.pmd)) 
+        }
+    }    
      
+    gradle.taskGraph.whenReady { taskGraph ->
+        tasks.checkstyleMain.onlyIf { 
+            taskGraph.hasTask((tasks.checkstyle))
+        }
+        tasks.checkstyleTest.onlyIf {  
+            taskGraph.hasTask((tasks.checkstyle)) 
+        }
+    }       
+    
     checkstyle {
         toolVersion = checkstyleVersion
         ignoreFailures = true
@@ -220,10 +248,10 @@ subprojects {
             }
         }
     }
-}
-
-idea {
-    module {
-        downloadJavadoc = true
     }
-}
+
+    idea {
+        module {
+            downloadJavadoc = true
+        }
+        }
