@@ -23,7 +23,7 @@
  */
 package dk.kontentsu.processing;
 
-import static dk.kontentsu.processing.HalJsonContent.*;
+import static dk.kontentsu.processing.JsonContent.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,6 +31,7 @@ import dk.kontentsu.jackson.ObjectMapperFactory;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.internal.Metadata;
+import dk.kontentsu.model.internal.MetadataType;
 import dk.kontentsu.model.internal.ReferenceType;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.parsers.ContentParserException;
@@ -49,14 +50,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Parser for JSON content. The parser will find metadata and compositions in the data.
+ * Parser for JSON content. The parser will find metadata and compositions in
+ * the data.
  *
  * @author Jens Borch Christiansen
  */
 @ContentProcessingScoped
 @ContentProcessingMimeType({"application/json"})
 public class JsonParser implements ContentParser {
-
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonParser.class);
     private final ObjectMapper objectMapper = ObjectMapperFactory.create();
@@ -76,17 +77,19 @@ public class JsonParser implements ContentParser {
 
     private Map<Metadata.Key, Metadata> parseMetadata(final JsonNode jsonContent) {
         Map<Metadata.Key, Metadata> result = new HashMap<>();
-        for (String metadataType : JSON_METADATA) {
-            JsonNode linksNode = jsonContent.findPath(metadataType);
-            Iterator<Map.Entry<String, JsonNode>> it = linksNode.fields();
-            while (it.hasNext()) {
-                Map.Entry<String, JsonNode> metadata = it.next();
-                if (metadata.getValue().isValueNode()) {
-                    LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", metadata.getKey(), metadataType, metadata.getValue().asText());
-                    result.put(new Metadata.Key(metadataType, metadata.getKey()), new Metadata(metadata.getValue().asText()));
-                }
+
+        jsonContent.get(JSON_METADATA).fields().forEachRemaining(m -> {
+            if (m.getValue().isArray()) {
+                //TODO
+            } else if (m.getValue().isValueNode()) {
+                String value = m.getValue().asText();
+                String key = m.getKey();
+                LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", key, MetadataType.SEO, value);
+                result.put(new Metadata.Key(MetadataType.SEO, key), new Metadata(value));
+            } else {
+                LOGGER.warn("Invalid metadata for key {}", m.getKey());
             }
-        }
+        });
         return result;
     }
 

@@ -1,0 +1,49 @@
+{
+    "links": [
+        {
+            "href": "pages/page-simple",
+            "ref": "self"
+        },
+        {
+            "href": "components/templates/responsive-one-article.tpl.html",
+            "rel": "template"
+        },
+        {
+            "href": "compositiontypes/default/page-one-article.json",
+            "rel": "composition-type"
+        }
+    ],
+    "composition": {
+        "articles": [
+            {
+                "links": [
+                    {
+                        "href": "items/article2",
+                        "rel": "article"
+                    }
+                ]
+            }
+        ],
+        "contacts": [
+            {
+                "links": [
+                    {
+                        "href": "items/contact",
+                        "rel": "contact"
+                    }
+                ]
+            }
+        ]
+    },
+    "metadata": {
+        "author": "Peter Nielsen",
+        "description": "Lorem Ipsum page2",
+        "title": "Lorem Ipsum",
+        "company": "Lorem Ipsum Inc.",
+        "keywords": ["lorem", "ipsum"],
+        "canonical": "http://da.lipsum.com/feed/html"
+    },
+    "content": {
+        "heading": "Lorem Ipsum"
+    }
+}

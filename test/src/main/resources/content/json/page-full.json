@@ -47,9 +47,8 @@
         "description": "Lorem Ipsum page1",
         "title": "Lorem Ipsum",
         "company": "Lorem Ipsum Inc.",
-        "keywords": "lorem, ipsum",
-        "canonical": "http://da.lipsum.com/feed/html",
-        "metadata": ""
+        "keywords": ["lorem", "ipsum"],
+        "canonical": "http://da.lipsum.com/feed/html"
     },
     "content": {
         "heading": "Lorem Ipsum"
