@@ -23,6 +23,13 @@
  */
 package dk.kontentsu.model.internal;
 
+import dk.kontentsu.jpa.AbstractBaseEntity;
+import dk.kontentsu.model.Content;
+import dk.kontentsu.model.Interval;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.State;
+import dk.kontentsu.repository.Repository;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +40,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -49,20 +55,14 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import dk.kontentsu.jpa.AbstractBaseEntity;
-import dk.kontentsu.model.Content;
-import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.State;
-import dk.kontentsu.repository.Repository;
-
 /**
- * A version of an item that can potentially be published to the CDN server. A version is active during a time period defined by its interval. A version (together with its content)
- * is immutable except it can be marked as inactive.
+ * A version of an item that can potentially be published to the CDN server. A
+ * version is active during a time period defined by its interval. A version
+ * (together with its content) is immutable except it can be marked as inactive.
  *
  * @author Jens Borch Christiansen
  */
@@ -103,7 +103,8 @@ public class Version extends AbstractBaseEntity {
     private State state;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "metadata", joinColumns = @JoinColumn(name = "item_id"))
+    @CollectionTable(name = "metadata", joinColumns = @JoinColumn(name = "item_id"), uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"type", "key"})})
     private Map<Metadata.Key, Metadata> metadata;
 
     protected Version() {
@@ -232,9 +233,9 @@ public class Version extends AbstractBaseEntity {
     public boolean isComplete() {
         return getReferences().isEmpty()
                 || !getReferences().stream()
-                .filter(c -> c.getType() == ReferenceType.COMPOSITION)
-                .filter(c -> c.getItem().getVersions(interval).isEmpty())
-                .findAny().isPresent();
+                        .filter(c -> c.getType() == ReferenceType.COMPOSITION)
+                        .filter(c -> c.getItem().getVersions(interval).isEmpty())
+                        .findAny().isPresent();
     }
 
     /**
@@ -314,7 +315,8 @@ public class Version extends AbstractBaseEntity {
         }
 
         /**
-         * Tuple containing an item and its composition type - useful for building compositions.
+         * Tuple containing an item and its composition type - useful for
+         * building compositions.
          */
         public static class ItemCompositionType {
 

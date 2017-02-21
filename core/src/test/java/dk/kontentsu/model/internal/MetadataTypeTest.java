@@ -1,6 +1,5 @@
 package dk.kontentsu.model.internal;
 
-import dk.kontentsu.model.internal.MetadataType;
 import static junit.framework.TestCase.assertEquals;
 
 import org.junit.Test;
@@ -18,7 +17,7 @@ public class MetadataTypeTest {
         assertEquals(MetadataType.OTHER, MetadataType.parse(""));
         assertEquals(MetadataType.OTHER, MetadataType.parse(null));
         assertEquals(MetadataType.OTHER, MetadataType.parse("other"));
-        assertEquals(MetadataType.SEO, MetadataType.parse("seo"));
+        assertEquals(MetadataType.PAGE, MetadataType.parse("page"));
     }
 
 }

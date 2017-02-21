@@ -41,7 +41,7 @@ public class VersionTest {
         item = new Item(semanticUri);
         version = Version.builder()
                 .from(NOW.plusDays(2))
-                .metadata(new Metadata.Key(MetadataType.SEO, "key"), new Metadata("This is metadata"))
+                .metadata(new Metadata.Key(MetadataType.PAGE, "key"), new Metadata("This is metadata"))
                 .content(content)
                 .build();
         item.addVersion(version);

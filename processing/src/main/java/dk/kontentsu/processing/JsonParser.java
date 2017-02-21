@@ -25,6 +25,7 @@ package dk.kontentsu.processing;
 
 import static dk.kontentsu.processing.JsonContent.*;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.jackson.ObjectMapperFactory;
@@ -45,6 +46,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,18 +80,27 @@ public class JsonParser implements ContentParser {
     private Map<Metadata.Key, Metadata> parseMetadata(final JsonNode jsonContent) {
         Map<Metadata.Key, Metadata> result = new HashMap<>();
 
-        jsonContent.get(JSON_METADATA).fields().forEachRemaining(m -> {
+        Optional.ofNullable(jsonContent.get(JSON_METADATA)).ifPresent(n -> n.fields().forEachRemaining(m -> {
             if (m.getValue().isArray()) {
-                //TODO
+                try {
+                    List<String> values = objectMapper.readValue(m.getValue().traverse(), new TypeReference<List<String>>() {
+                    });
+                    String key = m.getKey();
+                    String value = values.stream().collect(Collectors.joining(","));
+                    result.put(new Metadata.Key(MetadataType.PAGE, key), new Metadata(value));
+                } catch (IOException ex) {
+                    LOGGER.debug("Error reading array", ex);
+                }
+
             } else if (m.getValue().isValueNode()) {
                 String value = m.getValue().asText();
                 String key = m.getKey();
-                LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", key, MetadataType.SEO, value);
-                result.put(new Metadata.Key(MetadataType.SEO, key), new Metadata(value));
+                LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", key, MetadataType.PAGE, value);
+                result.put(new Metadata.Key(MetadataType.PAGE, key), new Metadata(value));
             } else {
                 LOGGER.warn("Invalid metadata for key {}", m.getKey());
             }
-        });
+        }));
         return result;
     }
 

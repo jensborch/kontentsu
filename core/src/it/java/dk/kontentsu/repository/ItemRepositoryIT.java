@@ -103,7 +103,7 @@ public class ItemRepositoryIT {
                 .content(content)
                 .from(from)
                 .to(to)
-                .metadata(new Metadata.Key(MetadataType.SEO, "key"), new Metadata("This is metadata"))
+                .metadata(new Metadata.Key(MetadataType.PAGE, "key"), new Metadata("This is metadata"))
                 .build();
 
         String itemName = (name == null) ? "test" : name;
@@ -293,7 +293,7 @@ public class ItemRepositoryIT {
             Item overlap = new Item(new SemanticUri(foundPath, "test"));
             Version version = Version.builder()
                     .from(NOW.plusDays(2))
-                    .metadata(new Metadata.Key(MetadataType.SEO, "key"), new Metadata("This is metadata"))
+                    .metadata(new Metadata.Key(MetadataType.PAGE, "key"), new Metadata("This is metadata"))
                     .content(content)
                     .build();
             overlap.addVersion(version);
@@ -318,7 +318,7 @@ public class ItemRepositoryIT {
             Version version = Version.builder()
                     .from(NOW.minusDays(100))
                     .to(NOW.minusDays(99))
-                    .metadata(new Metadata.Key(MetadataType.SEO, "key"), new Metadata("This is metadata"))
+                    .metadata(new Metadata.Key(MetadataType.PAGE, "key"), new Metadata("This is metadata"))
                     .content(content)
                     .build();
             item.addVersion(version);

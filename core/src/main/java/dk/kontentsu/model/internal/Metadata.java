@@ -25,7 +25,6 @@ package dk.kontentsu.model.internal;
 
 import java.io.Serializable;
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -34,6 +33,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
+ * Metadata for content in Kontentsu. Content metadata has a key composed of a
+ * type and a unique key for the given metadata value.
  *
  * @author Jens Borch Christiansen
  */
@@ -63,7 +64,6 @@ public class Metadata implements Serializable {
     public String toString() {
         return value;
     }
-
 
     /**
      * Key for metadata values that includes at type.

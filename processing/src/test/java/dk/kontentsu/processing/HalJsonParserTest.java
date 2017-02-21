@@ -44,8 +44,8 @@ public class HalJsonParserTest {
         ContentParser.Results result = parser.parse();
 
         assertEquals(7, result.getMetadata().size());
-        assertTrue(result.getMetadata().containsKey(new Metadata.Key(MetadataType.SEO, "author")));
-        assertEquals("Peter Nielsen", result.getMetadata().get(new Metadata.Key(MetadataType.SEO, "author")).getValue());
+        assertTrue(result.getMetadata().containsKey(new Metadata.Key(MetadataType.PAGE, "author")));
+        assertEquals("Peter Nielsen", result.getMetadata().get(new Metadata.Key(MetadataType.PAGE, "author")).getValue());
         assertEquals(5, result.getLinks().size());
 
     }

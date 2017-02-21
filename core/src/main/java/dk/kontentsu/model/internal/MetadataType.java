@@ -30,7 +30,15 @@ package dk.kontentsu.model.internal;
  */
 public enum MetadataType {
 
-    SEO, OTHER;
+    /**
+     * Metadata that will be added to the (content) page when it is
+     * externalized.
+     */
+    PAGE,
+    /**
+     * Internal metadata that will not go into the externalized page.
+     */
+    OTHER;
 
     public static MetadataType parse(final String type) {
         for (MetadataType t : values()) {

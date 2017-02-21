@@ -23,19 +23,19 @@
  */
 package dk.kontentsu.processing;
 
+import static dk.kontentsu.processing.HalJsonContent.*;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.jackson.ObjectMapperFactory;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.internal.Metadata;
+import dk.kontentsu.model.internal.MetadataType;
 import dk.kontentsu.model.internal.ReferenceType;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.parsers.ContentParserException;
 import dk.kontentsu.parsers.Link;
-
-import static dk.kontentsu.processing.HalJsonContent.*;
-
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
 import java.io.IOException;
@@ -84,12 +84,21 @@ public class HalJsonParser implements ContentParser {
                 Map.Entry<String, JsonNode> metadata = it.next();
                 if (metadata.getValue().isValueNode()) {
                     LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", metadata.getKey(), metadataType, metadata.getValue().asText());
-                    result.put(new Metadata.Key(metadataType, metadata.getKey()), new Metadata(metadata.getValue().asText()));
+                    result.put(new Metadata.Key(map(metadataType), metadata.getKey()), new Metadata(metadata.getValue().asText()));
                 }
             }
         }
         return result;
     }
+
+    private MetadataType map(String type) {
+        if("seo".equalsIgnoreCase(type)) {
+            return MetadataType.PAGE;
+        } else {
+            return MetadataType.OTHER;
+        }
+    }
+
 
     private List<Link> parse(final JsonNode jsonContent) {
         List<Link> result = new ArrayList<>(parseComposition(jsonContent));
