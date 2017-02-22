@@ -55,7 +55,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -103,8 +102,8 @@ public class Version extends AbstractBaseEntity {
     private State state;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "metadata", joinColumns = @JoinColumn(name = "item_id"), uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"type", "key"})})
+    @CollectionTable(name = "metadata", joinColumns = @JoinColumn(name = "item_id"))
+    //TODO: add uniqueConstraints = { @UniqueConstraint(columnNames = {"type", "key"})})
     private Map<Metadata.Key, Metadata> metadata;
 
     protected Version() {
