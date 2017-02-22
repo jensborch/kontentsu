@@ -20,7 +20,7 @@ ext {
     log4jVersion = '2.8'
     javaeeVersion = '7.0-1'
     h2Version = '1.4.193'
-    jacksonVersion = '2.8.1'
+    jacksonVersion = '2.8.5'
     jerseyVersion = '2.22.2'
     hibernateVersion = '5.2.7.Final'
     querydslVersion = "4.1.4"
@@ -38,7 +38,7 @@ ext {
     angularVersion = '1.6.1'
     materialDesignIconsVersions = '2.2.0'
 
-    payaraVersion = '4.1.1.164'
+    payaraVersion = '4.1.1.171.0.1'
 
     checkstyleVersion = "7.5.1"
     findbugsVersion =  "3.0.1"

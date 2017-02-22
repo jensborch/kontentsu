@@ -30,10 +30,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.jackson.ObjectMapperFactory;
 import dk.kontentsu.model.Content;
-import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.internal.Metadata;
 import dk.kontentsu.model.internal.MetadataType;
-import dk.kontentsu.model.internal.ReferenceType;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.parsers.ContentParserException;
 import dk.kontentsu.parsers.Link;
@@ -42,7 +40,6 @@ import dk.kontentsu.spi.ContentProcessingScoped;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -105,43 +102,22 @@ public class JsonParser implements ContentParser {
     }
 
     private List<Link> parse(final JsonNode jsonContent) {
-        List<Link> result = new ArrayList<>(parseComposition(jsonContent));
-        result.addAll(parseLinks(jsonContent));
-        return result;
-    }
-
-    private List<Link> parseLinks(final JsonNode jsonContent) {
         List<Link> result = new ArrayList<>();
-        JsonNode linksNode = jsonContent.findPath(JSON_LINKS);
-        Iterator<Map.Entry<String, JsonNode>> it = linksNode.fields();
-        while (it.hasNext()) {
-            Map.Entry<String, JsonNode> link = it.next();
-            if (!JSON_SELF_LINK.equals(link.getKey()) && !JSON_COMPOSITION.equals(link.getKey()) && !link.getKey().contains("template")) {
-                List<JsonNode> hrefs = link.getValue().findValues(JSON_HREF);
-                Optional<JsonNode> found = hrefs.stream().findFirst();
-                if (found.isPresent() && found.get().isTextual()) {
-                    LOGGER.debug("Adding link {}", found.get().asText());
-                    result.add(new Link(SemanticUri.parse(found.get().asText()), ReferenceType.LINK));
-                }
+        //TODO: parse single links
+        List<JsonNode> linkNodes = jsonContent.findValues(JSON_LINK);
+        List<JsonNode> linksNodes = jsonContent.findValues(JSON_LINKS);
+
+        linksNodes.stream().forEach(n -> {
+            if (n.findParent(JSON_COMPOSITION) != null) {
+                //TODO: loop over composition links
+                //LOGGER.debug("Adding composition {}", n.asText());
+                //result.add(new Link(SemanticUri.parse(n.asText()), ReferenceType.COMPOSITION));
+            } else {
+                //TODO: loop over links
+                //LOGGER.debug("Adding link {}", n.asText());
+                //result.add(new Link(SemanticUri.parse(n.asText()), ReferenceType.LINK));
             }
-        }
-        return result;
-    }
-
-    private List<Link> parseComposition(final JsonNode jsonContent) {
-        List<Link> result = new ArrayList<>();
-        JsonNode compositionNode = jsonContent.findPath(JSON_LINKS).findPath(JSON_COMPOSITION);
-        Iterator<Map.Entry<String, JsonNode>> it = compositionNode.fields();
-        while (it.hasNext()) {
-            Map.Entry<String, JsonNode> parent = it.next();
-            List<JsonNode> hrefs = parent.getValue().findValues(JSON_HREF);
-            hrefs.stream().forEach(found -> {
-                if (found.isTextual()) {
-                    LOGGER.debug("Adding composition {}", found.asText());
-                    result.add(new Link(SemanticUri.parse(found.asText()), ReferenceType.COMPOSITION));
-                }
-            });
-        }
+        });
         return result;
     }
 }
