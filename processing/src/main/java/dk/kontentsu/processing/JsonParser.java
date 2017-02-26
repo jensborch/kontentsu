@@ -30,8 +30,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.jackson.ObjectMapperFactory;
 import dk.kontentsu.model.Content;
+import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.internal.Metadata;
 import dk.kontentsu.model.internal.MetadataType;
+import dk.kontentsu.model.internal.ReferenceType;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.parsers.ContentParserException;
 import dk.kontentsu.parsers.Link;
@@ -113,9 +115,14 @@ public class JsonParser implements ContentParser {
                 //LOGGER.debug("Adding composition {}", n.asText());
                 //result.add(new Link(SemanticUri.parse(n.asText()), ReferenceType.COMPOSITION));
             } else {
-                //TODO: loop over links
-                //LOGGER.debug("Adding link {}", n.asText());
-                //result.add(new Link(SemanticUri.parse(n.asText()), ReferenceType.LINK));
+                n.forEach(l -> {
+                    JsonNode href = l.get(JSON_HREF);
+                    JsonNode rel = href.get(JSON_LINK_REL);
+                    if (href != null && href.isTextual() && rel != null && "template".equals(rel.asText())) {
+                        LOGGER.debug("Adding link {}", href.asText());
+                        result.add(new Link(SemanticUri.parse(href.asText()), ReferenceType.LINK));
+                    }
+                });
             }
         });
         return result;

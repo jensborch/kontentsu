@@ -15,6 +15,7 @@ public final class JsonContent {
     public static final String JSON_LINK = "link";
     public static final String JSON_METADATA = "metadata";
     public static final String JSON_SELF_LINK = "self";
+    public static final String JSON_LINK_REL = "rel";
 
     private JsonContent() {
     }
