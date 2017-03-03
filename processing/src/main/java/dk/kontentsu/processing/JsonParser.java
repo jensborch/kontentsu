@@ -25,6 +25,16 @@ package dk.kontentsu.processing;
 
 import static dk.kontentsu.processing.JsonContent.*;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,14 +49,6 @@ import dk.kontentsu.parsers.ContentParserException;
 import dk.kontentsu.parsers.Link;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,8 +119,8 @@ public class JsonParser implements ContentParser {
             } else {
                 n.forEach(l -> {
                     JsonNode href = l.get(JSON_HREF);
-                    JsonNode rel = href.get(JSON_LINK_REL);
-                    if (href != null && href.isTextual() && rel != null && "template".equals(rel.asText())) {
+                    JsonNode rel = l.get(JSON_LINK_REL);
+                    if (href != null && href.isTextual() && rel != null && !"template".equals(rel.asText())) {
                         LOGGER.debug("Adding link {}", href.asText());
                         result.add(new Link(SemanticUri.parse(href.asText()), ReferenceType.LINK));
                     }
