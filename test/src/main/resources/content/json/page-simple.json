@@ -1,37 +1,20 @@
 {
-    "links": [
-        {
-            "href": "pages/page-simple",
-            "ref": "self"
-        },
-        {
-            "href": "components/templates/responsive-one-article.tpl.html",
-            "rel": "template"
-        },
-        {
-            "href": "compositiontypes/default/page-one-article.json",
-            "rel": "composition-type"
-        }
-    ],
+    "href": "pages/page-simple",
+    "template": {
+        "href": "components/templates/responsive-one-article.tpl.html"
+    },
+    "composition-type": {
+        "href": "compositiontypes/default/page-one-article.json"
+    },
     "composition": {
         "articles": [
             {
-                "links": [
-                    {
-                        "href": "items/article2",
-                        "rel": "article"
-                    }
-                ]
+                "href": "items/article2"
             }
         ],
         "contacts": [
             {
-                "links": [
-                    {
-                        "href": "items/contact",
-                        "rel": "contact"
-                    }
-                ]
+                "href": "items/contact"
             }
         ]
     },

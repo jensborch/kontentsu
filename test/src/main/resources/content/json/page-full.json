@@ -1,45 +1,25 @@
-
 {
-    "links": [
-        {
-            "href": "pages/page-full",
-            "rel": "self"
-        },
-        {
-            "href": "components/templates/responsive-multi-article.tpl.html",
-            "rel": "template"
-        },
-        {
-            "href": "compositiontypes/default/page-multi-article.json",
-            "rel": "composition-type"
-        }
-    ],
+    "href": "pages/page-full",
+    "template": {
+        "href": "components/templates/responsive-multi-article.tpl.html"
+    },
+    "composition-type": {
+        "href": "compositiontypes/default/page-multi-article.json"
+    },
     "composition": {
         "articles": [
             {
-                "links": [{
-                        "href": "items/article1",
-                        "rel": "article"
-                    }]
+                "href": "items/article1"
             },
             {
-                "links": [{
-                        "href": "items/article2",
-                        "rel": "article"
-                    }]
+                "href": "items/article2"
             }
         ],
         "contacts": [{
-                "links": [{
-                        "href": "items/contact",
-                        "rel": "contact"
-                    }]
+                "href": "items/contact"
             }],
         "application": [{
-                "links": [{
-                        "href": "items/application-info",
-                        "rel": "application"
-                    }]
+                "href": "items/application-info"
             }]
     },
     "metadata": {

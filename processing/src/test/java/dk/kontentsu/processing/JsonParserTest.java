@@ -3,8 +3,6 @@ package dk.kontentsu.processing;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.nio.charset.StandardCharsets;
-
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.internal.Metadata;
@@ -12,6 +10,7 @@ import dk.kontentsu.model.internal.MetadataType;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.test.ContentTestData;
 import dk.kontentsu.test.ContentTestData.Type;
+import java.nio.charset.StandardCharsets;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +45,7 @@ public class JsonParserTest {
         assertEquals(6, result.getMetadata().size());
         assertTrue(result.getMetadata().containsKey(new Metadata.Key(MetadataType.PAGE, "author")));
         assertEquals("Peter Nielsen", result.getMetadata().get(new Metadata.Key(MetadataType.PAGE, "author")).getValue());
-        assertEquals(6, result.getLinks().size());
+        assertEquals(5, result.getLinks().size());
     }
 
 }

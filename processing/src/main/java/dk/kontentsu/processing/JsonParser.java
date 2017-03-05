@@ -25,16 +25,8 @@ package dk.kontentsu.processing;
 
 import static dk.kontentsu.processing.JsonContent.*;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,6 +41,16 @@ import dk.kontentsu.parsers.ContentParserException;
 import dk.kontentsu.parsers.Link;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
+import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +74,37 @@ public class JsonParser implements ContentParser {
     public Results parse() {
         try {
             JsonNode jsonContent = objectMapper.readTree(content.getData());
-            return new Results(parse(jsonContent), parseMetadata(jsonContent));
+            JsonFactory jf = new JsonFactory();
+            com.fasterxml.jackson.core.JsonParser jp = jf.createParser(content.getData());
+
+            List<Link> links = new ArrayList<>();
+            String fieldName = null;
+            Deque<String> path = new ArrayDeque<>();
+            while (!jp.isClosed()) {
+                JsonToken token = jp.nextToken();
+
+                if (token == JsonToken.FIELD_NAME) {
+                    fieldName = jp.getCurrentName();
+                    if (JSON_HREF.equals(fieldName) && !"template".equals(path.peekLast())
+                            && !"composition-type".equals(path.peekLast())) {
+                        jp.nextToken();
+                        String link = jp.getValueAsString();
+                        if (path.contains(JSON_COMPOSITION)) {
+                            links.add(new Link(SemanticUri.parse(link), ReferenceType.COMPOSITION));
+                        } else {
+                            links.add(new Link(SemanticUri.parse(link), ReferenceType.LINK));
+                        }
+                    }
+                }
+                if (token == JsonToken.START_OBJECT && fieldName != null) {
+                    path.push(fieldName);
+                }
+                if (token == JsonToken.END_OBJECT && !path.isEmpty()) {
+                    path.pop();
+                }
+            }
+
+            return new Results(links, parseMetadata(jsonContent));
         } catch (IOException ex) {
             throw new ContentParserException("Unable to parse content for contetn with UUID: " + content.getUuid(), ex);
         }
@@ -102,31 +134,6 @@ public class JsonParser implements ContentParser {
                 LOGGER.warn("Invalid metadata for key {}", m.getKey());
             }
         }));
-        return result;
-    }
-
-    private List<Link> parse(final JsonNode jsonContent) {
-        List<Link> result = new ArrayList<>();
-        //TODO: parse single links
-        List<JsonNode> linkNodes = jsonContent.findValues(JSON_LINK);
-        List<JsonNode> linksNodes = jsonContent.findValues(JSON_LINKS);
-
-        linksNodes.stream().forEach(n -> {
-            if (n.findParent(JSON_COMPOSITION) != null) {
-                //TODO: loop over composition links
-                //LOGGER.debug("Adding composition {}", n.asText());
-                //result.add(new Link(SemanticUri.parse(n.asText()), ReferenceType.COMPOSITION));
-            } else {
-                n.forEach(l -> {
-                    JsonNode href = l.get(JSON_HREF);
-                    JsonNode rel = l.get(JSON_LINK_REL);
-                    if (href != null && href.isTextual() && rel != null && !"template".equals(rel.asText())) {
-                        LOGGER.debug("Adding link {}", href.asText());
-                        result.add(new Link(SemanticUri.parse(href.asText()), ReferenceType.LINK));
-                    }
-                });
-            }
-        });
         return result;
     }
 }

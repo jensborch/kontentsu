@@ -55,4 +55,11 @@ public class Link {
     public String getName() {
         return uri.getName();
     }
+
+    @Override
+    public String toString() {
+        return "{type=" + type + ", uri=" + uri + '}';
+    }
+
+
 }
