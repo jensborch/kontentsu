@@ -1,14 +1,9 @@
 {
-    "links": [
-        {
-            "href": "items/article1",
-            "rel": "self"
-        },
-        {
-            "href": "components/templates/article-picture-right.tpl.html",
-            "rel": "template"
-        }
-    ],
+    "href": "items/article1",
+
+    "template": {
+        "href": "components/templates/article-picture-right.tpl.html"
+    },
     "heading": "Lorem Ipsum 1",
     "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tortor quam, dapibus eu leo quis, feugiat vulputate ligula.",
     "extended": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tortor quam, dapibus eu leo quis, feugiat vulputate ligula. Morbi non ornare tellus, a luctus orci. Integer commodo, sem sed iaculis lobortis, augue dolor ultricies nibh, quis accumsan mauris nisi vitae tortor. Nam commodo non lorem eget tristique.",
@@ -23,10 +18,7 @@
             "picture": {
                 "title": "Book",
                 "alt": "Book",
-                "link": {
-                    "href": "images/book",
-                    "rel": "image"
-                },
+                "href": "images/book",
                 "useMetadata": "false"
             }
         },
@@ -37,8 +29,7 @@
             ],
             "link": {
                 "title": "Simple page",
-                "href": "items/page2",
-                "rel": "page"
+                "href": "items/page2"
             }
         },
         {

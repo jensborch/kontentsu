@@ -27,8 +27,6 @@ import static dk.kontentsu.processing.JsonContent.*;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.jackson.ObjectMapperFactory;
 import dk.kontentsu.model.Content;
@@ -48,8 +46,6 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,10 +69,10 @@ public class JsonParser implements ContentParser {
     @Override
     public Results parse() {
         try {
-            JsonNode jsonContent = objectMapper.readTree(content.getData());
             JsonFactory jf = new JsonFactory();
             com.fasterxml.jackson.core.JsonParser jp = jf.createParser(content.getData());
 
+            Map<Metadata.Key, Metadata> metadata = new HashMap<>();
             List<Link> links = new ArrayList<>();
             String fieldName = null;
             Deque<String> path = new ArrayDeque<>();
@@ -90,10 +86,16 @@ public class JsonParser implements ContentParser {
                         jp.nextToken();
                         String link = jp.getValueAsString();
                         if (path.contains(JSON_COMPOSITION)) {
+                            LOGGER.debug("Adding composition: {}", link);
                             links.add(new Link(SemanticUri.parse(link), ReferenceType.COMPOSITION));
                         } else {
+                            LOGGER.debug("Adding link: {}", link);
                             links.add(new Link(SemanticUri.parse(link), ReferenceType.LINK));
                         }
+                    } else if (JSON_METADATA.equals(path.peekLast())) {
+                        jp.nextToken();
+                        LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", fieldName, MetadataType.PAGE, jp.getValueAsString());
+                        metadata.put(new Metadata.Key(MetadataType.PAGE, fieldName), new Metadata(jp.getValueAsString()));
                     }
                 }
                 if (token == JsonToken.START_OBJECT && fieldName != null) {
@@ -102,38 +104,13 @@ public class JsonParser implements ContentParser {
                 if (token == JsonToken.END_OBJECT && !path.isEmpty()) {
                     path.pop();
                 }
+                if (token == JsonToken.END_OBJECT) {
+                    fieldName = null;
+                }
             }
-
-            return new Results(links, parseMetadata(jsonContent));
+            return new Results(links, metadata);
         } catch (IOException ex) {
             throw new ContentParserException("Unable to parse content for contetn with UUID: " + content.getUuid(), ex);
         }
-    }
-
-    private Map<Metadata.Key, Metadata> parseMetadata(final JsonNode jsonContent) {
-        Map<Metadata.Key, Metadata> result = new HashMap<>();
-
-        Optional.ofNullable(jsonContent.get(JSON_METADATA)).ifPresent(n -> n.fields().forEachRemaining(m -> {
-            if (m.getValue().isArray()) {
-                try {
-                    List<String> values = objectMapper.readValue(m.getValue().traverse(), new TypeReference<List<String>>() {
-                    });
-                    String key = m.getKey();
-                    String value = values.stream().collect(Collectors.joining(","));
-                    result.put(new Metadata.Key(MetadataType.PAGE, key), new Metadata(value));
-                } catch (IOException ex) {
-                    LOGGER.debug("Error reading array", ex);
-                }
-
-            } else if (m.getValue().isValueNode()) {
-                String value = m.getValue().asText();
-                String key = m.getKey();
-                LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", key, MetadataType.PAGE, value);
-                result.put(new Metadata.Key(MetadataType.PAGE, key), new Metadata(value));
-            } else {
-                LOGGER.warn("Invalid metadata for key {}", m.getKey());
-            }
-        }));
-        return result;
     }
 }

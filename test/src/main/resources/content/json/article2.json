@@ -1,15 +1,8 @@
 {
-    "links": [
-        {
-            "href": "items/article2",
-            "rel": "self"
-        },
-        {
-            "href": "components/templates/article-picture-right.tpl.html",
-            "rel": "tempalte"
-        }
-
-    ],
+    "href": "items/article2",
+    "template": {
+        "href": "components/templates/article-picture-right.tpl.html"
+    },
     "heading": "Heading article 2",
     "summary": "Summary article 2",
     "sections": [
@@ -28,10 +21,7 @@
             "picture": {
                 "title": "Book",
                 "alt": "Book",
-                "link": {
-                    "href": "images/book/book.jpg",
-                    "rel": "image"
-                },
+                "href": "images/book/book.jpg",
                 "useMetadata": "true"
             }
         },

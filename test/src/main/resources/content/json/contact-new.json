@@ -1,10 +1,5 @@
 {
-    "links": [
-        {
-            "href": "items/contact",
-            "rel": "self"
-        }
-    ],
+    "href": "items/contact",
     "heading": "New Contact us",
     "telephone": {
         "legend": "New Call",
