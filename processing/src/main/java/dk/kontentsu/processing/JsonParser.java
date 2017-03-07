@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
 public class JsonParser implements ContentParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonParser.class);
-    private com.fasterxml.jackson.core.JsonParser jp;
+    private com.fasterxml.jackson.core.JsonParser jsonParser;
 
     @Inject
     private Content content;
@@ -71,7 +71,7 @@ public class JsonParser implements ContentParser {
     public void init() {
         JsonFactory jf = new JsonFactory();
         try {
-            jp = jf.createParser(content.getData());
+            jsonParser = jf.createParser(content.getData());
         } catch (IOException ex) {
             LOGGER.error("Error creating JSON parser", ex);
         }
@@ -83,34 +83,25 @@ public class JsonParser implements ContentParser {
             Map<Metadata.Key, Metadata> metadata = new HashMap<>();
             List<Link> links = new ArrayList<>();
             List<Processor> fieldProcessors = new ArrayList<>();
-            fieldProcessors.add(new Processor(
-                    (p, f) -> {
-                        return JSON_HREF.equals(f) && p.contains(JSON_COMPOSITION);
-                    },
-                    (k, v) -> {
-                        links.add(new Link(SemanticUri.parse(v), ReferenceType.LINK));
-                    })
-            );
-            fieldProcessors.add(new Processor(
-                    (p, f) -> {
-                        return JSON_HREF.equals(f)
+            fieldProcessors.add(new Processor((p, f) -> {
+                return JSON_HREF.equals(f) && p.contains(JSON_COMPOSITION);
+            }, (k, v) -> {
+                links.add(new Link(SemanticUri.parse(v), ReferenceType.LINK));
+            }));
+            fieldProcessors.add(new Processor((p, f) -> {
+                return JSON_HREF.equals(f)
                         && !p.contains(JSON_COMPOSITION)
                         && !"template".equals(p.peekLast())
                         && !"composition-type".equals(p.peekLast());
-                    },
-                    (k, v) -> {
-                        links.add(new Link(SemanticUri.parse(v), ReferenceType.COMPOSITION));
-                    })
-            );
-            fieldProcessors.add(new Processor(
-                    (p, f) -> {
-                        return JSON_METADATA.equals(p.peekLast());
-                    },
-                    (k, v) -> {
-                        LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", k, MetadataType.PAGE, v);
-                        metadata.put(new Metadata.Key(MetadataType.PAGE, k), new Metadata(v));
-                    })
-            );
+            }, (k, v) -> {
+                links.add(new Link(SemanticUri.parse(v), ReferenceType.COMPOSITION));
+            }));
+            fieldProcessors.add(new Processor((p, f) -> {
+                return JSON_METADATA.equals(p.peekLast());
+            }, (k, v) -> {
+                LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", k, MetadataType.PAGE, v);
+                metadata.put(new Metadata.Key(MetadataType.PAGE, k), new Metadata(v));
+            }));
             process(fieldProcessors);
             return new Results(links, metadata);
         } catch (IOException ex) {
@@ -118,17 +109,17 @@ public class JsonParser implements ContentParser {
         }
     }
 
-    private void process(List<Processor> processors) throws IOException {
+    private void process(final List<Processor> processors) throws IOException {
         String fieldName = null;
         Deque<String> path = new ArrayDeque<>();
-        while (!jp.isClosed()) {
-            JsonToken token = jp.nextToken();
+        while (!jsonParser.isClosed()) {
+            JsonToken token = jsonParser.nextToken();
             if (token == JsonToken.FIELD_NAME) {
-                fieldName = jp.getCurrentName();
+                fieldName = jsonParser.getCurrentName();
                 for (Processor p : processors) {
                     if (p.fieldMatcher.apply(path, fieldName)) {
-                        jp.nextToken();
-                        p.fieldConsumer.accept(fieldName, jp.getValueAsString());
+                        jsonParser.nextToken();
+                        p.fieldConsumer.accept(fieldName, jsonParser.getValueAsString());
                     }
                 }
             }
@@ -144,13 +135,18 @@ public class JsonParser implements ContentParser {
         }
     }
 
+    /**
+     * Processor for a JSON field.
+     */
     private static class Processor {
 
-        BiConsumer<String, String> fieldConsumer;
+        final BiConsumer<String, String> fieldConsumer;
 
-        BiFunction<Deque<String>, String, Boolean> fieldMatcher;
+        final BiFunction<Deque<String>, String, Boolean> fieldMatcher;
 
-        Processor(BiFunction<Deque<String>, String, Boolean> fieldMatcher, BiConsumer<String, String> fieldConsumer) {
+        Processor(
+                final BiFunction<Deque<String>, String, Boolean> fieldMatcher,
+                final BiConsumer<String, String> fieldConsumer) {
             this.fieldConsumer = fieldConsumer;
             this.fieldMatcher = fieldMatcher;
         }
