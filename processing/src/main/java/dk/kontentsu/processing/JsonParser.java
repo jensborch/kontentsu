@@ -73,7 +73,7 @@ public class JsonParser implements ContentParser {
         try {
             jp = jf.createParser(content.getData());
         } catch (IOException ex) {
-            LOGGER.error("", ex);
+            LOGGER.error("Error creating JSON parser", ex);
         }
     }
 
