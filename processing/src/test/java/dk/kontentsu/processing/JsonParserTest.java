@@ -9,25 +9,28 @@ import dk.kontentsu.model.internal.Metadata;
 import dk.kontentsu.model.internal.MetadataType;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.test.ContentTestData;
-import dk.kontentsu.test.ContentTestData.Type;
 import java.nio.charset.StandardCharsets;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.internal.util.reflection.Whitebox;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Test for {@link JsonParser}
  *
  * @author Jens Borch Christiansen
  */
+@RunWith(MockitoJUnitRunner.class
+)
 public class JsonParserTest {
 
     private ContentTestData data;
 
     @Before
-    public void setUp() {
-        data = new ContentTestData(Type.JSON);
+    public void setup() {
+        data = new ContentTestData(ContentTestData.Type.JSON);
     }
 
     @After
@@ -39,6 +42,7 @@ public class JsonParserTest {
         Content content = new Content(data.getFullPage(), StandardCharsets.UTF_8, MimeType.APPLICATION_JSON_TYPE);
         JsonParser parser = new JsonParser();
         Whitebox.setInternalState(parser, "content", content);
+        parser.init();
 
         ContentParser.Results result = parser.parse();
 

@@ -27,8 +27,6 @@ import static dk.kontentsu.processing.JsonContent.*;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dk.kontentsu.jackson.ObjectMapperFactory;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.internal.Metadata;
@@ -46,6 +44,9 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,56 +62,97 @@ import org.slf4j.LoggerFactory;
 public class JsonParser implements ContentParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonParser.class);
-    private final ObjectMapper objectMapper = ObjectMapperFactory.create();
+    private com.fasterxml.jackson.core.JsonParser jp;
 
     @Inject
     private Content content;
 
+    @PostConstruct
+    public void init() {
+        JsonFactory jf = new JsonFactory();
+        try {
+            jp = jf.createParser(content.getData());
+        } catch (IOException ex) {
+            LOGGER.error("", ex);
+        }
+    }
+
     @Override
     public Results parse() {
         try {
-            JsonFactory jf = new JsonFactory();
-            com.fasterxml.jackson.core.JsonParser jp = jf.createParser(content.getData());
-
             Map<Metadata.Key, Metadata> metadata = new HashMap<>();
             List<Link> links = new ArrayList<>();
-            String fieldName = null;
-            Deque<String> path = new ArrayDeque<>();
-            while (!jp.isClosed()) {
-                JsonToken token = jp.nextToken();
-
-                if (token == JsonToken.FIELD_NAME) {
-                    fieldName = jp.getCurrentName();
-                    if (JSON_HREF.equals(fieldName) && !"template".equals(path.peekLast())
-                            && !"composition-type".equals(path.peekLast())) {
-                        jp.nextToken();
-                        String link = jp.getValueAsString();
-                        if (path.contains(JSON_COMPOSITION)) {
-                            LOGGER.debug("Adding composition: {}", link);
-                            links.add(new Link(SemanticUri.parse(link), ReferenceType.COMPOSITION));
-                        } else {
-                            LOGGER.debug("Adding link: {}", link);
-                            links.add(new Link(SemanticUri.parse(link), ReferenceType.LINK));
-                        }
-                    } else if (JSON_METADATA.equals(path.peekLast())) {
-                        jp.nextToken();
-                        LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", fieldName, MetadataType.PAGE, jp.getValueAsString());
-                        metadata.put(new Metadata.Key(MetadataType.PAGE, fieldName), new Metadata(jp.getValueAsString()));
-                    }
-                }
-                if (token == JsonToken.START_OBJECT && fieldName != null) {
-                    path.push(fieldName);
-                }
-                if (token == JsonToken.END_OBJECT && !path.isEmpty()) {
-                    path.pop();
-                }
-                if (token == JsonToken.END_OBJECT) {
-                    fieldName = null;
-                }
-            }
+            List<Processor> fieldProcessors = new ArrayList<>();
+            fieldProcessors.add(new Processor(
+                    (p, f) -> {
+                        return JSON_HREF.equals(f) && p.contains(JSON_COMPOSITION);
+                    },
+                    (k, v) -> {
+                        links.add(new Link(SemanticUri.parse(v), ReferenceType.LINK));
+                    })
+            );
+            fieldProcessors.add(new Processor(
+                    (p, f) -> {
+                        return JSON_HREF.equals(f)
+                        && !p.contains(JSON_COMPOSITION)
+                        && !"template".equals(p.peekLast())
+                        && !"composition-type".equals(p.peekLast());
+                    },
+                    (k, v) -> {
+                        links.add(new Link(SemanticUri.parse(v), ReferenceType.COMPOSITION));
+                    })
+            );
+            fieldProcessors.add(new Processor(
+                    (p, f) -> {
+                        return JSON_METADATA.equals(p.peekLast());
+                    },
+                    (k, v) -> {
+                        LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", k, MetadataType.PAGE, v);
+                        metadata.put(new Metadata.Key(MetadataType.PAGE, k), new Metadata(v));
+                    })
+            );
+            process(fieldProcessors);
             return new Results(links, metadata);
         } catch (IOException ex) {
             throw new ContentParserException("Unable to parse content for contetn with UUID: " + content.getUuid(), ex);
+        }
+    }
+
+    private void process(List<Processor> processors) throws IOException {
+        String fieldName = null;
+        Deque<String> path = new ArrayDeque<>();
+        while (!jp.isClosed()) {
+            JsonToken token = jp.nextToken();
+            if (token == JsonToken.FIELD_NAME) {
+                fieldName = jp.getCurrentName();
+                for (Processor p : processors) {
+                    if (p.fieldMatcher.apply(path, fieldName)) {
+                        jp.nextToken();
+                        p.fieldConsumer.accept(fieldName, jp.getValueAsString());
+                    }
+                }
+            }
+            if (token == JsonToken.START_OBJECT && fieldName != null) {
+                path.push(fieldName);
+            }
+            if (token == JsonToken.END_OBJECT && !path.isEmpty()) {
+                path.pop();
+            }
+            if (token == JsonToken.END_OBJECT) {
+                fieldName = null;
+            }
+        }
+    }
+
+    private static class Processor {
+
+        BiConsumer<String, String> fieldConsumer;
+
+        BiFunction<Deque<String>, String, Boolean> fieldMatcher;
+
+        Processor(BiFunction<Deque<String>, String, Boolean> fieldMatcher, BiConsumer<String, String> fieldConsumer) {
+            this.fieldConsumer = fieldConsumer;
+            this.fieldMatcher = fieldMatcher;
         }
     }
 }
