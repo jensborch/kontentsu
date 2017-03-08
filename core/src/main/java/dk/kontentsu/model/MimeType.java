@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -44,6 +45,8 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.core.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class representing the content Mime Type of a item in the CDN, but also
@@ -67,6 +70,7 @@ public class MimeType implements Serializable {
     private static final String PARAM_CHARSET = "charset";
 
     private static final String SEPERATOR = "/";
+    private static final String WILDCARD = "*";
 
     // See http://www.ietf.org/rfc/rfc2045.txt for valid mime-type characters.
     private static final String VALID_MIMETYPE_CHARS = "[^\\c\\(\\)<>@,;:\\\\\"/\\[\\]\\?=\\s]";
@@ -77,6 +81,8 @@ public class MimeType implements Serializable {
     private static final Pattern MIME_REGEX = Pattern.compile(MIME_REGEX_STR);
     private static final Pattern MIME_PARAMS_REGEX = Pattern.compile(MIME_PARAMS_REGEX_STR);
     private static final long serialVersionUID = -6748129010939249437L;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MimeType.class);
 
     @Size(min = 1, max = 64)
     @Column(name = "mimetype_type", length = 64)
@@ -96,13 +102,13 @@ public class MimeType implements Serializable {
     }
 
     public MimeType(final String type) {
-        this.type = type.trim().toLowerCase();
+        this.type = type.trim().toLowerCase(Locale.ENGLISH);
         this.subType = "*";
     }
 
     public MimeType(final String type, final String subtype) {
-        this.type = type.trim().toLowerCase();
-        this.subType = subtype.trim().toLowerCase();
+        this.type = type.trim().toLowerCase(Locale.ENGLISH);
+        this.subType = subtype.trim().toLowerCase(Locale.ENGLISH);
     }
 
     public MimeType(final String type, final String subtype, final Map<String, String> params) {
@@ -155,7 +161,7 @@ public class MimeType implements Serializable {
             try {
                 types.add(MimeType.parse(r));
             } catch (IllegalArgumentException e) {
-                //Do nothing...
+                LOGGER.debug("Unable to parse header: {}", header);
             }
         });
         return types;
@@ -187,9 +193,9 @@ public class MimeType implements Serializable {
     private Match matches(final String type, final String subType) {
         if (this.type.equals(type) && this.subType.equals(subType)) {
             return Match.EXACT;
-        } else if (this.type.equals(type) && ("*".equals(this.subType) || "*".equals(subType))) {
+        } else if (this.type.equals(type) && (WILDCARD.equals(this.subType) || WILDCARD.equals(subType))) {
             return Match.SUBTYPE_WILDCARD;
-        } else if ("*".equals(this.type) || "*".equals(type)) {
+        } else if (WILDCARD.equals(this.type) || WILDCARD.equals(type)) {
             return Match.WILDCARD;
         } else {
             return Match.NONE;

@@ -82,26 +82,26 @@ public class JsonParser implements ContentParser {
         try {
             Map<Metadata.Key, Metadata> metadata = new HashMap<>();
             List<Link> links = new ArrayList<>();
-            List<Processor> fieldProcessors = new ArrayList<>();
-            fieldProcessors.add(new Processor((p, f) -> {
+            Processor[] fieldProcessors = new Processor[3];
+            fieldProcessors[0] = new Processor((p, f) -> {
                 return JSON_HREF.equals(f) && p.contains(JSON_COMPOSITION);
             }, (k, v) -> {
                 links.add(new Link(SemanticUri.parse(v), ReferenceType.LINK));
-            }));
-            fieldProcessors.add(new Processor((p, f) -> {
+            });
+            fieldProcessors[1] = new Processor((p, f) -> {
                 return JSON_HREF.equals(f)
                         && !p.contains(JSON_COMPOSITION)
                         && !"template".equals(p.peekLast())
                         && !"composition-type".equals(p.peekLast());
             }, (k, v) -> {
                 links.add(new Link(SemanticUri.parse(v), ReferenceType.COMPOSITION));
-            }));
-            fieldProcessors.add(new Processor((p, f) -> {
+            });
+            fieldProcessors[2] = new Processor((p, f) -> {
                 return JSON_METADATA.equals(p.peekLast());
             }, (k, v) -> {
                 LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", k, MetadataType.PAGE, v);
                 metadata.put(new Metadata.Key(MetadataType.PAGE, k), new Metadata(v));
-            }));
+            });
             process(fieldProcessors);
             return new Results(links, metadata);
         } catch (IOException ex) {
@@ -109,7 +109,7 @@ public class JsonParser implements ContentParser {
         }
     }
 
-    private void process(final List<Processor> processors) throws IOException {
+    private void process(final Processor... processors) throws IOException {
         String fieldName = null;
         Deque<String> path = new ArrayDeque<>();
         while (!jsonParser.isClosed()) {

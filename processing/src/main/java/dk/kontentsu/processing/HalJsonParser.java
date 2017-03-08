@@ -50,14 +50,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Parser for HAL+JSON CDN content. The parser will find metadata and compositions in the data.
+ * Parser for HAL+JSON CDN content. The parser will find metadata and
+ * compositions in the data.
  *
  * @author Jens Borch Christiansen
  */
 @ContentProcessingScoped
 @ContentProcessingMimeType({"application/hal+json"})
 public class HalJsonParser implements ContentParser {
-
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HalJsonParser.class);
     private final ObjectMapper objectMapper = ObjectMapperFactory.create();
@@ -91,14 +91,13 @@ public class HalJsonParser implements ContentParser {
         return result;
     }
 
-    private MetadataType map(String type) {
-        if("seo".equalsIgnoreCase(type)) {
+    private MetadataType map(final String type) {
+        if ("seo".equalsIgnoreCase(type)) {
             return MetadataType.PAGE;
         } else {
             return MetadataType.OTHER;
         }
     }
-
 
     private List<Link> parse(final JsonNode jsonContent) {
         List<Link> result = new ArrayList<>(parseComposition(jsonContent));
