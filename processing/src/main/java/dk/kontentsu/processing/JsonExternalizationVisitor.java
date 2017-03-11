@@ -23,7 +23,7 @@
  */
 package dk.kontentsu.processing;
 
-import static dk.kontentsu.processing.HalJsonContent.*;
+import static dk.kontentsu.processing.JsonContent.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,13 +38,9 @@ import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -59,7 +55,6 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
 
     private JsonNode pageNode;
     private JsonNode contentNode;
-    private final Counter counter;
 
     private final ObjectMapper mapper;
 
@@ -67,7 +62,6 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
     private Content content;
 
     public JsonExternalizationVisitor() {
-        this.counter = new Counter();
         this.mapper = ObjectMapperFactory.create();
     }
 
@@ -83,13 +77,12 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
 
     @Override
     public ExternalizationVisitor.Results getResults() {
-        removeComposition(pageNode);
         Content result = new Content(pageNode.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8, content.getMimeType());
         return new ExternalizationVisitor.Results(result);
     }
 
     private String getErrorMsg() {
-        return "Error externalizing content for with id: " + content.getUuid();
+        return "Error externalizing content with id: " + content.getUuid();
     }
 
     @Override
@@ -97,8 +90,7 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
         try {
             if (!node.isRoot()) {
                 JsonNode newContentNode = mapper.readTree(node.getVersion().getContent().getDataAsBinaryStream());
-                Map.Entry<String, JsonNode> parentNode = getContentNodeTypes(pageNode, node.getVersion());
-                updateLinksInExternalContent(pageNode, newContentNode, parentNode.getKey(), counter);
+                CompositionNode parentNode = getContentNodeTypes(pageNode, node.getVersion());
                 addContent2ExternalContent(contentNode, newContentNode, parentNode);
             }
         } catch (IOException ex) {
@@ -106,68 +98,39 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
         }
     }
 
-    private void removeComposition(final JsonNode pageNode) {
-        JsonNode tmp = pageNode.findPath(JSON_LINKS);
-        if (tmp instanceof ObjectNode) {
-            ObjectNode links = (ObjectNode) tmp;
-            links.remove(JSON_COMPOSITION);
-        }
-    }
-
-    private void updateLinksInExternalContent(final JsonNode external,
-            final JsonNode newContentNode,
-            final String type,
-            final Counter counter) {
-        ObjectNode linksNodeToUpdate = (ObjectNode) external.findPath(JSON_LINKS);
-        JsonNode linksNode = newContentNode.findPath(JSON_LINKS);
-
-        Consumer<Map.Entry<String, JsonNode>> linksUpdater = (Map.Entry<String, JsonNode> node) -> {
-            if (node.getValue().get(JSON_HREF) != null && !node.getKey().equals(JSON_SELF_LINK)) {
-                String newRef = type + counter.get(type) + "-" + node.getKey();
-                ObjectNode href = linksNodeToUpdate.with(newRef);
-                href.set(JSON_HREF, node.getValue().get(JSON_HREF));
-
-                updateContentNodeRefs(newContentNode, node.getKey(), newRef);
-            }
-        };
-
-        if (linksNode.fields().hasNext()) {
-            counter.getAndIncrement(type);
-            linksNode.fields().forEachRemaining(linksUpdater);
-        }
-
-        ((ObjectNode) newContentNode).remove(JSON_LINKS);
-    }
-
-    private static void updateContentNodeRefs(final JsonNode newContentNode, final String oldName, final String newName) {
-        newContentNode.findParents(JSON_REF).stream()
-                .filter(n -> n.get(JSON_REF).asText().equals(oldName))
-                .forEach(n -> ((ObjectNode) n).put(JSON_REF, newName));
-    }
-
     private void addContent2ExternalContent(final JsonNode externalContentNode,
             final JsonNode newContentNode,
-            final Map.Entry<String, JsonNode> parentNode) {
-        String propertyName = parentNode.getKey();
+            final CompositionNode parentNode) {
+        String propertyName = parentNode.name;
         ObjectNode tmpContentNode = (ObjectNode) externalContentNode;
-        if (parentNode.getValue().isArray()) {
+        if (parentNode.node.isArray()) {
             tmpContentNode.withArray(propertyName).add(newContentNode);
         } else {
             tmpContentNode.set(propertyName, newContentNode);
         }
     }
 
-    private Map.Entry<String, JsonNode> getContentNodeTypes(final JsonNode content, final Version version) {
-        JsonNode compositionNode = content.findPath(JSON_LINKS).findPath(JSON_COMPOSITION);
-        Iterator<Map.Entry<String, JsonNode>> it = compositionNode.fields();
-        while (it.hasNext()) {
-            Map.Entry<String, JsonNode> parent = it.next();
-            List<JsonNode> hrefs = parent.getValue().findValues(JSON_HREF);
-            Optional<JsonNode> found = hrefs.stream()
-                    .filter(href -> version.getItem().getUri().matches(href.asText()))
-                    .findFirst();
-            if (found.isPresent()) {
-                return parent;
+    private class CompositionNode {
+
+        String name;
+        JsonNode node;
+
+        public CompositionNode(String name, JsonNode node) {
+            this.name = name;
+            this.node = node;
+        }
+
+    }
+
+    private CompositionNode getContentNodeTypes(final JsonNode content, final Version version) {
+        Iterator<Map.Entry<String, JsonNode>> i = content.get(JSON_COMPOSITION).fields();
+        while (i.hasNext()) {
+            Map.Entry<String, JsonNode> node = i.next();
+            List<JsonNode> found = node.getValue().findParents(JSON_HREF);
+            for (JsonNode n : found) {
+                if (version.getItem().getUri().equals(n.get(JSON_HREF).asText())) {
+                    return new CompositionNode(node.getKey(), n);
+                }
             }
         }
         throw new ExternalizationException("Did not finde composition with URI " + version.getItem().getUri().toString() + " in content");
@@ -181,25 +144,4 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
         return externalContentNode;
     }
 
-    /**
-     * Counter for creating unique link names in finale "page"
-     */
-    private static class Counter {
-
-        @SuppressWarnings("PMD.UseConcurrentHashMap")
-        final Map<String, AtomicInteger> counter = new HashMap<>();
-
-        AtomicInteger getAtomic(final String key) {
-            this.counter.computeIfAbsent(key, k -> new AtomicInteger(0));
-            return this.counter.get(key);
-        }
-
-        int get(final String key) {
-            return getAtomic(key).intValue();
-        }
-
-        int getAndIncrement(final String key) {
-            return getAtomic(key).getAndIncrement();
-        }
-    }
 }

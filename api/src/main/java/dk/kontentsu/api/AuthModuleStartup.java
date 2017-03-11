@@ -14,7 +14,7 @@ import javax.servlet.annotation.WebListener;
  * @author Jens Borch Christiansen
  */
 @WebListener
-public class AuthModuleStarup implements ServletContextListener {
+public class AuthModuleStartup implements ServletContextListener {
 
     @Inject
     private Config config;
