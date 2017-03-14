@@ -1,0 +1,89 @@
+{
+    "href": "pages/page-simple",
+    "template": {
+        "href": "components/templates/responsive-one-article.tpl.html"
+    },
+    "composition-type": {
+        "href": "compositiontypes/default/page-one-article.json"
+    },
+    "composition": {
+        "articles": [
+            {
+                "href": "items/article2"
+            }
+        ],
+        "contacts": [
+            {
+                "href": "items/contact"
+            }
+        ]
+    },
+    "metadata": {
+        "author": "Peter Nielsen",
+        "description": "Lorem Ipsum page2",
+        "title": "Lorem Ipsum",
+        "company": "Lorem Ipsum Inc.",
+        "keywords": "lorem, ipsum",
+        "canonical": "http://da.lipsum.com/feed/html"
+    },
+    "content": {
+        "heading": "Lorem Ipsum",
+        "contact": {
+            "href": "items/contact",
+            "heading": "Contact us",
+            "telephone": {
+                "legend": "Call",
+                "text": "Call us:",
+                "number": "campaign"
+            },
+            "mail": {
+                "legend": "Email us",
+                "text": "Send an email:",
+                "address": "campaign"
+            }
+        },
+        "articles": [
+            {
+                "href": "items/article1",
+                "template": {
+                    "href": "components/templates/article-picture-right.tpl.html"
+                },
+                "heading": "Lorem Ipsum 1",
+                "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tortor quam, dapibus eu leo quis, feugiat vulputate ligula.",
+                "extended": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tortor quam, dapibus eu leo quis, feugiat vulputate ligula. Morbi non ornare tellus, a luctus orci. Integer commodo, sem sed iaculis lobortis, augue dolor ultricies nibh, quis accumsan mauris nisi vitae tortor. Nam commodo non lorem eget tristique.",
+                "sections": [
+                    {
+                        "heading": "",
+                        "paragraphs": [
+                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tortor quam, dapibus eu leo quis, feugiat vulputate ligula. Morbi non ornare tellus, a luctus orci. Integer commodo, sem sed iaculis lobortis, augue dolor ultricies nibh, quis accumsan mauris nisi vitae tortor. Nam commodo non lorem eget tristique. Aliquam semper sit amet urna at mollis. Fusce vel ante vitae lacus consequat aliquet. Suspendisse potenti. Mauris a risus ut lorem ultrices lacinia id sit amet libero. Aenean iaculis quam ipsum, at sollicitudin sapien lacinia vel. Vivamus id ultrices urna. Praesent ac placerat odio. Nulla at urna id risus rhoncus consequat sed nec leo. Duis dapibus pharetra ligula, vel vulputate turpis pretium non. Maecenas elementum vel metus vitae mollis.",
+                            "Quisque non tellus lectus. Quisque id convallis erat. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc sagittis sapien a nunc venenatis egestas. Sed pretium, ante ut auctor placerat, massa nibh iaculis ligula, ut placerat ipsum eros id nisi. Sed id nunc volutpat, condimentum arcu nec, pharetra dolor. Nam a lectus eu nisi eleifend sollicitudin. Vestibulum at lacus non sem hendrerit ornare eget a augue. Ut at accumsan erat. Aliquam nunc nibh, pretium non libero in, porttitor tempus ante. Morbi vulputate ipsum id nulla ultricies, sed sagittis nibh congue.",
+                            "Maecenas ut porttitor odio. Duis congue sed sem eget commodo. Nullam sed vestibulum massa. Cras feugiat efficitur ullamcorper. Sed arcu risus, elementum placerat orci vitae, accumsan facilisis mi. Quisque in lacus ullamcorper, placerat metus nec, aliquam dolor. Cras sagittis lacus ut porttitor commodo. Nunc quam tellus, consequat eu iaculis et, dignissim vitae orci. Morbi venenatis, tellus ac rhoncus congue, urna mi consequat augue, sit amet malesuada libero purus a odio. Praesent in augue scelerisque, auctor dolor ut, feugiat ante."
+                        ],
+                        "picture": {
+                            "title": "Book",
+                            "alt": "Book",
+                            "href": "images/book",
+                            "useMetadata": "false"
+                        }
+                    },
+                    {
+                        "heading": "Sed interdum",
+                        "paragraphs": [
+                            "Sed interdum, ex semper tristique volutpat, lectus lectus ultrices turpis, quis eleifend neque mauris ut turpis. Sed pharetra sagittis nulla ac posuere. Etiam aliquet nulla id magna egestas, a vehicula dui tempus. Ut felis ante, luctus sit amet dignissim sed, maximus vitae velit. Pellentesque nec odio non mi eleifend efficitur nec a urna. Curabitur sit amet consequat orci. Donec arcu dui, viverra nec pretium eu, mattis nec ex. Morbi tincidunt nisi tristique neque efficitur tempus. Nulla tellus est, rhoncus quis leo eu, imperdiet congue leo. Praesent ac varius diam. Pellentesque euismod condimentum velit, sit amet ultricies mi tincidunt id. Nulla facilisi. Pellentesque quis risus eu mauris pellentesque dictum."
+                        ],
+                        "link": {
+                            "title": "Simple page",
+                            "href": "items/page2"
+                        }
+                    },
+                    {
+                        "heading": "Etiam mattis ultricies turpis ut feugiat",
+                        "paragraphs": [
+                            "Etiam mattis ultricies turpis ut feugiat. Maecenas sollicitudin vitae turpis a venenatis. Sed vehicula rutrum mi sit amet fringilla. Nulla non rhoncus lacus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Suspendisse vel luctus est. Sed leo ipsum, cursus sit amet fermentum gravida, sollicitudin non ex. Nullam at egestas quam. Suspendisse eu neque in urna porttitor consectetur. Nulla eget purus sed risus bibendum accumsan vel sed nisi. Sed faucibus mattis metus, vel interdum elit aliquet quis. In mattis est sit amet libero faucibus, id tincidunt odio molestie."
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

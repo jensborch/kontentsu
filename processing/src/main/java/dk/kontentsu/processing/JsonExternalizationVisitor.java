@@ -32,6 +32,7 @@ import dk.kontentsu.externalization.ExternalizationException;
 import dk.kontentsu.externalization.visitors.ExternalizationVisitor;
 import dk.kontentsu.jackson.ObjectMapperFactory;
 import dk.kontentsu.model.Content;
+import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.internal.TemporalReferenceTree;
 import dk.kontentsu.model.internal.Version;
 import dk.kontentsu.spi.ContentProcessingMimeType;
@@ -103,33 +104,21 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
             final CompositionNode parentNode) {
         String propertyName = parentNode.name;
         ObjectNode tmpContentNode = (ObjectNode) externalContentNode;
-        if (parentNode.node.isArray()) {
+        if (parentNode.array) {
             tmpContentNode.withArray(propertyName).add(newContentNode);
         } else {
             tmpContentNode.set(propertyName, newContentNode);
         }
     }
 
-    private class CompositionNode {
-
-        String name;
-        JsonNode node;
-
-        public CompositionNode(String name, JsonNode node) {
-            this.name = name;
-            this.node = node;
-        }
-
-    }
-
     private CompositionNode getContentNodeTypes(final JsonNode content, final Version version) {
-        Iterator<Map.Entry<String, JsonNode>> i = content.get(JSON_COMPOSITION).fields();
+        Iterator<Map.Entry<String, JsonNode>> i = content.findPath(JSON_COMPOSITION).fields();
         while (i.hasNext()) {
             Map.Entry<String, JsonNode> node = i.next();
             List<JsonNode> found = node.getValue().findParents(JSON_HREF);
             for (JsonNode n : found) {
-                if (version.getItem().getUri().equals(n.get(JSON_HREF).asText())) {
-                    return new CompositionNode(node.getKey(), n);
+                if (version.getItem().getUri().equals(SemanticUri.parse(n.get(JSON_HREF).asText()))) {
+                    return new CompositionNode(node.getKey(), n, node.getValue().isArray());
                 }
             }
         }
@@ -142,6 +131,20 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
             externalContentNode = node.with(JSON_CONTENT);
         }
         return externalContentNode;
+    }
+
+    private class CompositionNode {
+
+        boolean array;
+        String name;
+        JsonNode node;
+
+        public CompositionNode(String name, JsonNode node, boolean array) {
+            this.name = name;
+            this.node = node;
+            this.array = array;
+        }
+
     }
 
 }

@@ -4,23 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.ejb.embeddable.EJBContainer;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.transaction.UserTransaction;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.ExternalFile;
@@ -35,6 +18,20 @@ import dk.kontentsu.repository.ExternalFileRepository;
 import dk.kontentsu.test.ContentTestData;
 import dk.kontentsu.test.TestEJBContainer;
 import dk.kontentsu.util.Transactions;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.util.List;
+import javax.annotation.Resource;
+import javax.ejb.embeddable.EJBContainer;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.transaction.UserTransaction;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Test for {@link ExternalizerService}.
@@ -50,7 +47,8 @@ public class ExternalizerServiceIT {
     private SemanticUri articleUri1;
     private Item contact;
     private SemanticUri contactUri;
-    private ContentTestData data;
+    private ContentTestData halJsonData;
+    private ContentTestData jsonData;
     private Item page;
     private SemanticUri pageUri;
     private Version pageVersion;
@@ -85,12 +83,13 @@ public class ExternalizerServiceIT {
     public void setUp() throws Exception {
         TestEJBContainer.inject(container, this);
         mapper = new ObjectMapper();
+        halJsonData = new ContentTestData(ContentTestData.Type.HAL);
+        jsonData = new ContentTestData(ContentTestData.Type.JSON);
     }
 
-    public void createItems(final MimeType mimeType) throws Exception {
+    public void createItems(final MimeType mimeType, ContentTestData data) throws Exception {
         try {
             userTransaction.begin();
-            data = new ContentTestData();
             articleUri1 = SemanticUri.parse("items/article2");
             article1 = new Item(articleUri1);
             Version articleVersion1 = Version.builder()
@@ -155,7 +154,7 @@ public class ExternalizerServiceIT {
 
     @Test
     public void testDelete() throws Exception {
-        createItems(MimeType.APPLICATION_HAL_JSON_TYPE);
+        createItems(MimeType.APPLICATION_HAL_JSON_TYPE, halJsonData);
         Content content = new Content("{\"test\": \"test\"}".getBytes(), Charset.defaultCharset(), new MimeType("application", "hal+json"));
         ExternalFile toDelete = ExternalFile.builder()
                 .externalizationId("42")
@@ -172,30 +171,46 @@ public class ExternalizerServiceIT {
     }
 
     @Test
-    public void testExternalize() throws Exception {
-        createItems(MimeType.APPLICATION_HAL_JSON_TYPE);
+    public void testExternalizeHalJson() throws Exception {
+        createItems(MimeType.APPLICATION_HAL_JSON_TYPE, halJsonData);
         List<ExternalFile> result = service.externalize(pageVersion.getUuid()).get();
 
         assertEquals(2, result.size());
         String external = result.get(0).getContent().getData();
 
-        assertEquals(mapper.readTree(data.getSimplePageResults(1)), mapper.readTree(external));
+        assertEquals(mapper.readTree(halJsonData.getSimplePageResults(1)), mapper.readTree(external));
         assertEquals(new Interval(NOW, NOW.plusDays(10)), result.get(0).getInterval());
 
         external = result.get(1).getContent().getData();
-        assertEquals(data.getSimplePageResults(2), external);
+        assertEquals(halJsonData.getSimplePageResults(2), external);
+        assertEquals(new Interval(NOW.plusDays(15), NOW.plusDays(20)), result.get(1).getInterval());
+    }
+
+    @Test
+    public void testExternalizeJson() throws Exception {
+        createItems(MimeType.APPLICATION_JSON_TYPE, jsonData);
+        List<ExternalFile> result = service.externalize(pageVersion.getUuid()).get();
+
+        assertEquals(2, result.size());
+        String external = result.get(0).getContent().getData();
+
+        assertEquals(mapper.readTree(jsonData.getSimplePageResults(1)), mapper.readTree(external));
+        assertEquals(new Interval(NOW, NOW.plusDays(10)), result.get(0).getInterval());
+
+        external = result.get(1).getContent().getData();
+        assertEquals(jsonData.getSimplePageResults(2), external);
         assertEquals(new Interval(NOW.plusDays(15), NOW.plusDays(20)), result.get(1).getInterval());
     }
 
     @Test
     public void testNewArticle() throws Exception {
-        createItems(MimeType.APPLICATION_HAL_JSON_TYPE);
+        createItems(MimeType.APPLICATION_HAL_JSON_TYPE, halJsonData);
         Version articleVersion;
         try {
             userTransaction.begin();
             article1 = em.find(Item.class, article1.getId());
             articleVersion = Version.builder()
-                    .content(new Content(data.getArticle(2), StandardCharsets.UTF_8, MimeType.APPLICATION_HAL_JSON_TYPE))
+                    .content(new Content(halJsonData.getArticle(2), StandardCharsets.UTF_8, MimeType.APPLICATION_HAL_JSON_TYPE))
                     .from(NOW.plusDays(21))
                     .to(NOW.plusDays(25))
                     .build();
@@ -207,19 +222,19 @@ public class ExternalizerServiceIT {
         assertEquals(3, result.size());
         ExternalFile file = result.stream().filter(f -> f.getInterval().equals(new Interval(NOW.plusDays(21), NOW.plusDays(25)))).findAny().get();
         assertNotNull(file);
-        assertEquals(data.getSimplePageResults(2), file.getContent().getData());
+        assertEquals(halJsonData.getSimplePageResults(2), file.getContent().getData());
     }
 
     @Test
     public void testShouldNotBeExternalized() throws Exception {
-        createItems(MimeType.APPLICATION_HAL_JSON_TYPE);
+        createItems(MimeType.APPLICATION_HAL_JSON_TYPE, halJsonData);
 
         try {
             userTransaction.begin();
             page = em.find(Item.class, page.getId());
 
             pageVersion = Version.builder()
-                    .content(new Content(data.getSimplePage(), StandardCharsets.UTF_8, MimeType.APPLICATION_HAL_JSON_TYPE))
+                    .content(new Content(halJsonData.getSimplePage(), StandardCharsets.UTF_8, MimeType.APPLICATION_HAL_JSON_TYPE))
                     .reference(article1, ReferenceType.COMPOSITION)
                     .reference(contact, ReferenceType.COMPOSITION)
                     .from(NOW.plusDays(101))

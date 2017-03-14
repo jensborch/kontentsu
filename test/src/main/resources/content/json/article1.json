@@ -1,6 +1,5 @@
 {
     "href": "items/article1",
-
     "template": {
         "href": "components/templates/article-picture-right.tpl.html"
     },
