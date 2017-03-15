@@ -12,11 +12,10 @@
                 "href": "items/article2"
             }
         ],
-        "contacts": [
-            {
-                "href": "items/contact"
-            }
-        ]
+        "contact": 
+                {
+                    "href": "items/contact"
+                }
     },
     "metadata": {
         "author": "Peter Nielsen",

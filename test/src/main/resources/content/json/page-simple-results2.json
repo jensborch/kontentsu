@@ -1,82 +1,84 @@
 {
-   "_links":{
-      "self":{
-         "href":"pages/page-simple"
-      },
-      "template":{
-         "href":"components/templates/responsive-one-article.tpl.html"
-      },
-      "composition-type":{
-         "href":"compositiontypes/default/page-one-article.json"
-      },
-      "articles1-article-picture-right-template":{
-         "href":"components/templates/article-picture-right.tpl.html"
-      },
-      "articles1-book":{
-         "href":"images/book/book.jpg"
-      }
-   },
-   "seo":{
-      "author":"Peter Nielsen",
-      "description":"Lorem Ipsum page2",
-      "title":"Lorem Ipsum",
-      "company":"Lorem Ipsum Inc.",
-      "keywords":"lorem, ipsum",
-      "canonical":"http://da.lipsum.com/feed/html",
-      "metadata":""
-   },
-   "content":{
-      "heading":"Lorem Ipsum",
-      "contact":{
-         "heading":"Contact us",
-         "telephone":{
-            "legend":"Call",
-            "text":"Call us:",
-            "number":"campaign"
-         },
-         "mail":{
-            "legend":"Email us",
-            "text":"Send an email:",
-            "address":"campaign"
-         }
-      },
-      "articles":[
-         {
-            "template":{
-               "ref":"articles1-article-picture-right-template"
+    "href": "pages/page-simple",
+    "template": {
+        "href": "components/templates/responsive-one-article.tpl.html"
+    },
+    "composition-type": {
+        "href": "compositiontypes/default/page-one-article.json"
+    },
+    "composition": {
+        "articles": [
+            {
+                "href": "items/article2"
+            }
+        ],
+        "contact": 
+                {
+                    "href": "items/contact"
+                }
+    },
+    "metadata": {
+        "author": "Peter Nielsen",
+        "description": "Lorem Ipsum page2",
+        "title": "Lorem Ipsum",
+        "company": "Lorem Ipsum Inc.",
+        "keywords": "lorem, ipsum",
+        "canonical": "http://da.lipsum.com/feed/html"
+    },
+    "content": {
+        "heading": "Lorem Ipsum",
+        "contact": {
+            "href":"items/contact",
+            "heading": "Contact us",
+            "telephone": {
+                "legend": "Call",
+                "text": "Call us:",
+                "number": "campaign"
             },
-            "heading":"Heading article 2",
-            "summary":"Summary article 2",
-            "sections":[
-               {
-                  "heading":"Section 1",
-                  "paragraphs":[
-                     "Paragraph 1",
-                     "Paragraph 2"
-                  ]
-               },
-               {
-                  "heading":"Section 2",
-                  "paragraphs":[
-                     "Paragraph 1"
-                  ],
-                  "picture":{
-                     "title":"Book",
-                     "alt":"Book",
-                     "ref":"articles1-book",
-                     "useMetadata":"true"
-                  }
-               },
-               {
-                  "heading":"Section 3",
-                  "paragraphs":[
-                     "Paragraph 1",
-                     "Paragraph 2",
-                     "Paragraph 3"
-                  ]
-               }
-            ]
-         }
-      ]
-   }
+            "mail": {
+                "legend": "Email us",
+                "text": "Send an email:",
+                "address": "campaign"
+            }
+        },
+        "articles": [
+            {
+                "href": "items/article2",
+                "template": {
+                    "href": "components/templates/article-picture-right.tpl.html"
+                },
+                "heading": "Heading article 2",
+                "summary": "Summary article 2",
+                "sections": [
+                    {
+                        "heading": "Section 1",
+                        "paragraphs": [
+                            "Paragraph 1",
+                            "Paragraph 2"
+                        ]
+                    },
+                    {
+                        "heading": "Section 2",
+                        "paragraphs": [
+                            "Paragraph 1"
+                        ],
+                        "picture": {
+                            "title": "Book",
+                            "alt": "Book",
+                            "href": "images/book/book.jpg",
+                            "useMetadata": "true"
+                        }
+                    },
+                    {
+                        "heading": "Section 3",
+                        "paragraphs": [
+                            "Paragraph 1",
+                            "Paragraph 2",
+                            "Paragraph 3"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
 }
