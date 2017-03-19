@@ -12,7 +12,10 @@ export class AppComponent implements OnInit {
     constructor(private contentService: ContentService) { }
 
     ngOnInit(): void {
-        this.contentService.getPage(this.frontPage).then(p => this.page = p);
+        this.contentService.getPage(this.frontPage).then(p => {
+            this.page = p
+            this.templateUrl = p.template.href;
+        });
     }
 
 }

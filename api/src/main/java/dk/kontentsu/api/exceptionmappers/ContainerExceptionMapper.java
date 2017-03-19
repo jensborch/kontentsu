@@ -23,77 +23,68 @@
  */
 package dk.kontentsu.api.exceptionmappers;
 
+import dk.kontentsu.api.model.ErrorRepresentation;
+import dk.kontentsu.api.model.ValidationErrorRepresentation;
+import dk.kontentsu.exception.ErrorCode;
 import java.util.Optional;
-import java.util.function.Predicate;
-
 import javax.ejb.EJBException;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dk.kontentsu.api.model.ErrorRepresentation;
-import dk.kontentsu.api.model.ValidationErrorRepresentation;
-import dk.kontentsu.exception.ErrorCode;
-
 /**
- * Exception mapper for Throwable. If Throwable is an EJBException, a nested NoResultException will be mapped to at HTTP 404 and a nested ConstraintViolationException will be
- * mapped to 400.
+ * Exception mapper for Throwable. If Throwable is an EJBException, a nested
+ * NoResultException will be mapped to at HTTP 404 and a nested
+ * ConstraintViolationException will be mapped to 400.
  *
  * All other exceptions will be mapped to HTTP 500.
  *
  * @author Jens Borch Christiansen
  */
 @Provider
-public class ContainerExceptionMapper implements ExceptionMapper<Throwable> {
+public class ContainerExceptionMapper implements ExceptionMapper<EJBException> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContainerExceptionMapper.class);
 
     @Override
-    public Response toResponse(final Throwable t) {
-        if (t instanceof EJBException) {
-            Optional<Throwable> ex = new CauseFinder(n -> n instanceof NoResultException).findCause(t);
-            if (ex.isPresent()) {
-                return Response
-                        .status(Response.Status.NOT_FOUND)
-                        .entity(new ErrorRepresentation(ErrorCode.NOT_FOUND_ERROR, ex.get().getMessage()))
-                        .build();
-            }
-            ex = new CauseFinder(n -> n instanceof ConstraintViolationException).findCause(t);
-            if (ex.isPresent()) {
-                return Response
-                        .status(Response.Status.BAD_REQUEST)
-                        .entity(new ValidationErrorRepresentation(ErrorCode.VALIDATION_ERROR, (ConstraintViolationException) ex.get()))
-                        .build();
-            }
+    public Response toResponse(final EJBException t) {
+        Optional<Throwable> ex = new CauseFinder(n -> n instanceof NoResultException).findCause(t);
+        if (ex.isPresent()) {
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(new ErrorRepresentation(ErrorCode.NOT_FOUND_ERROR, ex.get().getMessage()))
+                    .build();
         }
+        ex = new CauseFinder(n -> n instanceof ConstraintViolationException).findCause(t);
+        if (ex.isPresent()) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity(new ValidationErrorRepresentation(ErrorCode.VALIDATION_ERROR, (ConstraintViolationException) ex.get()))
+                    .build();
+        }
+        ex = new CauseFinder(n -> n instanceof PersistenceException).findCause(t);
+        if (ex.isPresent()) {
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorRepresentation(ErrorCode.VALIDATION_ERROR, ex.get().getMessage()))
+                    .build();
+        }
+
         LOGGER.warn("Unknown container error in CDN application", t);
+
+        String message = new CauseFinder(n -> n.getMessage() != null && !n.getMessage().isEmpty())
+                .findCause(t)
+                .map(e -> e.getMessage())
+                .orElse("Unknown container error");
+
         return Response
                 .status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(new ErrorRepresentation(ErrorCode.UNKNOWN_ERROR, t.getMessage()))
+                .entity(new ErrorRepresentation(ErrorCode.UNKNOWN_ERROR, message))
                 .build();
     }
-
-    /**
-     * Iterates through all causes to find exception matching predicate.
-     */
-    public static class CauseFinder {
-
-        private final Predicate<Throwable> predicate;
-
-        public CauseFinder(final Predicate<Throwable> predicate) {
-            this.predicate = predicate;
-        }
-
-        Optional<Throwable> findCause(final Throwable t) {
-            Throwable cause = t.getCause();
-            return cause == null ? Optional.empty()
-                    : predicate.test(cause) ? Optional.of(cause) : findCause(cause);
-        }
-    }
-
 }

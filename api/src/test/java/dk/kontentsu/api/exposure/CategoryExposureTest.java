@@ -1,16 +1,21 @@
 package dk.kontentsu.api.exposure;
 
-import dk.kontentsu.api.exposure.CategoryExposure;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.Mockito.*;
 
+import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
+import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
+import dk.kontentsu.model.Category;
+import dk.kontentsu.model.Taxon;
+import dk.kontentsu.model.Taxonomy;
+import dk.kontentsu.repository.CategoryRepository;
+import dk.kontentsu.repository.TaxonomyRepository;
 import java.util.ArrayList;
 import java.util.List;
-
+import javax.ejb.EJBException;
 import javax.persistence.NoResultException;
 import javax.ws.rs.core.Application;
-
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -18,15 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
-import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
-import dk.kontentsu.api.exceptionmappers.PersistenceExceptionMapper;
-import dk.kontentsu.model.Category;
-import dk.kontentsu.model.Taxon;
-import dk.kontentsu.model.Taxonomy;
-import dk.kontentsu.repository.CategoryRepository;
-import dk.kontentsu.repository.TaxonomyRepository;
 
 /**
  * Test for {@link CategoryExposure}.
@@ -48,7 +44,6 @@ public class CategoryExposureTest extends JerseyTest {
         return new ResourceConfig()
                 .register(CategoryExposure.class)
                 .register(ContainerExceptionMapper.class)
-                .register(PersistenceExceptionMapper.class)
                 .register(ConstraintViolationExceptionMapper.class)
                 .register(new AbstractBinder() {
                     @Override
@@ -68,7 +63,7 @@ public class CategoryExposureTest extends JerseyTest {
         taxonomies.add(t);
         when(taxRepo.findAll()).thenReturn(taxonomies);
         when(taxRepo.getByName("taxonomy1")).thenReturn(t);
-        when(taxRepo.getByName("unknown")).thenThrow(new NoResultException("test"));
+        when(taxRepo.getByName("unknown")).thenThrow(new EJBException(new NoResultException("test")));
 
         List<Category> categories = new ArrayList<>();
         Taxon c = Taxon.parse(t, "test1/test2");

@@ -7,7 +7,6 @@ import dk.kontentsu.api.ObjectMapperProvider;
 import dk.kontentsu.api.configuration.Config;
 import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
-import dk.kontentsu.api.exceptionmappers.PersistenceExceptionMapper;
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.SemanticUriPath;
 import dk.kontentsu.model.internal.Item;
@@ -16,6 +15,7 @@ import dk.kontentsu.upload.UploadService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import javax.ejb.EJBException;
 import javax.persistence.NoResultException;
 import javax.ws.rs.core.Application;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -52,7 +52,6 @@ public class ItemExposureTest extends JerseyTest {
         return new ResourceConfig()
                 .register(ItemExposure.class)
                 .register(ContainerExceptionMapper.class)
-                .register(PersistenceExceptionMapper.class)
                 .register(ConstraintViolationExceptionMapper.class)
                 .register(ObjectMapperProvider.class)
                 .register(new AbstractBinder() {
@@ -95,7 +94,7 @@ public class ItemExposureTest extends JerseyTest {
     @Test
     public void testGetNoResults() throws Exception {
         UUID uuid = UUID.randomUUID();
-        Mockito.when(itemRepo.get(uuid)).thenThrow(new NoResultException("Test"));
+        Mockito.when(itemRepo.get(uuid)).thenThrow(new EJBException(new NoResultException("Test")));
         given().get(target("items").path(uuid.toString()).getUri())
                 .then()
                 .statusCode(404);

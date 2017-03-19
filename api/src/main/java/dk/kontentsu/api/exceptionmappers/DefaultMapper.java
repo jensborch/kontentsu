@@ -23,34 +23,39 @@
  */
 package dk.kontentsu.api.exceptionmappers;
 
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceException;
+import dk.kontentsu.api.model.ErrorRepresentation;
+import dk.kontentsu.exception.ErrorCode;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-
-import dk.kontentsu.api.model.ErrorRepresentation;
-import dk.kontentsu.exception.ErrorCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Exception mapper for ConstraintViolationException.
+ * Exception mapper for Throwable. If Throwable is an EJBException, a nested NoResultException will be mapped to at HTTP 404 and a nested ConstraintViolationException will be
+ * mapped to 400.
+ *
+ * All other exceptions will be mapped to HTTP 500.
  *
  * @author Jens Borch Christiansen
  */
 @Provider
-public class PersistenceExceptionMapper implements ExceptionMapper<PersistenceException> {
+public class DefaultMapper implements ExceptionMapper<Throwable> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMapper.class);
 
     @Override
-    public Response toResponse(final PersistenceException ex) {
-        if (ex instanceof NoResultException) {
-            return Response
-                    .status(Response.Status.NOT_FOUND)
-                    .entity(new ErrorRepresentation(ErrorCode.NOT_FOUND_ERROR, ex.getMessage()))
-                    .build();
-        }
+    public Response toResponse(final Throwable t) {
+        LOGGER.warn("Unknown error in CDN application", t);
+
+        String message = new CauseFinder(n -> n.getMessage() != null && !n.getMessage().isEmpty())
+                .findCause(t)
+                .map(e -> e.getMessage())
+                .orElse("Unknown error");
+
         return Response
-                .status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorRepresentation(ErrorCode.PERSISTENCE_ERROR, ex.getMessage()))
+                .status(Response.Status.INTERNAL_SERVER_ERROR)
+                .entity(new ErrorRepresentation(ErrorCode.UNKNOWN_ERROR, message))
                 .build();
     }
 

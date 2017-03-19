@@ -14,7 +14,6 @@ import javax.ws.rs.core.Application;
 
 import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
-import dk.kontentsu.api.exceptionmappers.PersistenceExceptionMapper;
 import dk.kontentsu.model.internal.Host;
 import dk.kontentsu.repository.HostRepository;
 
@@ -43,7 +42,6 @@ public class HostExposureTest extends JerseyTest {
         return new ResourceConfig()
                 .register(HostExposure.class)
                 .register(ContainerExceptionMapper.class)
-                .register(PersistenceExceptionMapper.class)
                 .register(ConstraintViolationExceptionMapper.class)
                 .register(new AbstractBinder() {
                     @Override
