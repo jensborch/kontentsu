@@ -32,17 +32,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Exception mapper for Throwable. If Throwable is an EJBException, a nested NoResultException will be mapped to at HTTP 404 and a nested ConstraintViolationException will be
- * mapped to 400.
- *
- * All other exceptions will be mapped to HTTP 500.
+ * Exception mapper for Throwable - will map to HTTP 500.
  *
  * @author Jens Borch Christiansen
  */
 @Provider
-public class DefaultMapper implements ExceptionMapper<Throwable> {
+public class DefaultExceptionMapper implements ExceptionMapper<Throwable> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExceptionMapper.class);
 
     @Override
     public Response toResponse(final Throwable t) {

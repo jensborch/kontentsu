@@ -23,12 +23,25 @@
  */
 package dk.kontentsu.upload;
 
+import dk.kontentsu.externalization.ExternalizerService;
+import dk.kontentsu.model.Content;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.SemanticUriPath;
+import dk.kontentsu.model.internal.Host;
+import dk.kontentsu.model.internal.Item;
+import dk.kontentsu.model.internal.Version;
+import dk.kontentsu.parsers.ContentParser;
+import dk.kontentsu.parsers.Link;
+import dk.kontentsu.repository.CategoryRepository;
+import dk.kontentsu.repository.HostRepository;
+import dk.kontentsu.repository.ItemRepository;
+import dk.kontentsu.scope.InjectableContentProcessingScope;
+import dk.kontentsu.spi.ContentProcessingMimeType;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -39,23 +52,8 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import dk.kontentsu.externalization.ExternalizerService;
-import dk.kontentsu.model.Content;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.model.internal.Host;
-import dk.kontentsu.model.internal.Item;
-import dk.kontentsu.model.internal.Version;
-import dk.kontentsu.parsers.ContentParser;
-import dk.kontentsu.repository.CategoryRepository;
-import dk.kontentsu.repository.HostRepository;
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.scope.InjectableContentProcessingScope;
-import dk.kontentsu.spi.ContentProcessingMimeType;
 
 /**
  * Service facade for performing various operations on CDN items - like
@@ -87,7 +85,6 @@ public class UploadService {
     private BeanManager bm;
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
-
     public UUID upload(@Valid final UploadItem uploadeItem) {
         Version version = self.save(uploadeItem);
         externalizer.externalize(version.getUuid());
@@ -188,7 +185,7 @@ public class UploadService {
             findAllContentParserBeans().forEach(bean -> {
                 Arrays.stream(bean.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
                     if (content.getMimeType().matches(a).isMatch()) {
-                        parse(getContentParser(bean), builder);
+                        parse(getContentParser(bean), item.getUri(), builder);
                     }
                 });
             });
@@ -200,20 +197,30 @@ public class UploadService {
         return version;
     }
 
-    private void parse(final ContentParser parser, final Version.Builder builder) {
+    private void parse(final ContentParser parser, final SemanticUri uri, final Version.Builder builder) {
         ContentParser.Results parsedContent = parser.parse();
-        parsedContent.getLinks().stream().forEach(link -> {
-            Item i = itemRepo.findByUri(link.getUri()).orElseGet(() -> {
-                SemanticUriPath tmpPath = catRepo.findByUri(link.getPath()).orElse(link.getPath());
-                LOGGER.debug("Found link in content with path {} and name {}", tmpPath, link.getUri().getName());
-                Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));
-                return itemRepo.save(tmpItem);
-            });
-            builder.reference(i, link.getType());
-        });
+        parsedContent.getLinks()
+                .stream()
+                .filter(link -> !link.getUri().equals(uri))
+                .forEach(link -> {
+                    Item i = findOrCreate(link);
+                    builder.reference(i, link.getType());
+                });
         parsedContent.getMetadata().forEach((k, v) -> {
             LOGGER.debug("Found metadata in content with key {} and value {}", k, v);
             builder.metadata(k, v);
         });
+    }
+
+    private Item findOrCreate(final Link link) {
+        Item i = itemRepo.findByUri(link.getUri())
+                .orElseGet(() -> {
+                    SemanticUriPath tmpPath = catRepo.findByUri(link.getPath())
+                            .orElse(link.getPath());
+                    LOGGER.debug("Found link in content with path {} and name {}", tmpPath, link.getUri().getName());
+                    Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));
+                    return itemRepo.save(tmpItem);
+                });
+        return i;
     }
 }

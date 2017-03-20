@@ -71,7 +71,7 @@ import org.slf4j.LoggerFactory;
 @Entity
 @Table(name = "item",
         uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"path_id", "name"})})
+            @UniqueConstraint(columnNames = {"path_id", "name"}, name = "item_constraint")})
 @NamedQueries({
     @NamedQuery(name = Repository.ITEM_FIND_ALL,
             query = "SELECT DISTINCT i FROM Item i JOIN i.versions v WHERE v.state IN :state"),

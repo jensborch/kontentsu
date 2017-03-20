@@ -47,7 +47,7 @@ import javax.validation.Valid;
 @Entity
 @Table(name = "path",
         uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"path"})})
+            @UniqueConstraint(columnNames = {"path"}, name = "path_constraint")})
 @NamedQueries({
     @NamedQuery(name = Repository.URI_FIND_ALL,
             query = "SELECT p FROM SemanticUriPath p"),

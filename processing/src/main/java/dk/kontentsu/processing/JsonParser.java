@@ -86,7 +86,7 @@ public class JsonParser implements ContentParser {
             fieldProcessors[0] = new Processor((p, f) -> {
                 return JSON_HREF.equals(f) && p.contains(JSON_COMPOSITION);
             }, (k, v) -> {
-                links.add(new Link(SemanticUri.parse(v), ReferenceType.LINK));
+                links.add(new Link(SemanticUri.parse(v), ReferenceType.COMPOSITION));
             });
             fieldProcessors[1] = new Processor((p, f) -> {
                 return JSON_HREF.equals(f)
@@ -94,7 +94,7 @@ public class JsonParser implements ContentParser {
                         && !"template".equals(p.peekLast())
                         && !"composition-type".equals(p.peekLast());
             }, (k, v) -> {
-                links.add(new Link(SemanticUri.parse(v), ReferenceType.COMPOSITION));
+                links.add(new Link(SemanticUri.parse(v), ReferenceType.LINK));
             });
             fieldProcessors[2] = new Processor((p, f) -> {
                 return JSON_METADATA.equals(p.peekLast());
@@ -112,6 +112,7 @@ public class JsonParser implements ContentParser {
     private void process(final Processor... processors) throws IOException {
         String fieldName = null;
         Deque<String> path = new ArrayDeque<>();
+        boolean array = false;
         while (!jsonParser.isClosed()) {
             JsonToken token = jsonParser.nextToken();
             if (token == JsonToken.FIELD_NAME) {
@@ -123,10 +124,16 @@ public class JsonParser implements ContentParser {
                     }
                 }
             }
-            if (token == JsonToken.START_OBJECT && fieldName != null) {
+            if (token == JsonToken.START_ARRAY) {
+                array = true;
+            }
+            if (token == JsonToken.END_ARRAY) {
+                array = false;
+            }
+            if (token == JsonToken.START_OBJECT && fieldName != null && !array) {
                 path.push(fieldName);
             }
-            if (token == JsonToken.END_OBJECT && !path.isEmpty()) {
+            if (token == JsonToken.END_OBJECT && !path.isEmpty() && !array) {
                 path.pop();
             }
             if (token == JsonToken.END_OBJECT) {
