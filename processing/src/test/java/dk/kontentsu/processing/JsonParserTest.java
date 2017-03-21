@@ -50,6 +50,7 @@ public class JsonParserTest {
         assertEquals(6, result.getMetadata().size());
         assertTrue(result.getMetadata().containsKey(new Metadata.Key(MetadataType.PAGE, "author")));
         assertEquals("Peter Nielsen", result.getMetadata().get(new Metadata.Key(MetadataType.PAGE, "author")).getValue());
+        //TODO: Should not include self link
         assertEquals(5, result.getLinks().size());
         assertEquals(4L, result.getLinks()
                 .stream()

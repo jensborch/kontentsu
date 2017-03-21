@@ -1,32 +1,10 @@
 package dk.kontentsu.repository;
 
-import dk.kontentsu.repository.CategoryRepository;
-import dk.kontentsu.repository.ItemRepository;
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import java.io.ByteArrayInputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.ejb.EJBTransactionRequiredException;
-import javax.ejb.EJBTransactionRolledbackException;
-import javax.ejb.embeddable.EJBContainer;
-import javax.inject.Inject;
-import javax.persistence.PersistenceException;
-import javax.transaction.UserTransaction;
-
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.Interval;
@@ -39,13 +17,31 @@ import dk.kontentsu.model.internal.MetadataType;
 import dk.kontentsu.model.internal.ReferenceType;
 import dk.kontentsu.model.internal.Version;
 import dk.kontentsu.test.TestEJBContainer;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.util.List;
+import javax.annotation.Resource;
+import javax.ejb.EJBTransactionRequiredException;
+import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.embeddable.EJBContainer;
+import javax.inject.Inject;
+import javax.persistence.PersistenceException;
+import javax.transaction.RollbackException;
+import javax.transaction.UserTransaction;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Integration test for {@link ItemRepository}
  *
  * @author Jens Borch Christiansen
  */
-public class ItemRepositoryIT {
+    public class ItemRepositoryIT {
 
     private static final ZonedDateTime NOW = ZonedDateTime.now();
 
@@ -263,7 +259,7 @@ public class ItemRepositoryIT {
         }
     }
 
-    @Test(expected = EJBTransactionRolledbackException.class)
+    @Test(expected = RollbackException.class)
     public void testNonExistingComposition() throws Exception {
         try {
             userTransaction.begin();
@@ -275,12 +271,12 @@ public class ItemRepositoryIT {
                     .from(NOW.minusHours(24))
                     .to(NOW)
                     .content(content)
-                    .reference(doNotExistItem, ReferenceType.LINK)
+                    .reference(doNotExistItem, ReferenceType.COMPOSITION)
                     .build();
             compItem.addVersion(compVersion);
             itemRepo.save(compItem);
         } finally {
-            userTransaction.rollback();
+            userTransaction.commit();
         }
     }
 
