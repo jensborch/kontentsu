@@ -102,12 +102,11 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
     private void addContent2ExternalContent(final JsonNode externalContentNode,
             final JsonNode newContentNode,
             final CompositionNode parentNode) {
-        String propertyName = parentNode.name;
         ObjectNode tmpContentNode = (ObjectNode) externalContentNode;
         if (parentNode.array) {
-            tmpContentNode.withArray(propertyName).add(newContentNode);
+            tmpContentNode.withArray(parentNode.name).add(newContentNode);
         } else {
-            tmpContentNode.set(propertyName, newContentNode);
+            tmpContentNode.set(parentNode.name, newContentNode);
         }
     }
 
@@ -118,7 +117,7 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
             List<JsonNode> found = node.getValue().findParents(JSON_HREF);
             for (JsonNode n : found) {
                 if (version.getItem().getUri().equals(SemanticUri.parse(n.get(JSON_HREF).asText()))) {
-                    return new CompositionNode(node.getKey(), n, node.getValue().isArray());
+                    return new CompositionNode(node.getKey(), node.getValue().isArray());
                 }
             }
         }
@@ -133,15 +132,16 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
         return externalContentNode;
     }
 
-    private class CompositionNode {
+    /**
+     * Composition JSON node with a name.
+     */
+    private static class CompositionNode {
 
         boolean array;
         String name;
-        JsonNode node;
 
-        public CompositionNode(String name, JsonNode node, boolean array) {
+        CompositionNode(final String name, final boolean array) {
             this.name = name;
-            this.node = node;
             this.array = array;
         }
 

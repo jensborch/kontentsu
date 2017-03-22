@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -99,6 +98,9 @@ public class SemanticUri implements Serializable {
         String[] elements = getElements();
         String[] tail = (elements.length > 1) ? Arrays.copyOfRange(elements, 1, elements.length) : new String[0];
         java.nio.file.Path p = Paths.get(elements[0], tail);
+        if (p.getFileName() == null) {
+            throw new ContentException("Filename for path " + p + " is null");
+        }
         String filename = p.getFileName().toString() + "." + mimetype.getFileExtension();
         return p.getParent().resolve(filename);
     }
