@@ -48,18 +48,17 @@ public class DiagnosticFilter implements ContainerRequestFilter, ContainerRespon
     private static final String MDC_LOG_TOKEN = "token";
 
     @Context
-    protected HttpServletRequest servletRequest;
+    private HttpServletRequest servletRequest;
 
     @Override
-    public void filter(final ContainerRequestContext request, final ContainerResponseContext response) throws IOException {
+    public void filter(final ContainerRequestContext requestContext) throws IOException {
         ThreadContext.put(MDC_LOG_TOKEN, Optional
-                .ofNullable(request.getHeaderString(HEADER_LOG_TOKEN))
+                .ofNullable(servletRequest.getHeader(HEADER_LOG_TOKEN))
                 .orElse(UUID.randomUUID().toString()));
     }
 
     @Override
-    public void filter(final ContainerRequestContext requestContext) throws IOException {
+    public void filter(final ContainerRequestContext request, final ContainerResponseContext response) throws IOException {
         ThreadContext.clearAll();
     }
-
 }
