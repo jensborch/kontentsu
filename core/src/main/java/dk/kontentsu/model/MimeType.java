@@ -45,8 +45,8 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.core.MediaType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Class representing the content Mime Type of a item in the CDN, but also
@@ -82,7 +82,7 @@ public class MimeType implements Serializable {
     private static final Pattern MIME_PARAMS_REGEX = Pattern.compile(MIME_PARAMS_REGEX_STR);
     private static final long serialVersionUID = -6748129010939249437L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MimeType.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Size(min = 1, max = 64)
     @Column(name = "mimetype_type", length = 64)

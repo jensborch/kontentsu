@@ -34,8 +34,8 @@ import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Exception mapper for EJBException, a nested NoResultException will be mapped
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 @Provider
 public class ContainerExceptionMapper implements ExceptionMapper<EJBException> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContainerExceptionMapper.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
     public Response toResponse(final EJBException t) {

@@ -27,8 +27,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import dk.kontentsu.api.ApiErrorException;
 import dk.kontentsu.api.model.ErrorRepresentation;
@@ -40,7 +40,7 @@ import dk.kontentsu.api.model.ErrorRepresentation;
 @Provider
 public class ApiExceptionMapper implements ExceptionMapper<ApiErrorException> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApiExceptionMapper.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
     public Response toResponse(final ApiErrorException ex) {

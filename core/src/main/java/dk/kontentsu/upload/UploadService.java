@@ -52,8 +52,8 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Service facade for performing various operations on CDN items - like
@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class UploadService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UploadService.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Inject
     private ItemRepository itemRepo;

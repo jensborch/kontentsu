@@ -48,8 +48,8 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Parser for JSON content. The parser will find metadata and compositions in
@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
 @ContentProcessingMimeType({"application/json"})
 public class JsonParser implements ContentParser {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonParser.class);
+    private static final Logger LOGGER = LogManager.getLogger();
     private com.fasterxml.jackson.core.JsonParser jsonParser;
 
     @Inject

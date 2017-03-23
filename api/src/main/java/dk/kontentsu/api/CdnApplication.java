@@ -39,9 +39,9 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.jackson.JacksonFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The application class for the REST exposure.
@@ -53,7 +53,7 @@ public class CdnApplication extends Application {
 
     public static final String API_ROOT = "/api";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CdnApplication.class);
+    private static final Logger LOGGER = LogManager.getLogger();
     private final Set<Class<?>> classes = new HashSet<>();
 
     static {
@@ -79,6 +79,7 @@ public class CdnApplication extends Application {
 
         //Filters
         classes.add(CORSFilter.class);
+        classes.add(DiagnosticFilter.class);
 
         //Exception mappers
         classes.add(DefaultExceptionMapper.class);

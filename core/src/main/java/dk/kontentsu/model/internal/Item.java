@@ -60,8 +60,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * An item that can externalized to the CDN - i.e. a file on the CDN.
@@ -82,7 +82,7 @@ import org.slf4j.LoggerFactory;
 public class Item extends AbstractBaseEntity {
 
     private static final long serialVersionUID = 1457687095382268401L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(Item.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @NotNull
     @Valid

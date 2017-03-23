@@ -26,8 +26,8 @@ package dk.kontentsu.api.mappers;
 import java.nio.charset.Charset;
 import java.util.function.Function;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import dk.kontentsu.api.model.UploadItemRepresentation;
 import dk.kontentsu.model.Interval;
@@ -40,7 +40,7 @@ import dk.kontentsu.upload.UploadItem;
  */
 public class UploadItemMapper implements Function<UploadItemRepresentation, UploadItem> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UploadItemMapper.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
     public UploadItem apply(final UploadItemRepresentation from) {

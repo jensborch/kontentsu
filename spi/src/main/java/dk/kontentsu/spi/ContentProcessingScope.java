@@ -27,8 +27,8 @@ import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
 import javax.enterprise.context.spi.Contextual;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Class for managing the content processing scope defined using the
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ContentProcessingScope implements AutoCloseable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContentProcessingScope.class);
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final ThreadLocal<ArrayDeque<Map<Contextual<?>, ContentProcessingContext.Instance<?>>>> INSTANCES = new ThreadLocal<>();
 
     private Map<Contextual<?>, ContentProcessingContext.Instance<?>> map;

@@ -46,8 +46,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Parser for HAL+JSON CDN content. The parser will find metadata and
@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
 @ContentProcessingMimeType({"application/hal+json"})
 public class HalJsonParser implements ContentParser {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HalJsonParser.class);
+    private static final Logger LOGGER = LogManager.getLogger();
     private final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
     @Inject

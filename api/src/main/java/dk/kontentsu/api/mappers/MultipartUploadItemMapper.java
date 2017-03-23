@@ -26,8 +26,8 @@ package dk.kontentsu.api.mappers;
 import java.io.InputStream;
 import java.util.function.Function;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import dk.kontentsu.api.mappers.MultipartUploadItemMapper.MultipartUploadItem;
 import dk.kontentsu.api.model.MultipartUploadItemRepresentation;
@@ -43,7 +43,7 @@ import dk.kontentsu.upload.UploadItem;
  */
 public class MultipartUploadItemMapper implements Function<MultipartUploadItem, UploadItem> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MultipartUploadItemMapper.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
     public UploadItem apply(final MultipartUploadItem from) {

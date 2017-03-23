@@ -50,8 +50,8 @@ import javax.security.auth.message.module.ServerAuthModule;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * OAauth2 JASPIC server authentication module.
@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AuthModule implements ServerAuthModule, ServerAuthContext, ClientAuthContext, ClientAuthModule {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthModule.class);
+    private static final Logger LOGGER = LogManager.getLogger();
     private Options config;
     private CallbackHandler handler;
 

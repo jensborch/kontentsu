@@ -31,8 +31,8 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import org.glassfish.jersey.jackson.JacksonFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * The application class for the OAuth2 REST exposure.
@@ -44,7 +44,7 @@ public class OAuth2Application extends Application {
 
     public static final String API_ROOT = "/";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2Application.class);
+    private static final Logger LOGGER = LogManager.getLogger();
     private final Set<Class<?>> classes = new HashSet<>();
 
     static {

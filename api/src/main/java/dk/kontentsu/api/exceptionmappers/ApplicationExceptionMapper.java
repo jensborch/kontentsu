@@ -27,8 +27,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import dk.kontentsu.api.model.ErrorRepresentation;
 import dk.kontentsu.exception.ApplicationException;
@@ -41,7 +41,7 @@ import dk.kontentsu.exception.ValidationException;
 @Provider
 public class ApplicationExceptionMapper implements ExceptionMapper<ApplicationException> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationExceptionMapper.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
     public Response toResponse(final ApplicationException ex) {

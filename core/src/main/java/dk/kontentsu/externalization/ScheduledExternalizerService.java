@@ -23,6 +23,9 @@
  */
 package dk.kontentsu.externalization;
 
+import dk.kontentsu.model.ExternalFile;
+import dk.kontentsu.model.internal.Host;
+import dk.kontentsu.repository.ExternalFileRepository;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.ScheduleExpression;
@@ -48,15 +50,11 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import dk.kontentsu.model.ExternalFile;
-import dk.kontentsu.model.internal.Host;
-import dk.kontentsu.repository.ExternalFileRepository;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
+ * Scheduler for publishing externalized content.
  *
  * @author Jens Borch Christiansen
  */
@@ -65,7 +63,7 @@ import dk.kontentsu.repository.ExternalFileRepository;
 public class ScheduledExternalizerService {
 
     private static final int START_OFFSET = 2;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledExternalizerService.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final AtomicBoolean first = new AtomicBoolean(true);
 

@@ -27,8 +27,8 @@ import dk.kontentsu.model.Content;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import dk.kontentsu.spi.ContentProcessingScoped;
 
@@ -40,7 +40,7 @@ import dk.kontentsu.spi.ContentProcessingScoped;
 @ApplicationScoped
 public class ContentProducer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ContentProducer.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     static {
         LOGGER.info("Loading CDI content producer...");

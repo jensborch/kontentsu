@@ -47,8 +47,8 @@ import javax.inject.Inject;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import dk.kontentsu.configuration.Config;
 
@@ -60,7 +60,7 @@ import dk.kontentsu.configuration.Config;
 @Converter
 public class CryptoAttributeConverter implements AttributeConverter<String, String> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CryptoAttributeConverter.class);
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String KEY_ALGORITHM = "AES";
     private static final Charset ENCODING = StandardCharsets.UTF_8;
     private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
