@@ -26,13 +26,15 @@ package dk.kontentsu.oauth2.api;
 import dk.kontentsu.oauth2.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.oauth2.api.exceptionmappers.ContainerExceptionMapper;
 import dk.kontentsu.oauth2.api.exceptionmappers.NotAuthorizedExceptionMapper;
+import dk.kontentsu.util.rs.CORSFilter;
+import dk.kontentsu.util.rs.DiagnosticFilter;
 import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.glassfish.jersey.jackson.JacksonFeature;
 
 /**
  * The application class for the OAuth2 REST exposure.
@@ -57,6 +59,10 @@ public class OAuth2Application extends Application {
         classes.add(NotAuthorizedExceptionMapper.class);
         classes.add(ContainerExceptionMapper.class);
         classes.add(ConstraintViolationExceptionMapper.class);
+
+        //Filters
+        classes.add(CORSFilter.class);
+        classes.add(DiagnosticFilter.class);
     }
 
     @Override

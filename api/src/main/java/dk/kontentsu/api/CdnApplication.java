@@ -23,6 +23,8 @@
  */
 package dk.kontentsu.api;
 
+import dk.kontentsu.util.rs.DiagnosticFilter;
+import dk.kontentsu.util.rs.CORSFilter;
 import dk.kontentsu.api.exceptionmappers.ApiExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;

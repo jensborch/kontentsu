@@ -9,6 +9,8 @@ war {
 }
 
 dependencies {
+    compile project(':util')
+    
     compile 'org.apache.logging.log4j:log4j-web:' + log4jVersion
     compile 'org.aeonbits.owner:owner:' + ownerVersion;
     compile 'org.aeonbits.owner:owner-java8:' + ownerVersion;
