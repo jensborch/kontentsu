@@ -73,9 +73,11 @@ public class CacheFilter implements ContainerResponseFilter {
 
     @Override
     public void filter(ContainerRequestContext request, ContainerResponseContext response) throws IOException {
-        response.getHeaders().putSingle(HttpHeaders.CACHE_CONTROL, cacheControl
-                .stream()
-                .collect(Collectors.joining(", ")));
+        if (!cacheControl.isEmpty()) {
+            response.getHeaders().putSingle(HttpHeaders.CACHE_CONTROL, cacheControl
+                    .stream()
+                    .collect(Collectors.joining(", ")));
+        }
     }
 
 }
