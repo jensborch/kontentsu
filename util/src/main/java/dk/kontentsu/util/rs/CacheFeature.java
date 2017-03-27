@@ -35,7 +35,7 @@ import javax.ws.rs.core.FeatureContext;
 public class CacheFeature implements DynamicFeature {
 
     @Override
-    public void configure(ResourceInfo resourceInfo, FeatureContext context) {
+    public void configure(final ResourceInfo resourceInfo, final FeatureContext context) {
         CachControl cc = resourceInfo.getResourceMethod().getAnnotation(CachControl.class);
         CacheMaxAge maxAge = resourceInfo.getResourceMethod().getAnnotation(CacheMaxAge.class);
         CacheSMaxAge sMaxAge = resourceInfo.getResourceMethod().getAnnotation(CacheSMaxAge.class);

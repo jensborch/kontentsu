@@ -37,15 +37,15 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 public @interface CachControl {
 
-    public boolean isPrivate() default true;
+    boolean isPrivate() default true;
 
-    public boolean noCache() default false;
+    boolean noCache() default false;
 
-    public boolean noStore() default false;
+    boolean noStore() default false;
 
-    public boolean noTransform() default true;
+    boolean noTransform() default true;
 
-    public boolean mustRevalidate() default true;
+    boolean mustRevalidate() default true;
 
-    public boolean proxyRevalidate() default false;
+    boolean proxyRevalidate() default false;
 }

@@ -41,7 +41,7 @@ public class CacheFilter implements ContainerResponseFilter {
 
     private final Set<String> cacheControl;
 
-    CacheFilter(CachControl cc, CacheMaxAge maxAge, CacheSMaxAge sMaxAge) {
+    CacheFilter(final CachControl cc, final CacheMaxAge maxAge, final CacheSMaxAge sMaxAge) {
         this.cacheControl = new HashSet<>();
         if (cc != null) {
             if (cc.isPrivate()) {
@@ -72,7 +72,7 @@ public class CacheFilter implements ContainerResponseFilter {
     }
 
     @Override
-    public void filter(ContainerRequestContext request, ContainerResponseContext response) throws IOException {
+    public void filter(final ContainerRequestContext request, final ContainerResponseContext response) throws IOException {
         if (!cacheControl.isEmpty()) {
             response.getHeaders().putSingle(HttpHeaders.CACHE_CONTROL, cacheControl
                     .stream()
