@@ -23,25 +23,29 @@
  */
 package dk.kontentsu.util.rs;
 
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.FeatureContext;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Register and configure cache filter for all methods with a cache annotation.
+ * Cache configuration annotation used by {@link CacheFilter}.
  *
  * @author Jens Borch Christiansen
  */
-public class CacheFeature implements DynamicFeature {
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
+public @interface CachControl {
 
-    @Override
-    public void configure(ResourceInfo resourceInfo, FeatureContext context) {
-        CachControl cc = resourceInfo.getResourceMethod().getAnnotation(CachControl.class);
-        CacheMaxAge maxAge = resourceInfo.getResourceMethod().getAnnotation(CacheMaxAge.class);
-        CacheSMaxAge sMaxAge = resourceInfo.getResourceMethod().getAnnotation(CacheSMaxAge.class);
-        if (cc != null || maxAge != null || sMaxAge != null) {
-            context.register(new CacheFilter(cc, maxAge, sMaxAge));
-        }
-    }
+    public boolean isPrivate() default true;
 
+    public boolean noCache() default false;
+
+    public boolean noStore() default false;
+
+    public boolean noTransform() default true;
+
+    public boolean mustRevalidate() default true;
+
+    public boolean proxyRevalidate() default false;
 }
