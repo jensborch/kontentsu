@@ -42,6 +42,7 @@ import dk.kontentsu.model.internal.Item.Criteria;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.upload.UploadItem;
 import dk.kontentsu.upload.UploadService;
+import dk.kontentsu.util.rs.Cache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -128,6 +129,7 @@ public class ItemExposure {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Cache(maxAge = 30)
     public Response list() {
         List<ItemRepresentation> result = repo
                 .find(Criteria.create(true))
@@ -140,6 +142,7 @@ public class ItemExposure {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @Cache(maxAge = 300)
     public Response get(@PathParam("id") final String id) {
         return Response.ok().entity(new ItemRepresentation(repo.get(UUID.fromString(id)), uriInfo)).build();
     }
@@ -147,6 +150,7 @@ public class ItemExposure {
     @GET
     @Path("{id}/versions")
     @Produces(MediaType.APPLICATION_JSON)
+    @Cache(maxAge = 30)
     public Response getVersions(@PathParam("id") final String id) {
         List<VersionLinkRepresentation> result = repo.get(UUID.fromString(id))
                 .getVersions()
@@ -159,6 +163,7 @@ public class ItemExposure {
     @GET
     @Path("{item}/versions/{version}")
     @Produces(MediaType.APPLICATION_JSON)
+    @Cache(maxAge = 300)
     public Response getVersion(@PathParam("item") final String item, @PathParam("version") final String version) {
         Optional<VersionRepresentation> result = repo.get(UUID.fromString(item))
                 .getVersions()
@@ -178,10 +183,10 @@ public class ItemExposure {
     public Response delete(@PathParam("item") final String item, @PathParam("version") final String version) {
         repo.find(UUID.fromString(item))
                 .ifPresent(i -> i.getVersions()
-                        .stream()
-                        .filter(v -> v.getUuid().equals(UUID.fromString(version)))
-                        .findAny()
-                        .ifPresent(v -> v.delete()));
+                .stream()
+                .filter(v -> v.getUuid().equals(UUID.fromString(version)))
+                .findAny()
+                .ifPresent(v -> v.delete()));
         return Response.ok().build();
     }
 
@@ -191,8 +196,8 @@ public class ItemExposure {
     public Response delete(@PathParam("item") final String item) {
         repo.find(UUID.fromString(item))
                 .ifPresent(i -> i.getVersions()
-                        .stream()
-                        .forEach(v -> v.delete()));
+                .stream()
+                .forEach(v -> v.delete()));
         return Response.ok().build();
     }
 
@@ -207,7 +212,8 @@ public class ItemExposure {
     @ApiOperation(value = "Overwrite existing content on the CDN using a data from a URL",
             notes = "Encoding must be specified for textual content")
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Content has been uploaded"),
+        @ApiResponse(code = 201, message = "Content has been uploaded")
+        ,
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
     public Response overwrite(@PathParam("item") final String item, @Valid final UploadItemRepresentation uploadItemRepresentation) {
         service.overwrite(UUID.fromString(item), new UploadItemMapper().apply(uploadItemRepresentation));
@@ -225,7 +231,8 @@ public class ItemExposure {
     @ApiOperation(value = "Upload content to the CDN using a data from a URL",
             notes = "Encoding must be specified for textual content")
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Content has been uploaded"),
+        @ApiResponse(code = 201, message = "Content has been uploaded")
+        ,
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
     public Response uploade(@Valid final UploadItemRepresentation uploadItemRepresentation) {
         service.upload(new UploadItemMapper().apply(uploadItemRepresentation));
@@ -245,14 +252,16 @@ public class ItemExposure {
                 value = "Multipart upload JSON",
                 required = true,
                 dataType = "dk.kontentsu.cdn.api.model.MultipartUploadItemRepresentation",
-                paramType = "form"),
+                paramType = "form")
+        ,
         @ApiImplicitParam(name = "data",
                 value = "Multipart attachment to upload to CDN, name must match contentRef in uploaditem JSON",
                 required = true,
                 dataType = "java.io.File",
                 paramType = "body")})
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Content has been uploaded"),
+        @ApiResponse(code = 201, message = "Content has been uploaded")
+        ,
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
     public Response overwrite(@PathParam("item") final String item, @Context final HttpServletRequest request) {
         return processMultipartRequest(request, u -> service.overwrite(UUID.fromString(item), u));
@@ -276,14 +285,16 @@ public class ItemExposure {
                 value = "Multipart upload JSON",
                 required = true,
                 dataType = "dk.kontentsu.cdn.api.model.MultipartUploadItemRepresentation",
-                paramType = "form"),
+                paramType = "form")
+        ,
         @ApiImplicitParam(name = "data",
                 value = "Multipart attachment to upload to CDN, name must match contentRef in uploaditem JSON",
                 required = true,
                 dataType = "java.io.File",
                 paramType = "body")})
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Content has been uploaded"),
+        @ApiResponse(code = 201, message = "Content has been uploaded")
+        ,
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
     public Response uploade(@Context final HttpServletRequest request) {
         return processMultipartRequest(request, u -> service.upload(u));
@@ -349,9 +360,9 @@ public class ItemExposure {
                 .findAny()
                 .map(f -> f.getName())
                 .flatMap(n -> multipartItems.stream()
-                        .filter(f -> f.getFieldName().equals(n))
-                        .findAny()
-                        .map(i -> MimeType.parse(i.getContentType()))
+                .filter(f -> f.getFieldName().equals(n))
+                .findAny()
+                .map(i -> MimeType.parse(i.getContentType()))
                 );
     }
 
@@ -368,12 +379,12 @@ public class ItemExposure {
 
         InputStream is = retrieveInputStream(multipartItems, uploadItemRepresentation.getContentRef())
                 .orElseThrow(() -> new ValidationException("Error processing multipart data. Content reference '"
-                        + uploadItemRepresentation.getContentRef() + "' not found as from field for item with URI: "
-                        + uriToString(uploadItemRepresentation)));
+                + uploadItemRepresentation.getContentRef() + "' not found as from field for item with URI: "
+                + uriToString(uploadItemRepresentation)));
 
         MimeType m = retrieveMimeType(multipartItems, uploadItemRepresentation.getContentRef())
                 .orElseThrow(() -> new ValidationException("Error processing multipart data. Mimetype not specified on attachement for item with URI: "
-                        + uriToString(uploadItemRepresentation)));
+                + uriToString(uploadItemRepresentation)));
 
         return new MultipartUploadItemMapper().apply(
                 new MultipartUploadItemMapper.MultipartUploadItem(uploadItemRepresentation, m, is));

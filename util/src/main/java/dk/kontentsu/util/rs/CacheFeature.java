@@ -23,24 +23,38 @@
  */
 package dk.kontentsu.util.rs;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
+import javax.ws.rs.ext.Provider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Register and configure cache filter for all methods with a cache annotation.
  *
  * @author Jens Borch Christiansen
  */
+@Provider
 public class CacheFeature implements DynamicFeature {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
     public void configure(final ResourceInfo resourceInfo, final FeatureContext context) {
-        CachControl cc = resourceInfo.getResourceMethod().getAnnotation(CachControl.class);
-        CacheMaxAge maxAge = resourceInfo.getResourceMethod().getAnnotation(CacheMaxAge.class);
-        CacheSMaxAge sMaxAge = resourceInfo.getResourceMethod().getAnnotation(CacheSMaxAge.class);
-        if (cc != null || maxAge != null || sMaxAge != null) {
-            context.register(new CacheFilter(cc, maxAge, sMaxAge));
+        if (resourceInfo.getResourceMethod().getAnnotation(GET.class) != null) {
+            Cache cc = resourceInfo.getResourceMethod().getAnnotation(Cache.class);
+            NoCache nc = resourceInfo.getResourceMethod().getAnnotation(NoCache.class);
+            if (nc != null) {
+                LOGGER.debug("Found NoCache annotation on metod {}", resourceInfo.getResourceMethod());
+                context.register(new CacheFilter(nc));
+            } else if (cc != null) {
+                LOGGER.debug("Found Cache annotation on metod {}", resourceInfo.getResourceMethod());
+                context.register(new CacheFilter(cc));
+            }
+        } else {
+            LOGGER.warn("Found Cache annotation on non GET metod {}", resourceInfo.getResourceMethod());
         }
     }
 

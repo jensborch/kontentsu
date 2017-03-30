@@ -23,8 +23,6 @@
  */
 package dk.kontentsu.api;
 
-import dk.kontentsu.util.rs.DiagnosticFilter;
-import dk.kontentsu.util.rs.CORSFilter;
 import dk.kontentsu.api.exceptionmappers.ApiExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
@@ -34,6 +32,9 @@ import dk.kontentsu.api.exposure.ExternalFileExposure;
 import dk.kontentsu.api.exposure.HostExposure;
 import dk.kontentsu.api.exposure.ItemExposure;
 import dk.kontentsu.api.exposure.RootExposure;
+import dk.kontentsu.util.rs.CORSFilter;
+import dk.kontentsu.util.rs.CacheFeature;
+import dk.kontentsu.util.rs.DiagnosticFilter;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
@@ -82,6 +83,7 @@ public class CdnApplication extends Application {
         //Filters
         classes.add(CORSFilter.class);
         classes.add(DiagnosticFilter.class);
+        classes.add(CacheFeature.class);
 
         //Exception mappers
         classes.add(DefaultExceptionMapper.class);

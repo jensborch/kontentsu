@@ -24,8 +24,8 @@
 package dk.kontentsu.util.rs;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -39,19 +39,23 @@ import javax.ws.rs.core.HttpHeaders;
  */
 public class CacheFilter implements ContainerResponseFilter {
 
-    private final Set<String> cacheControl;
+    private final List<String> cacheControl;
 
-    CacheFilter(final CachControl cc, final CacheMaxAge maxAge, final CacheSMaxAge sMaxAge) {
-        this.cacheControl = new HashSet<>();
+    CacheFilter(final NoCache nc) {
+        this.cacheControl = new ArrayList<>();
+        if (nc != null) {
+            this.cacheControl.add("no-cache");
+        }
+    }
+
+    CacheFilter(final Cache cc) {
+        this.cacheControl = new ArrayList<>();
         if (cc != null) {
             if (cc.isPrivate()) {
                 this.cacheControl.add("private");
             }
             if (cc.mustRevalidate()) {
                 this.cacheControl.add("must-revalidate");
-            }
-            if (cc.noCache()) {
-                this.cacheControl.add("no-cache");
             }
             if (cc.noStore()) {
                 this.cacheControl.add("no-store");
@@ -62,12 +66,12 @@ public class CacheFilter implements ContainerResponseFilter {
             if (cc.proxyRevalidate()) {
                 this.cacheControl.add("proxy-revalidate");
             }
-        }
-        if (maxAge != null) {
-            this.cacheControl.add("max-age= " + maxAge.unit().toSeconds(maxAge.time()));
-        }
-        if (sMaxAge != null) {
-            this.cacheControl.add("s-max-age= " + sMaxAge.unit().toSeconds(sMaxAge.time()));
+            if (cc.maxAge() >= 0) {
+                this.cacheControl.add("max-age=" + cc.unit().toSeconds(cc.maxAge()));
+            }
+            if (cc.sMaxAge() >= 0) {
+                this.cacheControl.add("s-max-age=" + cc.unit().toSeconds(cc.sMaxAge()));
+            }
         }
     }
 

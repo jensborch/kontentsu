@@ -30,15 +30,27 @@ import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Cache max-age configuration annotation used by {@link CacheFilter}.
+ * Cache configuration annotation used by {@link CacheFilter}.
  *
  * @author Jens Borch Christiansen
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface CacheMaxAge {
+@Target({ElementType.METHOD})
+public @interface Cache {
 
-    long time();
+    boolean isPrivate() default false;
 
-    TimeUnit unit();
+    boolean noStore() default false;
+
+    boolean noTransform() default false;
+
+    boolean mustRevalidate() default false;
+
+    boolean proxyRevalidate() default false;
+
+    int maxAge() default -1;
+
+    int sMaxAge() default -1;
+
+    TimeUnit unit() default TimeUnit.SECONDS;
 }
