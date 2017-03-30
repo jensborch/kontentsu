@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
     ngOnInit(): void {
         this.contentService.getPage(this.frontPage).then(p => {
             this.page = p
-            this.templateUrl = p.template.href;
+            //this.templateUrl = p.template.href;
         });
     }
 
