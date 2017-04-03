@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ContentService } from './content.service';
+import { Template } from './template.component';
 @Component({
     selector: 'editing-app',
     templateUrl: 'app.component.html',
@@ -7,6 +8,7 @@ import { ContentService } from './content.service';
 })
 export class AppComponent implements OnInit {
     frontPage: String = 'pages/page-simple/page-simple';
+    template: String = 'templates/responsive-one-article.tpl.html';
     page = {};
 
     constructor(private contentService: ContentService) { }
@@ -14,7 +16,7 @@ export class AppComponent implements OnInit {
     ngOnInit(): void {
         this.contentService.getPage(this.frontPage).then(p => {
             this.page = p
-            //this.templateUrl = p.template.href;
+            this.template = p.template.href;
         });
     }
 

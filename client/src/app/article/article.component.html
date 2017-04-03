@@ -1,8 +1,8 @@
 <article>
 	<h1 [hidden]="!data.heading">{{data.heading}}</h1>
-	<section *ngFor="let data.sections of section">
+	<section *ngFor="let section of data.sections">
 		<h2 [hidden]="!section.heading">{{section.heading}}</h2>
-		<p *ngFor="let section.paragraphs of paragraph">
+		<p *ngFor="let paragraph of section.paragraphs">
 			{{paragraph}}
 		</p>
 		<img [hidden]="!section.picture" src="section.picture.href" alt="section.picture.alt" title="section.picture.title">
