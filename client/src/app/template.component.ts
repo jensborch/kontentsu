@@ -1,4 +1,4 @@
-import { Directive, NgModule, Component, Input, ViewContainerRef, Compiler } from '@angular/core';
+import { Directive, NgModule, Component, Input, ViewContainerRef, Compiler, ComponentRef } from '@angular/core';
 
 @Directive({
     selector: 'k-template'
@@ -6,18 +6,23 @@ import { Directive, NgModule, Component, Input, ViewContainerRef, Compiler } fro
 export class TemplateComponent {
 
     @Input() url: string;
+    @Input() data: any;
+
 
     constructor(private vcRef: ViewContainerRef, private compiler: Compiler) { }
 
     ngOnChanges() {
         const templateUrl = this.url;
-        if (!templateUrl) return;
+        const data = this.data;
+        if (!templateUrl || !data) return;
 
         @Component({
             selector: 'dynamic-comp',
             templateUrl: templateUrl
         })
-        class DynamicTemplateComponent { };
+        class DynamicTemplateComponent {
+            page = {};
+         };
 
         @NgModule({
             imports: [],
@@ -28,7 +33,8 @@ export class TemplateComponent {
         this.compiler.compileModuleAndAllComponentsAsync(DynamicTemplateModule)
             .then(factory => {
                 const compFactory = factory.componentFactories.find(x => x.componentType === DynamicTemplateComponent);
-                const cmpRef = this.vcRef.createComponent(compFactory, 0);
+                const cmpRef : ComponentRef<DynamicTemplateComponent> = this.vcRef.createComponent(compFactory, 0);
+                cmpRef.instance.page = data;
             });
     }
 }
