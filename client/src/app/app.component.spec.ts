@@ -40,13 +40,14 @@ describe('App: Kontentsu', () => {
     expect(app).toBeTruthy();
   }));
 
-  /*it(`should have title`, async(() => {
+  it(`should have title`, async(() => {
     let fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
-    fixture.detectChanges();
-    let titleService = TestBed.get(Title);
-    expect(titleService.getTitle()).toEqual('Test title');
-  }));*/
+    fixture.whenStable().then(() => {
+      let titleService = TestBed.get(Title);
+      expect(titleService.getTitle()).toEqual('Test title');
+    });
+  }));
 
   it('should render title in a h1 tag', async(() => {
     let fixture = TestBed.createComponent(AppComponent);

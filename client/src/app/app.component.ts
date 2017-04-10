@@ -15,13 +15,11 @@ export class AppComponent implements OnInit {
 
     ngOnInit(): void {
         this.contentService.getPage(this.frontPage).then(p => {
-            console.info(p);
             this.page = p
             if (p.content && p.content.heading) {
-                console.info("Setting heading " + p.content.heading);
+                console.info("Setting heading '" + p.content.heading + "'");
                 this.titleService.setTitle(p.content.heading);
             }
-             console.info("hej1");
             if (p.template && p.template.href) {
                 console.info("Setting template " + p.template.href);
                 this.template = p.template.href;
