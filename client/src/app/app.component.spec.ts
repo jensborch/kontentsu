@@ -1,20 +1,19 @@
 /* tslint:disable:no-unused-variable */
 
-import { HttpModule, XHRBackend, Http, ResponseOptions } from '@angular/http';
-import { TestBed, async, inject, fakeAsync, tick } from '@angular/core/testing';
-import { MockBackend } from '@angular/http/testing';
+import { HttpModule, Http } from '@angular/http';
+import { TestBed, async, inject } from '@angular/core/testing';
 import { Title } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { TemplateComponent } from './template.component';
 import { ContentService } from './content.service';
-
+import { Logger } from './logger.service';
 
 class MockContentService {
 
   getPage(path: String): Promise<any> {
     return new Promise((resolve, reject) => {
       resolve({
-        "content": { "heading": "Test title" }
+        content: { heading: 'Test title' }
       });
     });
   }
@@ -27,8 +26,8 @@ class MockHttp {
       toPromise: () => {
         return new Promise((resolve, reject) => {
           resolve({
-            text: () => "<h1>{{page.content.heading}}</h1>"
-        });
+            text: () => '<h1>{{page.content.heading}}</h1>'
+          });
         });
       }
     }
@@ -42,7 +41,8 @@ describe('App: Kontentsu', () => {
       providers: [
         { provide: Http, useClass: MockHttp },
         { provide: ContentService, useClass: MockContentService },
-        { provide: Title, useClass: Title }
+        { provide: Title, useClass: Title },
+        Logger
       ],
       declarations: [
         AppComponent,
@@ -57,7 +57,7 @@ describe('App: Kontentsu', () => {
     expect(app).toBeTruthy();
   }));
 
-  it(`should have title`, async(() => {
+  it('should have title', async(() => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.whenStable().then(() => {
       fixture.detectChanges();

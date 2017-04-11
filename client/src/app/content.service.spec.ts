@@ -4,6 +4,7 @@ import { HttpModule, XHRBackend, ResponseOptions } from '@angular/http';
 import { TestBed, async, inject } from '@angular/core/testing';
 import { MockBackend } from '@angular/http/testing';
 import { ContentService } from './content.service';
+import { Logger } from './logger.service';
 
 const mockResponse = {
   content: {
@@ -17,7 +18,8 @@ describe('Service: Content', () => {
       imports: [HttpModule],
       providers: [
         { provide: XHRBackend, useClass: MockBackend },
-        ContentService
+        ContentService,
+        Logger
       ]
     });
   });
@@ -31,10 +33,10 @@ describe('Service: Content', () => {
         body: JSON.stringify(mockResponse)
       })));
     });
-    service.getPage("page").then(page => {
+    service.getPage('page').then(page => {
       expect(page).toBeDefined();
       expect(page.content).toBeDefined();
-      expect(page.content.heading).toEqual("Testing");
+      expect(page.content.heading).toEqual('Testing');
     });
   }));
 });
