@@ -1,10 +1,13 @@
 /* tslint:disable:no-unused-variable */
 
-import { TestBed, async } from '@angular/core/testing';
+import { HttpModule, XHRBackend, Http, ResponseOptions } from '@angular/http';
+import { TestBed, async, inject, fakeAsync, tick } from '@angular/core/testing';
+import { MockBackend } from '@angular/http/testing';
+import { Title } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { TemplateComponent } from './template.component';
 import { ContentService } from './content.service';
-import { Title } from '@angular/platform-browser';
+
 
 class MockContentService {
 
@@ -17,42 +20,61 @@ class MockContentService {
   }
 }
 
+class MockHttp {
+
+  get(url: String) {
+    return {
+      toPromise: () => {
+        return new Promise((resolve, reject) => {
+          resolve({
+            text: () => "<h1>{{page.content.heading}}</h1>"
+        });
+        });
+      }
+    }
+  }
+}
+
 describe('App: Kontentsu', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [HttpModule],
+      providers: [
+        { provide: Http, useClass: MockHttp },
+        { provide: ContentService, useClass: MockContentService },
+        { provide: Title, useClass: Title }
+      ],
       declarations: [
         AppComponent,
         TemplateComponent
-      ],
-      imports: [
-
-      ],
-      providers: [
-        { provide: ContentService, useClass: MockContentService },
-        { provide: Title, useClass: Title }
       ]
     }).compileComponents();
   }));
 
   it('should create the app', async(() => {
-    let fixture = TestBed.createComponent(AppComponent);
-    let app = fixture.debugElement.componentInstance;
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
   }));
 
   it(`should have title`, async(() => {
-    let fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
+    const fixture = TestBed.createComponent(AppComponent);
     fixture.whenStable().then(() => {
-      let titleService = TestBed.get(Title);
-      expect(titleService.getTitle()).toEqual('Test title');
+      fixture.detectChanges();
+      fixture.whenStable().then(() => {
+        const titleService = TestBed.get(Title);
+        expect(titleService.getTitle()).toEqual('Test title');
+      });
     });
   }));
 
   it('should render title in a h1 tag', async(() => {
-    let fixture = TestBed.createComponent(AppComponent);
+    const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
-    let compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Kontentsu editing application');
+    fixture.whenStable().then(() => {
+      fixture.detectChanges();
+      const compiled = fixture.debugElement.nativeElement;
+      expect(compiled.querySelector('h1').textContent).toContain('Test title');
+    });
   }));
 });

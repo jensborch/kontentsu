@@ -10,5 +10,4 @@ export class ArticleComponent {
 
   constructor() { }
 
-
 }

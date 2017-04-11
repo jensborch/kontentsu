@@ -1,40 +1,57 @@
-import { Directive, NgModule, Component, Input, ViewContainerRef, Compiler, ComponentRef } from '@angular/core';
+import { Directive, NgModule, OnChanges, Component, Input, ViewContainerRef, Compiler, ComponentRef } from '@angular/core';
+import { Http, Response } from '@angular/http';
+import { CommonModule } from '@angular/common';
+import { ArticleComponent } from './article/article.component';
 
 @Directive({
     selector: 'k-template'
 })
-export class TemplateComponent {
+export class TemplateComponent implements OnChanges {
 
     @Input() url: string;
     @Input() data: any;
 
 
-    constructor(private vcRef: ViewContainerRef, private compiler: Compiler) { }
+    constructor(private http: Http, private vcRef: ViewContainerRef, private compiler: Compiler) { }
 
-    ngOnChanges() {
-        const templateUrl = this.url;
-        const data = this.data;
-        if (!templateUrl || !data) return;
-
+    private createComponent(template: string, data) {
         @Component({
             selector: 'dynamic-comp',
-            templateUrl: templateUrl
+            template: template
         })
         class DynamicTemplateComponent {
             page = {};
-         };
+        };
 
         @NgModule({
-            imports: [],
-            declarations: [DynamicTemplateComponent]
+            imports: [CommonModule],
+            declarations: [ArticleComponent, DynamicTemplateComponent]
         })
         class DynamicTemplateModule { }
 
         this.compiler.compileModuleAndAllComponentsAsync(DynamicTemplateModule)
             .then(factory => {
                 const compFactory = factory.componentFactories.find(x => x.componentType === DynamicTemplateComponent);
-                const cmpRef : ComponentRef<DynamicTemplateComponent> = this.vcRef.createComponent(compFactory, 0);
+                const cmpRef: ComponentRef<DynamicTemplateComponent> = this.vcRef.createComponent(compFactory, 0);
                 cmpRef.instance.page = data;
+            });
+    }
+
+    ngOnChanges() {
+        if (!this.url || !this.data) {
+            console.warn("Didn't find template");
+            return;
+        };
+        console.info(this.http);
+        this.http.get(this.url)
+            .toPromise()
+            .then((response: Response) => {
+                console.info("Template: " + this.url);
+                const template = response.text();
+                console.info("Template data: " + template);
+                this.createComponent(template, this.data);
+            }).catch((error) => {
+                console.error("Error getting template: " + error);
             });
     }
 }
