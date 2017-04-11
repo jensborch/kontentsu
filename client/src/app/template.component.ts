@@ -1,23 +1,26 @@
+/* tslint:disable:directive-selector */
+
 import { Directive, NgModule, OnChanges, Component, Input, ViewContainerRef, Compiler, ComponentRef } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { CommonModule } from '@angular/common';
 import { ArticleComponent } from './article/article.component';
 import { Logger } from './logger.service';
 
-@Directive({
-    selector: 'k-template'
+@Component({
+    selector: 'k-template',
+    template: ''
 })
 export class TemplateComponent implements OnChanges {
 
     @Input() url: string;
     @Input() data: any;
 
-
     constructor(private http: Http, private vcRef: ViewContainerRef, private compiler: Compiler, private log: Logger) { }
 
     private createComponent(template: string, data) {
+
         @Component({
-            selector: 'dynamic-comp',
+            selector: 'k-dynamic-template',
             template: template
         })
         class DynamicTemplateComponent {
@@ -40,18 +43,18 @@ export class TemplateComponent implements OnChanges {
 
     ngOnChanges() {
         if (!this.url || !this.data) {
-            this.log.warn("Didn't find template");
+            this.log.warn('Didn\'t find template');
             return;
         };
         this.http.get(this.url)
             .toPromise()
             .then((response: Response) => {
-                this.log.info("Template: " + this.url);
+                this.log.info('Template: ' + this.url);
                 const template = response.text();
-                this.log.debug("Template data: " + template);
+                this.log.debug('Template data: ' + template);
                 this.createComponent(template, this.data);
             }).catch((error) => {
-                this.log.error("Error getting template: " + error);
+                this.log.error('Error getting template: ' + error);
             });
     }
 }

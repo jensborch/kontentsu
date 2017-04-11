@@ -1,6 +1,4 @@
-# Kontentsu Editing Client
-
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.0.0.
+# Kontentsu Client
 
 ## Development server
 
@@ -17,6 +15,10 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+
+## Generating code coverage report
+
+Run `ng test --cc --single-run` - report and be found in coverage folder.
 
 ## Running end-to-end tests
 

@@ -8,7 +8,7 @@ import { Logger } from './logger.service';
 
 const mockResponse = {
   content: {
-    heading: "Testing"
+    heading: 'Testing'
   }
 };
 
