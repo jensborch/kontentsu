@@ -45,7 +45,7 @@
             {
                 "href": "items/article1",
                 "template": {
-                    "href": "components/templates/article-picture-right.tpl.html"
+                    "href": "templates/article-picture-right.tpl.html"
                 },
                 "heading": "Lorem Ipsum 1",
                 "summary": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tortor quam, dapibus eu leo quis, feugiat vulputate ligula.",
