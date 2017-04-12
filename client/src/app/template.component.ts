@@ -1,6 +1,4 @@
-/* tslint:disable:directive-selector */
-
-import { Directive, NgModule, OnChanges, Component, Input, ViewContainerRef, Compiler, ComponentRef, ViewChild } from '@angular/core';
+import { NgModule, OnChanges, Component, Input, ViewContainerRef, AfterViewInit, Compiler, ComponentRef, ViewChild} from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { CommonModule } from '@angular/common';
 import { PageModule } from './page.module';
@@ -9,13 +7,14 @@ import { Logger } from './logger.service';
 
 @Component({
     selector: 'k-template',
-    template: '<div #placeHolder></div>'
+    template: '<ng-template #target></ng-template>'
 })
-export class TemplateComponent implements OnChanges {
+export class TemplateComponent implements OnChanges, AfterViewInit {
 
-    @ViewChild('placeHolder', { read: ViewContainerRef }) placeHolder: ViewContainerRef;
+    @ViewChild('target', { read: ViewContainerRef }) target: ViewContainerRef;
     @Input() url: string;
     @Input() data: any;
+    private initialized = false;
 
     constructor(private http: Http, private vcRef: ViewContainerRef, private compiler: Compiler, private log: Logger) { }
 
@@ -38,16 +37,21 @@ export class TemplateComponent implements OnChanges {
         this.compiler.compileModuleAndAllComponentsAsync(DynamicTemplateModule)
             .then(factory => {
                 const compFactory = factory.componentFactories.find(x => x.componentType === DynamicTemplateComponent);
-                const cmpRef: ComponentRef<DynamicTemplateComponent> = this.placeHolder.createComponent(compFactory, 0);
+                this.target.clear();
+                const cmpRef: ComponentRef<DynamicTemplateComponent> = this.target
+                    .createComponent(compFactory);
                 cmpRef.instance.page = data;
             });
     }
 
-    ngOnChanges() {
+    private loadTemplate() {
         if (!this.url || !this.data) {
             this.log.warn('Didn\'t find template');
             return;
         };
+        if (!this.initialized) {
+            return;
+        }
         this.http.get(this.url)
             .toPromise()
             .then((response: Response) => {
@@ -59,4 +63,14 @@ export class TemplateComponent implements OnChanges {
                 this.log.error('Error getting template: ' + error);
             });
     }
+
+    ngOnChanges() {
+        this.loadTemplate();
+    }
+
+    ngAfterViewInit() {
+        this.initialized = true;
+        this.loadTemplate();
+    }
+
 }
