@@ -29,8 +29,9 @@ export class TemplateComponent implements OnChanges {
 
         @NgModule({
             imports: [CommonModule],
-            declarations: [ArticleComponent, DynamicTemplateComponent],
-            exports: [ArticleComponent]
+            declarations: [DynamicTemplateComponent],
+            //declarations: [ArticleComponent, DynamicTemplateComponent],
+            //exports: [ArticleComponent]
         })
         class DynamicTemplateModule { }
 

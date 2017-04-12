@@ -6,8 +6,10 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class ContentService {
 
-    private headers = new Headers({'Content-Type': 'application/hal+json'});
-    private contentUrl = 'http://localhost:9090/cdn/api/files/';  // URL to web api
+    private headers = new Headers({
+        'Content-Type': 'application/json'
+    });
+    private contentUrl = 'http://localhost:9090/kontentsu/api/files/';  // URL to web api
 
     constructor(private http: Http) { }
 

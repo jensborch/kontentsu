@@ -20,11 +20,11 @@ export class AppComponent implements OnInit {
         this.contentService.getPage(this.frontPage).then(p => {
             this.page = p;
             if (p.content && p.content.heading) {
-                this.log.info('Setting heading "' + p.content.heading + '"');
+                this.log.info('Setting heading from content "' + p.content.heading + '"');
                 this.titleService.setTitle(p.content.heading);
             }
             if (p.template && p.template.href) {
-                this.log.info('Setting template ' + p.template.href);
+                this.log.info('Setting template from content ' + p.template.href);
                 this.template = p.template.href;
             }
             this.log.info('Using template ' + this.template);

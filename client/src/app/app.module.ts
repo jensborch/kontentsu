@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { TemplateComponent } from './template.component';
+import { ArticleComponent } from './article/article.component';
 import { ContentService } from './content.service';
 import { Logger } from './logger.service';
 
@@ -12,6 +13,7 @@ import { Logger } from './logger.service';
   declarations: [
     AppComponent,
     TemplateComponent,
+    ArticleComponent,
   ],
   imports: [
     BrowserModule,

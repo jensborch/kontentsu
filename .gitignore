@@ -19,3 +19,5 @@
 /oauth/war/build
 /oauth/token/build/
 /oauth/authentication/build/
+/client/coverage
+/client/dist

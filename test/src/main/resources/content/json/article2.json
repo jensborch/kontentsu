@@ -1,7 +1,7 @@
 {
     "href": "items/article2",
     "template": {
-        "href": "components/templates/article-picture-right.tpl.html"
+        "href": "templates/article-picture-right.tpl.html"
     },
     "heading": "Heading article 2",
     "summary": "Summary article 2",

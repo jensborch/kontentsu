@@ -1,7 +1,7 @@
 {
     "href": "pages/page-simple",
     "template": {
-        "href": "components/templates/responsive-one-article.tpl.html"
+        "href": "templates/responsive-one-article.tpl.html"
     },
     "composition-type": {
         "href": "compositiontypes/default/page-one-article.json"
@@ -12,7 +12,7 @@
                 "href": "items/article2"
             }
         ],
-        "contact": 
+        "contact":
                 {
                     "href": "items/contact"
                 }

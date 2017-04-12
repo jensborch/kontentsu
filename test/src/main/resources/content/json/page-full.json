@@ -1,10 +1,10 @@
 {
     "href": "pages/page-full",
     "template": {
-        "href": "components/templates/responsive-multi-article.tpl.html"
+        "href": "templates/responsive-multi-article.tpl.html"
     },
     "composition-type": {
-        "href": "compositiontypes/default/page-multi-article.json"
+        "href": "default/page-multi-article.json"
     },
     "composition": {
         "articles": [
