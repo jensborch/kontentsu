@@ -30,6 +30,7 @@ package dk.kontentsu.exception;
  */
 public enum ErrorCode {
 
+    NOT_AUTHORIZED_ERROR,
     UNKNOWN_ERROR,
     PERSISTENCE_ERROR,
     CONTENT_PROCESSING_ERROR,

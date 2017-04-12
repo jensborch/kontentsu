@@ -23,10 +23,9 @@
  */
 package dk.kontentsu.api.exceptionmappers;
 
-import dk.kontentsu.api.model.ErrorRepresentation;
-import dk.kontentsu.api.model.ValidationErrorRepresentation;
-import dk.kontentsu.exception.ErrorCode;
 import java.util.Optional;
+
+import javax.ejb.AccessLocalException;
 import javax.ejb.EJBException;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceException;
@@ -34,13 +33,17 @@ import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-import org.apache.logging.log4j.Logger;
+
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import dk.kontentsu.api.model.ErrorRepresentation;
+import dk.kontentsu.api.model.ValidationErrorRepresentation;
+import dk.kontentsu.exception.ErrorCode;
 
 /**
- * Exception mapper for EJBException, a nested NoResultException will be mapped
- * to at HTTP 404 and a nested ConstraintViolationException or
- * PersistenceException will be mapped to 400.
+ * Exception mapper for EJBException, a nested NoResultException will be mapped to at HTTP 404 and a nested ConstraintViolationException or PersistenceException will be mapped to
+ * 400.
  *
  * All other exceptions will be mapped to HTTP 500.
  *
@@ -72,6 +75,13 @@ public class ContainerExceptionMapper implements ExceptionMapper<EJBException> {
             return Response
                     .status(Response.Status.BAD_REQUEST)
                     .entity(new ErrorRepresentation(ErrorCode.VALIDATION_ERROR, ex.get().getMessage()))
+                    .build();
+        }
+        ex = new CauseFinder(n -> n instanceof AccessLocalException).findCause(t);
+        if (ex.isPresent()) {
+            return Response
+                    .status(Response.Status.UNAUTHORIZED)
+                    .entity(new ErrorRepresentation(ErrorCode.NOT_AUTHORIZED_ERROR, ex.get().getMessage()))
                     .build();
         }
 
