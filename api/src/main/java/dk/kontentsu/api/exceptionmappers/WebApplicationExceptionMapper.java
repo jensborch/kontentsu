@@ -23,6 +23,7 @@
  */
 package dk.kontentsu.api.exceptionmappers;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -30,25 +31,25 @@ import javax.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import dk.kontentsu.api.ApiErrorException;
 import dk.kontentsu.api.model.ErrorRepresentation;
+import dk.kontentsu.exception.ErrorCode;
 
 /**
- * Exceptions mapper for API errors.
+ * Exception mapper for JAX-RX exceptions.
  *
  * @author Jens Borch Christiansen
  */
 @Provider
-public class ApiExceptionMapper implements ExceptionMapper<ApiErrorException> {
+public class WebApplicationExceptionMapper implements ExceptionMapper<WebApplicationException> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
-    public Response toResponse(final ApiErrorException ex) {
-        LOGGER.info("Error occured in CDN application REST API", ex);
+    public Response toResponse(final WebApplicationException ex) {
+        LOGGER.debug("Web application exception in REST API", ex);
         return Response
-                .status(ex.getHttpErrorCode())
-                .entity(new ErrorRepresentation(ex.getErrorCode(), ex.getMessage()))
+                .status(ex.getResponse().getStatusInfo())
+                .entity(new ErrorRepresentation(ErrorCode.REST_API_ERROR, ex.getMessage()))
                 .build();
     }
 
