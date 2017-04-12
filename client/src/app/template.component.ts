@@ -3,6 +3,7 @@
 import { Directive, NgModule, OnChanges, Component, Input, ViewContainerRef, Compiler, ComponentRef } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { CommonModule } from '@angular/common';
+import { PageModule } from './page.module';
 import { ArticleComponent } from './article/article.component';
 import { Logger } from './logger.service';
 
@@ -28,10 +29,8 @@ export class TemplateComponent implements OnChanges {
         };
 
         @NgModule({
-            imports: [CommonModule],
-            declarations: [DynamicTemplateComponent],
-            //declarations: [ArticleComponent, DynamicTemplateComponent],
-            //exports: [ArticleComponent]
+            imports: [CommonModule, PageModule],
+            declarations: [DynamicTemplateComponent]
         })
         class DynamicTemplateModule { }
 

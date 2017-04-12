@@ -5,15 +5,13 @@ import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 import { TemplateComponent } from './template.component';
-import { ArticleComponent } from './article/article.component';
 import { ContentService } from './content.service';
 import { Logger } from './logger.service';
 
 @NgModule({
   declarations: [
     AppComponent,
-    TemplateComponent,
-    ArticleComponent,
+    TemplateComponent
   ],
   imports: [
     BrowserModule,
