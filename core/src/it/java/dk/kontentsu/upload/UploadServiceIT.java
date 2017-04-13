@@ -1,6 +1,7 @@
 package dk.kontentsu.upload;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -17,11 +18,12 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.test.TestEJBContainer;
 
 /**
@@ -29,10 +31,14 @@ import dk.kontentsu.test.TestEJBContainer;
  */
 public class UploadServiceIT {
 
+    private static final ZonedDateTime NOW = ZonedDateTime.now();
     private static EJBContainer container;
 
     @Inject
     private UploadService service;
+
+    @Inject
+    private ItemRepository itemRepo;
 
     @Resource
     private UserTransaction userTransaction;
@@ -59,23 +65,32 @@ public class UploadServiceIT {
     }
 
     @Test
-    @Ignore
-    public void testOverwrite() {
+    public void testOverwrite() throws Exception {
         UploadItem upload = UploadItem.builder()
+                .uri(SemanticUri.parse("items/test"))
                 .content("ref", new ByteArrayInputStream("{}".getBytes()))
                 .encoding(StandardCharsets.UTF_8)
                 .mimeType(MimeType.APPLICATION_JSON_TYPE)
-                .interval(new Interval(ZonedDateTime.now(), ZonedDateTime.now().plusDays(2)))
+                .interval(new Interval(NOW, NOW.plusDays(2)))
                 .build();
-        UUID id = service.upload(upload);
+        UUID id = service.uploadSync(upload);
         upload = UploadItem.builder()
+                .uri(SemanticUri.parse("items/test"))
                 .content("ref", new ByteArrayInputStream("{}".getBytes()))
                 .encoding(StandardCharsets.UTF_8)
                 .mimeType(MimeType.APPLICATION_JSON_TYPE)
-                .interval(new Interval(ZonedDateTime.now(), ZonedDateTime.now().plusDays(4)))
+                .interval(new Interval(NOW, NOW.plusDays(4)))
                 .build();
-        Set<UUID> versions = service.overwrite(id, upload);
-        assertEquals(2, versions.size());
+        Set<UUID> versions = service.overwriteSync(id, upload);
+        assertEquals(1, versions.size());
+        UUID newid = versions.stream().findAny().get();
+        assertNotEquals(id, newid);
+        try {
+            userTransaction.begin();
+            assertEquals(new Interval(NOW, NOW.plusDays(4)), itemRepo.getVersion(newid).getInterval());
+        } finally {
+            userTransaction.commit();
+        }
     }
 
 }

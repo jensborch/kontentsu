@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package dk.kontentsu.exception;
 
 /**
+ * Thrown when a validation error occurs in the API or domain model. I.e. if a version interval overlaps.
  *
  * @author Jens Borch Christiansen
  */

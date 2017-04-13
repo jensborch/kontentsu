@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -93,10 +94,20 @@ public class UploadService {
         return version.getItem().getUuid();
     }
 
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public UUID uploadSync(@Valid final UploadItem uploadeItem) {
+        Version version = self.save(uploadeItem);
+        try {
+            externalizer.externalize(version.getUuid()).get();
+        } catch (InterruptedException | ExecutionException ex) {
+            throw new UploadException("Error externalizing version : " + version.getUuid(), ex);
+        }
+        return version.getItem().getUuid();
+    }
+
     /**
      *
-     * Overwrite a existing item with a given UUID. The will if needed change the internals of the
-     * existing active versions of the item, to make room for the new item.
+     * Overwrite a existing item with a given UUID. The will if needed change the internals of the existing active versions of the item, to make room for the new item.
      *
      * @param itemId the UUID of the item to replace
      * @param uploadeItem the new item to replace existing.
@@ -106,6 +117,19 @@ public class UploadService {
     public Set<UUID> overwrite(final UUID itemId, @Valid final UploadItem uploadeItem) {
         Set<UUID> externalized = self.overwriteAndSave(itemId, uploadeItem);
         externalized.stream().forEach(u -> externalizer.externalize(u));
+        return externalized;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Set<UUID> overwriteSync(final UUID itemId, @Valid final UploadItem uploadeItem) {
+        Set<UUID> externalized = self.overwriteAndSave(itemId, uploadeItem);
+        externalized.stream().forEach(u -> {
+            try {
+                externalizer.externalize(u).get();
+            } catch (InterruptedException | ExecutionException ex) {
+                throw new UploadException("Error externalizing version : " + u, ex);
+            }
+        });
         return externalized;
     }
 
@@ -123,7 +147,9 @@ public class UploadService {
                     LOGGER.debug("Deleting version {} with interval {}", v.getUuid(), v.getInterval());
                     v.delete();
                     v.getInterval().disjunctiveUnion(uploadeItem.getInterval())
-                            .stream().forEach(i -> {
+                            .stream()
+                            .filter(i -> !i.overlaps(uploadeItem.getInterval()))
+                            .forEach(i -> {
                                 Version n = Version.builder()
                                         .version(v)
                                         .interval(i)
@@ -181,6 +207,7 @@ public class UploadService {
 
     private Set<Bean<?>> findAllContentParserBeans() {
         return bm.getBeans(ContentParser.class, new AnnotationLiteral<Any>() {
+            private static final long serialVersionUID = 1L;
         });
     }
 
