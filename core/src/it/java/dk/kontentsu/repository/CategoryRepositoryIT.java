@@ -1,9 +1,5 @@
 package dk.kontentsu.repository;
 
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.repository.CategoryRepository;
-import dk.kontentsu.repository.TaxonomyRepository;
-
 import static org.junit.Assert.assertEquals;
 
 import java.nio.charset.StandardCharsets;

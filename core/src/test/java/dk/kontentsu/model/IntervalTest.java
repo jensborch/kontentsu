@@ -1,6 +1,5 @@
 package dk.kontentsu.model;
 
-import dk.kontentsu.model.Interval;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -84,7 +83,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testSplit() throws Exception {
+    public void testDisjunctiveUnion() throws Exception {
         Set<Interval> results = nowPlus2days.disjunctiveUnion(nowPlus4days);
         assertEquals(1, results.size());
         assertTrue(results.contains(new Interval(NOW.plusDays(2), NOW.plusDays(4))));

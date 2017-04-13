@@ -23,6 +23,26 @@
  */
 package dk.kontentsu.upload;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.util.AnnotationLiteral;
+import javax.inject.Inject;
+import javax.validation.Valid;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import dk.kontentsu.externalization.ExternalizerService;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.SemanticUri;
@@ -37,27 +57,9 @@ import dk.kontentsu.repository.HostRepository;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.scope.InjectableContentProcessingScope;
 import dk.kontentsu.spi.ContentProcessingMimeType;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Inject;
-import javax.validation.Valid;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 /**
- * Service facade for performing various operations on CDN items - like
- * uploading new items.
+ * Service facade for performing various operations on CDN items - like uploading new items.
  *
  * @author Jens Borch Christiansen
  */
@@ -91,17 +93,26 @@ public class UploadService {
         return version.getItem().getUuid();
     }
 
+    /**
+     *
+     * Overwrite a existing item with a given UUID. The will if needed change the internals of the
+     * existing active versions of the item, to make room for the new item.
+     *
+     * @param itemId the UUID of the item to replace
+     * @param uploadeItem the new item to replace existing.
+     * @return a list of the identifiers for the new versions created
+     */
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public UUID overwrite(final UUID itemId, @Valid final UploadItem uploadeItem) {
+    public Set<UUID> overwrite(final UUID itemId, @Valid final UploadItem uploadeItem) {
         Set<UUID> externalized = self.overwriteAndSave(itemId, uploadeItem);
         externalized.stream().forEach(u -> externalizer.externalize(u));
-        return itemId;
+        return externalized;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Set<UUID> overwriteAndSave(final UUID itemId, @Valid final UploadItem uploadeItem) {
         Item item = itemRepo.get(itemId);
-        Set<UUID> externalized = new HashSet<>();
+        Set<UUID> toExternalize = new HashSet<>();
         //We need to create tmp set to avoid ConcurrentModificationException. HasSet do not support that we loop and modify at the same time.
         Set<Version> toAdd = new HashSet<>();
         item.getVersions()
@@ -120,14 +131,14 @@ public class UploadService {
                                         .build();
                                 LOGGER.debug("Adding new version {} with interval {}", n.getUuid(), n.getInterval());
                                 toAdd.add(n);
-                                externalized.add(n.getUuid());
+                                toExternalize.add(n.getUuid());
                             });
                 });
         toAdd.forEach(v -> item.addVersion(v));
         Version version = addVersion(item, uploadeItem);
         addHosts(item, uploadeItem);
-        externalized.add(version.getUuid());
-        return externalized;
+        toExternalize.add(version.getUuid());
+        return toExternalize;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
