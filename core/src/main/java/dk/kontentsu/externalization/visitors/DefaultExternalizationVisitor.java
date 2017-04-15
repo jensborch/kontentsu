@@ -23,12 +23,18 @@
  */
 package dk.kontentsu.externalization.visitors;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import dk.kontentsu.externalization.ExternalizationException;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.internal.TemporalReferenceTree;
+import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
-import javax.inject.Inject;
 
 /**
  * Default externalization visitor for content thats should not be processed. Will throw a {@link ExternalizationException} if the content have a composition.
@@ -39,8 +45,18 @@ import javax.inject.Inject;
 @ContentProcessingMimeType({"*/*"})
 public class DefaultExternalizationVisitor extends ExternalizationVisitor {
 
+    private static final Logger LOGGER = LogManager.getLogger();
+
     @Inject
     private Content content;
+
+    @Inject
+    private ItemRepository repo;
+
+    @PostConstruct
+    public void init() {
+        LOGGER.debug("Using default externalization visitor for content {}", content.getUuid());
+    }
 
     @Override
     public void visit(final TemporalReferenceTree.Node node) {
@@ -51,7 +67,9 @@ public class DefaultExternalizationVisitor extends ExternalizationVisitor {
 
     @Override
     public ExternalizationVisitor.Results getResults() {
-        return new ExternalizationVisitor.Results(content);
+        //Injected content will be out of content processing CDI scope... so we need to get in from the DB
+        Content tmp = repo.getContent(content.getUuid());
+        return new ExternalizationVisitor.Results(tmp);
     }
 
 }

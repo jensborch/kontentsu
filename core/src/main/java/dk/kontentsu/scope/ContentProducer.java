@@ -23,13 +23,13 @@
  */
 package dk.kontentsu.scope;
 
-import dk.kontentsu.model.Content;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import dk.kontentsu.model.Content;
 import dk.kontentsu.spi.ContentProcessingScoped;
 
 /**
@@ -50,7 +50,7 @@ public class ContentProducer {
     @ContentProcessingScoped
     public Content getContent() {
         LOGGER.debug("Injecting content into class");
-        return new InjectableContentProcessingScope().retrive();
+        return InjectableContentProcessingScope.retrive();
     }
 
 }

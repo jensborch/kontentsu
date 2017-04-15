@@ -2,7 +2,29 @@ package dk.kontentsu.upload;
 
 import static com.googlecode.catchexception.CatchException.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+import javax.ejb.embeddable.EJBContainer;
+import javax.inject.Inject;
+import javax.transaction.UserTransaction;
+import javax.validation.ConstraintViolationException;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.MimeType;
@@ -13,23 +35,10 @@ import dk.kontentsu.repository.HostRepository;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.test.ContentTestData;
 import dk.kontentsu.test.TestEJBContainer;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
-import javax.ejb.embeddable.EJBContainer;
-import javax.inject.Inject;
-import javax.transaction.UserTransaction;
-import javax.validation.ConstraintViolationException;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import dk.kontentsu.upload.UploadItem;
+import dk.kontentsu.upload.UploadItem;
+import dk.kontentsu.upload.UploadService;
+import dk.kontentsu.upload.UploadService;
 
 /**
  * Test for {@link dk.kontentsu.cdn.service.UploadService}
@@ -202,6 +211,35 @@ public class UploadServiceIT {
             Item item = itemRepo.get(owerwrite.getUuid());
             assertEquals("article2", item.getName());
             assertEquals(3, item.getVersions().stream().filter(v -> v.isActive()).count());
+        } finally {
+            userTransaction.commit();
+        }
+    }
+
+    @Test
+    public void testOverwriteWithOverlap() throws Exception {
+        UploadItem upload = UploadItem.builder()
+                .uri(SemanticUri.parse("items/test"))
+                .content("ref", new ByteArrayInputStream("{}".getBytes()))
+                .encoding(StandardCharsets.UTF_8)
+                .mimeType(MimeType.APPLICATION_JSON_TYPE)
+                .interval(new Interval(NOW, NOW.plusDays(2)))
+                .build();
+        UUID id = service.uploadSync(upload);
+        upload = UploadItem.builder()
+                .uri(SemanticUri.parse("items/test"))
+                .content("ref", new ByteArrayInputStream("{}".getBytes()))
+                .encoding(StandardCharsets.UTF_8)
+                .mimeType(MimeType.APPLICATION_JSON_TYPE)
+                .interval(new Interval(NOW, NOW.plusDays(4)))
+                .build();
+        Set<UUID> versions = service.overwriteSync(id, upload);
+        assertEquals(1, versions.size());
+        UUID newid = versions.stream().findAny().get();
+        assertNotEquals(id, newid);
+        try {
+            userTransaction.begin();
+            assertEquals(new Interval(NOW, NOW.plusDays(4)), itemRepo.getVersion(newid).getInterval());
         } finally {
             userTransaction.commit();
         }

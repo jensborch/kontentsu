@@ -23,13 +23,6 @@
  */
 package dk.kontentsu.model.internal;
 
-import dk.kontentsu.jpa.AbstractBaseEntity;
-import dk.kontentsu.model.Content;
-import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.State;
-import dk.kontentsu.repository.Repository;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -58,6 +52,14 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import dk.kontentsu.jpa.AbstractBaseEntity;
+import dk.kontentsu.model.Content;
+import dk.kontentsu.model.Interval;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.State;
+import dk.kontentsu.repository.Repository;
 
 /**
  * A version of an item that can potentially be published to the CDN server. A
@@ -226,10 +228,6 @@ public class Version extends AbstractBaseEntity {
 
     public List<Reference> getReferences() {
         return Collections.unmodifiableList(references);
-    }
-
-    public boolean hasCompositions() {
-        return !references.isEmpty();
     }
 
     public boolean isComplete() {

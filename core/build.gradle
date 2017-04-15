@@ -27,7 +27,7 @@ dependencies {
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:' + jacksonVersion
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:' + jacksonVersion
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:' + jacksonVersion
-    
+
     compile 'com.pastdev:jsch-nio:' + jschNioVersion
 
     compile 'com.querydsl:querydsl-apt:' + querydslVersion + ':jpa'
@@ -43,7 +43,7 @@ dependencies {
         exclude group: 'com.fasterxml.jackson.datatype'
         exclude group: 'com.fasterxml.jackson.core'
     }
-    
+
     compile 'org.apache.logging.log4j:log4j-slf4j-impl:' + log4jVersion
     compile 'org.apache.logging.log4j:log4j-1.2-api:' + log4jVersion
     compile ('org.owasp.esapi:esapi:' + esapiVersion) {

@@ -49,11 +49,11 @@ public class InjectableContentProcessingScope implements AutoCloseable {
         inject(content);
     }
 
-    public final void inject(final Content content) {
+    public static void inject(final Content content) {
         CONTENT.set(content);
     }
 
-    public Content retrive() {
+    public static Content retrive() {
         return CONTENT.get();
     }
 

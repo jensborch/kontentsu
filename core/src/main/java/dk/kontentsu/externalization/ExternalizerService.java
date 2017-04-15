@@ -23,19 +23,6 @@
  */
 package dk.kontentsu.externalization;
 
-import dk.kontentsu.externalization.visitors.ExternalizationIdentifierVisitor;
-import dk.kontentsu.externalization.visitors.ExternalizationVisitor;
-import dk.kontentsu.model.ExternalFile;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.internal.Item;
-import dk.kontentsu.model.internal.ReferenceProcessor;
-import dk.kontentsu.model.internal.ReferenceType;
-import dk.kontentsu.model.internal.TemporalReferenceTree;
-import dk.kontentsu.model.internal.Version;
-import dk.kontentsu.repository.ExternalFileRepository;
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.scope.InjectableContentProcessingScope;
-import dk.kontentsu.spi.ContentProcessingMimeType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -47,6 +34,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.ConcurrencyManagement;
@@ -61,8 +49,23 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import dk.kontentsu.externalization.visitors.ExternalizationIdentifierVisitor;
+import dk.kontentsu.externalization.visitors.ExternalizationVisitor;
+import dk.kontentsu.model.ExternalFile;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.internal.Item;
+import dk.kontentsu.model.internal.ReferenceProcessor;
+import dk.kontentsu.model.internal.ReferenceType;
+import dk.kontentsu.model.internal.TemporalReferenceTree;
+import dk.kontentsu.model.internal.Version;
+import dk.kontentsu.repository.ExternalFileRepository;
+import dk.kontentsu.repository.ItemRepository;
+import dk.kontentsu.scope.InjectableContentProcessingScope;
+import dk.kontentsu.spi.ContentProcessingMimeType;
 
 /**
  * Service facade for externalizing internal content.
@@ -141,7 +144,7 @@ public class ExternalizerService {
                 .filter(Version::isComplete)
                 .collect(Collectors.toList());
 
-        if (version.hasComposition() && version.isComplete()) {
+        if (!version.hasComposition() || (version.hasComposition() && version.isComplete())) {
             versions.add(version);
         }
         return versions;
@@ -161,7 +164,7 @@ public class ExternalizerService {
     private Set<Bean<?>> findAllExternalizationVisitorBeans() {
         return bm.getBeans(ExternalizationVisitor.class,
                 new AnnotationLiteral<Any>() {
-                });
+        });
     }
 
     private Map<MimeType.Match, Bean<?>> findMatchingExternalizationVisitorBeans(final Version version, final Set<Bean<?>> all) {
