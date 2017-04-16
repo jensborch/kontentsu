@@ -153,7 +153,9 @@ public class ExternalizerService {
                 .filter(Version::isComplete)
                 .collect(Collectors.toList());
 
-        if (getHigestPriorityExternalizationVisitorBean(version).filter(DefaultExternalizationVisitor.class::isInstance).isPresent() || (version.hasComposition() && version.isComplete())) {
+        boolean defaultVisitor = getHigestPriorityExternalizationVisitorBean(version).map(b -> b.getBeanClass()).filter(DefaultExternalizationVisitor.class::equals).isPresent();
+
+        if (defaultVisitor || (version.hasComposition() && version.isComplete())) {
             versions.add(version);
         }
         return versions;
@@ -220,7 +222,7 @@ public class ExternalizerService {
                 trees.addAll(externalizeVersionInScope(version));
             }, version.getContent());
             LOGGER.debug("Found {} files to externalize", trees.size());
-            fileRepo.findAll(version.getInterval())
+            fileRepo.findByUri(version.getItem().getUri(), version.getInterval())
                     .stream()
                     .filter(f -> f.isDifferent(version))
                     .forEach(f -> {

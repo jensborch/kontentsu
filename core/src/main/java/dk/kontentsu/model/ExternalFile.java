@@ -51,6 +51,16 @@ import dk.kontentsu.repository.Repository;
 @Entity
 @Table(name = "external_file")
 @NamedQueries({
+    @NamedQuery(name = Repository.EXTERNAL_FILE_FIND_IN_INTERVAL,
+            query = "SELECT f "
+            + "FROM ExternalFile f "
+            + "JOIN f.item it "
+            + "JOIN it.uri.path p "
+            + "JOIN f.interval i "
+            + "WHERE f.state = :state "
+            + "AND p.path = :path "
+            + "AND it.uri.name = :name "
+            + "AND i.to >= :from AND i.from < :to"),
     @NamedQuery(name = Repository.EXTERNAL_FILE_FIND_ALL_IN_INTERVAL,
             query = "SELECT f "
             + "FROM ExternalFile f "

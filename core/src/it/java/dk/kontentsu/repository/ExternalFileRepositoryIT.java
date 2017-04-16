@@ -1,8 +1,5 @@
 package dk.kontentsu.repository;
 
-import dk.kontentsu.repository.CategoryRepository;
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.repository.ExternalFileRepository;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -198,7 +195,7 @@ public class ExternalFileRepositoryIT {
     public void testFindByUri() throws Exception {
         try {
             userTransaction.begin();
-            Optional<ExternalFile> tmpFile = fileRepo.findByUri(uri, null);
+            Optional<ExternalFile> tmpFile = fileRepo.findByUri(uri, (ZonedDateTime) null);
             assertFalse(tmpFile.isPresent());
 
             tmpFile = fileRepo.findByUri(uri, NOW.plusDays(43));

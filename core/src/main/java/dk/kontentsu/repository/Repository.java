@@ -66,6 +66,7 @@ public abstract class Repository<E> {
     public static final String EXTERNAL_FILE_FIND_ALL_AT_DATE_TIME = "ExternalFile.findAllAt";
     public static final String EXTERNAL_FILE_SCHEDULE = "ExternalFile.schedule";
     public static final String EXTERNAL_FILE_FIND_ALL_IN_INTERVAL = "ExternalFile.findAllInInterval";
+    public static final String EXTERNAL_FILE_FIND_IN_INTERVAL  = "ExternalFile.findInInterval";
 
     @Inject
     protected EntityManager em;

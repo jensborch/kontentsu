@@ -80,6 +80,16 @@ public class ExternalFileRepository extends Repository<ExternalFile> {
         return query.getSingleResult();
     }
 
+    public List<ExternalFile> findByUri(final SemanticUri uri, final Interval interval) {
+        TypedQuery<ExternalFile> query = em.createNamedQuery(EXTERNAL_FILE_FIND_IN_INTERVAL, ExternalFile.class);
+        query.setParameter("name", uri.getName());
+        query.setParameter("path", uri.getPath().toString());
+        query.setParameter("state", State.ACTIVE);
+        query.setParameter("from", interval.getFrom());
+        query.setParameter("to", interval.getTo());
+        return query.getResultList();
+    }
+
     @Override
     public List<ExternalFile> findAll() {
         TypedQuery<ExternalFile> query = em.createNamedQuery(EXTERNAL_FILE_FIND_ALL, ExternalFile.class);
