@@ -35,15 +35,11 @@ import dk.kontentsu.repository.HostRepository;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.test.ContentTestData;
 import dk.kontentsu.test.TestEJBContainer;
-import dk.kontentsu.upload.UploadItem;
-import dk.kontentsu.upload.UploadItem;
-import dk.kontentsu.upload.UploadService;
-import dk.kontentsu.upload.UploadService;
 
 /**
  * Test for {@link dk.kontentsu.cdn.service.UploadService}
  *
- * @author Jens Borch Christiansen
+ * @author Jens Borch Christiansen 
  */
 public class UploadServiceIT {
 

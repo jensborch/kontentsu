@@ -35,6 +35,7 @@ import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.ConcurrencyManagement;
@@ -53,6 +54,7 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import dk.kontentsu.externalization.visitors.DefaultExternalizationVisitor;
 import dk.kontentsu.externalization.visitors.ExternalizationIdentifierVisitor;
 import dk.kontentsu.externalization.visitors.ExternalizationVisitor;
 import dk.kontentsu.model.ExternalFile;
@@ -92,6 +94,13 @@ public class ExternalizerService {
 
     @Inject
     private BeanManager bm;
+
+    private static Map<MimeType, Bean<?>> externalizationVisitorBeans;
+
+    @PostConstruct
+    public void init() {
+        externalizationVisitorBeans = getExternalizationVisitorBeansMap();
+    }
 
     private boolean processing(final UUID uuid) {
         synchronized (processing) {
@@ -144,7 +153,7 @@ public class ExternalizerService {
                 .filter(Version::isComplete)
                 .collect(Collectors.toList());
 
-        if (!version.hasComposition() || (version.hasComposition() && version.isComplete())) {
+        if (getHigestPriorityExternalizationVisitorBean(version).filter(DefaultExternalizationVisitor.class::isInstance).isPresent() || (version.hasComposition() && version.isComplete())) {
             versions.add(version);
         }
         return versions;
@@ -167,19 +176,37 @@ public class ExternalizerService {
         });
     }
 
-    private Map<MimeType.Match, Bean<?>> findMatchingExternalizationVisitorBeans(final Version version, final Set<Bean<?>> all) {
-        Map<MimeType.Match, Bean<?>> matches = new HashMap<>();
-        all
-                .stream().forEach(b -> {
-                    Arrays.stream(b.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class
-                    )).forEach(a -> {
-                        MimeType.Match m = version.getMimeType().matches(a);
-                        if (m.isMatch()) {
-                            matches.put(m, b);
-                        }
-                    });
+    private Map<MimeType, Bean<?>> getExternalizationVisitorBeansMap() {
+        Map<MimeType, Bean<?>> map = new HashMap<>();
+        findAllExternalizationVisitorBeans().stream().forEach(b -> {
+            Arrays.stream(b.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class
+            )).forEach(a -> {
+                Arrays.stream(a.value()).map(MimeType::parse).forEach(m -> {
+                    map.put(m, b);
                 });
+            });
+        });
+        LOGGER.debug("Found {} CDI externalization visitors", map.size());
+        return map;
+    }
+
+    private Map<MimeType.Match, Bean<?>> getMatchingExternalizationVisitorBeans(final Version version) {
+        Map<MimeType.Match, Bean<?>> matches = new HashMap<>();
+        externalizationVisitorBeans.entrySet().forEach(e -> {
+            MimeType.Match m = e.getKey().matches(version.getMimeType());
+            if (m.isMatch()) {
+                matches.put(m, e.getValue());
+            }
+        });
         return matches;
+    }
+
+    private Optional<Bean<?>> getHigestPriorityExternalizationVisitorBean(final Version version) {
+        return getMatchingExternalizationVisitorBeans(version).entrySet()
+                .stream()
+                .sorted((e1, e2) -> Integer.compare(e2.getKey().getPriority(), e1.getKey().getPriority()))
+                .findFirst()
+                .map(e -> e.getValue());
     }
 
     private List<ExternalFile> externalizeVersion(final Version version) {
@@ -219,15 +246,7 @@ public class ExternalizerService {
 
     private List<TemporalReferenceTree<ExternalizationIdentifierVisitor.Results, ExternalizationIdentifierVisitor>> externalizeVersionInScope(final Version version) {
         List<TemporalReferenceTree<ExternalizationIdentifierVisitor.Results, ExternalizationIdentifierVisitor>> trees = new ArrayList<>();
-        Set<Bean<?>> all = findAllExternalizationVisitorBeans();
-        LOGGER.debug("Found {} CDI externalization visitors", all.size());
-        Map<MimeType.Match, Bean<?>> matches = findMatchingExternalizationVisitorBeans(version, all);
-        Optional<Bean<?>> bean = matches.entrySet()
-                .stream()
-                .sorted((e1, e2) -> Integer.compare(e2.getKey().getPriority(), e1.getKey().getPriority()))
-                .findFirst()
-                .map(e -> e.getValue());
-
+        Optional<Bean<?>> bean = getHigestPriorityExternalizationVisitorBean(version);
         if (bean.isPresent()) {
             ExternalizationIdentifierVisitor visitor = new ExternalizationIdentifierVisitor(getExternalizationVisitor(bean.get()));
             LOGGER.info("Using visitor {} to externalize version {} with mime type {}",
