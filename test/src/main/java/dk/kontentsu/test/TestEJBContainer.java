@@ -1,7 +1,6 @@
 package dk.kontentsu.test;
 
 import java.util.Properties;
-
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
 
@@ -20,8 +19,7 @@ public final class TestEJBContainer {
         props.put("CdnDS.JdbcDriver", "org.h2.Driver");
         props.put("CdnDs.JdbcUrl", "jdbc:h2:mem:CdnDB;create=true");
         props.put("CdnDs.JtaManaged", "true");
-        EJBContainer container = EJBContainer.createEJBContainer(props);
-        return container;
+        return EJBContainer.createEJBContainer(props);
     }
 
     public static void inject(final EJBContainer container, final Object obj) throws NamingException {

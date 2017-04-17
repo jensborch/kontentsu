@@ -23,18 +23,19 @@
  */
 package dk.kontentsu.model.processing;
 
+import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.Version;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-import dk.kontentsu.model.Interval;
-
 /**
- * Representation of a item that can be externalized - i.e. an page on the CDN valid in a certain interval.
+ * Representation of a item that can be externalized - i.e. an page on the CDN
+ * valid in a certain interval.
  *
- * To create actual external content, implement a Visitor to build the content when traversing the tree.
+ * To create actual external content, implement a Visitor to build the content
+ * when traversing the tree.
  *
  * @author Jens Borch Christiansen
  *
@@ -45,7 +46,7 @@ public class TemporalReferenceTree<R extends TemporalReferenceTreeVisitor.Result
 
     private Interval inteval;
     private final Node root;
-    private V visitor;
+    private final V visitor;
     private R results;
 
     public TemporalReferenceTree(final Version version, final V visitor) {

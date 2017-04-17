@@ -23,6 +23,9 @@
  */
 package dk.kontentsu.upload;
 
+import dk.kontentsu.model.Interval;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.SemanticUri;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -30,12 +33,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.validation.constraints.NotNull;
-
-import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
 
 /**
  * Class representing the information and data needed to upload a item to the CDN.
@@ -170,7 +168,7 @@ public final class UploadItem {
         private Interval interval;
         private MimeType mimeType;
         private Charset encoding;
-        private List<String> hosts = new ArrayList<>();
+        private final List<String> hosts = new ArrayList<>();
 
         private Builder() {
         }

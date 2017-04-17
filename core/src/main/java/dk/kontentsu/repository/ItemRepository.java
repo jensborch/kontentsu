@@ -121,7 +121,7 @@ public class ItemRepository extends Repository<Item> {
             int i = 1;
             statment.setObject(i++, uuid);
             statment.setBinaryStream(i++, content);
-            statment.setString(i++, (encoding != null) ? encoding.name() : null);
+            statment.setString(i++, (encoding == null) ? null : encoding.name());
             statment.setString(i++, mimeType.getType());
             statment.setString(i++, mimeType.getSubType());
             statment.executeUpdate();

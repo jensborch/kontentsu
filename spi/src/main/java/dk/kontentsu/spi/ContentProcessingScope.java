@@ -27,8 +27,8 @@ import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
 import javax.enterprise.context.spi.Contextual;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Class for managing the content processing scope defined using the
@@ -73,13 +73,13 @@ public class ContentProcessingScope implements AutoCloseable {
 
     @Override
     public void close() {
-        if (map != null) {
+        if (map == null) {
+            LOGGER.warn("CDI scope has not been startet");
+        } else {
             map.values().stream().forEach(ContentProcessingContext.Instance::destroy);
             map.clear();
             INSTANCES.get().pop();
             LOGGER.debug("Stopping CDI scope");
-        } else {
-            LOGGER.warn("CDI scope has not been startet");
         }
     }
 

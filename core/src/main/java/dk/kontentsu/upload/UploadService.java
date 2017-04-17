@@ -23,13 +23,26 @@
  */
 package dk.kontentsu.upload;
 
+import dk.kontentsu.externalization.ExternalizerService;
+import dk.kontentsu.model.Content;
+import dk.kontentsu.model.Host;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.SemanticUriPath;
+import dk.kontentsu.model.Version;
+import dk.kontentsu.parsers.ContentParser;
+import dk.kontentsu.parsers.Link;
+import dk.kontentsu.repository.CategoryRepository;
+import dk.kontentsu.repository.HostRepository;
+import dk.kontentsu.repository.ItemRepository;
+import dk.kontentsu.scope.InjectableContentProcessingScope;
+import dk.kontentsu.spi.ContentProcessingMimeType;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -40,24 +53,8 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.validation.Valid;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import dk.kontentsu.externalization.ExternalizerService;
-import dk.kontentsu.model.Content;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.model.Host;
-import dk.kontentsu.model.Item;
-import dk.kontentsu.model.Version;
-import dk.kontentsu.parsers.ContentParser;
-import dk.kontentsu.parsers.Link;
-import dk.kontentsu.repository.CategoryRepository;
-import dk.kontentsu.repository.HostRepository;
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.scope.InjectableContentProcessingScope;
-import dk.kontentsu.spi.ContentProcessingMimeType;
 
 /**
  * Service facade for performing various operations on CDN items - like uploading new items.
@@ -201,8 +198,7 @@ public class UploadService {
 
     private ContentParser getContentParser(final Bean<?> b) {
         CreationalContext<?> ctx = bm.createCreationalContext(b);
-        ContentParser p = (ContentParser) bm.getReference(b, ContentParser.class, ctx);
-        return p;
+        return (ContentParser) bm.getReference(b, ContentParser.class, ctx);
     }
 
     private Set<Bean<?>> findAllContentParserBeans() {

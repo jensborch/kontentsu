@@ -23,6 +23,8 @@
  */
 package dk.kontentsu.processing;
 
+import static dk.kontentsu.processing.HalJsonContent.*;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -30,11 +32,8 @@ import dk.kontentsu.externalization.ExternalizationException;
 import dk.kontentsu.externalization.visitors.ExternalizationVisitor;
 import dk.kontentsu.jackson.ObjectMapperFactory;
 import dk.kontentsu.model.Content;
-import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.model.Version;
-
-import static dk.kontentsu.processing.HalJsonContent.*;
-
+import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
 import java.io.IOException;
@@ -188,11 +187,11 @@ public class HalJsonExternalizationVisitor extends ExternalizationVisitor {
     private static class Counter {
 
         @SuppressWarnings("PMD.UseConcurrentHashMap")
-        final Map<String, AtomicInteger> counter = new HashMap<>();
+        final Map<String, AtomicInteger> count = new HashMap<>();
 
         AtomicInteger getAtomic(final String key) {
-            this.counter.computeIfAbsent(key, k -> new AtomicInteger(0));
-            return this.counter.get(key);
+            this.count.computeIfAbsent(key, k -> new AtomicInteger(0));
+            return this.count.get(key);
         }
 
         int get(final String key) {

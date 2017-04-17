@@ -23,19 +23,17 @@
  */
 package dk.kontentsu.api.model;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.SemanticUri;
 import io.swagger.annotations.ApiModelProperty;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * Class representing the JSON data for uploading an item to the CDN.
@@ -52,7 +50,7 @@ public class UploadItemRepresentation {
     private SemanticUri uri;
 
     @ApiModelProperty(value = "Set to true if the item should be a draft and thus not uploadet to the CDN host", required = false)
-    private boolean draft = false;
+    private boolean draft;
 
     @NotNull
     @Valid

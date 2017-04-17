@@ -54,7 +54,7 @@ public final class BeanValidator {
      *
      * @return a set of the constraint violations found
      */
-    public static <T> Set<ConstraintViolation<T>> validate(final T obj, final String method, final Class<?>[] params, final Object[] values) {
+    public static <T> Set<ConstraintViolation<T>> validate(final T obj, final String method, final Class<?>[] params, final Object... values) {
         try {
             ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
             ExecutableValidator validator = vf.getValidator().forExecutables();

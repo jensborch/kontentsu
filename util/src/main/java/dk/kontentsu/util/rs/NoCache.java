@@ -23,11 +23,18 @@
  */
 package dk.kontentsu.util.rs;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * Set no-cache in Cache-Control header using {@link CacheFilter}.
  *
  * @author Jens Borch Christiansen
  */
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD})
 public @interface NoCache {
 
 }

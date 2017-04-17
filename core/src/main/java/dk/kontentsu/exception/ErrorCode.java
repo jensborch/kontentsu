@@ -23,6 +23,8 @@
  */
 package dk.kontentsu.exception;
 
+import java.util.Locale;
+
 /**
  * Unique identifies for each error that can occur.
  *
@@ -46,7 +48,7 @@ public enum ErrorCode {
     DB_CYPTO_ERROR;
 
     public String getErrorCode() {
-        return name().toLowerCase().replace('_', '-');
+        return name().toLowerCase(Locale.ENGLISH).replace('_', '-');
     }
 
     @Override

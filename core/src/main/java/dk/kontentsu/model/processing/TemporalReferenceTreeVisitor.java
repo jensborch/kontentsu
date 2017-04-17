@@ -42,7 +42,7 @@ public interface TemporalReferenceTreeVisitor<R extends TemporalReferenceTreeVis
     /**
      * Results from visiting the temporal reference tree.
      */
-    public interface Results {
+    interface Results {
     }
 
 }
