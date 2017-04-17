@@ -23,6 +23,13 @@
  */
 package dk.kontentsu.repository;
 
+import dk.kontentsu.model.Content;
+import dk.kontentsu.model.ContentException;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.State;
+import dk.kontentsu.model.Version;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.sql.Connection;
@@ -32,7 +39,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -40,16 +46,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.validation.Valid;
-
 import org.hibernate.internal.SessionImpl;
-
-import dk.kontentsu.model.Content;
-import dk.kontentsu.model.ContentException;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.State;
-import dk.kontentsu.model.Item;
-import dk.kontentsu.model.Version;
 
 /**
  * Repository for performing CRUD operations on CDN items.
@@ -104,7 +101,7 @@ public class ItemRepository extends Repository<Item> {
         return item;
     }
 
-    public Content getContent(UUID uuid) {
+    public Content getContent(final UUID uuid) {
         TypedQuery<Content> query = em.createNamedQuery(CONTENT_GET, Content.class);
         query.setParameter("uuid", uuid);
         return query.getSingleResult();
