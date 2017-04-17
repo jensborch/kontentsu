@@ -25,7 +25,7 @@ package dk.kontentsu.parsers;
 
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.model.internal.ReferenceType;
+import dk.kontentsu.model.ReferenceType;
 
 /**
  * Link in content

@@ -24,8 +24,8 @@ import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.SemanticUriPath;
 import dk.kontentsu.model.Taxon;
 import dk.kontentsu.model.Taxonomy;
-import dk.kontentsu.model.internal.Item;
-import dk.kontentsu.model.internal.Version;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.Version;
 import dk.kontentsu.test.TestEJBContainer;
 
 /**

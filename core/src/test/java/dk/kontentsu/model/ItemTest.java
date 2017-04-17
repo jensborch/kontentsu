@@ -11,6 +11,7 @@ import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.SemanticUriPath;
 import dk.kontentsu.model.Content;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -23,10 +24,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import dk.kontentsu.exception.ValidationException;
-import dk.kontentsu.model.internal.Item;
-import dk.kontentsu.model.internal.Metadata;
-import dk.kontentsu.model.internal.MetadataType;
-import dk.kontentsu.model.internal.Version;
 
 /**
  * Test for {@link Item}.

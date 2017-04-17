@@ -39,7 +39,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import dk.kontentsu.model.internal.Item;
 import dk.kontentsu.repository.Repository;
 
 /**

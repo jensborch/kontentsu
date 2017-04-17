@@ -16,11 +16,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import dk.kontentsu.model.internal.Item;
-import dk.kontentsu.model.internal.Metadata;
-import dk.kontentsu.model.internal.MetadataType;
-import dk.kontentsu.model.internal.ReferenceType;
-import dk.kontentsu.model.internal.Version;
 
 /**
  *

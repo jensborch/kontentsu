@@ -21,8 +21,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.model.internal;
+package dk.kontentsu.model.processing;
 
+import dk.kontentsu.model.Version;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;

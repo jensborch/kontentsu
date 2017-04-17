@@ -35,8 +35,8 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
-import dk.kontentsu.model.internal.Host;
-import dk.kontentsu.model.internal.Item;
+import dk.kontentsu.model.Host;
+import dk.kontentsu.model.Item;
 
 /**
  * Repository for performing CRUD operations on host objects.

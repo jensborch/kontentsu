@@ -36,8 +36,8 @@ import javax.ws.rs.core.UriInfo;
 import dk.kontentsu.api.exposure.CategoryExposure;
 import dk.kontentsu.api.exposure.HostExposure;
 import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.internal.Item;
-import dk.kontentsu.model.internal.Provider;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.Provider;
 import io.swagger.annotations.ApiModelProperty;
 
 /**

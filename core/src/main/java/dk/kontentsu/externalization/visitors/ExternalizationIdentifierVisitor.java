@@ -1,8 +1,8 @@
 package dk.kontentsu.externalization.visitors;
 
 import dk.kontentsu.model.Content;
-import dk.kontentsu.model.internal.TemporalReferenceTree;
-import dk.kontentsu.model.internal.TemporalReferenceTreeVisitor;
+import dk.kontentsu.model.processing.TemporalReferenceTree;
+import dk.kontentsu.model.processing.TemporalReferenceTreeVisitor;
 import java.util.ArrayList;
 import java.util.List;
 import org.hashids.Hashids;

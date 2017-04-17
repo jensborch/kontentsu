@@ -7,13 +7,12 @@ package dk.kontentsu.model;
 
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.ExternalFile;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.time.ZonedDateTime;
 
-import dk.kontentsu.model.internal.Item;
-import dk.kontentsu.model.internal.Version;
 
 import org.junit.After;
 import org.junit.Before;

@@ -21,14 +21,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.model.internal;
+package dk.kontentsu.model;
+
+import java.io.Serializable;
+import java.time.ZonedDateTime;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
+ * Approver for an CDN item.
  *
  * @author Jens Borch Christiansen
  */
-public enum ReferenceType {
+@Embeddable
+public class Approver implements Serializable {
 
-    LINK, COMPOSITION;
+    private static final long serialVersionUID = -5831497378428229904L;
+
+    @NotNull
+    @Size(min = 2, max = 200)
+    @Column(name = "name", length = 200)
+    private String name;
+
+    @Column(name = "approved")
+    @NotNull
+    private ZonedDateTime approved;
+
+    protected Approver() {
+        //Needed by JPA
+        approved = ZonedDateTime.now();
+    }
+
+    public Approver(final String name) {
+        this();
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ZonedDateTime getApproved() {
+        return approved;
+    }
 
 }

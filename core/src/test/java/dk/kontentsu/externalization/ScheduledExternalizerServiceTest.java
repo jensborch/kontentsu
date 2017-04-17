@@ -1,6 +1,7 @@
 package dk.kontentsu.externalization;
 
 import dk.kontentsu.externalization.ScheduledExternalizerService;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
@@ -27,8 +28,8 @@ import dk.kontentsu.model.Content;
 import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.internal.Host;
-import dk.kontentsu.model.internal.Item;
+import dk.kontentsu.model.Host;
+import dk.kontentsu.model.Item;
 import dk.kontentsu.repository.ExternalFileRepository;
 import dk.kontentsu.util.DelTreeFileVisitor;
 

@@ -14,7 +14,7 @@ import javax.ws.rs.core.Application;
 
 import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
-import dk.kontentsu.model.internal.Host;
+import dk.kontentsu.model.Host;
 import dk.kontentsu.repository.HostRepository;
 
 import org.glassfish.hk2.utilities.binding.AbstractBinder;

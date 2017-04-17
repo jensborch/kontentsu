@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import dk.kontentsu.model.internal.Metadata;
+import dk.kontentsu.model.Metadata;
 
 /**
  * Content parser interface. Class implementing this interface are responsible for parsing content and thus finding links, compositions and metadata in content.

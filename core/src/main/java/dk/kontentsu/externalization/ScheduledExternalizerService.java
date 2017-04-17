@@ -24,7 +24,7 @@
 package dk.kontentsu.externalization;
 
 import dk.kontentsu.model.ExternalFile;
-import dk.kontentsu.model.internal.Host;
+import dk.kontentsu.model.Host;
 import dk.kontentsu.repository.ExternalFileRepository;
 import java.io.IOException;
 import java.nio.file.Files;

@@ -23,6 +23,32 @@
  */
 package dk.kontentsu.api.exposure;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dk.kontentsu.api.ApiErrorException;
+import dk.kontentsu.api.configuration.Config;
+import dk.kontentsu.api.mappers.MultipartUploadItemMapper;
+import dk.kontentsu.api.mappers.UploadItemMapper;
+import dk.kontentsu.api.model.ErrorRepresentation;
+import dk.kontentsu.api.model.ItemRepresentation;
+import dk.kontentsu.api.model.MultipartUploadItemRepresentation;
+import dk.kontentsu.api.model.UploadItemRepresentation;
+import dk.kontentsu.api.model.VersionLinkRepresentation;
+import dk.kontentsu.api.model.VersionRepresentation;
+import dk.kontentsu.exception.ValidationException;
+import dk.kontentsu.jackson.ObjectMapperFactory;
+import dk.kontentsu.model.Item.Criteria;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.Role;
+import dk.kontentsu.repository.ItemRepository;
+import dk.kontentsu.upload.UploadItem;
+import dk.kontentsu.upload.UploadService;
+import dk.kontentsu.util.rs.Cache;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -33,7 +59,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -61,7 +86,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadBase;
@@ -69,33 +93,6 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dk.kontentsu.api.ApiErrorException;
-import dk.kontentsu.api.configuration.Config;
-import dk.kontentsu.api.mappers.MultipartUploadItemMapper;
-import dk.kontentsu.api.mappers.UploadItemMapper;
-import dk.kontentsu.api.model.ErrorRepresentation;
-import dk.kontentsu.api.model.ItemRepresentation;
-import dk.kontentsu.api.model.MultipartUploadItemRepresentation;
-import dk.kontentsu.api.model.UploadItemRepresentation;
-import dk.kontentsu.api.model.VersionLinkRepresentation;
-import dk.kontentsu.api.model.VersionRepresentation;
-import dk.kontentsu.exception.ValidationException;
-import dk.kontentsu.jackson.ObjectMapperFactory;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.Role;
-import dk.kontentsu.model.internal.Item.Criteria;
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.upload.UploadItem;
-import dk.kontentsu.upload.UploadService;
-import dk.kontentsu.util.rs.Cache;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 /**
  * REST resource for listing and manipulating items on the CDN.
@@ -212,11 +209,11 @@ public class ItemExposure {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @TransactionAttribute(TransactionAttributeType.NEVER)
+
     @ApiOperation(value = "Overwrite existing content on the CDN using a data from a URL",
             notes = "Encoding must be specified for textual content")
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Content has been uploaded")
-        ,
+        @ApiResponse(code = 201, message = "Content has been uploaded"),
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
     public Response overwrite(@PathParam("item") final String item, @Valid final UploadItemRepresentation uploadItemRepresentation) {
         service.overwrite(UUID.fromString(item), new UploadItemMapper().apply(uploadItemRepresentation));
@@ -234,8 +231,7 @@ public class ItemExposure {
     @ApiOperation(value = "Upload content to the CDN using a data from a URL",
             notes = "Encoding must be specified for textual content")
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Content has been uploaded")
-        ,
+        @ApiResponse(code = 201, message = "Content has been uploaded"),
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
     public Response uploade(@Valid final UploadItemRepresentation uploadItemRepresentation) {
         service.upload(new UploadItemMapper().apply(uploadItemRepresentation));
@@ -248,6 +244,7 @@ public class ItemExposure {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     @TransactionAttribute(TransactionAttributeType.NEVER)
+
     @ApiOperation(value = "Overwrite existing content on the CDN using multipart attachment",
             notes = "Encoding must be specified for textual content", hidden = true)
     @ApiImplicitParams({
@@ -255,16 +252,14 @@ public class ItemExposure {
                 value = "Multipart upload JSON",
                 required = true,
                 dataType = "dk.kontentsu.cdn.api.model.MultipartUploadItemRepresentation",
-                paramType = "form")
-        ,
+                paramType = "form"),
         @ApiImplicitParam(name = "data",
                 value = "Multipart attachment to upload to CDN, name must match contentRef in uploaditem JSON",
                 required = true,
                 dataType = "java.io.File",
                 paramType = "body")})
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Content has been uploaded")
-        ,
+        @ApiResponse(code = 201, message = "Content has been uploaded"),
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
     public Response overwrite(@PathParam("item") final String item, @Context final HttpServletRequest request) {
         return processMultipartRequest(request, u -> {
@@ -275,14 +270,17 @@ public class ItemExposure {
     }
 
     /**
-     * Upload content to CDN using multipart request. Content should be added as an attachment.
+     * Upload content to CDN using multipart request. Content should be added as
+     * an attachment.
      *
-     * <em>Note:</em> Swagger do not support operation overloading even with different content types, so no documentation is created for this method.
+     * <em>Note:</em> Swagger do not support operation overloading even with
+     * different content types, so no documentation is created for this method.
      */
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     @TransactionAttribute(TransactionAttributeType.NEVER)
+
     @ApiOperation(value = "Upload content to the CDN using multipart attachment",
             notes = "Encoding must be specified for textual content", hidden = true)
     @ApiImplicitParams({
@@ -290,16 +288,14 @@ public class ItemExposure {
                 value = "Multipart upload JSON",
                 required = true,
                 dataType = "dk.kontentsu.cdn.api.model.MultipartUploadItemRepresentation",
-                paramType = "form")
-        ,
+                paramType = "form"),
         @ApiImplicitParam(name = "data",
                 value = "Multipart attachment to upload to CDN, name must match contentRef in uploaditem JSON",
                 required = true,
                 dataType = "java.io.File",
                 paramType = "body")})
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Content has been uploaded")
-        ,
+        @ApiResponse(code = 201, message = "Content has been uploaded"),
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
     public Response uploade(@Context final HttpServletRequest request) {
         return processMultipartRequest(request, u -> service.upload(u));

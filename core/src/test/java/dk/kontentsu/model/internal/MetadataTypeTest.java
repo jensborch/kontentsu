@@ -1,5 +1,7 @@
 package dk.kontentsu.model.internal;
 
+import dk.kontentsu.model.MetadataType;
+
 import static junit.framework.TestCase.assertEquals;
 
 import org.junit.Test;

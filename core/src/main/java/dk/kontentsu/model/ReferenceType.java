@@ -21,28 +21,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.model.internal;
+package dk.kontentsu.model;
 
 /**
- * Node visitor for temporal reference tree.
+ * The different reference (or link) types that can occur in content.
  *
- * @param <R> type of result to return from visitor
+ * @author Jens Borch Christiansen
  */
-public interface TemporalReferenceTreeVisitor<R extends TemporalReferenceTreeVisitor.Results> {
+public enum ReferenceType {
 
-    /**
-     * Called when a new node is reached.
-     *
-     * @param node the node visited
-     */
-    void visit(TemporalReferenceTree.Node node);
-
-    R getResults();
-
-    /**
-     * Results from visiting the temporal reference tree.
-     */
-    public interface Results {
-    }
+    LINK, COMPOSITION;
 
 }

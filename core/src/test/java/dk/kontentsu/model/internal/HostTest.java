@@ -1,6 +1,6 @@
 package dk.kontentsu.model.internal;
 
-import dk.kontentsu.model.internal.Host;
+import dk.kontentsu.model.Host;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

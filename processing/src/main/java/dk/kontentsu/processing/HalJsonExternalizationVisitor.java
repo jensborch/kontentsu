@@ -30,8 +30,8 @@ import dk.kontentsu.externalization.ExternalizationException;
 import dk.kontentsu.externalization.visitors.ExternalizationVisitor;
 import dk.kontentsu.jackson.ObjectMapperFactory;
 import dk.kontentsu.model.Content;
-import dk.kontentsu.model.internal.TemporalReferenceTree;
-import dk.kontentsu.model.internal.Version;
+import dk.kontentsu.model.processing.TemporalReferenceTree;
+import dk.kontentsu.model.Version;
 
 import static dk.kontentsu.processing.HalJsonContent.*;
 

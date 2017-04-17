@@ -22,20 +22,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.model.internal;
+package dk.kontentsu.model;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import dk.kontentsu.exception.ValidationException;
 import dk.kontentsu.jpa.AbstractBaseEntity;
-import dk.kontentsu.model.ExternalFile;
-import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.QContent;
-import dk.kontentsu.model.QSemanticUriPath;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.model.State;
-import dk.kontentsu.model.Taxon;
 import dk.kontentsu.repository.Repository;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -60,8 +51,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * An item that can externalized to the CDN - i.e. a file on the CDN.

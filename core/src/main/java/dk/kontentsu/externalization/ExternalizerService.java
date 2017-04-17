@@ -23,6 +23,20 @@
  */
 package dk.kontentsu.externalization;
 
+import dk.kontentsu.externalization.visitors.DefaultExternalizationVisitor;
+import dk.kontentsu.externalization.visitors.ExternalizationIdentifierVisitor;
+import dk.kontentsu.externalization.visitors.ExternalizationVisitor;
+import dk.kontentsu.model.ExternalFile;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.ReferenceType;
+import dk.kontentsu.model.Version;
+import dk.kontentsu.model.processing.ReferenceProcessor;
+import dk.kontentsu.model.processing.TemporalReferenceTree;
+import dk.kontentsu.repository.ExternalFileRepository;
+import dk.kontentsu.repository.ItemRepository;
+import dk.kontentsu.scope.InjectableContentProcessingScope;
+import dk.kontentsu.spi.ContentProcessingMimeType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,7 +48,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -50,24 +63,8 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import dk.kontentsu.externalization.visitors.DefaultExternalizationVisitor;
-import dk.kontentsu.externalization.visitors.ExternalizationIdentifierVisitor;
-import dk.kontentsu.externalization.visitors.ExternalizationVisitor;
-import dk.kontentsu.model.ExternalFile;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.internal.Item;
-import dk.kontentsu.model.internal.ReferenceProcessor;
-import dk.kontentsu.model.internal.ReferenceType;
-import dk.kontentsu.model.internal.TemporalReferenceTree;
-import dk.kontentsu.model.internal.Version;
-import dk.kontentsu.repository.ExternalFileRepository;
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.scope.InjectableContentProcessingScope;
-import dk.kontentsu.spi.ContentProcessingMimeType;
 
 /**
  * Service facade for externalizing internal content.
@@ -95,7 +92,7 @@ public class ExternalizerService {
     @Inject
     private BeanManager bm;
 
-    private static Map<MimeType, Bean<?>> externalizationVisitorBeans;
+    private Map<MimeType, Bean<?>> externalizationVisitorBeans;
 
     @PostConstruct
     public void init() {

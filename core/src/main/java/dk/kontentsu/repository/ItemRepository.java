@@ -48,8 +48,8 @@ import dk.kontentsu.model.ContentException;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.State;
-import dk.kontentsu.model.internal.Item;
-import dk.kontentsu.model.internal.Version;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.Version;
 
 /**
  * Repository for performing CRUD operations on CDN items.

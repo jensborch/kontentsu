@@ -25,7 +25,7 @@ package dk.kontentsu.api.exposure;
 
 import dk.kontentsu.api.model.ErrorRepresentation;
 import dk.kontentsu.model.Role;
-import dk.kontentsu.model.internal.Host;
+import dk.kontentsu.model.Host;
 import dk.kontentsu.repository.HostRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

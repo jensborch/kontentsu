@@ -32,9 +32,9 @@ import javax.ws.rs.core.UriInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.State;
-import dk.kontentsu.model.internal.Approver;
-import dk.kontentsu.model.internal.Metadata;
-import dk.kontentsu.model.internal.Version;
+import dk.kontentsu.model.Approver;
+import dk.kontentsu.model.Metadata;
+import dk.kontentsu.model.Version;
 import io.swagger.annotations.ApiModelProperty;
 
 /**

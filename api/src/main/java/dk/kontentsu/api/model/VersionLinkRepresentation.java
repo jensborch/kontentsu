@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import dk.kontentsu.api.exposure.ItemExposure;
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.State;
-import dk.kontentsu.model.internal.Version;
+import dk.kontentsu.model.Version;
 
 /**
  *

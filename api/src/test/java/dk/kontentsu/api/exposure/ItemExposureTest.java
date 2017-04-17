@@ -9,7 +9,7 @@ import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.model.internal.Item;
+import dk.kontentsu.model.Item;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.upload.UploadService;
 import java.util.ArrayList;

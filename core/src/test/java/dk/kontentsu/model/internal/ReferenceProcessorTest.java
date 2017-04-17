@@ -1,5 +1,11 @@
 package dk.kontentsu.model.internal;
 
+import dk.kontentsu.model.processing.ReferenceProcessor;
+import dk.kontentsu.model.processing.TemporalReferenceTree;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.Version;
+import dk.kontentsu.model.ReferenceType;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

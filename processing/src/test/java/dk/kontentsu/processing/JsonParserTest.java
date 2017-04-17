@@ -5,9 +5,9 @@ import static org.junit.Assert.assertTrue;
 
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.internal.Metadata;
-import dk.kontentsu.model.internal.MetadataType;
-import dk.kontentsu.model.internal.ReferenceType;
+import dk.kontentsu.model.Metadata;
+import dk.kontentsu.model.MetadataType;
+import dk.kontentsu.model.ReferenceType;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.test.ContentTestData;
 import java.nio.charset.StandardCharsets;

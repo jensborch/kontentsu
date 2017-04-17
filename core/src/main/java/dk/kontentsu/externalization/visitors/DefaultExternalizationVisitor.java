@@ -31,7 +31,7 @@ import org.apache.logging.log4j.Logger;
 
 import dk.kontentsu.externalization.ExternalizationException;
 import dk.kontentsu.model.Content;
-import dk.kontentsu.model.internal.TemporalReferenceTree;
+import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;

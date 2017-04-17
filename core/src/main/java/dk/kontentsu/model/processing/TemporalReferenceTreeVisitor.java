@@ -21,51 +21,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.model.internal;
-
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+package dk.kontentsu.model.processing;
 
 /**
- * Approver for an CDN item.
+ * Node visitor for temporal reference tree.
  *
- * @author Jens Borch Christiansen
+ * @param <R> type of result to return from visitor
  */
-@Embeddable
-public class Approver implements Serializable {
+public interface TemporalReferenceTreeVisitor<R extends TemporalReferenceTreeVisitor.Results> {
 
-    private static final long serialVersionUID = -5831497378428229904L;
+    /**
+     * Called when a new node is reached.
+     *
+     * @param node the node visited
+     */
+    void visit(TemporalReferenceTree.Node node);
 
-    @NotNull
-    @Size(min = 2, max = 200)
-    @Column(name = "name", length = 200)
-    private String name;
+    R getResults();
 
-    @Column(name = "approved")
-    @NotNull
-    private ZonedDateTime approved;
-
-    protected Approver() {
-        //Needed by JPA
-        approved = ZonedDateTime.now();
-    }
-
-    public Approver(final String name) {
-        this();
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public ZonedDateTime getApproved() {
-        return approved;
+    /**
+     * Results from visiting the temporal reference tree.
+     */
+    public interface Results {
     }
 
 }

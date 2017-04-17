@@ -28,8 +28,8 @@ import org.junit.Test;
 
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.model.internal.Host;
-import dk.kontentsu.model.internal.Item;
+import dk.kontentsu.model.Host;
+import dk.kontentsu.model.Item;
 import dk.kontentsu.test.TestEJBContainer;
 
 /**

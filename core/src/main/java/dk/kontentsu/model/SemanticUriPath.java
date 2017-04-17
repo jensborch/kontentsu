@@ -23,7 +23,6 @@
  */
 package dk.kontentsu.model;
 
-import dk.kontentsu.model.internal.Item;
 import dk.kontentsu.repository.Repository;
 import java.util.Collections;
 import java.util.HashSet;
