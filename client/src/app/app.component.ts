@@ -3,9 +3,10 @@ import { ContentService } from './content.service';
 import { TemplateComponent } from './template.component';
 import { Logger } from './logger.service';
 import { BrowserModule, Title } from '@angular/platform-browser';
+
 @Component({
     selector: 'k-app',
-    templateUrl: 'app.component.html'
+    templateUrl: 'app.component.html',
 })
 export class AppComponent implements OnInit {
     frontPage: String = 'pages/page-simple/page-simple';
