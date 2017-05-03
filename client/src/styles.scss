@@ -1,46 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
 
-/* Material Design Lite */
+@import '~@angular/material/theming';
 
-// Variables and mixins
-@import "~material-design-lite/src/variables";
-@import "~material-design-lite/src/mixins";
+@include mat-core();
 
-// Resets and dependencies
-@import "~material-design-lite/src/resets/resets";
-@import "~material-design-lite/src/typography/typography";
+$dark-primary: mat-palette($mat-blue-grey);
+$dark-accent:  mat-palette($mat-amber, A200, A100, A400);
+$dark-warn:    mat-palette($mat-deep-orange);
+$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
 
-// Components
-@import "~material-design-lite/src/palette/palette";
-
-@import "~material-design-lite/src/layout/layout";
-
-@import "~material-design-lite/src/grid/grid";
-
-.ribbon {
-  width: 100%;
-  height: 40vh;
-  background-color: #3F51B5;
-  flex-shrink: 0;
-}
-
-.main {
-  margin-top: -35vh;
-  flex-shrink: 0;
-}
-
-.header .mdl-layout__header-row {
-  padding-left: 40px;
-}
-
-.container {
-  max-width: 1600px;
-  width: calc(100% - 16px);
-  margin: 0 auto;
-}
-
-.content {
-  border-radius: 2px;
-  padding: 80px 56px;
-  margin-bottom: 80px;
-}
+@include angular-material-theme($dark-theme);

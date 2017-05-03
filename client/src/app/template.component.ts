@@ -1,9 +1,10 @@
-import { NgModule, OnChanges, Component, Input, ViewContainerRef, AfterViewInit, Compiler, ComponentRef, ViewChild} from '@angular/core';
+import { NgModule, OnChanges, Component, Input, ViewContainerRef, AfterViewInit, Compiler, ComponentRef, ViewChild } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { CommonModule } from '@angular/common';
 import { PageModule } from './page.module';
 import { ArticleComponent } from './article/article.component';
 import { Logger } from './logger.service';
+
 
 @Component({
     selector: 'k-template',
@@ -31,6 +32,7 @@ export class TemplateComponent implements OnChanges, AfterViewInit {
         @NgModule({
             imports: [CommonModule, PageModule],
             declarations: [DynamicTemplateComponent],
+            exports: [PageModule]
         })
         class DynamicTemplateModule { }
 

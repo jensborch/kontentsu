@@ -8,13 +8,10 @@ import { TemplateComponent } from './template.component';
 import { ContentService } from './content.service';
 import { Logger } from './logger.service';
 
-import { MdlDirective } from './mdl.directive';
-
 @NgModule({
   declarations: [
     AppComponent,
-    TemplateComponent,
-    MdlDirective
+    TemplateComponent
   ],
   imports: [
     BrowserModule,
