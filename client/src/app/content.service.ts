@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http, Response } from '@angular/http';
+import { environment } from '../environments/environment';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -9,12 +10,11 @@ export class ContentService {
     private headers = new Headers({
         'Content-Type': 'application/json'
     });
-    private contentUrl = 'http://localhost:9090/kontentsu/api/files/';  // URL to web api
 
     constructor(private http: Http) { }
 
     getPage(path: String): Promise<any> {
-        return this.http.get(this.contentUrl + path, {headers: this.headers})
+        return this.http.get(environment.filesApi + path, {headers: this.headers})
             .toPromise()
             .then((response: Response) => response.json())
             .catch(this.handleError);
