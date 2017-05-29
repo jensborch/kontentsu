@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { TemplateComponent } from './template.component';
 import { ContentService } from './content.service';
 import { Logger } from './logger.service';
+import { MaterialModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { Logger } from './logger.service';
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    MaterialModule 
   ],
   providers: [ContentService, Logger],
   bootstrap: [AppComponent]

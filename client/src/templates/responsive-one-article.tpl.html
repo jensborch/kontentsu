@@ -1,8 +1,9 @@
-<div class="flex-container" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="center center" fxLayoutAlign.xs="start">
-    <div class="flex-item" fxFlex="80%" fxFlex.xs="90%">
-        <div class="content">
-            <k-article *ngFor="let article of page.content.articles" [data]="article">
-            </k-article>
-        </div>
-    </div>
-</div>
+<md-toolbar color="primary" class="k-toolbar">
+    <span>{{page.content.heading}}</span>
+</md-toolbar>
+
+
+<md-card>
+    <k-article *ngFor="let article of page.content.articles" [data]="article">
+    </k-article>
+</md-card>

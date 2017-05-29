@@ -1,6 +1,7 @@
 
 const modRewrite = require('connect-modrewrite');
-var serveStatic = require('serve-static');
+const serveStatic = require('serve-static');
+const cors = require('connect-cors')
 const connect = require('connect');
 const http = require('http');
 const path = require('path');
@@ -10,10 +11,9 @@ const files = path.join(__dirname, 'files');
 var app = connect();
 
 app.use(modRewrite([
-    '^/test$ /index.html',
-    '^/test/\\d*$ /index.html [L]',
-    '^/test/\\d*/\\d*$ /flag.html [L]'
+    '^/kontentsu/api/files/(.+)/$ /$1/index.json [L]'
 ]))
+    .use(cors({}))
     .use(serveStatic(files));
 
-http.createServer(app).listen(8080);
+http.createServer(app).listen(9090);

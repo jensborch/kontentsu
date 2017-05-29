@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ArticleComponent } from './article/article.component';
-import { MaterialModule } from '@angular/material';
-import { MdCardModule, MdSidenavModule, MdIconModule, MdGridListModule, MdListModule, MdToolbarModule } from '@angular/material';
-import { FlexLayoutModule } from "@angular/flex-layout";
+import { MdCardModule, MdMenuModule, MdIconModule, MdToolbarModule } from '@angular/material';
+//import { FlexLayoutModule, MediaMonitor } from "@angular/flex-layout";
 
 
 @NgModule({
-    imports: [CommonModule, FlexLayoutModule],
+    imports: [CommonModule,  MdCardModule, MdMenuModule, MdIconModule, MdToolbarModule],
     declarations: [ArticleComponent],
-    exports: [ArticleComponent, MdCardModule, MdSidenavModule, MdIconModule, MdGridListModule, MdListModule, MdToolbarModule]
+    providers: [],
+    exports: [ArticleComponent, MdCardModule, MdMenuModule, MdIconModule, MdToolbarModule]
 })
 export class PageModule { }

@@ -9,7 +9,7 @@ import { BrowserModule, Title } from '@angular/platform-browser';
     templateUrl: 'app.component.html',
 })
 export class AppComponent implements OnInit {
-    frontPage: String = 'pages/page-simple/page-simple';
+    frontPage: String = 'pages/page-simple/';
     template: String = 'templates/responsive-one-article.tpl.html';
     page = {
         content: { heading: 'Test title' }

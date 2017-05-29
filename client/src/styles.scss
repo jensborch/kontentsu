@@ -3,15 +3,15 @@
 
 @include mat-core();
 
-$dark-primary: mat-palette($mat-blue-grey);
-$dark-accent:  mat-palette($mat-amber, A200, A100, A400);
-$dark-warn:    mat-palette($mat-deep-orange);
-$dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+$candy-app-primary: mat-palette($mat-indigo);
+$candy-app-accent:  mat-palette($mat-pink, A200, A100, A400);
 
-@include angular-material-theme($dark-theme);
+$candy-app-warn:    mat-palette($mat-red);
 
-.content {
-    border-radius: 2px;
-    padding: 80px 56px;
-    margin-bottom: 80px;
+$candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent, $candy-app-warn);
+
+@include angular-material-theme($candy-app-theme);
+
+body {
+    margin: 0px
 }
