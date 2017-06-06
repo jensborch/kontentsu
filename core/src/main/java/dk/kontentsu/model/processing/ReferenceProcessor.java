@@ -24,6 +24,7 @@
 package dk.kontentsu.model.processing;
 
 import dk.kontentsu.model.Version;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +36,6 @@ import java.util.Optional;
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.processing.TemporalReferenceTree.Node;
-import dk.kontentsu.scope.InjectableContentProcessingScope;
 
 /**
  * Breadth-first tree processor for finding all temporal versions of items that

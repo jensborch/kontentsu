@@ -35,8 +35,9 @@ import dk.kontentsu.model.processing.ReferenceProcessor;
 import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.repository.ExternalFileRepository;
 import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.scope.InjectableContentProcessingScope;
+import dk.kontentsu.model.processing.InjectableContentProcessingScope;
 import dk.kontentsu.spi.ContentProcessingMimeType;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
@@ -63,6 +65,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

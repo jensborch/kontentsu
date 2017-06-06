@@ -1,36 +1,30 @@
-package dk.kontentsu.model.internal;
-
-import dk.kontentsu.model.processing.ReferenceProcessor;
-import dk.kontentsu.model.processing.TemporalReferenceTree;
-import dk.kontentsu.model.Item;
-import dk.kontentsu.model.Version;
-import dk.kontentsu.model.ReferenceType;
+package dk.kontentsu.model;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import dk.kontentsu.model.Content;
-import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.scope.InjectableContentProcessingScope;
-import dk.kontentsu.spi.ContentProcessingExtension;
-import dk.kontentsu.test.ContentTestData;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.CdiRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import dk.kontentsu.model.processing.InjectableContentProcessingScope;
+import dk.kontentsu.model.processing.ReferenceProcessor;
+import dk.kontentsu.model.processing.TemporalReferenceTree;
+import dk.kontentsu.spi.ContentProcessingExtension;
+import dk.kontentsu.test.ContentTestData;
 
 /**
  * Test for {@link ReferenceProcessor}

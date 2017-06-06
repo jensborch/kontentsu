@@ -1,4 +1,4 @@
-package dk.kontentsu.scope;
+package dk.kontentsu.model.processing;
 
 import dk.kontentsu.model.Content;
 import dk.kontentsu.spi.ContentProcessingScoped;

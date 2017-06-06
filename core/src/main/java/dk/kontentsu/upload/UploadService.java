@@ -35,14 +35,16 @@ import dk.kontentsu.parsers.Link;
 import dk.kontentsu.repository.CategoryRepository;
 import dk.kontentsu.repository.HostRepository;
 import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.scope.InjectableContentProcessingScope;
+import dk.kontentsu.model.processing.InjectableContentProcessingScope;
 import dk.kontentsu.spi.ContentProcessingMimeType;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -53,6 +55,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.validation.Valid;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

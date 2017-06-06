@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.scope;
+package dk.kontentsu.model.processing;
 
 import dk.kontentsu.model.Content;
 import dk.kontentsu.spi.ContentProcessingScope;

@@ -1,4 +1,4 @@
-package dk.kontentsu.model.internal;
+package dk.kontentsu.model;
 
 import dk.kontentsu.model.MetadataType;
 
