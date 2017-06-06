@@ -21,19 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.api.mappers;
+package dk.kontentsu.api.exposure.mappers;
 
-import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.function.Function;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import dk.kontentsu.api.mappers.MultipartUploadItemMapper.MultipartUploadItem;
-import dk.kontentsu.api.model.MultipartUploadItemRepresentation;
-import dk.kontentsu.exception.ValidationException;
+import dk.kontentsu.api.exposure.model.UploadItemRepresentation;
 import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.MimeType;
 import dk.kontentsu.upload.UploadItem;
 
 /**
@@ -41,49 +38,30 @@ import dk.kontentsu.upload.UploadItem;
  *
  * @author Jens Borch Christiansen
  */
-public class MultipartUploadItemMapper implements Function<MultipartUploadItem, UploadItem> {
+public class UploadItemMapper implements Function<UploadItemRepresentation, UploadItem> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
-    public UploadItem apply(final MultipartUploadItem from) {
+    public UploadItem apply(final UploadItemRepresentation from) {
         final UploadItem.Builder builder = UploadItem.builder()
-                .uri(from.item.getUri())
-                .mimeType(from.mimetype)
-                .content(from.item.getContentRef(), from.is);
+                .uri(from.getUri())
+                .content(from.getContentUrl())
+                .mimeType(from.getMimeType());
 
-        if (from.item.getInterval() == null) {
-            LOGGER.debug("Using default interval for item: {}", from.item.getUri());
+        if (from.getInterval() == null) {
+            LOGGER.debug("Using default interval for item: {}", from.getUri());
             builder.interval(new Interval());
         } else {
-            builder.interval(from.item.getInterval());
+            builder.interval(from.getInterval());
         }
 
-        from.item.getHosts().stream().forEach(h -> builder.host(h));
+        from.getHost().stream().forEach(h -> builder.host(h));
 
-        if (from.mimetype.isText()) {
-            builder.encoding(from.mimetype.getCharset()
-                    .orElseThrow(() -> new ValidationException("Encoding must be part of attachment mimetype for upload item: " + from.item.getUri().toString())));
+        if (from.getEncoding() != null) {
+            builder.encoding(Charset.forName(from.getEncoding()));
         }
 
         return builder.build();
     }
-
-    /**
-     * Representation of a multipart upload.
-     */
-    public static class MultipartUploadItem {
-
-        private final MultipartUploadItemRepresentation item;
-        private final MimeType mimetype;
-        private final InputStream is;
-
-        public MultipartUploadItem(final MultipartUploadItemRepresentation item, final MimeType mimetype, final InputStream is) {
-            this.item = item;
-            this.mimetype = mimetype;
-            this.is = is;
-        }
-
-    }
-
 }

@@ -23,7 +23,7 @@
  */
 package dk.kontentsu.api.exposure;
 
-import dk.kontentsu.api.model.ErrorRepresentation;
+import dk.kontentsu.api.exposure.model.ErrorRepresentation;
 import dk.kontentsu.model.Role;
 import dk.kontentsu.model.Host;
 import dk.kontentsu.repository.HostRepository;
@@ -31,9 +31,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;

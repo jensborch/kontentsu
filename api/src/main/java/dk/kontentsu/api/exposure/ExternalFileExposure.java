@@ -23,7 +23,7 @@
  */
 package dk.kontentsu.api.exposure;
 
-import dk.kontentsu.api.model.ErrorRepresentation;
+import dk.kontentsu.api.exposure.model.ErrorRepresentation;
 import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.repository.ExternalFileRepository;
@@ -33,7 +33,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
 import java.time.ZonedDateTime;
+
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.inject.Inject;

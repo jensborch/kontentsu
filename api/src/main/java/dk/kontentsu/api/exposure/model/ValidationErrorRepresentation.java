@@ -1,4 +1,4 @@
-package dk.kontentsu.api.model;
+package dk.kontentsu.api.exposure.model;
 
 import java.util.ArrayList;
 import java.util.Collections;

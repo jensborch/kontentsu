@@ -12,7 +12,7 @@ plugins {
     id 'jacoco'
     id 'pmd'
     id 'com.github.ben-manes.versions' version '0.14.0'
-    id 'de.aaschmid.cpd' version '1.0' 
+    id 'de.aaschmid.cpd' version '1.0'
     id 'nebula.lint' version '6.8.0'
 }
 
@@ -38,7 +38,7 @@ ext {
     angularVersion = '1.6.1'
     materialDesignIconsVersions = '2.2.0'
 
-    payaraVersion = '4.1.1.171.1'
+    payaraVersion = '4.1.2.172'
 
     checkstyleVersion = "7.5.1"
     findbugsVersion =  "3.0.1"
@@ -65,11 +65,11 @@ allprojects {
         options.incremental = true
         options.fork = true
     }
-    
+
     apply plugin: 'nebula.lint'
-    gradleLint.rules = ['unused-dependency'] 
-    gradleLint.alwaysRun = false    
-    
+    gradleLint.rules = ['unused-dependency']
+    gradleLint.alwaysRun = false
+
     tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
     }
@@ -79,22 +79,22 @@ allprojects {
             println commandLine
         }
     }
-    
+
     task findbugs(
-        group: "Verification", 
+        group: "Verification",
         description: "Marker task to enabled Findbugs."
     )
-    
+
     task pmd(
-        group: "Verification", 
+        group: "Verification",
         description: "Marker task to enabled PMD."
-    )    
-    
+    )
+
     task checkstyle(
-        group: "Verification", 
+        group: "Verification",
         description: "Marker task to enabled Checkstyle."
     )
-    
+
     repositories {
         jcenter()
         mavenCentral()
@@ -109,35 +109,35 @@ subprojects {
     apply plugin: 'pmd'
     apply plugin: 'jacoco'
     apply plugin: 'org.owasp.dependencycheck'
-    
-    
+
+
     gradle.taskGraph.whenReady { taskGraph ->
-        tasks.findbugsMain.onlyIf { 
+        tasks.findbugsMain.onlyIf {
             taskGraph.hasTask((tasks.findbugs))
         }
-        tasks.findbugsTest.onlyIf {  
-            taskGraph.hasTask((tasks.findbugs)) 
+        tasks.findbugsTest.onlyIf {
+            taskGraph.hasTask((tasks.findbugs))
         }
     }
-    
+
     gradle.taskGraph.whenReady { taskGraph ->
-        tasks.pmdMain.onlyIf { 
+        tasks.pmdMain.onlyIf {
             taskGraph.hasTask((tasks.pmd))
         }
-        tasks.pmdTest.onlyIf {  
-            taskGraph.hasTask((tasks.pmd)) 
+        tasks.pmdTest.onlyIf {
+            taskGraph.hasTask((tasks.pmd))
         }
-    }    
-     
+    }
+
     gradle.taskGraph.whenReady { taskGraph ->
-        tasks.checkstyleMain.onlyIf { 
+        tasks.checkstyleMain.onlyIf {
             taskGraph.hasTask((tasks.checkstyle))
         }
-        tasks.checkstyleTest.onlyIf {  
-            taskGraph.hasTask((tasks.checkstyle)) 
+        tasks.checkstyleTest.onlyIf {
+            taskGraph.hasTask((tasks.checkstyle))
         }
-    }       
-    
+    }
+
     checkstyle {
         toolVersion = checkstyleVersion
         ignoreFailures = true
@@ -162,18 +162,18 @@ subprojects {
         ignoreFailures = true
         ruleSetFiles = files("$rootProject.projectDir/config/pmd/ruleset.xml")
     }
-    
+
     plugins.withType(JavaBasePlugin) {
         check.dependsOn(rootProject.cpdCheck)
-    }    
-    
+    }
+
     cpd {
         toolVersion = pmdVersion
         ignoreFailures = true
         ignoreAnnotations = true
         minimumTokenCount = 50
     }
-    
+
     cpdCheck {
         reports {
             text.enabled = false
@@ -206,10 +206,10 @@ subprojects {
             junitXml.destination = "$buildDir/integration-test-results"
         }
     }
-    
+
     task javadocJar(type: Jar, dependsOn: javadoc) {
         appendix = 'javadoc'
-        from(javadoc.destinationDir) { 
+        from(javadoc.destinationDir) {
             into "META-INF/resources/webjars/${baseName}"
         }
     }

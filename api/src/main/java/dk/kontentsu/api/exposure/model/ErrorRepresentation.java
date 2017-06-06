@@ -21,50 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.api.model;
+package dk.kontentsu.api.exposure.model;
 
-import javax.ws.rs.core.Link;
-import javax.ws.rs.core.UriInfo;
-
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import dk.kontentsu.api.exposure.ItemExposure;
-import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.State;
-import dk.kontentsu.model.Version;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import dk.kontentsu.exception.ErrorCode;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
+ * Generic error response representation, containing a unique error code.
  *
  * @author Jens Borch Christiansen
  */
-public class VersionLinkRepresentation {
+@JsonInclude(Include.NON_NULL)
+public class ErrorRepresentation {
 
-    private final Link link;
+    @ApiModelProperty(value = "The message of the error", required = false)
+    private final String msg;
 
-    @JsonUnwrapped
-    private final Interval interval;
+    @ApiModelProperty(value = "Unique identifier of the error", required = true)
+    private final String code;
 
-    private final State state;
-
-    public VersionLinkRepresentation(final Version v, final UriInfo uriInfo) {
-        this.link = Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
-                .path(ItemExposure.class)
-                .path(ItemExposure.class, "getVersion"))
-                .rel("version")
-                .build(v.getItem().getUuid(), v.getUuid());
-        this.interval = v.getInterval();
-        this.state = v.getState();
+    public ErrorRepresentation(final ErrorCode code, final String msg) {
+        this.code = code.getErrorCode();
+        this.msg = msg;
     }
 
-    public Interval getInterval() {
-        return interval;
+    public String getMsg() {
+        return msg;
     }
 
-    public Link getLink() {
-        return link;
-    }
-
-    public State getState() {
-        return state;
+    public String getCode() {
+        return code;
     }
 
 }

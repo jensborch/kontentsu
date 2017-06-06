@@ -23,11 +23,13 @@
  */
 package dk.kontentsu.api.exceptionmappers;
 
-import dk.kontentsu.api.model.ErrorRepresentation;
+import dk.kontentsu.api.exposure.model.ErrorRepresentation;
 import dk.kontentsu.exception.ErrorCode;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 

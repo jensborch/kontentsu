@@ -21,40 +21,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.api.model;
+package dk.kontentsu.api.exposure.model;
 
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.UriInfo;
 
-import dk.kontentsu.api.exposure.ItemExposure;
-import dk.kontentsu.model.Reference;
-import dk.kontentsu.model.ReferenceType;
+import dk.kontentsu.api.exposure.CategoryExposure;
+import dk.kontentsu.model.Category;
 
 /**
- * Representation of a reference between versions - e.g. a link or a composition.
  *
  * @author Jens Borch Christiansen
  */
-public class ReferenceRepresentation {
+public class CategoryRepresentation {
 
-    private final Link link;
+    @NotNull
+    private final Link taxonomy;
 
-    private final ReferenceType type;
+    @NotNull
+    private final String path;
 
-    public ReferenceRepresentation(final Reference reference, final UriInfo uriInfo) {
-        this.type = reference.getType();
-        this.link = Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
-                .path(ItemExposure.class)
-                .path(ItemExposure.class, "get"))
-                .rel("item").build(reference.getItem().getUuid());
+    public CategoryRepresentation(final Category c, final UriInfo uriInfo) {
+        this.taxonomy = Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
+                .path(CategoryExposure.class)
+                .path(CategoryExposure.class, "getTaxonomy"))
+                .rel("taxonomy")
+                .title(c.getTaxonomy().getName())
+                .build(c.getTaxonomy().getName());
+        this.path = c.toString();
     }
 
-    public Link getLink() {
-        return link;
+    public String getPath() {
+        return path;
     }
 
-    public ReferenceType getType() {
-        return type;
+    public Link getTaxonomy() {
+        return taxonomy;
     }
 
 }

@@ -37,8 +37,8 @@ import javax.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import dk.kontentsu.api.model.ErrorRepresentation;
-import dk.kontentsu.api.model.ValidationErrorRepresentation;
+import dk.kontentsu.api.exposure.model.ErrorRepresentation;
+import dk.kontentsu.api.exposure.model.ValidationErrorRepresentation;
 import dk.kontentsu.exception.ErrorCode;
 
 /**

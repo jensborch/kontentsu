@@ -28,7 +28,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import dk.kontentsu.api.model.ValidationErrorRepresentation;
+import dk.kontentsu.api.exposure.model.ValidationErrorRepresentation;
 import dk.kontentsu.exception.ErrorCode;
 
 /**

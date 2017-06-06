@@ -21,73 +21,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.api.model;
+package dk.kontentsu.api.exposure.model;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import javax.ws.rs.core.Link;
 import javax.ws.rs.core.UriInfo;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import dk.kontentsu.api.exposure.ItemExposure;
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.State;
-import dk.kontentsu.model.Approver;
-import dk.kontentsu.model.Metadata;
 import dk.kontentsu.model.Version;
-import io.swagger.annotations.ApiModelProperty;
 
 /**
- * Representation of a version of an item in the CDN.
  *
  * @author Jens Borch Christiansen
  */
-public class VersionRepresentation {
+public class VersionLinkRepresentation {
 
-    private final Map<Metadata.Key, Metadata> metadata;
-
-    @ApiModelProperty(value = "Mimetype of the version", required = true)
-    private final String mimeType;
+    private final Link link;
 
     @JsonUnwrapped
     private final Interval interval;
 
-    @ApiModelProperty(value = "The state of this version - e.g. draft", required = true)
     private final State state;
 
-    @ApiModelProperty(value = "The preson who approved this version", required = false)
-    private final Approver approver;
-
-    @ApiModelProperty(value = "List of references", required = false)
-    private final List<ReferenceRepresentation> references;
-
-    public VersionRepresentation(final Version v,  final UriInfo uriInfo) {
-        this.mimeType = v.getContent().getMimeType().toString();
+    public VersionLinkRepresentation(final Version v, final UriInfo uriInfo) {
+        this.link = Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
+                .path(ItemExposure.class)
+                .path(ItemExposure.class, "getVersion"))
+                .rel("version")
+                .build(v.getItem().getUuid(), v.getUuid());
         this.interval = v.getInterval();
         this.state = v.getState();
-        this.approver = v.getApprover();
-        this.references = v.getReferences().stream().map(r -> new ReferenceRepresentation(r, uriInfo)).collect(Collectors.toList());
-        this.metadata = v.getMetadata();
-    }
-
-    public State getState() {
-        return state;
     }
 
     public Interval getInterval() {
         return interval;
     }
 
-    public String getMimeType() {
-        return mimeType;
+    public Link getLink() {
+        return link;
     }
 
-    public Approver getApprover() {
-        return approver;
-    }
-
-    public List<ReferenceRepresentation> getReferences() {
-        return references;
+    public State getState() {
+        return state;
     }
 
 }

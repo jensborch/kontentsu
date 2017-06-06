@@ -21,38 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.api.model;
+package dk.kontentsu.api.exposure.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import dk.kontentsu.exception.ErrorCode;
-import io.swagger.annotations.ApiModelProperty;
+import javax.ws.rs.core.Link;
+import javax.ws.rs.core.UriInfo;
+
+import dk.kontentsu.api.exposure.ItemExposure;
+import dk.kontentsu.model.Reference;
+import dk.kontentsu.model.ReferenceType;
 
 /**
- * Generic error response representation, containing a unique error code.
+ * Representation of a reference between versions - e.g. a link or a composition.
  *
  * @author Jens Borch Christiansen
  */
-@JsonInclude(Include.NON_NULL)
-public class ErrorRepresentation {
+public class ReferenceRepresentation {
 
-    @ApiModelProperty(value = "The message of the error", required = false)
-    private final String msg;
+    private final Link link;
 
-    @ApiModelProperty(value = "Unique identifier of the error", required = true)
-    private final String code;
+    private final ReferenceType type;
 
-    public ErrorRepresentation(final ErrorCode code, final String msg) {
-        this.code = code.getErrorCode();
-        this.msg = msg;
+    public ReferenceRepresentation(final Reference reference, final UriInfo uriInfo) {
+        this.type = reference.getType();
+        this.link = Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
+                .path(ItemExposure.class)
+                .path(ItemExposure.class, "get"))
+                .rel("item").build(reference.getItem().getUuid());
     }
 
-    public String getMsg() {
-        return msg;
+    public Link getLink() {
+        return link;
     }
 
-    public String getCode() {
-        return code;
+    public ReferenceType getType() {
+        return type;
     }
 
 }

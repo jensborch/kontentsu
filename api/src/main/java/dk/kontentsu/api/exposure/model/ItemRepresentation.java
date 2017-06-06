@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.api.model;
+package dk.kontentsu.api.exposure.model;
 
 import java.util.Collections;
 import java.util.List;

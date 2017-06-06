@@ -23,8 +23,8 @@
  */
 package dk.kontentsu.api.exposure;
 
-import dk.kontentsu.api.model.CategoryRepresentation;
-import dk.kontentsu.api.model.ErrorRepresentation;
+import dk.kontentsu.api.exposure.model.CategoryRepresentation;
+import dk.kontentsu.api.exposure.model.ErrorRepresentation;
 import dk.kontentsu.model.Role;
 import dk.kontentsu.model.Taxon;
 import dk.kontentsu.model.Taxonomy;
@@ -34,8 +34,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
