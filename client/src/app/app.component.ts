@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ContentService } from './content.service';
-import { TemplateComponent } from './template.component';
+import { TemplateComponent } from './template/template.component';
 import { Logger } from './logger.service';
 import { BrowserModule, Title } from '@angular/platform-browser';
 
 @Component({
     selector: 'k-app',
-    templateUrl: 'app.component.html',
+    template: '<k-template *ngIf="page.content" [url]="template" [data]="page"></k-template>'
 })
 export class AppComponent implements OnInit {
     frontPage: String = 'pages/page-simple/';

@@ -4,7 +4,7 @@ import { HttpModule, Http } from '@angular/http';
 import { TestBed, async, inject } from '@angular/core/testing';
 import { Title } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
-import { TemplateComponent } from './template.component';
+import { TemplateComponent } from './template/template.component';
 import { ContentService } from './content.service';
 import { Logger } from './logger.service';
 

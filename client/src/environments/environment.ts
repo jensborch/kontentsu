@@ -5,5 +5,5 @@
 
 export const environment = {
   production: false,
-  filesApi: "http://localhost:9090/kontentsu/api/files/"
+  filesApi: 'http://localhost:9090/kontentsu/api/files/'
 };
