@@ -1,10 +1,14 @@
-<md-toolbar color="primary" class="k-toolbar">
-    <span>{{page.content.heading}}</span>
-</md-toolbar>
+<div class="page-header">
+    <md-toolbar color="primary" class="k-toolbar">
+        <span>{{page.content.heading}}</span>
+        <md-toolbar-row>
+        </md-toolbar-row>
+    </md-toolbar>
+</div>
 
 <div class="page-content">
-<md-card>
-    <k-article *ngFor="let article of page.content.articles" [data]="article">
-    </k-article>
-</md-card>
+    <md-card>
+        <k-article *ngFor="let article of page.content.articles" [data]="article">
+        </k-article>
+    </md-card>
 </div>
