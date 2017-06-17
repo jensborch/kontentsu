@@ -23,7 +23,6 @@
  */
 package dk.kontentsu.model;
 
-import dk.kontentsu.spi.ContentProcessingMimeType;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
@@ -39,14 +38,18 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.core.MediaType;
-import org.apache.logging.log4j.Logger;
+
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import dk.kontentsu.spi.ContentProcessingMimeType;
 
 /**
  * Class representing the content Mime Type of a item in the CDN, but also
