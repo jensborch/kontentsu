@@ -29,7 +29,6 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import dk.kontentsu.externalization.ExternalizationException;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.repository.ItemRepository;
