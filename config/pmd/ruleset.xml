@@ -18,11 +18,6 @@
             <property name="fieldCommentRequirement" value="Ignored"/>
         </properties>
     </rule>
-    <rule ref="rulesets/java/comments.xml/CommentSize">
-        <properties>
-            <property name="violationSuppressRegex" value="\/\*(.|\n)*The\sMIT\sLicense(.|\n)*\*\/"/>
-        </properties>
-    </rule>
     <rule ref="rulesets/java/controversial.xml">
         <exclude name="AtLeastOneConstructor"/>
         <exclude name="CallSuperInConstructor"/>
