@@ -35,6 +35,7 @@
     </rule>
     <rule ref="rulesets/java/design.xml">
         <exclude name="AccessorClassGeneration"/>
+        <exclude name="AccessorMethodGeneration"/>
     </rule>
     <rule ref="rulesets/java/empty.xml"/>
     <rule ref="rulesets/java/finalizers.xml"/>
