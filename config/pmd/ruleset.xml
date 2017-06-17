@@ -20,7 +20,7 @@
     </rule>
     <rule ref="rulesets/java/comments.xml/CommentSize">
         <properties>
-            <property name="violationSuppressRegex" value="/\*.*The\sMIT\sLicense.*\*/"/>
+            <property name="violationSuppressRegex" value="\/\*(.|\n)*The\sMIT\sLicense(.|\n)*\*\/"/>
         </properties>
     </rule>
     <rule ref="rulesets/java/controversial.xml">
