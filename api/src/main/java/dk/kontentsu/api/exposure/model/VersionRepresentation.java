@@ -23,6 +23,8 @@
  */
 package dk.kontentsu.api.exposure.model;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,10 +32,10 @@ import java.util.stream.Collectors;
 import javax.ws.rs.core.UriInfo;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.State;
 import dk.kontentsu.model.Approver;
+import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.Metadata;
+import dk.kontentsu.model.State;
 import dk.kontentsu.model.Version;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -44,7 +46,7 @@ import io.swagger.annotations.ApiModelProperty;
  */
 public class VersionRepresentation {
 
-    private final Map<Metadata.Key, Metadata> metadata;
+    private final Map<Metadata.Key, Metadata> metadata = new HashMap<>();
 
     @ApiModelProperty(value = "Mimetype of the version", required = true)
     private final String mimeType;
@@ -61,13 +63,13 @@ public class VersionRepresentation {
     @ApiModelProperty(value = "List of references", required = false)
     private final List<ReferenceRepresentation> references;
 
-    public VersionRepresentation(final Version v,  final UriInfo uriInfo) {
+    public VersionRepresentation(final Version v, final UriInfo uriInfo) {
         this.mimeType = v.getContent().getMimeType().toString();
         this.interval = v.getInterval();
         this.state = v.getState();
         this.approver = v.getApprover();
         this.references = v.getReferences().stream().map(r -> new ReferenceRepresentation(r, uriInfo)).collect(Collectors.toList());
-        this.metadata = v.getMetadata();
+        metadata.putAll(v.getMetadata());
     }
 
     public State getState() {
@@ -87,7 +89,11 @@ public class VersionRepresentation {
     }
 
     public List<ReferenceRepresentation> getReferences() {
-        return references;
+        return Collections.unmodifiableList(references);
+    }
+
+    public Map<Metadata.Key, Metadata> getMetadata() {
+        return Collections.unmodifiableMap(metadata);
     }
 
 }

@@ -18,7 +18,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class ValidationErrorRepresentation extends ErrorRepresentation {
 
     @ApiModelProperty(value = "List of validation errors", required = true)
-    private List<Violation> violations = new ArrayList<>();
+    private final List<Violation> violations = new ArrayList<>();
 
     public ValidationErrorRepresentation(final ErrorCode code, final ConstraintViolationException e) {
         super(code, e.getMessage());
