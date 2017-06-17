@@ -23,9 +23,6 @@
  */
 package dk.kontentsu.externalization;
 
-import dk.kontentsu.externalization.visitors.DefaultExternalizationVisitor;
-import dk.kontentsu.externalization.visitors.ExternalizationIdentifierVisitor;
-import dk.kontentsu.externalization.visitors.ExternalizationVisitor;
 import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;

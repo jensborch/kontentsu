@@ -29,13 +29,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import dk.kontentsu.externalization.ExternalizationException;
-import dk.kontentsu.externalization.visitors.ExternalizationVisitor;
+import dk.kontentsu.externalization.ExternalizationVisitor;
 import dk.kontentsu.jackson.ObjectMapperFactory;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.Version;
 import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.externalization.visitors;
+package dk.kontentsu.externalization;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
