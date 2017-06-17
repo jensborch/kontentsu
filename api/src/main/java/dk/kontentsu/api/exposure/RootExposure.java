@@ -67,14 +67,10 @@ import io.swagger.annotations.Tag;
         basePath = CdnApplication.API_ROOT,
         schemes = {SwaggerDefinition.Scheme.DEFAULT},
         tags = {
-            @Tag(name = "root", description = "CDN Publishing Service root resource")
-            ,
-            @Tag(name = "hosts", description = "CDN destination hosts")
-            ,
-            @Tag(name = "categories", description = "Categories for items on the CDN")
-            ,
-            @Tag(name = "items", description = "Internal API for manipulation items that can be published to a CDN host")
-            ,
+            @Tag(name = "root", description = "CDN Publishing Service root resource"),
+            @Tag(name = "hosts", description = "CDN destination hosts"),
+            @Tag(name = "categories", description = "Categories for items on the CDN"),
+            @Tag(name = "items", description = "Internal API for manipulation items that can be published to a CDN host"),
             @Tag(name = "files", description = "External exposure of the files that can be published to a CDN host - similarly to a HTTP server")
         })
 @Api(tags = {"root"})
