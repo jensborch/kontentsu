@@ -23,17 +23,9 @@
  */
 package dk.kontentsu.api.exposure;
 
-import dk.kontentsu.api.CdnApplication;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Info;
-import io.swagger.annotations.License;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.annotations.Tag;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
@@ -46,8 +38,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import dk.kontentsu.api.CdnApplication;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Info;
+import io.swagger.annotations.License;
+import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.Tag;
+
 /**
- * Root exposure of the CDN Publishing Services listing all avilable resources.   xposes files on the CDN similar to a HTTP server
+ * Root exposure of the CDN Publishing Services listing all available resources. Exposes files on the CDN similar to a HTTP server.
  *
  * @author Jens Borch Christiansen
  */

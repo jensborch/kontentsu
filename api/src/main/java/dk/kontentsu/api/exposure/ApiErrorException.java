@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.api;
+package dk.kontentsu.api.exposure;
 
 import javax.ws.rs.core.Response;
 
@@ -29,6 +29,7 @@ import dk.kontentsu.exception.ApplicationException;
 import dk.kontentsu.exception.ErrorCode;
 
 /**
+ * Thrown if an error occurs in the REST API.
  *
  * @author Jens Borch Christiansen
  */

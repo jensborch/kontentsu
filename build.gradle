@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath 'org.owasp:dependency-check-gradle:1.4.5'
+        classpath 'org.owasp:dependency-check-gradle:1.4.5.1'
     }
 }
 
@@ -11,44 +11,44 @@ plugins {
     id 'idea'
     id 'jacoco'
     id 'pmd'
-    id 'com.github.ben-manes.versions' version '0.14.0'
+    id 'com.github.ben-manes.versions' version '0.15.0'
     id 'de.aaschmid.cpd' version '1.0'
-    id 'nebula.lint' version '6.8.0'
+    id 'nebula.lint' version '7.4.0'
 }
 
 ext {
-    log4jVersion = '2.8.1'
+    log4jVersion = '2.8.2'
     javaeeVersion = '7.0-1'
-    h2Version = '1.4.194'
+    h2Version = '1.4.196'
     jacksonVersion = '2.8.5'
     jerseyVersion = '2.22.2'
-    hibernateVersion = '5.2.8.Final'
+    hibernateVersion = '5.2.10.Final'
     querydslVersion = "4.1.4"
-    fileuploadVersion = "1.3.2"
+    fileuploadVersion = "1.3.3"
     ownerVersion = '1.0.9'
-    hashidsVersion = '1.0.1'
+    hashidsVersion = '1.0.2'
     esapiVersion = '2.1.0.1'
     jjwtVersion = '0.7.0'
     jschNioVersion = '1.0.4'
     findbugsAnnotationsVersion = '3.0.1u2';
 
-    swaggerUiVersion = '2.2.10-1'
-    swaggerVersion = '1.5.13'
+    swaggerUiVersion = '3.0.14'
+    swaggerVersion = '1.5.15'
     angularMaterialVersion = '1.1.3'
     angularVersion = '1.6.1'
     materialDesignIconsVersions = '2.2.0'
 
     payaraVersion = '4.1.2.172'
 
-    checkstyleVersion = "7.5.1"
+    checkstyleVersion = "7.8.1"
     findbugsVersion =  "3.0.1"
-    pmdVersion = "5.5.3"
+    pmdVersion = "5.7.0"
     openejbVersion = '7.0.1'
     junitVersion = '4.12'
     jacocoVersion = "0.7.9"
     mockitoVersion = '1.10.19'
     catchExceptionVersion = '1.4.4'
-    restAssuredVersion = '3.0.2'
+    restAssuredVersion = '3.0.3'
     jglueVersion = '3.1.4'
 }
 

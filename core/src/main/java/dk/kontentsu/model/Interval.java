@@ -102,7 +102,7 @@ public class Interval implements Serializable {
             return false;
         } else {
             return other.equals(this)
-                    || (from.compareTo(other.to) < 0 && other.from.compareTo(to) < 0);
+                    || from.compareTo(other.to) < 0 && other.from.compareTo(to) < 0;
         }
     }
 

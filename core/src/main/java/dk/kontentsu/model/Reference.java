@@ -23,7 +23,6 @@
  */
 package dk.kontentsu.model;
 
-import dk.kontentsu.jpa.AbstractBaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -32,6 +31,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import dk.kontentsu.jpa.AbstractBaseEntity;
 
 /**
  *
@@ -56,6 +57,7 @@ public class Reference extends AbstractBaseEntity {
     /**
      * Column for optimizing JPA queries.
      */
+    @SuppressWarnings("PMD")
     @NotNull
     @Column(name = "item_path")
     private String itemPath;
@@ -63,6 +65,7 @@ public class Reference extends AbstractBaseEntity {
     /**
      * Column for optimizing JPA queries.
      */
+    @SuppressWarnings("PMD")
     @NotNull
     @Column(name = "item_name")
     private String itemName;

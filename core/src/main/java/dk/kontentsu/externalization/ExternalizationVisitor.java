@@ -1,4 +1,4 @@
-package dk.kontentsu.externalization.visitors;
+package dk.kontentsu.externalization;
 
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.processing.TemporalReferenceTreeVisitor;

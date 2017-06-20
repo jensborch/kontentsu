@@ -24,7 +24,6 @@
 package dk.kontentsu.api.exposure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dk.kontentsu.api.ApiErrorException;
 import dk.kontentsu.api.configuration.Config;
 import dk.kontentsu.api.exposure.mappers.MultipartUploadItemMapper;
 import dk.kontentsu.api.exposure.mappers.UploadItemMapper;

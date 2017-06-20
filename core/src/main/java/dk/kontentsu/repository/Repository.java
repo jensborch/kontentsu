@@ -85,7 +85,6 @@ public abstract class Repository<E> {
 
     public E save(@Valid final E entity) {
         em.persist(entity);
-        em.flush();
         return entity;
     }
 

@@ -18,16 +18,12 @@
             <property name="fieldCommentRequirement" value="Ignored"/>
         </properties>
     </rule>
-    <!--<rule ref="rulesets/java/comments.xml/CommentSize">
-        <properties>
-            <property name="violationSuppressRegex" value=".*The\sMIT\sLicense.*"/>
-        </properties>
-    </rule>-->
     <rule ref="rulesets/java/controversial.xml">
         <exclude name="AtLeastOneConstructor"/>
         <exclude name="CallSuperInConstructor"/>
         <exclude name="OnlyOneReturn"/>
         <exclude name="DefaultPackage"/>
+        <exclude name="DataflowAnomalyAnalysis"/>
     </rule>
     <rule ref="rulesets/java/coupling.xml">
         <exclude name="LawOfDemeter"/>
@@ -35,16 +31,12 @@
     </rule>
     <rule ref="rulesets/java/design.xml">
         <exclude name="AccessorClassGeneration"/>
+        <exclude name="AccessorMethodGeneration"/>
     </rule>
     <rule ref="rulesets/java/empty.xml"/>
     <rule ref="rulesets/java/finalizers.xml"/>
     <rule ref="rulesets/java/imports.xml"/>
     <rule ref="rulesets/java/j2ee.xml"/>
-    <!--<rule ref="rulesets/java/javabeans.xml/BeanMembersShouldSerialize">
-        <properties>
-            <property name="violationSuppressXPath" value="//ClassOrInterfaceBodyDeclaration/Annotation/MarkerAnnotation//Name[@Image='Inject']" />
-        </properties>
-    </rule>-->
     <rule ref="rulesets/java/javabeans.xml/MissingSerialVersionUID"/>
     <rule ref="rulesets/java/junit.xml"/>
     <rule ref="rulesets/java/naming.xml">

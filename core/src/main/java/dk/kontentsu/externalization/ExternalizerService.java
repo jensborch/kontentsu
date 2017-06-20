@@ -23,21 +23,6 @@
  */
 package dk.kontentsu.externalization;
 
-import dk.kontentsu.externalization.visitors.DefaultExternalizationVisitor;
-import dk.kontentsu.externalization.visitors.ExternalizationIdentifierVisitor;
-import dk.kontentsu.externalization.visitors.ExternalizationVisitor;
-import dk.kontentsu.model.ExternalFile;
-import dk.kontentsu.model.Item;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.ReferenceType;
-import dk.kontentsu.model.Version;
-import dk.kontentsu.model.processing.ReferenceProcessor;
-import dk.kontentsu.model.processing.TemporalReferenceTree;
-import dk.kontentsu.repository.ExternalFileRepository;
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.model.processing.InjectableContentProcessingScope;
-import dk.kontentsu.spi.ContentProcessingMimeType;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -68,6 +53,18 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import dk.kontentsu.model.ExternalFile;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.ReferenceType;
+import dk.kontentsu.model.Version;
+import dk.kontentsu.model.processing.InjectableContentProcessingScope;
+import dk.kontentsu.model.processing.ReferenceProcessor;
+import dk.kontentsu.model.processing.TemporalReferenceTree;
+import dk.kontentsu.repository.ExternalFileRepository;
+import dk.kontentsu.repository.ItemRepository;
+import dk.kontentsu.spi.ContentProcessingMimeType;
 
 /**
  * Service facade for externalizing internal content.
@@ -173,8 +170,7 @@ public class ExternalizerService {
     }
 
     private Set<Bean<?>> findAllExternalizationVisitorBeans() {
-        return bm.getBeans(ExternalizationVisitor.class,
-                new AnnotationLiteral<Any>() {
+        return bm.getBeans(ExternalizationVisitor.class, new AnnotationLiteral<Any>() {
         });
     }
 
