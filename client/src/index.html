@@ -21,8 +21,8 @@
     <script type="text/javascript">
       document.addEventListener("appready", handleAppReady);
       function handleAppReady(event) {
-        var preBootstrapContainer = document.getElementById("pre-bootstrap-container");
-        var preBootstrap = document.getElementById("pre-bootstrap");
+        const preBootstrapContainer = document.getElementById("pre-bootstrap-container");
+        const preBootstrap = document.getElementById("pre-bootstrap");
         preBootstrap.className = "loaded";
         setTimeout(
           function removeLoadingScreen() {
@@ -43,5 +43,5 @@
     </div>
   </div>
 
-</body>
+</body> 
 </html>

@@ -3,7 +3,7 @@ import { ContentService } from './content.service';
 import { TemplateComponent } from './template/template.component';
 import { Logger } from './logger.service';
 import { BrowserModule, Title } from '@angular/platform-browser';
-import { DOCUMENT } from "@angular/platform-browser";
+import { DOCUMENT } from '@angular/platform-browser';
 
 @Component({
     selector: 'k-app',
@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
                 this.template = p.template.href;
             }
             this.log.info('Using template ' + this.template);
-            this.doc.dispatchEvent(new CustomEvent("appready", {}));
+            this.doc.dispatchEvent(new CustomEvent('appready', {}));
         });
     }
 }

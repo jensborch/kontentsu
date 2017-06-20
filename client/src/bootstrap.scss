@@ -1,0 +1,50 @@
+@import 'theme';
+#pre-bootstrap {
+    position: fixed;
+    background-color: mat-color($primary);
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    opacity: 1.0;
+    transition: all linear 300ms;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#pre-bootstrap.loaded {
+    opacity: 0.0;
+}
+
+$spinner-duration: 1.4s;
+$spinner-offset: 187;
+.spinner {
+    left: 50%;
+    transform: translate(-50%, 0);
+    position: absolute;
+    top: 150px;
+    fill: none;
+    stroke-width: 10px;
+    stroke-linecap: square;
+    stroke-dasharray: $spinner-offset;
+    stroke-dashoffset: 0;
+    transform-origin: center;
+    stroke: mat-color($accent);
+    animation: spinner-rotator $spinner-duration ease-in-out infinite;
+}
+
+@keyframes spinner-rotator {
+    0% {
+        stroke-dashoffset: $spinner-offset;
+    }
+    50% {
+        stroke-dashoffset: $spinner-offset/4;
+        transform: rotate(135deg);
+    }
+    100% {
+        stroke-dashoffset: $spinner-offset;
+        transform: rotate(450deg);
+    }
+}

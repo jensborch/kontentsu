@@ -1,77 +1,15 @@
-
-@import '~@angular/material/theming';
-
-@include mat-core();
-
-$candy-app-primary: mat-palette($mat-indigo);
-$candy-app-accent:  mat-palette($mat-pink, A200, A100, A400);
-
-$candy-app-warn:    mat-palette($mat-red);
-
-$candy-app-theme: mat-light-theme($candy-app-primary, $candy-app-accent, $candy-app-warn);
-
-@include angular-material-theme($candy-app-theme);
+@import 'theme';
+@import 'bootstrap';
+.page-header {
+    width: 100%;
+    height: 300px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    background: mat-color($primary);
+}
 
 body {
     margin: 0px
-}
-
-#pre-bootstrap {
-    background-color: mat-color($candy-app-primary); 
-    bottom: 0px ;
-    left: 0px ;
-    opacity: 1.0 ;
-    position: fixed ;
-    right: 0px ;
-    top: 0px ;
-    transition: all linear 300ms ;
-    -webkit-transition: all linear 300ms ;
-    z-index: 999 ;
-}
-
-#pre-bootstrap.loaded {
-    opacity: 0.0;
-    visibility: hidden;
-    display: none;
-}
-
-.page-header {
-  width: 100%;
-  height: 300px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  background: mat-color($candy-app-accent);
-}
-
-$spinner-duration: 1.4s;
-$spinner-offset: 187;
-
-.spinner {
-    left: 50%;
-    transform: translate(-50%, 0); 
-    position: absolute;
-    top: 150px;
-    fill: none;
-    stroke-width: 10px;
-    stroke-linecap: square;
-    stroke-dasharray: $spinner-offset;
-    stroke-dashoffset: 0;
-    transform-origin: center;
-    stroke: mat-color($candy-app-accent);
-    animation:
-        spinner-rotator $spinner-duration ease-in-out infinite;
-}
-
-@keyframes spinner-rotator {
- 0% { stroke-dashoffset: $spinner-offset; }
- 50% {
-   stroke-dashoffset: $spinner-offset/4;
-   transform:rotate(135deg);
- }
- 100% {
-   stroke-dashoffset: $spinner-offset;
-   transform:rotate(450deg);
- }
 }
