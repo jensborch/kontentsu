@@ -21,10 +21,6 @@
 $spinner-duration: 1.4s;
 $spinner-offset: 187;
 .spinner {
-    left: 50%;
-    transform: translate(-50%, 0);
-    position: absolute;
-    top: 150px;
     fill: none;
     stroke-width: 10px;
     stroke-linecap: square;
@@ -36,15 +32,28 @@ $spinner-offset: 187;
 }
 
 @keyframes spinner-rotator {
-    0% {
-        stroke-dashoffset: $spinner-offset;
+    12.5% {
+        transform: rotate( 135deg);
+    }
+    25% {
+        transform: rotate( 270deg);
+    }
+    37.5% {
+        transform: rotate( 405deg);
     }
     50% {
-        stroke-dashoffset: $spinner-offset/4;
-        transform: rotate(135deg);
+        transform: rotate( 540deg);
+    }
+    62.5% {
+        transform: rotate( 675deg);
+    }
+    75% {
+        transform: rotate( 810deg);
+    }
+    87.5% {
+        transform: rotate( 945deg);
     }
     100% {
-        stroke-dashoffset: $spinner-offset;
-        transform: rotate(450deg);
+        transform: rotate(1080deg);
     }
 }
