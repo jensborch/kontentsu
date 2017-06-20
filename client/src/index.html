@@ -11,13 +11,37 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
-
 <body>
-  <k-app>
-    <h1>
-      Loading...
-    </h1>
-  </k-app>
-</body>
 
+  <k-app></k-app>
+
+  <div class="page-header">
+  </div>
+  <div id="pre-bootstrap-container">
+    <script type="text/javascript">
+      document.addEventListener("appready", handleAppReady);
+      function handleAppReady(event) {
+        var preBootstrapContainer = document.getElementById("pre-bootstrap-container");
+        var preBootstrap = document.getElementById("pre-bootstrap");
+        preBootstrap.className = "loaded";
+        setTimeout(
+          function removeLoadingScreen() {
+            preBootstrapContainer
+              .parentNode
+              .removeChild(preBootstrapContainer)
+              ;
+          },
+          300
+        );
+      }
+    </script>
+
+    <div id="pre-bootstrap">
+      <svg width="100px" height="100px" viewBox="0 0 110 110">
+        <circle class="spinner" cx="50" cy="50" r="30"></circle>
+      </svg>
+    </div>
+  </div>
+
+</body>
 </html>

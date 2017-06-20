@@ -1,21 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { ContentService } from './content.service';
 import { TemplateComponent } from './template/template.component';
 import { Logger } from './logger.service';
 import { BrowserModule, Title } from '@angular/platform-browser';
+import { DOCUMENT } from "@angular/platform-browser";
 
 @Component({
     selector: 'k-app',
     template: '<k-template *ngIf="page.content" [url]="template" [data]="page"></k-template>'
 })
 export class AppComponent implements OnInit {
+
+    private doc: Document;
+
     frontPage: String = 'pages/page-simple/';
     template: String = 'templates/responsive-one-article.tpl.html';
     page = {
         content: { heading: 'Test title' }
     };
 
-    constructor(private contentService: ContentService, private titleService: Title, private log: Logger) { }
+    constructor( @Inject(DOCUMENT) doc: any, private contentService: ContentService, private titleService: Title, private log: Logger) {
+        this.doc = doc;
+    }
 
     ngOnInit(): void {
         this.contentService.getPage(this.frontPage).then(p => {
@@ -29,6 +35,7 @@ export class AppComponent implements OnInit {
                 this.template = p.template.href;
             }
             this.log.info('Using template ' + this.template);
+            this.doc.dispatchEvent(new CustomEvent("appready", {}));
         });
     }
 }
