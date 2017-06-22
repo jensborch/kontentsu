@@ -5,5 +5,7 @@
 
 export const environment = {
   production: false,
+  frontPage: 'pages/page-simple/',
+  defaultTemplate: 'templates/responsive-one-article.tpl.html',
   filesApi: 'http://localhost:9090/kontentsu/api/files/'
 };
