@@ -5,7 +5,6 @@
   <meta charset="utf-8">
   <title>Kontentsu</title>
   <base href="/">
-
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
@@ -20,25 +19,30 @@
   </div>
   <div id="pre-bootstrap-container">
     <script type="text/javascript">
-      document.addEventListener("appready", handleAppReady);
-      function handleAppReady(event) {
+      document.addEventListener("appready", event => {
         const preBootstrapContainer = document.getElementById("pre-bootstrap-container");
         const preBootstrap = document.getElementById("pre-bootstrap");
         preBootstrap.className = "loaded";
-        setTimeout(
-          function removeLoadingScreen() {
-            preBootstrapContainer
-              .parentNode
-              .removeChild(preBootstrapContainer)
-              ;
-          },
+        setTimeout(() => {
+          preBootstrapContainer
+            .parentNode
+            .removeChild(preBootstrapContainer);
+        },
           300
         );
-      }
+      });
+      document.addEventListener("apperror", event => {
+        const preBootstrapContainer = document.getElementById("bootstrap-error");
+        preBootstrap.removeChild(preBootstrapContainer.getElementById("pre-bootstrap-spinner"));
+        const h = document.createElement("h1");
+        const t = document.createTextNode("404");
+        h.appendChild(t);
+        preBootstrap.appendChild(h);
+      });
     </script>
 
     <div id="pre-bootstrap">
-      <svg width="100px" height="100px" viewBox="0 0 110 110">
+      <svg id="pre-bootstrap-spinner" width="100px" height="100px" viewBox="0 0 110 110">
         <circle class="spinner" cx="50" cy="50" r="40"></circle>
       </svg>
     </div>

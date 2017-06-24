@@ -36,6 +36,8 @@ export class AppComponent implements OnInit {
             }
             this.log.info('Using template ' + environment.defaultTemplate);
             this.doc.dispatchEvent(new CustomEvent('appready', {}));
+        }).catch(e => {
+            this.doc.dispatchEvent(new CustomEvent('apperror', {}));
         });
     }
 }
