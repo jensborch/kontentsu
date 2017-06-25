@@ -32,8 +32,8 @@
         );
       });
       document.addEventListener("apperror", event => {
-        const preBootstrapContainer = document.getElementById("bootstrap-error");
-        preBootstrap.removeChild(preBootstrapContainer.getElementById("pre-bootstrap-spinner"));
+        const preBootstrap = document.getElementById("pre-bootstrap");
+        preBootstrap.removeChild(document.getElementById("pre-bootstrap-spinner"));
         const h = document.createElement("h1");
         const t = document.createTextNode("404");
         h.appendChild(t);
