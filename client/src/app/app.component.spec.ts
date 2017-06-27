@@ -1,7 +1,7 @@
 /* tslint:disable:no-unused-variable */
 
 import { Component } from '@angular/core';
-import { TestBed, async, inject } from '@angular/core/testing';
+import { TestBed, async  } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { TemplateComponent } from './template/template.component';
 import { Page } from './page';
