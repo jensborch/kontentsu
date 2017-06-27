@@ -11,7 +11,7 @@ import { Page } from './page';
 })
 export class AppComponent implements OnInit {
 
-    private loade: boolean = false;
+    private loaded: boolean = false;
 
     constructor(
         @Inject(DOCUMENT) private doc: any,
@@ -22,9 +22,9 @@ export class AppComponent implements OnInit {
     ngOnInit(): void {
         this.contentService.load();
         this.contentService.getPage().subscribe(p => {
-            if (!this.loade) {
+            if (!this.loaded) {
                 this.doc.dispatchEvent(new CustomEvent('appready', {}));
-                this.loade = true;
+                this.loaded = true;
             }
         }, e => {
             this.log.error('Error getting front page at ' + environment.frontPage);

@@ -1,4 +1,4 @@
-import { OnInit, NgModule, OnChanges, Component, Input, ViewContainerRef, AfterViewInit, Compiler, ComponentRef, ViewChild } from '@angular/core';
+import { OnInit, NgModule, Component, ViewContainerRef, AfterViewInit, Compiler, ComponentRef, ViewChild } from '@angular/core';
 import { Http, Response } from '@angular/http';
 import { CommonModule } from '@angular/common';
 import { PageModule } from '../page.module';

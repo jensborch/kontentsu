@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpModule, XHRBackend } from '@angular/http';
 import { MockBackend } from '@angular/http/testing';
 import { TemplateComponent } from './template.component';
+import { ContentService } from './../content.service';
 import { Logger } from '../logger.service';
 
 describe('TemplateComponent', () => {
@@ -15,6 +16,7 @@ describe('TemplateComponent', () => {
       declarations: [TemplateComponent],
       providers: [
         { provide: XHRBackend, useClass: MockBackend },
+        ContentService,
         Logger
       ]
     })
