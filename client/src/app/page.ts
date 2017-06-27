@@ -17,6 +17,4 @@ export class Page {
     get data(): any {
         return this._data;
     }
-
-
 }

@@ -11,7 +11,7 @@ import { Page } from './page';
 })
 export class AppComponent implements OnInit {
 
-    private loaded: boolean = false;
+    private loaded = false;
 
     constructor(
         @Inject(DOCUMENT) private doc: any,

@@ -2,7 +2,7 @@
 
 import { HttpModule, XHRBackend, ResponseOptions } from '@angular/http';
 import { Title } from '@angular/platform-browser';
-import { TestBed, async, inject } from '@angular/core/testing';
+import { TestBed, inject } from '@angular/core/testing';
 import { MockBackend } from '@angular/http/testing';
 import { ContentService } from './content.service';
 import { Logger } from './logger.service';

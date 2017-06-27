@@ -7,7 +7,7 @@ import { TemplateComponent } from './template/template.component';
 import { Page } from './page';
 import { ContentService } from './content.service';
 import { Logger } from './logger.service';
-import { Observable } from "rxjs/Rx";
+import { Observable } from 'rxjs/Rx';
 import { DOCUMENT } from '@angular/platform-browser';
 
 class MockContentService {
@@ -17,7 +17,7 @@ class MockContentService {
 
   getPage(): Observable<Page> {
     return Observable.of(new Page(
-      "template",
+      'template',
       {
         content: { heading: 'Test title' }
       }));
@@ -25,8 +25,8 @@ class MockContentService {
 }
 
 @Component({
-  template: '',
-  selector: 'k-template'
+  selector: 'k-template',
+  template: ''
 })
 class MockTemplateComponent { };
 
