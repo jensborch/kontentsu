@@ -1,10 +1,11 @@
 <article>
-	<h1 [hidden]="!data.heading">{{data.heading}}</h1>
+	<h1 *ngIf="data.heading">{{data.heading}}</h1>
 	<section *ngFor="let section of data.sections">
-		<h2 [hidden]="!section.heading">{{section.heading}}</h2>
+		<h2 *ngIf="section.heading">{{section.heading}}</h2>
 		<p *ngFor="let paragraph of section.paragraphs">
 			{{paragraph}}
 		</p>
-		<img [hidden]="!section.picture" [src]="'http://localhost:9090/kontentsu/api/files/' + section.picture?.href" [alt]="section.picture?.alt" [title]="section.picture?.title">
+		<img *ngIf="section.picture" [src]="'http://localhost:9090/kontentsu/api/files/' + section.picture?.href" [alt]="section.picture?.alt"
+		 [title]="section.picture?.title">
 	</section>
 </article>

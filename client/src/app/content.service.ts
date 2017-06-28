@@ -17,7 +17,7 @@ export class ContentService {
         'Content-Type': 'application/json'
     });
 
-    constructor(private http: Http, private log: Logger, private titleService: Title, ) { }
+    constructor(private http: Http, private log: Logger, private titleService: Title) { }
 
     load(path?: String): void {
         if (!path) {

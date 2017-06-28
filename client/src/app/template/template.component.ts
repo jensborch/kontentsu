@@ -26,7 +26,7 @@ export class TemplateComponent implements OnInit {
         private log: Logger) { }
 
     ngOnInit(): void {
-        this.contentService.getPage().subscribe(p => {
+        this.contentService.getPage().subscribe((p: Page) => {
             this.page = p;
             this.loadTemplate();
         });
@@ -61,14 +61,17 @@ export class TemplateComponent implements OnInit {
     }
 
     private loadTemplate() {
-        this.http.get(this.page.template).subscribe((response: Response) => {
-            this.log.info('Template: ' + this.page.template);
-            const template = response.text();
-            this.log.debug('Template data: ' + template);
-            this.createComponent(template, this.page.data);
-        }, (error) => {
-            this.log.error('Error getting template: ' + error);
-        });
+        this.http.get(this.page.template)
+            .catch((error: any, c: Observable<Response>) => {
+                this.log.error('Error getting template ' + this.page.template);
+                return Observable.throw('Error getting template ' + this.page.template);
+            })
+            .subscribe((response: Response) => {
+                this.log.info('Template: ' + this.page.template);
+                const template = response.text();
+                this.log.debug('Template data: ' + template);
+                this.createComponent(template, this.page.data);
+            });
     }
 
 }
