@@ -24,7 +24,7 @@ export class ContentService {
             path = environment.frontPage;
         }
         this.http.get(environment.filesApi + path, { headers: this.headers }).subscribe(p => {
-            let json = p.json();
+            const json = p.json();
             if (json.content && json.content.heading) {
                 this.log.info('Setting heading from content "' + json.content.heading + '"');
                 this.titleService.setTitle(json.content.heading);
