@@ -7,8 +7,6 @@ import { Page } from './page';
 import { Logger } from './logger.service';
 import { Title } from '@angular/platform-browser';
 
-import 'rxjs/add/operator/toPromise';
-
 @Injectable()
 export class ContentService {
 
@@ -21,37 +19,25 @@ export class ContentService {
 
     constructor(private http: Http, private log: Logger, private titleService: Title, ) { }
 
-    private findPage(path: String): Promise<any> {
-        return this.http.get(environment.filesApi + path, { headers: this.headers })
-            .toPromise()
-            .then((response: Response) => response.json())
-            .catch(this.handleError);
-    }
-
-    private handleError(error: any): Promise<any> {
-        return Promise.reject(error.message || error);
-    }
-
-
     load(path?: String): void {
         if (!path) {
             path = environment.frontPage;
         }
-        this.findPage(path).then(p => {
-            this.page = p;
-            if (p.content && p.content.heading) {
-                this.log.info('Setting heading from content "' + p.content.heading + '"');
-                this.titleService.setTitle(p.content.heading);
+        this.http.get(environment.filesApi + path, { headers: this.headers }).subscribe(p => {
+            let json = p.json();
+            if (json.content && json.content.heading) {
+                this.log.info('Setting heading from content "' + json.content.heading + '"');
+                this.titleService.setTitle(json.content.heading);
             }
-            if (p.template && p.template.href) {
-                this.log.info('Setting template from content ' + p.template.href);
-                this.page = new Page(p.template.href, p);
+            if (json.template && json.template.href) {
+                this.log.info('Setting template from content ' + json.template.href);
+                this.page = new Page(json.template.href, json);
             } else {
                 this.log.info('Using default template ' + environment.defaultTemplate);
-                this.page = new Page(environment.defaultTemplate, p);
+                this.page = new Page(environment.defaultTemplate, json);
             }
             this.subject.next(this.page);
-        }).catch(e => {
+        }, e => {
             this.log.error('Error getting front page at ' + environment.frontPage);
             this.subject.error(this.page);
         });
