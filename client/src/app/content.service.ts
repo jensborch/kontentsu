@@ -23,23 +23,25 @@ export class ContentService {
         if (!path) {
             path = environment.frontPage;
         }
-        this.http.get(environment.filesApi + path, { headers: this.headers }).subscribe(p => {
-            const json = p.json();
-            if (json.content && json.content.heading) {
-                this.log.info('Setting heading from content "' + json.content.heading + '"');
-                this.titleService.setTitle(json.content.heading);
+        this.http.get(environment.filesApi + path, { headers: this.headers })
+        .map((res:Response) => res.json())
+        .catch((error:any, c: Observable<Response>) => {
+            this.log.error('Error getting front page at ' + environment.frontPage);
+            return Observable.throw('Error getting front page at ' + environment.frontPage);
+        })
+        .subscribe(p => {
+            if (p.content && p.content.heading) {
+                this.log.info('Setting heading from content "' + p.content.heading + '"');
+                this.titleService.setTitle(p.content.heading);
             }
-            if (json.template && json.template.href) {
-                this.log.info('Setting template from content ' + json.template.href);
-                this.page = new Page(json.template.href, json);
+            if (p.template && p.template.href) {
+                this.log.info('Setting template from content ' + p.template.href);
+                this.page = new Page(p.template.href, p);
             } else {
                 this.log.info('Using default template ' + environment.defaultTemplate);
-                this.page = new Page(environment.defaultTemplate, json);
+                this.page = new Page(environment.defaultTemplate, p);
             }
             this.subject.next(this.page);
-        }, e => {
-            this.log.error('Error getting front page at ' + environment.frontPage);
-            this.subject.error(this.page);
         });
     }
 
