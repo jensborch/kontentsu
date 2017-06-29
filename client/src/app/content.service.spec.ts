@@ -6,6 +6,8 @@ import { TestBed, inject } from '@angular/core/testing';
 import { MockBackend } from '@angular/http/testing';
 import { ContentService } from './content.service';
 import { Logger } from './logger.service';
+import { Location, LocationStrategy, PathLocationStrategy, APP_BASE_HREF } from '@angular/common';
+
 
 const mockResponse = {
   content: {
@@ -20,6 +22,9 @@ describe('Service: Content', () => {
       providers: [
         { provide: XHRBackend, useClass: MockBackend },
         { provide: Title, useClass: Title },
+        { provide: LocationStrategy, useClass: PathLocationStrategy },
+        {provide: APP_BASE_HREF, useValue : '/' },
+        Location,
         ContentService,
         Logger
       ]

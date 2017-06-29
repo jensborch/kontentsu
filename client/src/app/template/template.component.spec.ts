@@ -5,6 +5,7 @@ import { MockBackend } from '@angular/http/testing';
 import { TemplateComponent } from './template.component';
 import { ContentService } from './../content.service';
 import { Logger } from '../logger.service';
+import { Location, LocationStrategy, PathLocationStrategy, APP_BASE_HREF } from '@angular/common';
 
 describe('TemplateComponent', () => {
   let component: TemplateComponent;
@@ -16,6 +17,9 @@ describe('TemplateComponent', () => {
       declarations: [TemplateComponent],
       providers: [
         { provide: XHRBackend, useClass: MockBackend },
+        { provide: LocationStrategy, useClass: PathLocationStrategy },
+        { provide: APP_BASE_HREF, useValue: '/' },
+        Location,
         ContentService,
         Logger
       ]
