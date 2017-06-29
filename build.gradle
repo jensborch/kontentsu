@@ -14,6 +14,7 @@ plugins {
     id 'com.github.ben-manes.versions' version '0.15.0'
     id 'de.aaschmid.cpd' version '1.0'
     id 'nebula.lint' version '7.4.0'
+    id "com.moowork.node" version "1.2.0"
 }
 
 ext {
@@ -253,3 +254,8 @@ subprojects {
             downloadJavadoc = true
         }
         }
+
+node {
+  version = '6.11.10'
+  npmVersion = '3.10.10'
+}        
