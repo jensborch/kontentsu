@@ -80,8 +80,13 @@ allprojects {
         doFirst {
             println commandLine
         }
-    }
-
+    }    
+        
+    task jdepend(
+        group: "Verification",
+        description: "Marker task to enabled JDepend."
+    )
+    
     task findbugs(
         group: "Verification",
         description: "Marker task to enabled Findbugs."
@@ -112,8 +117,7 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'org.owasp.dependencycheck'
     apply plugin: 'jdepend'
-
-
+    
     gradle.taskGraph.whenReady { taskGraph ->
         tasks.findbugsMain.onlyIf {
             taskGraph.hasTask((tasks.findbugs))
@@ -140,6 +144,15 @@ subprojects {
             taskGraph.hasTask((tasks.checkstyle))
         }
     }
+    
+    gradle.taskGraph.whenReady { taskGraph ->
+        tasks.jdependMain.onlyIf {
+            taskGraph.hasTask((tasks.jdepend))
+        }
+        tasks.jdependTest.onlyIf {
+            taskGraph.hasTask((tasks.jdepend))
+        }
+    }    
 
     checkstyle {
         toolVersion = checkstyleVersion
