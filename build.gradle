@@ -247,15 +247,22 @@ subprojects {
             }
         }
     }
-    }
+}
 
-    idea {
-        module {
-            downloadJavadoc = true
-        }
-        }
+idea {
+    module {
+        downloadJavadoc = true
+    }
+}
 
 node {
-  version = '6.11.10'
-  npmVersion = '3.10.10'
+    version = '6.11.10'
+    npmVersion = '3.10.10'
+    nodeModulesDir = file("${project.projectDir}/client")
 }        
+
+task testAngular(type: NpmTask) {
+    args = ['test', '--', '--single-run', '--code-coverage']
+}
+
+testAngular.dependsOn(npm_install)
