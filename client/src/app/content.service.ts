@@ -20,7 +20,7 @@ export class ContentService {
 
     constructor(private http: Http, private log: Logger, private titleService: Title, private location: Location) {
         location.subscribe((l) => {
-            if (location.path() != '') {
+            if (location.path() !== '') {
                 this.load(location.path());
             }
         });

@@ -11,6 +11,7 @@ plugins {
     id 'idea'
     id 'jacoco'
     id 'pmd'
+    id 'jdepend'
     id 'com.github.ben-manes.versions' version '0.15.0'
     id 'de.aaschmid.cpd' version '1.0'
     id 'nebula.lint' version '7.4.0'
@@ -110,6 +111,7 @@ subprojects {
     apply plugin: 'pmd'
     apply plugin: 'jacoco'
     apply plugin: 'org.owasp.dependencycheck'
+    apply plugin: 'jdepend'
 
 
     gradle.taskGraph.whenReady { taskGraph ->
@@ -265,4 +267,9 @@ task testAngular(type: NpmTask) {
     args = ['test', '--', '--single-run', '--code-coverage']
 }
 
+task lintAngular(type: NpmTask) {
+    args = [ 'run-script', 'lint', '--', '--single-run']
+}
+
 testAngular.dependsOn(npm_install)
+lintAngular.dependsOn(npm_install)
