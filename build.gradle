@@ -229,6 +229,20 @@ subprojects {
             into "META-INF/resources/webjars/${baseName}"
         }
     }
+    
+    task jdependReport(dependsOn: jdependMain, group: 'verification', description: 'Generates JDepend HTML report...') << {
+        ant.xslt(
+            in: "$reporting.baseDir/jdepend/main.xml",
+            style: "$rootDir/config/jdepend/jdepend-report.xslt",
+            out:"$reporting.baseDir/jdepend/main.html")
+    }
+    
+    task jdependGraph(dependsOn: jdependMain, group: 'verification', description: 'Generates JDepend graph...') << {
+        ant.xslt(
+            in: "$reporting.baseDir/jdepend/main.xml",
+            style: "$rootDir/config/jdepend/jdepend-dot.xslt",
+            out:"$reporting.baseDir/jdepend/main.dot")
+    }    
 
     dependencies {
 
