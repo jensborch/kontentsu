@@ -277,7 +277,7 @@ node {
 }        
 
 task testAngular(type: NpmTask) {
-    args = ['test', '--', '--single-run', '--code-coverage']
+    args = ['test', '--', '--single-run', '--code-coverage', "--browsers ChromeHeadless"]
 }
 
 task lintAngular(type: NpmTask) {
