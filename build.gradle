@@ -197,6 +197,11 @@ subprojects {
         }
         source = sourceSets.main.allJava
     }
+    
+    jdepend {
+        sourceSets = [sourceSets.main]
+        ignoreFailures = true
+    }
 
     test {
         finalizedBy jacocoTestReport
@@ -230,18 +235,19 @@ subprojects {
         }
     }
     
-    task jdependReport(dependsOn: jdependMain, group: 'verification', description: 'Generates JDepend HTML report...') << {
-        ant.xslt(
-            in: "$reporting.baseDir/jdepend/main.xml",
-            style: "$rootDir/config/jdepend/jdepend-report.xslt",
-            out:"$reporting.baseDir/jdepend/main.html")
+    task jdependReport(dependsOn: [jdependMain], group: 'verification', description: 'Generates JDepend HTML report...') {
+        doLast {
+            xslt("$reporting.baseDir/jdepend/main.xml", "$rootDir/config/jdepend/jdepend-report.xslt", "$reporting.baseDir/jdepend/main.html")
+        }
     }
     
-    task jdependGraph(dependsOn: jdependMain, group: 'verification', description: 'Generates JDepend graph...') << {
-        ant.xslt(
-            in: "$reporting.baseDir/jdepend/main.xml",
-            style: "$rootDir/config/jdepend/jdepend-dot.xslt",
-            out:"$reporting.baseDir/jdepend/main.dot")
+    task jdependGraph(dependsOn: [jdependMain], group: 'verification', description: 'Generates JDepend graph...') {
+        doLast {
+            ant.xslt(
+                in: "$reporting.baseDir/jdepend/main.xml",
+                style: "$rootDir/config/jdepend/jdepend-dot.xslt",
+                out:"$reporting.baseDir/jdepend/main.dot")
+        }
     }    
 
     dependencies {
@@ -300,3 +306,13 @@ task lintAngular(type: NpmTask) {
 
 testAngular.dependsOn(npm_install)
 lintAngular.dependsOn(npm_install)
+
+def xslt(String input, String style, String output) {
+    def file = new File(input)
+    if (file.exists()) {
+        ant.xslt(
+            in: file,
+            style: style,
+            out: output)
+    }
+}

@@ -26,7 +26,6 @@ package dk.kontentsu.model;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import dk.kontentsu.exception.ValidationException;
-import dk.kontentsu.jpa.AbstractBaseEntity;
 import dk.kontentsu.repository.Repository;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;

@@ -38,7 +38,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import dk.kontentsu.jpa.AbstractBaseEntity;
 import dk.kontentsu.repository.Repository;
 
 /**

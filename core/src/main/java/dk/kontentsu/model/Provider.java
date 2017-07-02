@@ -29,7 +29,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import dk.kontentsu.jpa.AbstractBaseEntity;
 
 /**
  * Provider or supplier of content to the CDN, e.g. a CMS system.

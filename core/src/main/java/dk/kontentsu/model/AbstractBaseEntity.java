@@ -21,11 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.jpa;
+package dk.kontentsu.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.UUID;
-
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,16 +33,14 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 
 /**
- * Base JPA class contaning ID and UUID.
+ * Base JPA class containing ID and UUID.
  *
  * @author Jens Borch Christiansen
  */
 @MappedSuperclass
-public abstract class AbstractBaseEntity implements Serializable {
+abstract class AbstractBaseEntity implements Serializable {
 
     private static final long serialVersionUID = -1841654741660206472L;
 

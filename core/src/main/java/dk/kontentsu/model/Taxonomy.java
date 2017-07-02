@@ -31,7 +31,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import dk.kontentsu.jpa.AbstractBaseEntity;
 import dk.kontentsu.repository.Repository;
 
 /**

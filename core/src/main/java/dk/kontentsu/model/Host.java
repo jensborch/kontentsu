@@ -41,7 +41,6 @@ import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import dk.kontentsu.jpa.AbstractBaseEntity;
 import dk.kontentsu.repository.Repository;
 
 /**

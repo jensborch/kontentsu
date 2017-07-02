@@ -24,7 +24,7 @@
 package dk.kontentsu.oauth2.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import dk.kontentsu.oauth2.api.Config;
+import dk.kontentsu.oauth2.api.configuration.Config;
 
 /**
  * Response containing an OAuth2 access token.

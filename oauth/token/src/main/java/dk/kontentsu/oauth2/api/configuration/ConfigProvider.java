@@ -21,43 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.oauth2.api;
+package dk.kontentsu.oauth2.api.configuration;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+
+import org.aeonbits.owner.ConfigCache;
 
 /**
- * OAuth2 configuration.
+ * Provider making it possible to CDI inject Owner configuration.
  *
  * @author Jens Borch Christiansen
  */
-@SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
-public interface Config extends org.aeonbits.owner.Config {
+@ApplicationScoped
+public class ConfigProvider {
 
-    /**
-     * JWT signature key used in OAuth2 bearer token.
-     *
-     * @return a signature key string.
-     */
-    @Key("oauth2.jwt.signature.key")
-    @DefaultValue("kontentsujwtkey")
-    String signatureKey();
-
-    /**
-     * JWT token timeout in minutes.
-     *
-     * @return the timeout value.
-     */
-    @Key("oauth2.token.timeout")
-    @DefaultValue("30")
-    int timeout();
-
-    /**
-     * The name of the token issuer.
-     *
-     * @return the issuer.
-     */
-    @Key("oauth2.token.issuer")
-    @DefaultValue("Kontentsu")
-    String issuer();
-
+    @Produces
+    public Config getConfig() {
+        return ConfigCache.getOrCreate(Config.class);
+    }
 }

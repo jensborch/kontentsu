@@ -1,5 +1,7 @@
 package dk.kontentsu.oauth2.api;
 
+import dk.kontentsu.oauth2.api.configuration.Config;
+
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.when;

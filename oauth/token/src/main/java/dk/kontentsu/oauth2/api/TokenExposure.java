@@ -23,6 +23,7 @@
  */
 package dk.kontentsu.oauth2.api;
 
+import dk.kontentsu.oauth2.api.configuration.Config;
 import dk.kontentsu.oauth2.api.model.TokenRepresentation;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

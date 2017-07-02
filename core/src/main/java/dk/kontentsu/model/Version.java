@@ -23,7 +23,6 @@
  */
 package dk.kontentsu.model;
 
-import dk.kontentsu.jpa.AbstractBaseEntity;
 import dk.kontentsu.repository.Repository;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;

@@ -37,7 +37,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import dk.kontentsu.jpa.AbstractBaseEntity;
 
 /**
  * Category for item on the CDN. Can be used categorized CDN items for e.g. web personalization or for finding items.
