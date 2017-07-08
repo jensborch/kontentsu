@@ -62,15 +62,13 @@ export class TemplateComponent implements OnInit {
 
     private loadTemplate() {
         this.http.get(this.page.template)
-            .catch((error: any, c: Observable<Response>) => {
-                this.log.error('Error getting template ' + this.page.template);
-                return Observable.throw('Error getting template ' + this.page.template);
-            })
-            .subscribe((response: Response) => {
+            .subscribe((res: Response) => {
                 this.log.info('Template: ' + this.page.template);
-                const template = response.text();
+                const template = res.text();
                 this.log.debug('Template data: ' + template);
                 this.createComponent(template, this.page.data);
+            }, e => {
+                this.log.error('Error getting template ' + this.page.template);
             });
     }
 
