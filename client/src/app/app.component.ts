@@ -4,8 +4,6 @@ import { Logger } from './logger.service';
 import { DOCUMENT } from '@angular/platform-browser';
 import { environment } from '../environments/environment';
 import { Page } from './page';
-//import { Observable } from 'rxjs/Observable';
-//import 'rxjs/add/observable/throw';
 
 @Component({
     selector: 'k-app',
