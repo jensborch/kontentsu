@@ -5,7 +5,7 @@ import { HttpModule } from '@angular/http';
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { TemplateComponent } from './template/template.component';
-import { ContentService } from './content.service';
+import { ContentService } from './content/content.service';
 import { Logger } from './logger.service';
 import { MaterialModule } from '@angular/material';
 

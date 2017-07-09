@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { ContentService } from './content.service';
+import { ContentService } from './content/content.service';
 import { Logger } from './logger.service';
 import { DOCUMENT } from '@angular/platform-browser';
 import { environment } from '../environments/environment';

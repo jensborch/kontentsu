@@ -5,7 +5,7 @@ import { TestBed, async  } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { TemplateComponent } from './template/template.component';
 import { Page } from './page';
-import { ContentService } from './content.service';
+import { ContentService } from './content/content.service';
 import { Logger } from './logger.service';
 import { Observable } from 'rxjs/Rx';
 import { DOCUMENT } from '@angular/platform-browser';

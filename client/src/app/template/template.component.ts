@@ -5,7 +5,7 @@ import { PageModule } from '../page.module';
 import { ArticleComponent } from '../article/article.component';
 import { Logger} from '../logger.service';
 import { Page } from './../page';
-import { ContentService } from './../content.service';
+import { ContentService } from '../content/content.service';
 import { Observable } from 'rxjs/Observable';
 
 @Component({

@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpModule, XHRBackend } from '@angular/http';
 import { MockBackend } from '@angular/http/testing';
 import { TemplateComponent } from './template.component';
-import { ContentService } from './../content.service';
+import { ContentService } from '../content/content.service';
 import { Logger } from '../logger.service';
 import { Location, LocationStrategy, PathLocationStrategy, APP_BASE_HREF } from '@angular/common';
 
