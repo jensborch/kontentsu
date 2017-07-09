@@ -4,7 +4,7 @@ import { Logger } from './logger.service';
 import { DOCUMENT } from '@angular/platform-browser';
 import { environment } from '../environments/environment';
 import { Page } from './page';
-import { Router, NavigationStart } from '@angular/router';
+import { Router, Routes, NavigationStart } from '@angular/router';
 import 'rxjs/add/operator/filter';
 
 @Component({
@@ -26,12 +26,14 @@ export class AppComponent implements OnInit {
         this.router.events
             .filter(e => e instanceof NavigationStart)
             .subscribe((s: NavigationStart) => {
-                if (s.url) {
-                    if (s.url !== '', s.url !== '/') {
-                        this.contentService.load(s.url.slice(1) + '/');
-                    } else {
-                        this.contentService.load();
-                    }
+                if (s.url !== '', s.url !== '/') {
+                    this.contentService.load(s.url.slice(1) + '/');
+                    this.router.config.concat({
+                        path: s.url,
+                        component: AppComponent
+                    });
+                } else {
+                    this.contentService.load();
                 }
             });
         this.contentService.getPage()
