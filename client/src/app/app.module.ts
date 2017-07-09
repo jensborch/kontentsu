@@ -13,8 +13,8 @@ import { NotfoundComponent } from './notfound/notfound.component';
 
 const routes: Routes = [
   { path: '', component: AppComponent },
-  { path: 'pages/page1', component: AppComponent },
-  { path: 'pages/page2', component: AppComponent },
+  // { path: 'pages/page1', component: AppComponent },
+  // { path: 'pages/page2', component: AppComponent },
   { path: '**', component: NotfoundComponent }
 ];
 
