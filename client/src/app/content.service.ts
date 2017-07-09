@@ -1,5 +1,4 @@
-import {PopStateEvent} from '@angular/common';
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Headers, Http, Response } from '@angular/http';
 import { environment } from '../environments/environment';
 import { Subject } from 'rxjs/Subject';
@@ -8,10 +7,9 @@ import 'rxjs/add/operator/map';
 import { Page } from './page';
 import { Logger } from './logger.service';
 import { Title } from '@angular/platform-browser';
-import { Location } from '@angular/common';
 
 @Injectable()
-export class ContentService implements OnInit {
+export class ContentService {
 
     private page: Page;
     private subject: Subject<Page> = new Subject<Page>();
@@ -22,16 +20,7 @@ export class ContentService implements OnInit {
 
     constructor(private http: Http,
         private log: Logger,
-        private titleService: Title,
-        private location: Location) { }
-
-    ngOnInit() {
-        this.location.subscribe((e: PopStateEvent) => {
-            if (e.url !== '') {
-                this.load(e.url);
-            }
-        });
-    }
+        private titleService: Title) { }
 
     load(path?: String): void {
         if (!path) {

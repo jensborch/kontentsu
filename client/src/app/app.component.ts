@@ -1,11 +1,11 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Location, PopStateEvent } from '@angular/common';
 import { ContentService } from './content.service';
 import { Logger } from './logger.service';
 import { DOCUMENT } from '@angular/platform-browser';
 import { environment } from '../environments/environment';
 import { Page } from './page';
-import {Router} from '@angular/router';
+import { Router, NavigationStart } from '@angular/router';
+import 'rxjs/add/operator/filter';
 
 @Component({
     selector: 'k-app',
@@ -18,22 +18,22 @@ export class AppComponent implements OnInit {
     constructor(
         @Inject(DOCUMENT) private doc: any,
         private contentService: ContentService,
-        private location: Location,
         private router: Router,
         private log: Logger) { }
 
 
     ngOnInit(): void {
-        this.router.events.subscribe((e: any) => {
-            if (e.url && e.url !== '', e.url !== '/') {
-                this.contentService.load(e.url.slice(1) + '/');
-            }
-        });
-        if (this.location.path(false) !== '') {
-            this.contentService.load(this.location.path(false).slice(1) + '/');
-        } else {
-            this.contentService.load();
-        }
+        this.router.events
+            .filter(e => e instanceof NavigationStart)
+            .subscribe((s: NavigationStart) => {
+                if (s.url) {
+                    if (s.url !== '', s.url !== '/') {
+                        this.contentService.load(s.url.slice(1) + '/');
+                    } else {
+                        this.contentService.load();
+                    }
+                }
+            });
         this.contentService.getPage()
             .subscribe(p => {
                 if (!this.loaded) {

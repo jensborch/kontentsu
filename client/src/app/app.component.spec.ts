@@ -9,6 +9,8 @@ import { ContentService } from './content.service';
 import { Logger } from './logger.service';
 import { Observable } from 'rxjs/Rx';
 import { DOCUMENT } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 
 class MockContentService {
 
@@ -35,7 +37,9 @@ const contentService: MockContentService = new MockContentService();
 describe('App: Kontentsu', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [],
+      imports: [
+        RouterTestingModule.withRoutes([])
+      ],
       providers: [
         { provide: ContentService, useValue: contentService },
         Logger
