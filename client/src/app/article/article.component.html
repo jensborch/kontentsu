@@ -1,4 +1,4 @@
-<article>
+<article *ngIf="data.sections">
 	<h1 *ngIf="data.heading">{{data.heading}}</h1>
 	<section *ngFor="let section of data.sections">
 		<h2 *ngIf="section.heading">{{section.heading}}</h2>
