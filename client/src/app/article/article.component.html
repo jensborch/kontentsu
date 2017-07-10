@@ -3,9 +3,6 @@
 	<section *ngFor="let section of data.sections">
 		<h2 *ngIf="section.heading">{{section.heading}}</h2>
 		<p *ngFor="let paragraph of section.paragraphs">
-			<!--{{paragraph}}-->
-			<!--<span [innerHTML]="paragraph">
-			</span>-->
 			<k-content [data]="paragraph"></k-content>
 		</p>
 		<img *ngIf="section.picture" [src]="'http://localhost:9090/kontentsu/api/files/' + section.picture?.href" [alt]="section.picture?.alt"

@@ -5,7 +5,7 @@ import { Title } from '@angular/platform-browser';
 import { TestBed, inject } from '@angular/core/testing';
 import { MockBackend } from '@angular/http/testing';
 import { ContentService } from './content.service';
-import { Logger } from '../logger.service';
+import { Logger } from '../logger/logger.service';
 import { Location, LocationStrategy, PathLocationStrategy, APP_BASE_HREF } from '@angular/common';
 
 

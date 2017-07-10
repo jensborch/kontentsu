@@ -1,3 +1,4 @@
+/* tslint:disable:directive-selector */
 import { Router } from '@angular/router';
 import { HostListener, Directive, Input } from '@angular/core';
 

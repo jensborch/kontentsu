@@ -10,7 +10,7 @@ import { By } from '@angular/platform-browser';
 })
 class TestComponent { }
 
-describe('LinkDirective', () => {
+describe('Directive: Link', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -22,7 +22,7 @@ describe('LinkDirective', () => {
   });
   it('should create an instance', () => {
     const fixture = TestBed.createComponent(TestComponent);
-    const directiveEl = fixture.debugElement.query(By.directive(LinkDirective));
-    expect(directiveEl).not.toBeNull();
+    const directive = fixture.debugElement.query(By.directive(LinkDirective));
+    expect(directive).not.toBeNull();
   });
 });
