@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { ArticleComponent } from './article.component';
-import { Directive, Input } from '@angular/core';
+import { Directive, Input, Component } from '@angular/core';
 
-@Directive({
-  selector: 'k-content'
+@Component({
+  selector: 'k-content',
+  template: ''
 })
 class MockContentDirective {
   @Input('data')
