@@ -216,15 +216,18 @@ subprojects {
             }
             output.classesDir = "$buildDir/classes/integration-test"
         }
+        main {
+            output.resourcesDir = "build/classes/java/test"
+        }
     }
 
     task integrationTest(type: Test) {
         description = 'Run integration tests'
-        testClassesDir = sourceSets.integrationTest.output.classesDir
+        testClassesDirs = files(sourceSets.integrationTest.output.classesDir)
         classpath = sourceSets.main.runtimeClasspath + sourceSets.integrationTest.runtimeClasspath
         reports {
-            html.destination = "$buildDir/reports/integration-test"
-            junitXml.destination = "$buildDir/integration-test-results"
+            html.destination = file("$buildDir/reports/integration-test")
+            junitXml.destination = file("$buildDir/integration-test-results")
         }
     }
 
