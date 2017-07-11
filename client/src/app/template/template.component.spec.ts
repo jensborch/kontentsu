@@ -6,8 +6,9 @@ import { TemplateComponent } from './template.component';
 import { ContentService } from '../content/content.service';
 import { Logger } from '../logger/logger.service';
 import { Location, LocationStrategy, PathLocationStrategy, APP_BASE_HREF } from '@angular/common';
+import { Compiler } from '@angular/core';
 
-describe('TemplateComponent', () => {
+describe('Component: Template', () => {
   let component: TemplateComponent;
   let fixture: ComponentFixture<TemplateComponent>;
 
@@ -17,9 +18,7 @@ describe('TemplateComponent', () => {
       declarations: [TemplateComponent],
       providers: [
         { provide: XHRBackend, useClass: MockBackend },
-        { provide: LocationStrategy, useClass: PathLocationStrategy },
-        { provide: APP_BASE_HREF, useValue: '/' },
-        Location,
+        Compiler,
         ContentService,
         Logger
       ]

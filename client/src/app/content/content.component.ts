@@ -9,7 +9,7 @@ import { PageModule } from '../page.module';
 
 @Component({
   selector: 'k-content',
-  template: '<div #content></div>'
+  template: '<ng-template #content></ng-template>'
 })
 export class ContentComponent implements OnInit {
 
@@ -18,9 +18,7 @@ export class ContentComponent implements OnInit {
   @ViewChild('content', { read: ViewContainerRef })
   content: ViewContainerRef;
 
-  constructor(
-    private componentFactoryResolver: ComponentFactoryResolver,
-    private compiler: Compiler) { }
+  constructor(private compiler: Compiler) { }
 
   ngOnInit() {
     const factory = this.createComponentFactory(this.data);
@@ -36,7 +34,10 @@ export class ContentComponent implements OnInit {
     class DynamicContentComponent {
     }
 
-    @NgModule({ imports: [PageModule], declarations: [DynamicContentComponent] })
+    @NgModule({
+      imports: [PageModule],
+      declarations: [DynamicContentComponent]
+    })
     class DynamicContentModule { }
 
     const module: ModuleWithComponentFactories<any> = this.compiler.compileModuleAndAllComponentsSync(DynamicContentModule);

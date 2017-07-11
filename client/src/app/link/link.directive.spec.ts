@@ -16,7 +16,6 @@ describe('Directive: Link', () => {
       imports: [
         RouterTestingModule.withRoutes([])
       ],
-      providers: [],
       declarations: [TestComponent, LinkDirective]
     });
   });

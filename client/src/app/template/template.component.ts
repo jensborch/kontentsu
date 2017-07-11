@@ -21,7 +21,6 @@ export class TemplateComponent implements OnInit {
     constructor(
         private contentService: ContentService,
         private http: Http,
-        private vcRef: ViewContainerRef,
         private compiler: Compiler,
         private log: Logger) { }
 
@@ -45,8 +44,7 @@ export class TemplateComponent implements OnInit {
 
         @NgModule({
             imports: [CommonModule, PageModule],
-            declarations: [DynamicTemplateComponent],
-            exports: [PageModule]
+            declarations: [DynamicTemplateComponent]
         })
         class DynamicTemplateModule { }
 
