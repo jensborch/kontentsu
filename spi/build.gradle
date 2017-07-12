@@ -3,7 +3,7 @@ jar {
 }
 
 sourceSets {
-    main {
+    test {
         output.resourcesDir = "$buildDir/classes/java/test"
     }
 }
