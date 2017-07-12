@@ -216,9 +216,6 @@ subprojects {
             }
             output.classesDir = "$buildDir/classes/integration-test"
         }
-        main {
-            output.resourcesDir = "build/classes/java/test"
-        }
     }
 
     task integrationTest(type: Test) {
@@ -277,11 +274,11 @@ subprojects {
 
     jacocoTestReport {
         reports {
-            xml.enabled true
-            csv.enabled false
+            xml.enabled = true
+            csv.enabled = false
             html {
-                enabled true
-                destination "${buildDir}/reports/jacoco"
+                enabled = true
+                destination = file("${buildDir}/reports/jacoco")
             }
         }
     }

@@ -2,6 +2,12 @@ jar {
     baseName = 'kontentsu-spi'
 }
 
+sourceSets {
+    main {
+        output.resourcesDir = "$buildDir/classes/java/test"
+    }
+}
+
 dependencies {
     compile 'org.apache.tomee:javaee-api:' + javaeeVersion
 

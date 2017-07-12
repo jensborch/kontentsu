@@ -14,6 +14,9 @@ sourceSets {
     main {
         output.resourcesDir = "$buildDir/classes/java/main"
     }
+    test {
+        output.resourcesDir = "$buildDir/classes/java/test"
+    }    
 }
 
 dependencies {
