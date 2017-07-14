@@ -61,7 +61,7 @@
                         "picture": {
                             "title": "Book",
                             "alt": "Book",
-                            "href": "images/book",
+                            "href": "images/book/book.jpg",
                             "useMetadata": "false"
                         }
                     },

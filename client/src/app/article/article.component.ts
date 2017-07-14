@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ContentComponent } from '../content/content.component';
+import { environment } from '../../environments/environment';
 
 
 @Component({
@@ -10,6 +11,10 @@ import { ContentComponent } from '../content/content.component';
 export class ArticleComponent {
   @Input() data = {};
 
-  constructor() { }
+  root: string;
+
+  constructor() {
+    this.root = environment.filesApi;
+  }
 
 }

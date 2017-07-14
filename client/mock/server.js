@@ -11,7 +11,8 @@ const files = path.join(__dirname, 'files');
 var app = connect();
 
 app.use(modRewrite([
-    '^/kontentsu/api/files/(.+)/$ /$1/index.json [L]'
+    '^/kontentsu/api/files/pages/(.+)/$ /pages/$1/index.json [L]',
+    '^/kontentsu/api/files/images/(.+)$ /images/$1 [L]'
 ]))
     .use(cors({}))
     .use(serveStatic(files));

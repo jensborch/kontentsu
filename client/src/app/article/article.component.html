@@ -1,11 +1,10 @@
-<article *ngIf="data.sections">
+<md-card-content *ngIf="data.sections">
 	<h1 *ngIf="data.heading">{{data.heading}}</h1>
-	<section *ngFor="let section of data.sections">
+	<div *ngFor="let section of data.sections">
 		<h2 *ngIf="section.heading">{{section.heading}}</h2>
 		<p *ngFor="let paragraph of section.paragraphs">
 			<k-content [data]="paragraph"></k-content>
 		</p>
-		<img *ngIf="section.picture" [src]="'http://localhost:9090/kontentsu/api/files/' + section.picture?.href" [alt]="section.picture?.alt"
-		 [title]="section.picture?.title">
-	</section>
-</article>
+		<img md-card-image *ngIf="section.picture" [src]="root + section.picture.href" [alt]="section.picture?.alt" [title]="section.picture?.title">
+	</div>
+</md-card-content>
