@@ -6,11 +6,19 @@ pipeline {
         stage('Clean') {
             steps {
                 sh 'gradle clean'
+                dir('client') {
+                    sh 'npm prune'
+                    sh 'npm install'
+                }
             }
         }        
         stage('Build') {
             steps {
                 sh 'gradle build'
+                dir('client') {
+                    sh 'ng dist'
+                    sh 'ng test --single-run --code-coverage --browsers ChromeHeadless'
+                }
             }
         }
         stage('Static code analysis') {
