@@ -5,17 +5,33 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building..'
+                if(isUnix()) {
+                    sh 'gradle build'
+                } else {
+                    bat 'gradle build'
+                }
             }
         }
-        stage('Test') {
+        stage('Static code analysis') {
             steps {
-                echo 'Testing..'
+                if(isUnix()) {
+                    sh 'gradle pmd'
+                    sh 'gradle checkstyle'
+                    sh 'gradle findbugs'
+                } else {
+                    bat 'gradle pmd'
+                    bat 'gradle checkstyle'
+                    bat 'gradle findbugs'                    
+                }
             }
         }   
-        stage('Deploy') {
+        stage('Integration tests') {
             steps {
-                echo 'Deploying....'
+                if(isUnix()) {
+                    sh 'gradle integrationTest'
+                } else {
+                    bat 'gradle integrationTest'
+                }
             }
         }
     }
