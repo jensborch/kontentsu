@@ -8,7 +8,7 @@ pipeline {
                 sh 'gradle clean'
                 dir('client') {
                     dir('node_modules') {
-                        deleteDir
+                        deleteDir()
                     }
                     sh 'npm install'
                 }
