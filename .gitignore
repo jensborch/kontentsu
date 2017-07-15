@@ -21,3 +21,5 @@
 /oauth/authentication/build/
 /client/coverage
 /client/dist
+/client/.vscode
+/private
