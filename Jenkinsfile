@@ -2,8 +2,8 @@
 pipeline {
     agent any
 
-    node {
-        stages {
+    stages {
+        node {
         stage('Build') {
                 if(isUnix()) {
                     sh 'gradle build'
