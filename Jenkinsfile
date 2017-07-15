@@ -1,9 +1,8 @@
 #!/usr/bin/env groovy
-pipeline {
+node {
     agent any
 
     stages {
-        node {
         stage('Build') {
                 if(isUnix()) {
                     sh 'gradle build'
@@ -29,6 +28,5 @@ pipeline {
                     bat 'gradle integrationTest'
                 }
         }
-    }
     }
 }
