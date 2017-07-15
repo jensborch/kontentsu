@@ -31,7 +31,7 @@ pipeline {
                 dir('client') {
                     sh "mkdir -p checkstyle"
                     sh "rm -f checkstyle/main.xml"
-                    sh 'npm run-script lint -- --format checkstyle --force true | awk "{if(NR > 3) print $0}" > checkstyle/main.xml'
+                    sh 'npm run-script lint -- --format checkstyle --force true | awk \\"{if(NR > 3) print $0}\\" > checkstyle/main.xml'
                 }
             }
         }   
