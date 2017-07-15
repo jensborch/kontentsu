@@ -10,9 +10,9 @@ pipeline {
         }
         stage('Static code analysis') {
             steps {
-                sh 'gradle pmd'
-                sh 'gradle checkstyle'
-                sh 'gradle findbugs'
+                sh 'gradle pmd pmdMain'
+                sh 'gradle checkstyle checkstyleMain'
+                sh 'gradle findbugs findbugsMain'
             }
         }   
         stage('Integration tests') {
