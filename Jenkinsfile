@@ -29,7 +29,7 @@ pipeline {
                 sh 'gradle checkstyle checkstyleMain'
                 sh 'gradle findbugs findbugsMain'
                 dir('client') {
-                    sh "mkdir checkstyle"
+                    sh "mkdir -p checkstyle"
                     sh 'npm run-script lint -- --format checkstyle --force true | awk "{if(NR > 3) print $0}" > checkstyle/main.xml'
                 }
             }
