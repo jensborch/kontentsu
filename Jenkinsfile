@@ -29,7 +29,7 @@ pipeline {
                 sh 'gradle checkstyle checkstyleMain'
                 sh 'gradle findbugs findbugsMain'
                 dir('client') {
-                    sh 'npm run-script lint -- --format checkstyle'
+                    sh 'npm run-script lint -- --format checkstyle --force true'
                 }
             }
         }   
@@ -45,6 +45,8 @@ pipeline {
                 findbugs canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', pattern: '**/findbugs/main.xml', unHealthy: ''
                 checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/checkstyle/main.xml', unHealthy: ''
                 pmd canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/pmd/main.xml', unHealthy: ''
+                openTasks canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', high: 'FIXME,HACK', ignoreCase: true, low: 'NOTE', normal: 'TODO', pattern: '**/*java,client/src/**/*.ts', unHealthy: ''
+                dry canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/build/**/cpd/cpdCheck.xml', unHealthy: ''
             }
         }
     }
