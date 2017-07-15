@@ -29,7 +29,8 @@ pipeline {
                 sh 'gradle checkstyle checkstyleMain'
                 sh 'gradle findbugs findbugsMain'
                 dir('client') {
-                    sh 'npm run-script lint -- --format checkstyle --force true'
+                    sh "mkdir checkstyle"
+                    sh 'npm run-script lint -- --format checkstyle --force true > checkstyle/main.xml'
                 }
             }
         }   
