@@ -3,6 +3,7 @@ pipeline {
     agent any
 
     node {
+        stages {
         stage('Build') {
                 if(isUnix()) {
                     sh 'gradle build'
@@ -28,5 +29,6 @@ pipeline {
                     bat 'gradle integrationTest'
                 }
         }
+    }
     }
 }
