@@ -28,6 +28,9 @@ pipeline {
                 sh 'gradle pmd pmdMain'
                 sh 'gradle checkstyle checkstyleMain'
                 sh 'gradle findbugs findbugsMain'
+                dir('client') {
+                    sh 'npm run-script lint -- --format checkstyle'
+                }
             }
         }   
         stage('Integration tests') {
@@ -40,6 +43,8 @@ pipeline {
                 junit '**/build/test-results/test/*.xml'
                 jacoco changeBuildStatus: true, exclusionPattern: ' **/*Test*.class, **/*IT.class, **/model/**/Q*.class', maximumBranchCoverage: '60', maximumClassCoverage: '70', maximumComplexityCoverage: '60', maximumInstructionCoverage: '60', maximumLineCoverage: '60', maximumMethodCoverage: '60', minimumBranchCoverage: '40', minimumClassCoverage: '50', minimumComplexityCoverage: '40', minimumInstructionCoverage: '40', minimumLineCoverage: '40', minimumMethodCoverage: '40'
                 findbugs canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', pattern: '**/findbugs/main.xml', unHealthy: ''
+                checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/checkstyle/main.xml', unHealthy: ''
+                pmd canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/pmd/main.xml', unHealthy: ''
             }
         }
     }
