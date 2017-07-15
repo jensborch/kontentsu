@@ -16,7 +16,7 @@ pipeline {
             steps {
                 sh 'gradle build'
                 dir('client') {
-                    sh 'npm run-script dist'
+                    sh 'npm run-script build'
                     sh 'npm run-script test -- --single-run --code-coverage --browsers ChromeHeadless'
                 }
             }
