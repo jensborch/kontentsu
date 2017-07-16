@@ -5,7 +5,7 @@ import { ContentComponent } from './content/content.component';
 import { MdCardModule, MdMenuModule, MdIconModule, MdToolbarModule } from '@angular/material';
 import { RouterModule } from '@angular/router';
 import { LinkDirective } from 'app/link/link.directive';
-import { FlexLayoutModule } from "@angular/flex-layout";
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
     imports: [
@@ -23,11 +23,11 @@ import { FlexLayoutModule } from "@angular/flex-layout";
         ContentComponent,
         LinkDirective,
         CommonModule,
-        FlexLayoutModule, 
-        RouterModule, 
-        MdCardModule, 
-        MdMenuModule, 
-        MdIconModule, 
+        FlexLayoutModule,
+        RouterModule,
+        MdCardModule,
+        MdMenuModule,
+        MdIconModule,
         MdToolbarModule]
 })
 export class PageModule { }
