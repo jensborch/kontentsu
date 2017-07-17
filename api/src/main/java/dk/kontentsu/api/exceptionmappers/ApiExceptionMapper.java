@@ -45,7 +45,7 @@ public class ApiExceptionMapper implements ExceptionMapper<ApiErrorException> {
 
     @Override
     public Response toResponse(final ApiErrorException ex) {
-        LOGGER.info("Error occured in CDN application REST API", ex);
+        LOGGER.info("Error occurred in CDN application REST API", ex);
         return Response
                 .status(ex.getHttpErrorCode())
                 .entity(new ErrorRepresentation(ex.getErrorCode(), ex.getMessage()))

@@ -28,7 +28,7 @@ public class AuthModuleStartup implements ServletContextListener {
 
     @Override
     public void contextDestroyed(final ServletContextEvent event) {
-        //Do noothinng...
+        //Do nothing...
     }
 
 }

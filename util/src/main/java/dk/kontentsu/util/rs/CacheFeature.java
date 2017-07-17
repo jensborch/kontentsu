@@ -47,14 +47,14 @@ public class CacheFeature implements DynamicFeature {
             Cache cc = resourceInfo.getResourceMethod().getAnnotation(Cache.class);
             NoCache nc = resourceInfo.getResourceMethod().getAnnotation(NoCache.class);
             if (nc != null) {
-                LOGGER.debug("Found NoCache annotation on metod {}", resourceInfo.getResourceMethod());
+                LOGGER.debug("Found NoCache annotation on method {}", resourceInfo.getResourceMethod());
                 context.register(new CacheFilter(nc));
             } else if (cc != null) {
-                LOGGER.debug("Found Cache annotation on metod {}", resourceInfo.getResourceMethod());
+                LOGGER.debug("Found Cache annotation on method {}", resourceInfo.getResourceMethod());
                 context.register(new CacheFilter(cc));
             }
         } else {
-            LOGGER.warn("Found Cache annotation on non GET metod {}", resourceInfo.getResourceMethod());
+            LOGGER.warn("Found Cache annotation on non GET method {}", resourceInfo.getResourceMethod());
         }
     }
 

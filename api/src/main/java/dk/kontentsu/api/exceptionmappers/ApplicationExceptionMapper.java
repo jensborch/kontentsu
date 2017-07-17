@@ -45,7 +45,7 @@ public class ApplicationExceptionMapper implements ExceptionMapper<ApplicationEx
 
     @Override
     public Response toResponse(final ApplicationException ex) {
-        LOGGER.info("Error occured in CDN application", ex);
+        LOGGER.info("Error occurred in CDN application", ex);
         if (ex instanceof ValidationException) {
             return Response
                     .status(Response.Status.BAD_REQUEST)

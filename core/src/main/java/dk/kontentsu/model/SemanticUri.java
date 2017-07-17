@@ -107,7 +107,7 @@ public class SemanticUri implements Serializable {
 
     @Override
     public String toString() {
-        return path.toString() + SemanticUriPath.SEPERATOR_CHAR + name;
+        return path.toString() + SemanticUriPath.SEPARATOR_CHAR + name;
     }
 
     @Override

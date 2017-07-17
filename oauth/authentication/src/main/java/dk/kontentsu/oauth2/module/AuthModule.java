@@ -54,7 +54,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 /**
- * OAauth2 JASPIC server authentication module.
+ * OAuth2 JASPIC server authentication module.
  *
  * @author Jens Borch Christiansen
  */
@@ -110,7 +110,7 @@ public class AuthModule implements ServerAuthModule, ServerAuthContext, ClientAu
                 LOGGER.debug("Subject after invoking callbacks: {}", clientSubject);
                 LOGGER.debug("Principal: " + username);
             } catch (JwtException e) {
-                LOGGER.warn("Error in JWT token retrived from authorization header", e);
+                LOGGER.warn("Error in JWT token retrieved from authorization header", e);
             } catch (UnsupportedCallbackException | IOException e) {
                 LOGGER.error("Error in server authentication module", e);
                 return AuthStatus.SEND_FAILURE;

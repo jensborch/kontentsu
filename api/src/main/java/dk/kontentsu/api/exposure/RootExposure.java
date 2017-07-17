@@ -38,7 +38,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import dk.kontentsu.api.CdnApplication;
+import dk.kontentsu.api.KontentsuApplication;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -64,7 +64,7 @@ import io.swagger.annotations.Tag;
                 license = @License(
                         name = "MIT License",
                         url = "https://opensource.org/licenses/MIT")),
-        basePath = CdnApplication.API_ROOT,
+        basePath = KontentsuApplication.API_ROOT,
         schemes = {SwaggerDefinition.Scheme.DEFAULT},
         tags = {
             @Tag(name = "root", description = "CDN Publishing Service root resource"),
