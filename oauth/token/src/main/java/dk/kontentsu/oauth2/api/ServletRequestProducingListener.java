@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 @WebListener
 public class ServletRequestProducingListener implements ServletRequestListener {
 
-    private static final ThreadLocal<ServletRequest> SERVLET_REQUESTS = new ThreadLocal<ServletRequest>();
+    private static final ThreadLocal<ServletRequest> SERVLET_REQUESTS = new ThreadLocal<>();
 
     @Override
     public void requestInitialized(final ServletRequestEvent event) {

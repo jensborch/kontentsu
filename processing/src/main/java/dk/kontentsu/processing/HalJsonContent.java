@@ -16,7 +16,7 @@ public final class HalJsonContent {
     public static final String JSON_CONTENT = "content";
     public static final String JSON_HREF = "href";
     public static final String JSON_LINKS = "_links";
-    public static final List<String> JSON_METADATA = Collections.unmodifiableList(Arrays.asList(new String[]{"seo"}));
+    public static final List<String> JSON_METADATA = Collections.unmodifiableList(Arrays.asList("seo"));
     public static final String JSON_REF = "ref";
     public static final String JSON_SELF_LINK = "self";
 

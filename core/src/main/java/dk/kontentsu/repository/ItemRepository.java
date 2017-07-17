@@ -67,7 +67,7 @@ public class ItemRepository extends Repository<Item> {
     @Override
     public List<Item> findAll() {
         TypedQuery<Item> query = em.createNamedQuery(ITEM_FIND_ALL, Item.class);
-        query.setParameter("state", Arrays.asList(new State[]{State.ACTIVE, State.DRAFT}));
+        query.setParameter("state", Arrays.asList(State.ACTIVE, State.DRAFT));
         return query.getResultList();
     }
 

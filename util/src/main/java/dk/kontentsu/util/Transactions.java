@@ -59,7 +59,7 @@ public final class Transactions {
             }
         }
 
-        public <T> void accept(final Consumer<T> consumer, final T param) throws Exception {
+        public void accept(final Consumer<T> consumer, final T param) throws Exception {
             try {
                 userTransaction.begin();
                 consumer.accept(param);
