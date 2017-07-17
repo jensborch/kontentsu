@@ -179,10 +179,8 @@ public class UploadService {
     private Item findOrCreateItem(final UploadItem uploadeItem) {
         SemanticUriPath path = catRepo.findByUri(uploadeItem.getUri().getPath())
                 .orElse(uploadeItem.getUri().getPath());
-        Item item = path.getItem(uploadeItem.getUri().getName())
+        return path.getItem(uploadeItem.getUri().getName())
                 .orElse(new Item(new SemanticUri(path, uploadeItem.getUri().getName())));
-
-        return item;
     }
 
     private void addHosts(final Item item, final UploadItem uploadeItem) {
@@ -250,7 +248,7 @@ public class UploadService {
     }
 
     private Item findOrCreate(final Link link) {
-        Item i = itemRepo.findByUri(link.getUri())
+        return itemRepo.findByUri(link.getUri())
                 .orElseGet(() -> {
                     SemanticUriPath tmpPath = catRepo.findByUri(link.getPath())
                             .orElse(link.getPath());
@@ -258,6 +256,5 @@ public class UploadService {
                     Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));
                     return itemRepo.save(tmpItem);
                 });
-        return i;
     }
 }

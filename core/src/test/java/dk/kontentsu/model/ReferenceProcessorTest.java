@@ -40,13 +40,12 @@ public class ReferenceProcessorTest {
     @Inject
     private TestVisitor visitor;
 
-    private ContentTestData data;
     private Item page;
     private Version pageVersion;
 
     @Before
     public void setUp() throws Exception {
-        data = new ContentTestData();
+        ContentTestData data = new ContentTestData();
         SemanticUri semanticUri1 = new SemanticUri(new SemanticUriPath("items", "article2"), "article2");
         Item article1 = new Item(semanticUri1);
         Version articleVersion1 = Version.builder()

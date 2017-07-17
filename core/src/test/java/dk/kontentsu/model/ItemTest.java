@@ -50,13 +50,12 @@ public class ItemTest {
 
     private Version create(final ZonedDateTime from, final ZonedDateTime to) throws Exception {
         Content content = new Content("This is a test".getBytes(), Charset.defaultCharset(), new MimeType("text", "plain"));
-        Version version = Version.builder()
+        return Version.builder()
                 .content(content)
                 .from(from)
                 .to(to)
                 .metadata(new Metadata.Key(MetadataType.PAGE, "key"), new Metadata("This is metadata"))
                 .build();
-        return version;
     }
 
     @Test

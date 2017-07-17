@@ -210,12 +210,11 @@ public class Version extends AbstractBaseEntity {
     }
 
     public Map<SemanticUri, List<Version>> getComposition() {
-        Map<SemanticUri, List<Version>> result = references.stream()
+        return references.stream()
                 .filter(c -> c.getType() == ReferenceType.COMPOSITION)
                 .map(c -> c.getItem())
                 .flatMap(i -> i.getVersions(interval).stream())
                 .collect(Collectors.groupingBy(v -> v.item.getUri()));
-        return result;
     }
 
     public List<Reference> getReferences() {

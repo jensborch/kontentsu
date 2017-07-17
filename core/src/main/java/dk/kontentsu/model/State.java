@@ -29,6 +29,6 @@ package dk.kontentsu.model;
  */
 public enum State {
 
-    ACTIVE, DELETED, DRAFT;
+    ACTIVE, DELETED, DRAFT
 
 }

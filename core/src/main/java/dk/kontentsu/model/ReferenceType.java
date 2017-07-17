@@ -30,6 +30,6 @@ package dk.kontentsu.model;
  */
 public enum ReferenceType {
 
-    LINK, COMPOSITION;
+    LINK, COMPOSITION
 
 }
