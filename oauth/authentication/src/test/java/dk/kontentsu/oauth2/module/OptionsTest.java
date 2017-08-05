@@ -29,7 +29,7 @@ public class OptionsTest {
     @Test
     public void testSignatureKey() throws Exception {
         Options options = new Options().setSignatureKey("junit");
-        assertArrayEquals("junit".getBytes(), (byte[]) options.getSignatureKey());
+        assertArrayEquals("junit".getBytes(), options.getSignatureKey());
         assertEquals("junit", options.asMap().get("oauth2.jwt.signature.key"));
     }
 
@@ -41,7 +41,7 @@ public class OptionsTest {
         map.put("javax.security.auth.message.MessagsePolicy.isMandatory", "wrong");
         map.put("test", "junit");
         options.augment(map);
-        assertArrayEquals("junit".getBytes(), (byte[]) options.getSignatureKey());
+        assertArrayEquals("junit".getBytes(), options.getSignatureKey());
         assertFalse(options.isMandatory());
         assertEquals("junit", options.asMap().get("test"));
     }

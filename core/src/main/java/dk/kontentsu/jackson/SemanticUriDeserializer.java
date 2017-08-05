@@ -45,7 +45,7 @@ public class SemanticUriDeserializer extends StdDeserializer<SemanticUri> {
     }
 
     @Override
-    public SemanticUri deserialize(final JsonParser jp, final DeserializationContext dc) throws IOException, JsonProcessingException {
+    public SemanticUri deserialize(final JsonParser jp, final DeserializationContext dc) throws IOException {
         String value = jp.readValueAs(String.class);
         return SemanticUri.parse(value);
     }

@@ -49,7 +49,7 @@ public class LinkSerializer extends StdSerializer<Link> {
     }
 
     @Override
-    public void serialize(final Link link, final JsonGenerator jgen, final SerializerProvider provider) throws IOException, JsonProcessingException {
+    public void serialize(final Link link, final JsonGenerator jgen, final SerializerProvider provider) throws IOException {
         jgen.writeStartObject();
         if (link.getRel() != null) {
             jgen.writeStringField(REL, link.getRel());

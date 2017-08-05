@@ -34,10 +34,10 @@ dependencies {
     compile 'com.pastdev:jsch-nio:' + jschNioVersion
 
     compile 'com.querydsl:querydsl-apt:' + querydslVersion + ':jpa'
-    compile 'com.querydsl:querydsl-jpa:' + querydslVersion;
+    compile 'com.querydsl:querydsl-jpa:' + querydslVersion
     compile 'org.hibernate:hibernate-entitymanager:' + hibernateVersion
-    compile 'org.aeonbits.owner:owner:' + ownerVersion;
-    compile 'org.aeonbits.owner:owner-java8:' + ownerVersion;
+    compile 'org.aeonbits.owner:owner:' + ownerVersion
+    compile 'org.aeonbits.owner:owner-java8:' + ownerVersion
     compile ('io.swagger:swagger-jersey2-jaxrs:' + swaggerVersion) {
         exclude group: 'org.glassfish.jersey.containers'
         exclude group: 'javax.servlet.media'

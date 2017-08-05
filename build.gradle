@@ -32,7 +32,7 @@ ext {
     esapiVersion = '2.1.0.1'
     jjwtVersion = '0.7.0'
     jschNioVersion = '1.0.4'
-    findbugsAnnotationsVersion = '3.0.1u2';
+    findbugsAnnotationsVersion = '3.0.1u2'
 
     swaggerUiVersion = '3.0.14'
     swaggerVersion = '1.5.15'

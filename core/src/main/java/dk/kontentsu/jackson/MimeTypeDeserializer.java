@@ -45,7 +45,7 @@ public class MimeTypeDeserializer extends StdDeserializer<MimeType> {
     }
 
     @Override
-    public MimeType deserialize(final JsonParser jp, final DeserializationContext dc) throws IOException, JsonProcessingException {
+    public MimeType deserialize(final JsonParser jp, final DeserializationContext dc) throws IOException {
         String value = jp.readValueAs(String.class);
         return MimeType.parse(value);
     }

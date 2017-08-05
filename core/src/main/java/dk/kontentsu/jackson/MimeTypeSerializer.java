@@ -45,7 +45,7 @@ public class MimeTypeSerializer extends StdSerializer<MimeType> {
     }
 
     @Override
-    public void serialize(final MimeType value, final JsonGenerator jgen, final SerializerProvider provider) throws IOException, JsonGenerationException {
+    public void serialize(final MimeType value, final JsonGenerator jgen, final SerializerProvider provider) throws IOException {
         jgen.writeString(value.toString());
     }
 
