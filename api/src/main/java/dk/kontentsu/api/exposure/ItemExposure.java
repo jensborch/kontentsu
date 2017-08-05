@@ -23,32 +23,6 @@
  */
 package dk.kontentsu.api.exposure;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dk.kontentsu.api.configuration.Config;
-import dk.kontentsu.api.exposure.mappers.MultipartUploadItemMapper;
-import dk.kontentsu.api.exposure.mappers.UploadItemMapper;
-import dk.kontentsu.api.exposure.model.ErrorRepresentation;
-import dk.kontentsu.api.exposure.model.ItemRepresentation;
-import dk.kontentsu.api.exposure.model.MultipartUploadItemRepresentation;
-import dk.kontentsu.api.exposure.model.UploadItemRepresentation;
-import dk.kontentsu.api.exposure.model.VersionLinkRepresentation;
-import dk.kontentsu.api.exposure.model.VersionRepresentation;
-import dk.kontentsu.exception.ValidationException;
-import dk.kontentsu.jackson.ObjectMapperFactory;
-import dk.kontentsu.model.Item.Criteria;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.Role;
-import dk.kontentsu.model.Version;
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.upload.UploadItem;
-import dk.kontentsu.upload.Uploader;
-import dk.kontentsu.util.rs.Cache;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -59,6 +33,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -84,6 +59,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadBase;
@@ -91,6 +74,26 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
+
+import dk.kontentsu.api.configuration.Config;
+import dk.kontentsu.api.exposure.mappers.MultipartUploadItemMapper;
+import dk.kontentsu.api.exposure.mappers.UploadItemMapper;
+import dk.kontentsu.api.exposure.model.ErrorRepresentation;
+import dk.kontentsu.api.exposure.model.ItemRepresentation;
+import dk.kontentsu.api.exposure.model.MultipartUploadItemRepresentation;
+import dk.kontentsu.api.exposure.model.UploadItemRepresentation;
+import dk.kontentsu.api.exposure.model.VersionLinkRepresentation;
+import dk.kontentsu.api.exposure.model.VersionRepresentation;
+import dk.kontentsu.exception.ValidationException;
+import dk.kontentsu.jackson.ObjectMapperFactory;
+import dk.kontentsu.model.Item.Criteria;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.Role;
+import dk.kontentsu.model.Version;
+import dk.kontentsu.repository.ItemRepository;
+import dk.kontentsu.upload.UploadItem;
+import dk.kontentsu.upload.Uploader;
+import dk.kontentsu.util.rs.Cache;
 
 /**
  * REST resource for listing and manipulating items on the CDN.

@@ -23,16 +23,6 @@
  */
 package dk.kontentsu.upload;
 
-import dk.kontentsu.externalization.ExternalizerService;
-import dk.kontentsu.model.*;
-import dk.kontentsu.parsers.ContentParser;
-import dk.kontentsu.parsers.Link;
-import dk.kontentsu.repository.CategoryRepository;
-import dk.kontentsu.repository.HostRepository;
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.model.processing.InjectableContentProcessingScope;
-import dk.kontentsu.spi.ContentProcessingMimeType;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -54,6 +44,20 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import dk.kontentsu.externalization.ExternalizerService;
+import dk.kontentsu.model.Content;
+import dk.kontentsu.model.Host;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.SemanticUriPath;
+import dk.kontentsu.model.Version;
+import dk.kontentsu.parsers.ContentParser;
+import dk.kontentsu.parsers.Link;
+import dk.kontentsu.repository.CategoryRepository;
+import dk.kontentsu.repository.HostRepository;
+import dk.kontentsu.repository.ItemRepository;
+import dk.kontentsu.spi.ContentProcessingMimeType;
 
 /**
  * Service facade for performing various operations on CDN items - like uploading new items.
