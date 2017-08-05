@@ -83,10 +83,6 @@ public class ReferenceProcessorTest {
         page.addVersion(pageVersion);
     }
 
-    @After
-    public void tearDown() {
-    }
-
     @Test
     public void testVisitor() {
         InjectableContentProcessingScope.execute(() -> {
@@ -100,8 +96,8 @@ public class ReferenceProcessorTest {
             assertArrayEquals(new String[]{"contact", "article2"}, result.get(1).getResult().names.toArray(new String[2]));
             assertNotEquals(result.get(0), result.get(1));
             assertNotEquals(result.get(0).getInteval(), result.get(1).getInteval());
-            assertTrue(result.stream().filter(n -> n.getInteval().equals(new Interval(NOW, NOW.plusDays(10)))).findAny().isPresent());
-            assertTrue(result.stream().filter(n -> n.getInteval().equals(new Interval(NOW.plusDays(15)))).findAny().isPresent());
+            assertTrue(result.stream().anyMatch(n -> n.getInteval().equals(new Interval(NOW, NOW.plusDays(10)))));
+            assertTrue(result.stream().anyMatch(n -> n.getInteval().equals(new Interval(NOW.plusDays(15)))));
         });
     }
 

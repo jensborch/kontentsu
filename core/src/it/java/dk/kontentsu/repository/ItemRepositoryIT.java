@@ -88,7 +88,7 @@ import org.junit.Test;
     public void tearDown() throws Exception {
         userTransaction.begin();
         List<Item> items = itemRepo.findAll();
-        items.stream().forEach(i -> i.delete());
+        items.forEach(Item::delete);
         userTransaction.commit();
     }
 

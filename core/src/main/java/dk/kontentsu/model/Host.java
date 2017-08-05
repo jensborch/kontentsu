@@ -107,7 +107,7 @@ public class Host extends AbstractBaseEntity {
 
     @JsonIgnore
     public FileSystem getFilesystem() {
-        return getFilesystemURI().map(u -> FileSystems.getFileSystem(u)).orElse(FileSystems.getDefault());
+        return getFilesystemURI().map(FileSystems::getFileSystem).orElse(FileSystems.getDefault());
     }
 
     @JsonSerialize(using = ToStringSerializer.class)

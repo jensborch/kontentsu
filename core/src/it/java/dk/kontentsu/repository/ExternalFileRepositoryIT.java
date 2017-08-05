@@ -123,7 +123,7 @@ public class ExternalFileRepositoryIT {
     public void tearDown() throws Exception {
         try {
             userTransaction.begin();
-            fileRepo.findAll().stream().forEach(f -> f.delete());
+            fileRepo.findAll().forEach(ExternalFile::delete);
         } finally {
             userTransaction.commit();
         }

@@ -76,7 +76,7 @@ public class ContentProcessingScope implements AutoCloseable {
         if (map == null) {
             LOGGER.warn("CDI scope has not been started");
         } else {
-            map.values().stream().forEach(ContentProcessingContext.Instance::destroy);
+            map.values().forEach(ContentProcessingContext.Instance::destroy);
             map.clear();
             INSTANCES.get().pop();
             LOGGER.debug("Stopping CDI scope");

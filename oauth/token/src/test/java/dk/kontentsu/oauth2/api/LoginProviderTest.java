@@ -47,12 +47,7 @@ public class LoginProviderTest {
     @Test
     public void testLogin() {
         Set<Principal> principals = new HashSet<>();
-        principals.add(new Principal() {
-            @Override
-            public String getName() {
-                return "group";
-            }
-        });
+        principals.add(() -> "group");
         login.subject = new Subject(true, principals, new HashSet<>(0), new HashSet<>(0));
         User user = login.login("username", "password");
         assertNotNull(user);

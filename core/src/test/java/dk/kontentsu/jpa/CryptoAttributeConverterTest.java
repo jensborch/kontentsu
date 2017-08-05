@@ -2,8 +2,6 @@ package dk.kontentsu.jpa;
 
 import dk.kontentsu.jpa.CryptoAttributeConverter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;

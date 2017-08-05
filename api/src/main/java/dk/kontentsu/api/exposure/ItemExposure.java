@@ -38,6 +38,7 @@ import dk.kontentsu.jackson.ObjectMapperFactory;
 import dk.kontentsu.model.Item.Criteria;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.Role;
+import dk.kontentsu.model.Version;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.upload.UploadItem;
 import dk.kontentsu.upload.Uploader;
@@ -183,7 +184,7 @@ public class ItemExposure {
                 .stream()
                 .filter(v -> v.getUuid().equals(UUID.fromString(version)))
                 .findAny()
-                .ifPresent(v -> v.delete()));
+                .ifPresent(Version::delete));
         return Response.ok().build();
     }
 
@@ -193,8 +194,7 @@ public class ItemExposure {
     public Response delete(@PathParam("item") final String item) {
         repo.find(UUID.fromString(item))
                 .ifPresent(i -> i.getVersions()
-                .stream()
-                .forEach(v -> v.delete()));
+                .forEach(Version::delete));
         return Response.ok().build();
     }
 
@@ -349,7 +349,7 @@ public class ItemExposure {
         return multipartItems.stream()
                 .filter(i -> i.getFieldName().equals(ref))
                 .findAny()
-                .map(f -> f.getName())
+                .map(FileItem::getName)
                 .flatMap(n -> multipartItems.stream()
                 .filter(f -> f.getFieldName().equals(n))
                 .findAny()

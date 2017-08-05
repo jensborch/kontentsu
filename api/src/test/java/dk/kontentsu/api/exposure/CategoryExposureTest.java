@@ -1,8 +1,8 @@
 package dk.kontentsu.api.exposure;
 
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.*;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.when;
 
 import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;

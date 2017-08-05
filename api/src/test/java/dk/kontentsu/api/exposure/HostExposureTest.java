@@ -1,22 +1,13 @@
 package dk.kontentsu.api.exposure;
 
-import dk.kontentsu.api.exposure.HostExposure;
-
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.*;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ws.rs.core.Application;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.when;
 
 import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
 import dk.kontentsu.model.Host;
 import dk.kontentsu.repository.HostRepository;
-
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -24,6 +15,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import javax.ws.rs.core.Application;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Test for {@link HostExposure}.

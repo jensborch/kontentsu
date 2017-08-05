@@ -59,9 +59,7 @@ public class ReferenceProcessor<R extends TemporalReferenceTreeVisitor.Results, 
 
     public List<TemporalReferenceTree<R, V>> process() {
         while (!processing.isEmpty()) {
-            InjectableContentProcessingScope.execute(() -> {
-                processInScope();
-            });
+            InjectableContentProcessingScope.execute(this::processInScope);
         }
         return Collections.unmodifiableList(processed);
     }

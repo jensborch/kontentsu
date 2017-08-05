@@ -155,7 +155,7 @@ public class Item extends AbstractBaseEntity {
 
     public List<Version> getVersions(final Interval interval) {
         return versions.stream()
-                .filter(v -> v.isActive())
+                .filter(Version::isActive)
                 .filter(v -> v.getInterval().overlaps(interval))
                 .collect(Collectors.toList());
     }
@@ -180,16 +180,14 @@ public class Item extends AbstractBaseEntity {
         boolean result = !getVersions().isEmpty() && getVersions()
                 .stream()
                 .filter(v -> !v.equals(other))
-                .filter(v -> v.isActive())
-                .filter(v -> v.getInterval().overlaps(other.getInterval()))
-                .findAny()
-                .isPresent();
+                .filter(Version::isActive)
+                .anyMatch(v -> v.getInterval().overlaps(other.getInterval()));
         LOGGER.debug("Overlaps between {} and {} returned {}", other.getUuid(), this.getUuid(), result);
         return result;
     }
 
     public void delete() {
-        getVersions().stream().forEach(v -> v.delete());
+        getVersions().forEach(Version::delete);
     }
 
     /**

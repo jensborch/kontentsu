@@ -38,9 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -111,13 +109,13 @@ public class Uploader {
      */
     public Set<UUID> overwrite(@NotNull final UUID itemId, @Valid final UploadItem uploadeItem) {
         Set<UUID> externalized = self.overwriteAndSave(itemId, uploadeItem);
-        externalized.stream().forEach(u ->  externalizer.externalize(u));
+        externalized.forEach(u ->  externalizer.externalize(u));
         return externalized;
     }
 
     public Set<UUID> overwriteSync(final UUID itemId, @Valid final UploadItem uploadeItem) {
         Set<UUID> externalized = self.overwriteAndSave(itemId, uploadeItem);
-        externalized.stream().forEach(u -> {
+        externalized.forEach(u -> {
             try {
                 externalizer.externalize(u).get();
             } catch (InterruptedException | ExecutionException ex) {
@@ -135,7 +133,7 @@ public class Uploader {
         Set<Version> toAdd = new HashSet<>();
         item.getVersions()
                 .stream()
-                .filter(i -> i.isActive())
+                .filter(Version::isActive)
                 .filter(i -> i.getInterval().overlaps(uploadeItem.getInterval()))
                 .forEach(v -> {
                     LOGGER.debug("Deleting version {} with interval {}", v.getUuid(), v.getInterval());
@@ -154,7 +152,7 @@ public class Uploader {
                                 toExternalize.add(n.getUuid());
                             });
                 });
-        toAdd.forEach(v -> item.addVersion(v));
+        toAdd.forEach(item::addVersion);
         Version version = addVersion(item, uploadeItem);
         addHosts(item, uploadeItem);
         toExternalize.add(version.getUuid());
@@ -180,14 +178,12 @@ public class Uploader {
     private void addHosts(final Item item, final UploadItem uploadeItem) {
         List<Host> hosts = hostRepo.findAll();
         if (uploadeItem.getHosts().isEmpty()) {
-            hosts.stream().forEach(h -> item.addHost(h));
+            hosts.forEach(item::addHost);
         } else {
             hosts.stream()
                     .filter(h -> uploadeItem.getHosts().stream()
-                    .filter(n -> h.getName().equals(n))
-                    .findAny()
-                    .isPresent())
-                    .forEach(h -> item.addHost(h));
+                    .anyMatch(n -> h.getName().equals(n)))
+                    .forEach(item::addHost);
         }
     }
 

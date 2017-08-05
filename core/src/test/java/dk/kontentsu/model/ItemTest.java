@@ -44,10 +44,6 @@ public class ItemTest {
         item.addVersion(create(NOW, Interval.INFINIT));
     }
 
-    @After
-    public void tearDown() {
-    }
-
     private Version create(final ZonedDateTime from, final ZonedDateTime to) throws Exception {
         Content content = new Content("This is a test".getBytes(), Charset.defaultCharset(), new MimeType("text", "plain"));
         return Version.builder()

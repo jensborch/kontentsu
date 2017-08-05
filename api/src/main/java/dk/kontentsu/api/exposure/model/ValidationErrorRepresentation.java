@@ -22,7 +22,7 @@ public class ValidationErrorRepresentation extends ErrorRepresentation {
 
     public ValidationErrorRepresentation(final ErrorCode code, final ConstraintViolationException e) {
         super(code, e.getMessage());
-        e.getConstraintViolations().stream().forEach(v -> {
+        e.getConstraintViolations().forEach(v -> {
             violations.add(new Violation(v.getMessage(), Objects.toString(v.getPropertyPath())));
         });
     }

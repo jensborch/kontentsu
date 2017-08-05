@@ -86,7 +86,7 @@ public abstract class Category extends AbstractBaseEntity {
     }
 
     private static String toString(final List<String> semanticUri) {
-        return semanticUri.stream().map(s -> Objects.toString(s)).collect(Collectors.joining(SEPARATOR));
+        return semanticUri.stream().map(Objects::toString).collect(Collectors.joining(SEPARATOR));
     }
 
     @Override

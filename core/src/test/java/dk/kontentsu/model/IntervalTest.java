@@ -43,10 +43,6 @@ public class IntervalTest {
         nowMax = new Interval(NOW, null);
     }
 
-    @After
-    public void tearDown() {
-    }
-
     @Test
     public void testOverlaps() {
         assertTrue(max.overlaps(nowPlus4days));

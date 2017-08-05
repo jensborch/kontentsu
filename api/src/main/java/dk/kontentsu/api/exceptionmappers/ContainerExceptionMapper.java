@@ -89,7 +89,7 @@ public class ContainerExceptionMapper implements ExceptionMapper<EJBException> {
 
         String message = new CauseFinder(n -> n.getMessage() != null && !n.getMessage().isEmpty())
                 .findCause(t)
-                .map(e -> e.getMessage())
+                .map(Throwable::getMessage)
                 .orElse("Unknown container error");
 
         return Response

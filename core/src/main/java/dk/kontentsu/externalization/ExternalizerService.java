@@ -149,7 +149,7 @@ public class ExternalizerService {
                 .filter(Version::isComplete)
                 .collect(Collectors.toList());
 
-        boolean defaultVisitor = getHigestPriorityExternalizationVisitorBean(version).map(b -> b.getBeanClass()).filter(DefaultExternalizationVisitor.class::equals).isPresent();
+        boolean defaultVisitor = getHigestPriorityExternalizationVisitorBean(version).map(Bean::getBeanClass).filter(DefaultExternalizationVisitor.class::equals).isPresent();
 
         if (defaultVisitor || (version.hasComposition() && version.isComplete())) {
             versions.add(version);
@@ -175,7 +175,7 @@ public class ExternalizerService {
 
     private Map<MimeType, Bean<?>> getExternalizationVisitorBeansMap() {
         Map<MimeType, Bean<?>> map = new HashMap<>();
-        findAllExternalizationVisitorBeans().stream().forEach(b -> {
+        findAllExternalizationVisitorBeans().forEach(b -> {
             Arrays.stream(b.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class
             )).forEach(a -> {
                 Arrays.stream(a.value()).map(MimeType::parse).forEach(m -> {
@@ -189,10 +189,10 @@ public class ExternalizerService {
 
     private Map<MimeType.Match, Bean<?>> getMatchingExternalizationVisitorBeans(final Version version) {
         Map<MimeType.Match, Bean<?>> matches = new HashMap<>();
-        externalizationVisitorBeans.entrySet().forEach(e -> {
-            MimeType.Match m = e.getKey().matches(version.getMimeType());
+        externalizationVisitorBeans.forEach((key, value) -> {
+            MimeType.Match m = key.matches(version.getMimeType());
             if (m.isMatch()) {
-                matches.put(m, e.getValue());
+                matches.put(m, value);
             }
         });
         return matches;
@@ -203,7 +203,7 @@ public class ExternalizerService {
                 .stream()
                 .sorted((e1, e2) -> Integer.compare(e2.getKey().getPriority(), e1.getKey().getPriority()))
                 .findFirst()
-                .map(e -> e.getValue());
+                .map(Map.Entry::getValue);
     }
 
     private List<ExternalFile> externalizeVersion(final Version version) {

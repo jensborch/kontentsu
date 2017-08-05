@@ -124,8 +124,8 @@ public class ExternalFileRepository extends Repository<ExternalFile> {
         List<Interval> intervals = query.getResultList();
 
         List<ZonedDateTime> tmp = Stream.concat(
-                intervals.stream().map(i -> i.getFrom()),
-                intervals.stream().map(i -> i.getTo())
+                intervals.stream().map(Interval::getFrom),
+                intervals.stream().map(Interval::getTo)
         )
                 .filter(t -> t.isAfter(from))
                 .distinct()

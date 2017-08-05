@@ -42,11 +42,6 @@ public class VersionTest {
         item.addVersion(version);
     }
 
-    @After
-    public void tearDown() {
-
-    }
-
     @Test
     public void testOverlaps() {
         assertEquals(1, item.getVersions().size());

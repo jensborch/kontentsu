@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.chrono.ChronoZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -154,11 +155,11 @@ public class Interval implements Serializable {
     }
 
     public ZonedDateTime min(final Interval other) {
-        return Stream.concat(times().stream(), other.times().stream()).min((t1, t2) -> t1.compareTo(t2)).get();
+        return Stream.concat(times().stream(), other.times().stream()).min(ChronoZonedDateTime::compareTo).get();
     }
 
     public ZonedDateTime max(final Interval other) {
-        return Stream.concat(times().stream(), other.times().stream()).max((t1, t2) -> t1.compareTo(t2)).get();
+        return Stream.concat(times().stream(), other.times().stream()).max(ChronoZonedDateTime::compareTo).get();
     }
 
     @Override

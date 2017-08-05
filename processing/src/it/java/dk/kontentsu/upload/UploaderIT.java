@@ -20,17 +20,13 @@ import javax.inject.Inject;
 import javax.transaction.UserTransaction;
 import javax.validation.ConstraintViolationException;
 
+import dk.kontentsu.model.*;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.Host;
-import dk.kontentsu.model.Item;
 import dk.kontentsu.repository.HostRepository;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.test.ContentTestData;
@@ -105,7 +101,7 @@ public class UploaderIT {
     public void tearDown() throws Exception {
         try {
             userTransaction.begin();
-            itemRepo.findAll().stream().forEach(i -> i.delete());
+            itemRepo.findAll().forEach(Item::delete);
         } finally {
             userTransaction.commit();
         }
@@ -132,8 +128,8 @@ public class UploaderIT {
             Item r = itemRepo.get(id);
             assertEquals("name", r.getName());
             assertEquals(1, r.getVersions().size());
-            assertEquals(1, r.getVersions().stream().filter(v -> v.getInterval().getFrom().toInstant().equals(NOW.toInstant())).collect(Collectors.counting()).intValue());
-            assertEquals(1, r.getVersions().stream().filter(v -> v.getInterval().getTo().toInstant().equals(Interval.INFINIT.toInstant())).collect(Collectors.counting()).intValue());
+            assertEquals(1, ((Long) r.getVersions().stream().filter(v -> v.getInterval().getFrom().toInstant().equals(NOW.toInstant())).count()).intValue());
+            assertEquals(1, ((Long) r.getVersions().stream().filter(v -> v.getInterval().getTo().toInstant().equals(Interval.INFINIT.toInstant())).count()).intValue());
             assertEquals(1, r.getHosts().size());
             assertEquals(textHost, r.getHosts().stream().findFirst().get());
         } finally {
@@ -206,7 +202,7 @@ public class UploaderIT {
             userTransaction.begin();
             Item item = itemRepo.get(owerwrite.getUuid());
             assertEquals("article2", item.getName());
-            assertEquals(3, item.getVersions().stream().filter(v -> v.isActive()).count());
+            assertEquals(3, item.getVersions().stream().filter(Version::isActive).count());
         } finally {
             userTransaction.commit();
         }

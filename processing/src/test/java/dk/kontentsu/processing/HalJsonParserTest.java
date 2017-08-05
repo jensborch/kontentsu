@@ -31,10 +31,6 @@ public class HalJsonParserTest {
         data = new ContentTestData();
     }
 
-    @After
-    public void tearDown() {
-    }
-
     @Test
     public void testParse() throws Exception {
         Content content = new Content(data.getFullPage(), StandardCharsets.UTF_8, MimeType.APPLICATION_HAL_JSON_TYPE);

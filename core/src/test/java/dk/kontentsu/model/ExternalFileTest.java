@@ -45,10 +45,6 @@ public class ExternalFileTest {
                 .build();
     }
 
-    @After
-    public void tearDown() {
-    }
-
     @Test
     public void testIsDifferent() {
         assertTrue(file.isDifferent(version));

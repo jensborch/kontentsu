@@ -130,7 +130,7 @@ public class HalJsonParser implements ContentParser {
         while (it.hasNext()) {
             Map.Entry<String, JsonNode> parent = it.next();
             List<JsonNode> hrefs = parent.getValue().findValues(JSON_HREF);
-            hrefs.stream().forEach(found -> {
+            hrefs.forEach(found -> {
                 if (found.isTextual()) {
                     LOGGER.debug("Adding composition {}", found.asText());
                     result.add(new Link(SemanticUri.parse(found.asText()), ReferenceType.COMPOSITION));

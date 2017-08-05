@@ -49,7 +49,7 @@ public class DefaultExceptionMapper implements ExceptionMapper<Throwable> {
 
         String message = new CauseFinder(n -> n.getMessage() != null && !n.getMessage().isEmpty())
                 .findCause(t)
-                .map(e -> e.getMessage())
+                .map(Throwable::getMessage)
                 .orElse("Unknown error");
 
         return Response
