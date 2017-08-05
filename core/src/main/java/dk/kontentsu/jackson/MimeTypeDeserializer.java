@@ -23,13 +23,12 @@
  */
 package dk.kontentsu.jackson;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import dk.kontentsu.model.MimeType;
+
+import java.io.IOException;
 
 /**
  * Jackson deserializer for {@link dk.kontentsu.model.MimeType} objects.
