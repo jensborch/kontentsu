@@ -52,6 +52,7 @@ import dk.kontentsu.model.Item;
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.SemanticUriPath;
 import dk.kontentsu.model.Version;
+import dk.kontentsu.model.processing.InjectableContentProcessingScope;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.parsers.Link;
 import dk.kontentsu.repository.CategoryRepository;
