@@ -1,12 +1,12 @@
 build
 generated
+out
 node_modules
 .vscode
 .idea
 /.svn
 /.gradle
 /.nb-gradle
-/out
 /client/app
 /client/typings
 /client/coverage

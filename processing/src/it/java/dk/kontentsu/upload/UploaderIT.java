@@ -41,7 +41,7 @@ import dk.kontentsu.test.TestEJBContainer;
  *
  * @author Jens Borch Christiansen 
  */
-public class UploadServiceIT {
+public class UploaderIT {
 
     private static final ZonedDateTime NOW = ZonedDateTime.now();
 
@@ -56,7 +56,7 @@ public class UploadServiceIT {
     private ItemRepository itemRepo;
 
     @Inject
-    private UploadService service;
+    private Uploader service;
 
     @Resource
     private UserTransaction userTransaction;

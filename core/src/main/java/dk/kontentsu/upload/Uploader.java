@@ -24,12 +24,7 @@
 package dk.kontentsu.upload;
 
 import dk.kontentsu.externalization.ExternalizerService;
-import dk.kontentsu.model.Content;
-import dk.kontentsu.model.Host;
-import dk.kontentsu.model.Item;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.model.Version;
+import dk.kontentsu.model.*;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.parsers.Link;
 import dk.kontentsu.repository.CategoryRepository;
@@ -43,7 +38,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -55,6 +52,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,7 +63,7 @@ import org.apache.logging.log4j.Logger;
  * @author Jens Borch Christiansen
  */
 @Stateless
-public class UploadService {
+public class Uploader {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -82,19 +80,17 @@ public class UploadService {
     private ExternalizerService externalizer;
 
     @Inject
-    private UploadService self;
+    private Uploader self;
 
     @Inject
     private BeanManager bm;
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
     public UUID upload(@Valid final UploadItem uploadeItem) {
         Version version = self.save(uploadeItem);
         externalizer.externalize(version.getUuid());
         return version.getItem().getUuid();
     }
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
     public UUID uploadSync(@Valid final UploadItem uploadeItem) {
         Version version = self.save(uploadeItem);
         try {
@@ -113,14 +109,12 @@ public class UploadService {
      * @param uploadeItem the new item to replace existing.
      * @return a list of the identifiers for the new versions created
      */
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Set<UUID> overwrite(final UUID itemId, @Valid final UploadItem uploadeItem) {
+    public Set<UUID> overwrite(@NotNull final UUID itemId, @Valid final UploadItem uploadeItem) {
         Set<UUID> externalized = self.overwriteAndSave(itemId, uploadeItem);
-        externalized.stream().forEach(u -> externalizer.externalize(u));
+        externalized.stream().forEach(u ->  externalizer.externalize(u));
         return externalized;
     }
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
     public Set<UUID> overwriteSync(final UUID itemId, @Valid final UploadItem uploadeItem) {
         Set<UUID> externalized = self.overwriteAndSave(itemId, uploadeItem);
         externalized.stream().forEach(u -> {
@@ -168,10 +162,10 @@ public class UploadService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Version save(@Valid final UploadItem uploadeItem) {
-        Item item = findOrCreateItem(uploadeItem);
-        Version version = addVersion(item, uploadeItem);
-        addHosts(item, uploadeItem);
+    public Version save(@Valid final UploadItem uploadItem) {
+        Item item = findOrCreateItem(uploadItem);
+        Version version = addVersion(item, uploadItem);
+        addHosts(item, uploadItem);
         itemRepo.save(item);
         return version;
     }

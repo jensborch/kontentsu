@@ -40,7 +40,7 @@ import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.Role;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.upload.UploadItem;
-import dk.kontentsu.upload.UploadService;
+import dk.kontentsu.upload.Uploader;
 import dk.kontentsu.util.rs.Cache;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -62,8 +62,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
@@ -111,7 +109,7 @@ public class ItemExposure {
     private Config config;
 
     @Inject
-    private UploadService service;
+    private Uploader service;
 
     @Inject
     private ItemRepository repo;
@@ -207,8 +205,6 @@ public class ItemExposure {
     @Path("{item}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-
     @ApiOperation(value = "Overwrite existing content on the CDN using a data from a URL",
             notes = "Encoding must be specified for textual content")
     @ApiResponses(value = {
@@ -226,13 +222,12 @@ public class ItemExposure {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @TransactionAttribute(TransactionAttributeType.NEVER)
     @ApiOperation(value = "Upload content to the CDN using a data from a URL",
             notes = "Encoding must be specified for textual content")
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Content has been uploaded"),
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
-    public Response uploade(@Valid final UploadItemRepresentation uploadItemRepresentation) {
+    public Response upload(@Valid final UploadItemRepresentation uploadItemRepresentation) {
         service.upload(new UploadItemMapper().apply(uploadItemRepresentation));
         URI uri = uriInfo.getAbsolutePathBuilder().build(UploadItem.class);
         return Response.created(uri).build();
@@ -242,8 +237,6 @@ public class ItemExposure {
     @Path("{item}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-
     @ApiOperation(value = "Overwrite existing content on the CDN using multipart attachment",
             notes = "Encoding must be specified for textual content", hidden = true)
     @ApiImplicitParams({
@@ -278,8 +271,6 @@ public class ItemExposure {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-
     @ApiOperation(value = "Upload content to the CDN using multipart attachment",
             notes = "Encoding must be specified for textual content", hidden = true)
     @ApiImplicitParams({
@@ -296,7 +287,7 @@ public class ItemExposure {
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Content has been uploaded"),
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
-    public Response uploade(@Context final HttpServletRequest request) {
+    public Response upload(@Context final HttpServletRequest request) {
         return processMultipartRequest(request, u -> service.upload(u));
     }
 

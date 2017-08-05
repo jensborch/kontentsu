@@ -79,7 +79,7 @@ public class UploadItemRepresentation {
     @ApiModelProperty(value = "URL to content to upload", example = "http://server/images/image.png", required = true)
     private URL contentUrl;
 
-    @ApiModelProperty(value = "Destination host for CDN item", example = "Website", required = false, notes = "If not specified item will be uploade to all registred hosts")
+    @ApiModelProperty(value = "Destination host for CDN item", example = "Website", required = false, notes = "If not specified item will be upload to all registred hosts")
     private final List<String> hosts = new ArrayList<>();
 
     public SemanticUri getUri() {

@@ -117,7 +117,6 @@ public class ExternalizerService {
     }
 
     @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Future<List<ExternalFile>> externalize(final UUID version) {
         Version v = itemRepo.getVersion(version);
         LOGGER.info("Externalizing version {} and its references", version);

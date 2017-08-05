@@ -11,7 +11,7 @@ import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.SemanticUriPath;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.upload.UploadService;
+import dk.kontentsu.upload.Uploader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -41,7 +41,7 @@ public class ItemExposureTest extends JerseyTest {
     private Config config;
 
     @Mock
-    private UploadService service;
+    private Uploader service;
 
     private List<Item> items;
 
@@ -59,7 +59,7 @@ public class ItemExposureTest extends JerseyTest {
                     protected void configure() {
                         bind(itemRepo).to(ItemRepository.class);
                         bind(config).to(Config.class);
-                        bind(service).to(UploadService.class);
+                        bind(service).to(Uploader.class);
                     }
                 });
     }

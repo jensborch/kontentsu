@@ -62,7 +62,7 @@ public class MultipartUploadItemRepresentation {
     @ApiModelProperty(value = "Reference to multipart attachments", required = true)
     private String contentRef;
 
-    @ApiModelProperty(value = "Destination host for CDN item", example = "Website", required = false, notes = "If not specified item will be uploade to all registred hosts")
+    @ApiModelProperty(value = "Destination host for CDN item", example = "Website", required = false, notes = "If not specified item will be upload to all registred hosts")
     private List<String> hosts = new ArrayList<>();
 
     public SemanticUri getUri() {
