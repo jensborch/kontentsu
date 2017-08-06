@@ -26,7 +26,6 @@ package dk.kontentsu.spi;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.spi.AlterableContext;

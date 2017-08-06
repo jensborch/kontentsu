@@ -46,7 +46,11 @@ import io.swagger.annotations.ApiModelProperty;
 public class MultipartUploadItemRepresentation {
 
     @NotNull
-    @ApiModelProperty(value = "The (semantic) URI of the uploaded item on the CDN", dataType = "string", example = "images/book/book-xl.png", required = true)
+    @ApiModelProperty(
+            value = "The (semantic) URI of the uploaded item on the CDN",
+            dataType = "string",
+            example = "images/book/book-xl.png",
+            required = true)
     private SemanticUri uri;
 
     @ApiModelProperty(value = "Set to true if item should be a draft and thus not uploaded to the CDN", required = false)
@@ -55,14 +59,22 @@ public class MultipartUploadItemRepresentation {
     @NotNull
     @Valid
     @JsonUnwrapped
-    @ApiModelProperty(value = "Interval item should be available on the CDN", dataType = "java.time.ZonedDateTime", example = "2016-04-09:20:00:00Z", name = "from", required = true)
+    @ApiModelProperty(
+            value = "Interval item should be available on the CDN",
+            dataType = "java.time.ZonedDateTime",
+            example = "2016-04-09:20:00:00Z",
+            name = "from", required = true)
     private Interval interval;
 
     @NotNull
     @ApiModelProperty(value = "Reference to multipart attachments", required = true)
     private String contentRef;
 
-    @ApiModelProperty(value = "Destination host for CDN item", example = "Website", required = false, notes = "If not specified item will be upload to all registered hosts")
+    @ApiModelProperty(
+            value = "Destination host for CDN item",
+            example = "Website",
+            required = false,
+            notes = "If not specified item will be upload to all registered hosts")
     private List<String> hosts = new ArrayList<>();
 
     public SemanticUri getUri() {

@@ -1,3 +1,3 @@
-rootProject.name = 'Kontentsu CDN Publishing Service'
+rootProject.name = 'Kontentsu CMS'
 include 'api', 'processing', 'core', 'spi', 'util', 'test', 'payara', 'oauth:authentication', 'oauth:token'
 
