@@ -72,7 +72,7 @@ public class MimeType implements Serializable {
 
     private static final String PARAM_CHARSET = "charset";
 
-    private static final String SEPERATOR = "/";
+    private static final String SEPARATOR = "/";
     private static final String WILDCARD = "*";
 
     // See http://www.ietf.org/rfc/rfc2045.txt for valid mime-type characters.
@@ -326,7 +326,7 @@ public class MimeType implements Serializable {
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder(type);
-        s.append(SEPERATOR)
+        s.append(SEPARATOR)
                 .append(subType)
                 .append(params.isEmpty() ? "" : ";")
                 .append(params.entrySet()

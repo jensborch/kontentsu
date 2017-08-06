@@ -76,7 +76,7 @@ public class HostExposure {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Find all CDN host destinations")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Host definotions", response = Link.class, responseContainer = "List")})
+        @ApiResponse(code = 200, message = "Host definitions", response = Link.class, responseContainer = "List")})
     public Response findAll() {
         List<Link> result = repo.findAll()
                 .stream()
@@ -95,7 +95,7 @@ public class HostExposure {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Get CDN host destination")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Host definotion", response = Host.class),
+        @ApiResponse(code = 200, message = "Host definition", response = Host.class),
         @ApiResponse(code = 404, message = "If UUID cant be found", response = ErrorRepresentation.class)})
     public Response get(@PathParam("name") final String name) {
         return Response.ok().entity(repo.getByName(name.trim())).build();

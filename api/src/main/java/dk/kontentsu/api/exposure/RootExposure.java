@@ -58,8 +58,8 @@ import io.swagger.annotations.Tag;
 @PermitAll
 @SwaggerDefinition(
         info = @Info(
-                title = "CDN Publiching",
-                description = "CDN REST Publiching API",
+                title = "Kontentsu",
+                description = "Kontentsu REST API",
                 version = "V1.0.0",
                 license = @License(
                         name = "MIT License",
@@ -67,10 +67,10 @@ import io.swagger.annotations.Tag;
         basePath = KontentsuApplication.API_ROOT,
         schemes = {SwaggerDefinition.Scheme.DEFAULT},
         tags = {
-            @Tag(name = "root", description = "CDN Publishing Service root resource"),
-            @Tag(name = "hosts", description = "CDN destination hosts"),
-            @Tag(name = "categories", description = "Categories for items on the CDN"),
-            @Tag(name = "items", description = "Internal API for manipulation items that can be published to a CDN host"),
+            @Tag(name = "root", description = "Kontentsu API root resource"),
+            @Tag(name = "hosts", description = "CDN publishing destination hosts"),
+            @Tag(name = "categories", description = "Categories for items in Kontentsu"),
+            @Tag(name = "items", description = "Internal API for manipulation items in Kontentsu"),
             @Tag(name = "files", description = "External exposure of the files that can be published to a CDN host - similarly to a HTTP server")
         })
 @Api(tags = {"root"})
@@ -97,7 +97,7 @@ public class RootExposure {
         links.add(Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
                 .path(ExternalFileExposure.class))
                 .rel("externalFiles")
-                .title("Publiched external files")
+                .title("Published external files")
                 .build());
 
         links.add(Link.fromUriBuilder(uriInfo.getBaseUriBuilder()

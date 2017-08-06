@@ -51,13 +51,13 @@ public class UploadItemRepresentation {
             required = true)
     private SemanticUri uri;
 
-    @ApiModelProperty(value = "Set to true if the item should be a draft and thus not uploadet to the CDN host", required = false)
+    @ApiModelProperty(value = "Set to true if the item should be a draft and thus not uploaded to the CDN host", required = false)
     private boolean draft;
 
     @NotNull
     @Valid
     @JsonUnwrapped
-    @ApiModelProperty(value = "Timestamp from when an item should be avilabe on the CDN",
+    @ApiModelProperty(value = "Timestamp from when an item should be available on the CDN",
             notes = "To specify a end date for the item use 'to'",
             dataType = "java.time.ZonedDateTime",
             example = "2016-04-09T20:00:00Z",
@@ -66,7 +66,7 @@ public class UploadItemRepresentation {
     private Interval interval;
 
     @NotNull
-    @ApiModelProperty(value = "Mimetype of the content uploaded", dataType = "string", example = "image/png", required = true)
+    @ApiModelProperty(value = "Mime type of the content uploaded", dataType = "string", example = "image/png", required = true)
     private MimeType mimeType;
 
     @ApiModelProperty(value = "Encoding of the content uploaded",
@@ -79,7 +79,7 @@ public class UploadItemRepresentation {
     @ApiModelProperty(value = "URL to content to upload", example = "http://server/images/image.png", required = true)
     private URL contentUrl;
 
-    @ApiModelProperty(value = "Destination host for CDN item", example = "Website", required = false, notes = "If not specified item will be upload to all registred hosts")
+    @ApiModelProperty(value = "Destination host for CDN item", example = "Website", required = false, notes = "If not specified item will be upload to all registered hosts")
     private final List<String> hosts = new ArrayList<>();
 
     public SemanticUri getUri() {

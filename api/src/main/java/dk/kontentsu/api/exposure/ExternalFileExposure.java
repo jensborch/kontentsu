@@ -69,7 +69,7 @@ public class ExternalFileExposure {
     @Path("/{uri:.*}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Get content as on the CDN",
-            notes = "The accept header mutch match the mime type of the content at the given URI")
+            notes = "The accept header must match the mime type of the content at the given URI")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "The content uploaded to the CDN"),
         @ApiResponse(code = 404, message = "No content found at URI", response = ErrorRepresentation.class),
@@ -78,7 +78,7 @@ public class ExternalFileExposure {
             @ApiParam(value = "URI to content on the CDN", required = true)
             @PathParam("uri") @NotNull @Size(min = 3)
             final String uri,
-            @ApiParam(value = "Accept header defining the content type to retrive", required = false)
+            @ApiParam(value = "Accept header defining the content type to retrieve", required = false)
             @HeaderParam(HttpHeaders.ACCEPT)
             final String acceptHeader,
             @ApiParam(value = "Timestamp in UTC format defining at what point in time to get content from", required = false)

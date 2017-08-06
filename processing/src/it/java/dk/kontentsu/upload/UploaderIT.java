@@ -12,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.ejb.embeddable.EJBContainer;
@@ -129,7 +128,7 @@ public class UploaderIT {
             assertEquals("name", r.getName());
             assertEquals(1, r.getVersions().size());
             assertEquals(1, ((Long) r.getVersions().stream().filter(v -> v.getInterval().getFrom().toInstant().equals(NOW.toInstant())).count()).intValue());
-            assertEquals(1, ((Long) r.getVersions().stream().filter(v -> v.getInterval().getTo().toInstant().equals(Interval.INFINIT.toInstant())).count()).intValue());
+            assertEquals(1, ((Long) r.getVersions().stream().filter(v -> v.getInterval().getTo().toInstant().equals(Interval.INFINITE.toInstant())).count()).intValue());
             assertEquals(1, r.getHosts().size());
             assertEquals(textHost, r.getHosts().stream().findFirst().get());
         } finally {

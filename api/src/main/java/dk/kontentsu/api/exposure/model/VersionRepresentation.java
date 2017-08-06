@@ -48,7 +48,7 @@ public class VersionRepresentation {
 
     private final Map<Metadata.Key, Metadata> metadata = new HashMap<>();
 
-    @ApiModelProperty(value = "Mimetype of the version", required = true)
+    @ApiModelProperty(value = "Mime type of the version", required = true)
     private final String mimeType;
 
     @JsonUnwrapped
@@ -57,7 +57,7 @@ public class VersionRepresentation {
     @ApiModelProperty(value = "The state of this version - e.g. draft", required = true)
     private final State state;
 
-    @ApiModelProperty(value = "The preson who approved this version", required = false)
+    @ApiModelProperty(value = "The person who approved this version", required = false)
     private final Approver approver;
 
     @ApiModelProperty(value = "List of references", required = false)

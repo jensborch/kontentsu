@@ -263,7 +263,7 @@ public class ExternalizerService {
         ExternalFile.Builder builder = ExternalFile.builder()
                 .item(version.getItem())
                 .content(t.getResult().getContent())
-                .interval(t.getInteval())
+                .interval(t.getInterval())
                 .externalizationId(t.getResult().getId())
                 .state(version.getState());
         return builder.build();

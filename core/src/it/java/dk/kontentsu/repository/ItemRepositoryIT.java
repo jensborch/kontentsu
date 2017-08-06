@@ -80,7 +80,7 @@ import org.junit.Test;
             return (SemanticUriPath) catRepo.save(tmpPath);
         });
 
-        item = create("test", NOW, Interval.INFINIT);
+        item = create("test", NOW, Interval.INFINITE);
         userTransaction.commit();
     }
 

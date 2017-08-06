@@ -107,18 +107,17 @@ public class ItemRepository extends Repository<Item> {
     }
 
     private UUID saveContentUsingJDBC(final InputStream content, final Charset encoding, final MimeType mimeType) {
-        UUID uuid = null;
+        UUID uuid = UUID.randomUUID();
         String sql = "INSERT INTO content (uuid, data, encoding, mimetype_type, mimetype_subtype) VALUES(?, ?, ?, ?, ?)";
         Connection con = getConnection();
-        try (PreparedStatement statment = con.prepareStatement(sql)) {
-            uuid = UUID.randomUUID();
+        try (PreparedStatement statement = con.prepareStatement(sql)) {
             int i = 1;
-            statment.setObject(i++, uuid);
-            statment.setBinaryStream(i++, content);
-            statment.setString(i++, (encoding == null) ? null : encoding.name());
-            statment.setString(i++, mimeType.getType());
-            statment.setString(i++, mimeType.getSubType());
-            statment.executeUpdate();
+            statement.setObject(i++, uuid);
+            statement.setBinaryStream(i++, content);
+            statement.setString(i++, (encoding == null) ? null : encoding.name());
+            statement.setString(i++, mimeType.getType());
+            statement.setString(i++, mimeType.getSubType());
+            statement.executeUpdate();
         } catch (SQLException ex) {
             throw new ContentException("Error saving content to database", ex);
         }

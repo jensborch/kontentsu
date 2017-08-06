@@ -44,13 +44,13 @@ import java.util.Optional;
  */
 public class TemporalReferenceTree<R extends TemporalReferenceTreeVisitor.Results, V extends TemporalReferenceTreeVisitor<R>> {
 
-    private Interval inteval;
+    private Interval interval;
     private final Node root;
     private final V visitor;
     private R results;
 
     public TemporalReferenceTree(final Version version, final V visitor) {
-        this.inteval = version.getInterval();
+        this.interval = version.getInterval();
         this.visitor = visitor;
         this.root = new Node(version, this);
         visitor.visit(root);
@@ -64,7 +64,7 @@ public class TemporalReferenceTree<R extends TemporalReferenceTreeVisitor.Result
      */
     @SuppressWarnings("unchecked")
     public TemporalReferenceTree(final TemporalReferenceTree tree, final Interval interval) {
-        this.inteval = interval;
+        this.interval = interval;
         this.visitor = (V) tree.visitor;
         this.root = new Node(tree.getRoot().getVersion(), this);
     }
@@ -73,12 +73,12 @@ public class TemporalReferenceTree<R extends TemporalReferenceTreeVisitor.Result
         this.results = visitor.getResults();
     }
 
-    public Interval getInteval() {
-        return inteval;
+    public Interval getInterval() {
+        return interval;
     }
 
-    void setInteval(final Interval inteval) {
-        this.inteval = inteval;
+    void setInterval(final Interval interval) {
+        this.interval = interval;
     }
 
     public R getResult() {

@@ -332,7 +332,7 @@ public class ItemExposure {
         try {
             return m.getInputStream();
         } catch (IOException ex) {
-            throw new ApiErrorException("Error processing multipart data - unable to get inputstream for reference " + m.getName(), ex);
+            throw new ApiErrorException("Error processing multipart data - unable to get input stream for reference " + m.getName(), ex);
         }
     }
 
@@ -377,7 +377,7 @@ public class ItemExposure {
                 + uriToString(uploadItemRepresentation)));
 
         MimeType m = retrieveMimeType(multipartItems, uploadItemRepresentation.getContentRef())
-                .orElseThrow(() -> new ValidationException("Error processing multipart data. Mimetype not specified on attachement for item with URI: "
+                .orElseThrow(() -> new ValidationException("Error processing multipart data. Mime type not specified on attachment for item with URI: "
                 + uriToString(uploadItemRepresentation)));
 
         return new MultipartUploadItemMapper().apply(

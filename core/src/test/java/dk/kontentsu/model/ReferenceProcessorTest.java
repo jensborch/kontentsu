@@ -15,7 +15,6 @@ import javax.inject.Inject;
 
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.CdiRunner;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -95,9 +94,9 @@ public class ReferenceProcessorTest {
             assertEquals(2, result.get(1).getResult().names.size());
             assertArrayEquals(new String[]{"contact", "article2"}, result.get(1).getResult().names.toArray(new String[2]));
             assertNotEquals(result.get(0), result.get(1));
-            assertNotEquals(result.get(0).getInteval(), result.get(1).getInteval());
-            assertTrue(result.stream().anyMatch(n -> n.getInteval().equals(new Interval(NOW, NOW.plusDays(10)))));
-            assertTrue(result.stream().anyMatch(n -> n.getInteval().equals(new Interval(NOW.plusDays(15)))));
+            assertNotEquals(result.get(0).getInterval(), result.get(1).getInterval());
+            assertTrue(result.stream().anyMatch(n -> n.getInterval().equals(new Interval(NOW, NOW.plusDays(10)))));
+            assertTrue(result.stream().anyMatch(n -> n.getInterval().equals(new Interval(NOW.plusDays(15)))));
         });
     }
 

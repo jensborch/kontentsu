@@ -52,7 +52,6 @@ public class ContentProcessingContext implements AlterableContext, Serializable 
     @Override
     public void destroy(final Contextual<?> contextual) {
         Optional.ofNullable(scope.peek().get(contextual))
-                .filter(Objects::nonNull)
                 .ifPresent(Instance::destroy);
     }
 

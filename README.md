@@ -1,8 +1,8 @@
 # Kontentsu CMS
 
-Kontentsu is a different take on a content management system. Unlike many traditional content mangement systems, that renders content on the server, Kontentsu instead provides a modern REST API for accessing and managing content.
+Kontentsu is a different take on a content management system. Unlike many traditional content management systems, that renders content on the server, Kontentsu instead provides a modern REST API for accessing and managing content.
 
-Kontentsu is headless and decoupled and can can publich content to HTTP server like Apache.
+Kontentsu is headless and decoupled and can can publish content to HTTP server like Apache.
 
 ## Status
 

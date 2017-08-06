@@ -55,7 +55,7 @@ public class Interval implements Serializable {
     /**
      * Max date use when "valid to" has not been set. LocalDateTime.MAX can't be used as it exceeded the maximum value of SQL Timestamp.
      */
-    public static final ZonedDateTime INFINIT = ZonedDateTime.of(LocalDateTime.of(2099, Month.DECEMBER, 31, 0, 0), ZoneOffset.UTC);
+    public static final ZonedDateTime INFINITE = ZonedDateTime.of(LocalDateTime.of(2099, Month.DECEMBER, 31, 0, 0), ZoneOffset.UTC);
 
     private static final long serialVersionUID = -239839694581153026L;
 
@@ -68,7 +68,7 @@ public class Interval implements Serializable {
 
     public Interval(final ZonedDateTime from, final ZonedDateTime to) {
         this.from = from;
-        this.to = (to == null) ? INFINIT : to;
+        this.to = (to == null) ? INFINITE : to;
     }
 
     public Interval(final ZonedDateTime from) {
@@ -88,8 +88,8 @@ public class Interval implements Serializable {
     }
 
     @JsonIgnore
-    public boolean isInfinit() {
-        return to.toInstant().equals(INFINIT.toInstant());
+    public boolean isInfinite() {
+        return to.toInstant().equals(INFINITE.toInstant());
     }
 
     /**

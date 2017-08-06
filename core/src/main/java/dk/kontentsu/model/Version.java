@@ -236,7 +236,7 @@ public class Version extends AbstractBaseEntity {
 
         private Content content;
         private ZonedDateTime from = ZonedDateTime.now();
-        private ZonedDateTime to = Interval.INFINIT;
+        private ZonedDateTime to = Interval.INFINITE;
         private State state = State.ACTIVE;
         private UUID uuid;
 
