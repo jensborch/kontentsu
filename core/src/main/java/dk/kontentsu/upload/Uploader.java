@@ -88,14 +88,14 @@ public class Uploader {
     @Inject
     private BeanManager bm;
 
-    public UUID upload(@Valid final UploadItem uploadeItem) {
-        Version version = self.save(uploadeItem);
+    public UUID upload(@Valid final UploadItem uploadItem) {
+        Version version = self.save(uploadItem);
         externalizer.externalize(version.getUuid());
         return version.getItem().getUuid();
     }
 
-    public UUID uploadSync(@Valid final UploadItem uploadeItem) {
-        Version version = self.save(uploadeItem);
+    public UUID uploadSync(@Valid final UploadItem uploadItem) {
+        Version version = self.save(uploadItem);
         try {
             externalizer.externalize(version.getUuid()).get();
         } catch (InterruptedException | ExecutionException ex) {
@@ -109,17 +109,17 @@ public class Uploader {
      * Overwrite a existing item with a given UUID. The will if needed change the internals of the existing active versions of the item, to make room for the new item.
      *
      * @param itemId the UUID of the item to replace
-     * @param uploadeItem the new item to replace existing.
+     * @param uploadItem the new item to replace existing.
      * @return a list of the identifiers for the new versions created
      */
-    public Set<UUID> overwrite(@NotNull final UUID itemId, @Valid final UploadItem uploadeItem) {
-        Set<UUID> externalized = self.overwriteAndSave(itemId, uploadeItem);
+    public Set<UUID> overwrite(@NotNull final UUID itemId, @Valid final UploadItem uploadItem) {
+        Set<UUID> externalized = self.overwriteAndSave(itemId, uploadItem);
         externalized.forEach(u ->  externalizer.externalize(u));
         return externalized;
     }
 
-    public Set<UUID> overwriteSync(final UUID itemId, @Valid final UploadItem uploadeItem) {
-        Set<UUID> externalized = self.overwriteAndSave(itemId, uploadeItem);
+    public Set<UUID> overwriteSync(final UUID itemId, @Valid final UploadItem uploadItem) {
+        Set<UUID> externalized = self.overwriteAndSave(itemId, uploadItem);
         externalized.forEach(u -> {
             try {
                 externalizer.externalize(u).get();
@@ -131,7 +131,7 @@ public class Uploader {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Set<UUID> overwriteAndSave(final UUID itemId, @Valid final UploadItem uploadeItem) {
+    public Set<UUID> overwriteAndSave(final UUID itemId, @Valid final UploadItem uploadItem) {
         Item item = itemRepo.get(itemId);
         Set<UUID> toExternalize = new HashSet<>();
         //We need to create tmp set to avoid ConcurrentModificationException. HasSet do not support that we loop and modify at the same time.
@@ -139,13 +139,13 @@ public class Uploader {
         item.getVersions()
                 .stream()
                 .filter(Version::isActive)
-                .filter(i -> i.getInterval().overlaps(uploadeItem.getInterval()))
+                .filter(i -> i.getInterval().overlaps(uploadItem.getInterval()))
                 .forEach(v -> {
                     LOGGER.debug("Deleting version {} with interval {}", v.getUuid(), v.getInterval());
                     v.delete();
-                    v.getInterval().disjunctiveUnion(uploadeItem.getInterval())
+                    v.getInterval().disjunctiveUnion(uploadItem.getInterval())
                             .stream()
-                            .filter(i -> !i.overlaps(uploadeItem.getInterval()))
+                            .filter(i -> !i.overlaps(uploadItem.getInterval()))
                             .forEach(i -> {
                                 Version n = Version.builder()
                                         .version(v)
@@ -158,8 +158,8 @@ public class Uploader {
                             });
                 });
         toAdd.forEach(item::addVersion);
-        Version version = addVersion(item, uploadeItem);
-        addHosts(item, uploadeItem);
+        Version version = addVersion(item, uploadItem);
+        addHosts(item, uploadItem);
         toExternalize.add(version.getUuid());
         return toExternalize;
     }
@@ -173,20 +173,20 @@ public class Uploader {
         return version;
     }
 
-    private Item findOrCreateItem(final UploadItem uploadeItem) {
-        SemanticUriPath path = catRepo.findByUri(uploadeItem.getUri().getPath())
-                .orElse(uploadeItem.getUri().getPath());
-        return path.getItem(uploadeItem.getUri().getName())
-                .orElse(new Item(new SemanticUri(path, uploadeItem.getUri().getName())));
+    private Item findOrCreateItem(final UploadItem uploadItem) {
+        SemanticUriPath path = catRepo.findByUri(uploadItem.getUri().getPath())
+                .orElse(uploadItem.getUri().getPath());
+        return path.getItem(uploadItem.getUri().getName())
+                .orElse(new Item(new SemanticUri(path, uploadItem.getUri().getName())));
     }
 
-    private void addHosts(final Item item, final UploadItem uploadeItem) {
+    private void addHosts(final Item item, final UploadItem uploadItem) {
         List<Host> hosts = hostRepo.findAll();
-        if (uploadeItem.getHosts().isEmpty()) {
+        if (uploadItem.getHosts().isEmpty()) {
             hosts.forEach(item::addHost);
         } else {
             hosts.stream()
-                    .filter(h -> uploadeItem.getHosts().stream()
+                    .filter(h -> uploadItem.getHosts().stream()
                     .anyMatch(n -> h.getName().equals(n)))
                     .forEach(item::addHost);
         }
@@ -222,7 +222,7 @@ public class Uploader {
         }, content);
 
         Version version = builder.build();
-        LOGGER.debug("Adding newly uploadet version {} to item with interval {}", version.getUuid(), version.getInterval());
+        LOGGER.debug("Adding newly uploaded version {} to item with interval {}", version.getUuid(), version.getInterval());
         item.addVersion(version);
         return version;
     }

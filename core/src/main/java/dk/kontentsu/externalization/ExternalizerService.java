@@ -149,7 +149,7 @@ public class ExternalizerService {
                 .filter(Version::isComplete)
                 .collect(Collectors.toList());
 
-        boolean defaultVisitor = getHigestPriorityExternalizationVisitorBean(version).map(Bean::getBeanClass).filter(DefaultExternalizationVisitor.class::equals).isPresent();
+        boolean defaultVisitor = getHighestPriorityExternalizationVisitorBean(version).map(Bean::getBeanClass).filter(DefaultExternalizationVisitor.class::equals).isPresent();
 
         if (defaultVisitor || (version.hasComposition() && version.isComplete())) {
             versions.add(version);
@@ -198,7 +198,7 @@ public class ExternalizerService {
         return matches;
     }
 
-    private Optional<Bean<?>> getHigestPriorityExternalizationVisitorBean(final Version version) {
+    private Optional<Bean<?>> getHighestPriorityExternalizationVisitorBean(final Version version) {
         return getMatchingExternalizationVisitorBeans(version).entrySet()
                 .stream()
                 .sorted((e1, e2) -> Integer.compare(e2.getKey().getPriority(), e1.getKey().getPriority()))
@@ -243,7 +243,7 @@ public class ExternalizerService {
 
     private List<TemporalReferenceTree<ExternalizationIdentifierVisitor.Results, ExternalizationIdentifierVisitor>> externalizeVersionInScope(final Version version) {
         List<TemporalReferenceTree<ExternalizationIdentifierVisitor.Results, ExternalizationIdentifierVisitor>> trees = new ArrayList<>();
-        Optional<Bean<?>> bean = getHigestPriorityExternalizationVisitorBean(version);
+        Optional<Bean<?>> bean = getHighestPriorityExternalizationVisitorBean(version);
         if (bean.isPresent()) {
             ExternalizationIdentifierVisitor visitor = new ExternalizationIdentifierVisitor(getExternalizationVisitor(bean.get()));
             LOGGER.info("Using visitor {} to externalize version {} with mime type {}",
@@ -254,7 +254,7 @@ public class ExternalizerService {
                     = new ReferenceProcessor<>(version, visitor);
             trees.addAll(processor.process());
         } else {
-            LOGGER.warn("No visitor found to externalizr version {} with mime type {}", version.getUuid(), version.getMimeType());
+            LOGGER.warn("No visitor found to externalizer version {} with mime type {}", version.getUuid(), version.getMimeType());
         }
         return trees;
     }

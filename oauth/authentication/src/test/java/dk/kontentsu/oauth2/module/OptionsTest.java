@@ -19,7 +19,7 @@ public class OptionsTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void tetsIsMandatory() {
+    public void testIsMandatory() {
         Map map = new HashMap();
         map.put("javax.security.auth.message.MessagsePolicy.isMandatory", "true");
         Options options = new Options(map);
@@ -35,7 +35,7 @@ public class OptionsTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testAgument() throws Exception {
+    public void testAugment() throws Exception {
         Options options = new Options().setSignatureKey("junit");
         Map map = new HashMap();
         map.put("javax.security.auth.message.MessagsePolicy.isMandatory", "wrong");

@@ -44,8 +44,8 @@ public class SemanticUriSerializer extends StdSerializer<SemanticUri> {
     }
 
     @Override
-    public void serialize(final SemanticUri value, final JsonGenerator jgen, final SerializerProvider provider) throws IOException {
-        jgen.writeString(value.toString());
+    public void serialize(final SemanticUri value, final JsonGenerator generator, final SerializerProvider provider) throws IOException {
+        generator.writeString(value.toString());
     }
 
 }

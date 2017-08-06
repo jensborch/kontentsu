@@ -123,7 +123,7 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
                 }
             }
         }
-        throw new ExternalizationException("Did not finde composition with URI " + version.getItem().getUri().toString() + " in content");
+        throw new ExternalizationException("Did not find composition with URI " + version.getItem().getUri().toString() + " in content");
     }
 
     private JsonNode findOrCreateExternalContentNode(final JsonNode node) {

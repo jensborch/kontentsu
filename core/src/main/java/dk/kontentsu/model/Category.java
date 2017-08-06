@@ -64,9 +64,9 @@ public abstract class Category extends AbstractBaseEntity {
     }
 
     public Category(final String... elements) {
-        List<String> tmpuri = new ArrayList<>(Arrays.asList(elements));
-        if (tmpuri.isEmpty() || tmpuri.contains(null) || tmpuri.contains("")) {
-            throw new IllegalArgumentException("Invalid category element(s): " + toString(tmpuri));
+        List<String> tmpUri = new ArrayList<>(Arrays.asList(elements));
+        if (tmpUri.isEmpty() || tmpUri.contains(null) || tmpUri.contains("")) {
+            throw new IllegalArgumentException("Invalid category element(s): " + toString(tmpUri));
         }
         this.elements = elements;
         this.path = toString(Arrays.asList(elements));

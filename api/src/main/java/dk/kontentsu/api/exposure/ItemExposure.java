@@ -322,7 +322,7 @@ public class ItemExposure {
         Validator validator = vf.getValidator();
         Set<ConstraintViolation<MultipartUploadItemRepresentation>> errors = validator.validate(uploadItemRepresentation, Default.class);
         if (!errors.isEmpty()) {
-            throw new ConstraintViolationException("Error in multiparet upload for item with URI: "
+            throw new ConstraintViolationException("Error in multipart upload for item with URI: "
                     + Objects.toString(uploadItemRepresentation.getUri()), errors);
         }
         return uploadItemRepresentation;

@@ -122,7 +122,7 @@ public final class UploadItem {
             try {
                 return url.openStream();
             } catch (IOException ex) {
-                throw new UploadException("Error retriving content from URL: " + getReference(), ex);
+                throw new UploadException("Error retrieving content from URL: " + getReference(), ex);
             }
         }
 

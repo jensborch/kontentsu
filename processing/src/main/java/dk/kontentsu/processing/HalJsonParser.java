@@ -71,7 +71,7 @@ public class HalJsonParser implements ContentParser {
             JsonNode jsonContent = objectMapper.readTree(content.getData());
             return new Results(parse(jsonContent), parseMetadata(jsonContent));
         } catch (IOException ex) {
-            throw new ContentParserException("Unable to parse content for contetn with UUID: " + content.getUuid(), ex);
+            throw new ContentParserException("Unable to parse content for content with UUID: " + content.getUuid(), ex);
         }
     }
 

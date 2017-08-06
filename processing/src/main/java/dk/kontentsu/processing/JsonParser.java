@@ -105,7 +105,7 @@ public class JsonParser implements ContentParser {
             process(fieldProcessors);
             return new Results(links, metadata);
         } catch (IOException ex) {
-            throw new ContentParserException("Unable to parse content for contetn with UUID: " + content.getUuid(), ex);
+            throw new ContentParserException("Unable to parse content for content with UUID: " + content.getUuid(), ex);
         }
     }
 

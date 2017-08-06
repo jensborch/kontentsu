@@ -199,7 +199,7 @@ public class Item extends AbstractBaseEntity {
 
         private static final List<State> STATES = new ArrayList<>();
         private static final int DEFAULT_FROM_COMPENSATION_SECONDS = 1;
-        private static final ZonedDateTime INFINIT = Interval.INFINITE.plusSeconds(DEFAULT_FROM_COMPENSATION_SECONDS);
+        private static final ZonedDateTime INFINITE = Interval.INFINITE.plusSeconds(DEFAULT_FROM_COMPENSATION_SECONDS);
 
         private final QItem item = QItem.item;
         private final QVersion version = QVersion.version;
@@ -207,7 +207,7 @@ public class Item extends AbstractBaseEntity {
         private final JPAQuery<Item> query;
 
         private Optional<ZonedDateTime> from = Optional.empty();
-        private ZonedDateTime to = INFINIT;
+        private ZonedDateTime to = INFINITE;
 
         static {
             STATES.add(State.ACTIVE);
@@ -246,7 +246,7 @@ public class Item extends AbstractBaseEntity {
 
         public Criteria interval(final Interval interval) {
             this.from = Optional.of(interval.getFrom());
-            this.to = interval.isInfinite() ? INFINIT : interval.getFrom();
+            this.to = interval.isInfinite() ? INFINITE : interval.getFrom();
             return this;
         }
 
