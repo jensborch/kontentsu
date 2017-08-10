@@ -23,9 +23,9 @@
  */
 package dk.kontentsu.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,6 +33,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Base JPA class containing ID and UUID.
@@ -86,7 +87,6 @@ abstract class AbstractBaseEntity implements Serializable {
         if (!(obj instanceof AbstractBaseEntity)) {
             return false;
         }
-        AbstractBaseEntity other = (AbstractBaseEntity) obj;
-        return getUuid().equals(other.getUuid());
+        return getUuid().equals(((AbstractBaseEntity) obj).getUuid());
     }
 }
