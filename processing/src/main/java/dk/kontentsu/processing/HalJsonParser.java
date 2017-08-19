@@ -71,7 +71,7 @@ public class HalJsonParser implements ContentParser {
             JsonNode jsonContent = objectMapper.readTree(content.getData());
             return new Results(parse(jsonContent), parseMetadata(jsonContent));
         } catch (IOException ex) {
-            throw new ContentParserException("Unable to parse content for contetn with UUID: " + content.getUuid(), ex);
+            throw new ContentParserException("Unable to parse content for content with UUID: " + content.getUuid(), ex);
         }
     }
 
@@ -130,7 +130,7 @@ public class HalJsonParser implements ContentParser {
         while (it.hasNext()) {
             Map.Entry<String, JsonNode> parent = it.next();
             List<JsonNode> hrefs = parent.getValue().findValues(JSON_HREF);
-            hrefs.stream().forEach(found -> {
+            hrefs.forEach(found -> {
                 if (found.isTextual()) {
                     LOGGER.debug("Adding composition {}", found.asText());
                     result.add(new Link(SemanticUri.parse(found.asText()), ReferenceType.COMPOSITION));

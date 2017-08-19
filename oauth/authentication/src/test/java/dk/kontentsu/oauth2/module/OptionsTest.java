@@ -19,7 +19,7 @@ public class OptionsTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void tetsIsMandatory() {
+    public void testIsMandatory() {
         Map map = new HashMap();
         map.put("javax.security.auth.message.MessagsePolicy.isMandatory", "true");
         Options options = new Options(map);
@@ -29,19 +29,19 @@ public class OptionsTest {
     @Test
     public void testSignatureKey() throws Exception {
         Options options = new Options().setSignatureKey("junit");
-        assertArrayEquals("junit".getBytes(), (byte[]) options.getSignatureKey());
+        assertArrayEquals("junit".getBytes(), options.getSignatureKey());
         assertEquals("junit", options.asMap().get("oauth2.jwt.signature.key"));
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testAgument() throws Exception {
+    public void testAugment() throws Exception {
         Options options = new Options().setSignatureKey("junit");
         Map map = new HashMap();
         map.put("javax.security.auth.message.MessagsePolicy.isMandatory", "wrong");
         map.put("test", "junit");
         options.augment(map);
-        assertArrayEquals("junit".getBytes(), (byte[]) options.getSignatureKey());
+        assertArrayEquals("junit".getBytes(), options.getSignatureKey());
         assertFalse(options.isMandatory());
         assertEquals("junit", options.asMap().get("test"));
     }

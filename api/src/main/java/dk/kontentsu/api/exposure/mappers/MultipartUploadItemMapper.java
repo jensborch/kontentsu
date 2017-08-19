@@ -59,11 +59,11 @@ public class MultipartUploadItemMapper implements Function<MultipartUploadItem, 
             builder.interval(from.item.getInterval());
         }
 
-        from.item.getHosts().stream().forEach(h -> builder.host(h));
+        from.item.getHosts().forEach(builder::host);
 
         if (from.mimetype.isText()) {
             builder.encoding(from.mimetype.getCharset()
-                    .orElseThrow(() -> new ValidationException("Encoding must be part of attachment mimetype for upload item: " + from.item.getUri().toString())));
+                    .orElseThrow(() -> new ValidationException("Encoding must be part of attachment mime type for upload item: " + from.item.getUri().toString())));
         }
 
         return builder.build();

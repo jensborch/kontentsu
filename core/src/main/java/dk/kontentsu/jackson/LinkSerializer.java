@@ -23,14 +23,12 @@
  */
 package dk.kontentsu.jackson;
 
-import java.io.IOException;
-
-import javax.ws.rs.core.Link;
-
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+
+import javax.ws.rs.core.Link;
+import java.io.IOException;
 
 /**
  * Jackson serializer for {@link javax.ws.rs.core.Link} objects.
@@ -49,16 +47,16 @@ public class LinkSerializer extends StdSerializer<Link> {
     }
 
     @Override
-    public void serialize(final Link link, final JsonGenerator jgen, final SerializerProvider provider) throws IOException, JsonProcessingException {
-        jgen.writeStartObject();
+    public void serialize(final Link link, final JsonGenerator generator, final SerializerProvider provider) throws IOException {
+        generator.writeStartObject();
         if (link.getRel() != null) {
-            jgen.writeStringField(REL, link.getRel());
+            generator.writeStringField(REL, link.getRel());
         }
-        jgen.writeStringField(HREF, link.getUri().toString());
+        generator.writeStringField(HREF, link.getUri().toString());
         if (link.getTitle() != null) {
-            jgen.writeStringField(TITLE, link.getTitle());
+            generator.writeStringField(TITLE, link.getTitle());
         }
-        jgen.writeEndObject();
+        generator.writeEndObject();
     }
 
 }

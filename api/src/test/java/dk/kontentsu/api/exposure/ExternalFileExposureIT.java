@@ -47,11 +47,6 @@ public class ExternalFileExposureIT {
         TestEJBContainer.inject(container, this);
     }
 
-    @After
-    public void tearDown() throws Exception {
-
-    }
-
     @Test
     public void notFound() throws Exception {
         catchException(exposure).get("test/notfound", null, null);

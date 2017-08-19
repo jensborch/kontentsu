@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.chrono.ChronoZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -54,7 +55,7 @@ public class Interval implements Serializable {
     /**
      * Max date use when "valid to" has not been set. LocalDateTime.MAX can't be used as it exceeded the maximum value of SQL Timestamp.
      */
-    public static final ZonedDateTime INFINIT = ZonedDateTime.of(LocalDateTime.of(2099, Month.DECEMBER, 31, 0, 0), ZoneOffset.UTC);
+    public static final ZonedDateTime INFINITE = ZonedDateTime.of(LocalDateTime.of(2099, Month.DECEMBER, 31, 0, 0), ZoneOffset.UTC);
 
     private static final long serialVersionUID = -239839694581153026L;
 
@@ -67,7 +68,7 @@ public class Interval implements Serializable {
 
     public Interval(final ZonedDateTime from, final ZonedDateTime to) {
         this.from = from;
-        this.to = (to == null) ? INFINIT : to;
+        this.to = (to == null) ? INFINITE : to;
     }
 
     public Interval(final ZonedDateTime from) {
@@ -87,8 +88,8 @@ public class Interval implements Serializable {
     }
 
     @JsonIgnore
-    public boolean isInfinit() {
-        return to.toInstant().equals(INFINIT.toInstant());
+    public boolean isInfinite() {
+        return to.toInstant().equals(INFINITE.toInstant());
     }
 
     /**
@@ -154,11 +155,11 @@ public class Interval implements Serializable {
     }
 
     public ZonedDateTime min(final Interval other) {
-        return Stream.concat(times().stream(), other.times().stream()).min((t1, t2) -> t1.compareTo(t2)).get();
+        return Stream.concat(times().stream(), other.times().stream()).min(ChronoZonedDateTime::compareTo).get();
     }
 
     public ZonedDateTime max(final Interval other) {
-        return Stream.concat(times().stream(), other.times().stream()).max((t1, t2) -> t1.compareTo(t2)).get();
+        return Stream.concat(times().stream(), other.times().stream()).max(ChronoZonedDateTime::compareTo).get();
     }
 
     @Override

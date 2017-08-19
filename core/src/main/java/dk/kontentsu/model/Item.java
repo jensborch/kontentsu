@@ -155,7 +155,7 @@ public class Item extends AbstractBaseEntity {
 
     public List<Version> getVersions(final Interval interval) {
         return versions.stream()
-                .filter(v -> v.isActive())
+                .filter(Version::isActive)
                 .filter(v -> v.getInterval().overlaps(interval))
                 .collect(Collectors.toList());
     }
@@ -180,16 +180,14 @@ public class Item extends AbstractBaseEntity {
         boolean result = !getVersions().isEmpty() && getVersions()
                 .stream()
                 .filter(v -> !v.equals(other))
-                .filter(v -> v.isActive())
-                .filter(v -> v.getInterval().overlaps(other.getInterval()))
-                .findAny()
-                .isPresent();
+                .filter(Version::isActive)
+                .anyMatch(v -> v.getInterval().overlaps(other.getInterval()));
         LOGGER.debug("Overlaps between {} and {} returned {}", other.getUuid(), this.getUuid(), result);
         return result;
     }
 
     public void delete() {
-        getVersions().stream().forEach(v -> v.delete());
+        getVersions().forEach(Version::delete);
     }
 
     /**
@@ -201,7 +199,7 @@ public class Item extends AbstractBaseEntity {
 
         private static final List<State> STATES = new ArrayList<>();
         private static final int DEFAULT_FROM_COMPENSATION_SECONDS = 1;
-        private static final ZonedDateTime INFINIT = Interval.INFINIT.plusSeconds(DEFAULT_FROM_COMPENSATION_SECONDS);
+        private static final ZonedDateTime INFINITE = Interval.INFINITE.plusSeconds(DEFAULT_FROM_COMPENSATION_SECONDS);
 
         private final QItem item = QItem.item;
         private final QVersion version = QVersion.version;
@@ -209,7 +207,7 @@ public class Item extends AbstractBaseEntity {
         private final JPAQuery<Item> query;
 
         private Optional<ZonedDateTime> from = Optional.empty();
-        private ZonedDateTime to = INFINIT;
+        private ZonedDateTime to = INFINITE;
 
         static {
             STATES.add(State.ACTIVE);
@@ -248,7 +246,7 @@ public class Item extends AbstractBaseEntity {
 
         public Criteria interval(final Interval interval) {
             this.from = Optional.of(interval.getFrom());
-            this.to = interval.isInfinit() ? INFINIT : interval.getFrom();
+            this.to = interval.isInfinite() ? INFINITE : interval.getFrom();
             return this;
         }
 

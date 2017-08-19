@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 @WebListener
 public class ServletRequestProducingListener implements ServletRequestListener {
 
-    private static final ThreadLocal<ServletRequest> SERVLET_REQUESTS = new ThreadLocal<ServletRequest>();
+    private static final ThreadLocal<ServletRequest> SERVLET_REQUESTS = new ThreadLocal<>();
 
     @Override
     public void requestInitialized(final ServletRequestEvent event) {
@@ -54,12 +54,12 @@ public class ServletRequestProducingListener implements ServletRequestListener {
 
     @RequestScoped
     @Produces
-    private HttpServletRequest getServletRequest() {
+    public HttpServletRequest getServletRequest() {
         ServletRequest request = SERVLET_REQUESTS.get();
         if (request instanceof HttpServletRequest) {
             return (HttpServletRequest) request;
         } else {
-            throw new IllegalStateException("HttpServletRequest not avaible for injection");
+            throw new IllegalStateException("HttpServletRequest not available for injection");
         }
     }
 }

@@ -112,8 +112,8 @@ public class ScheduledExternalizerService {
         List<ExternalFile> all = fileRepo.findAll(time);
         LOGGER.info("Found {} files to publish", all.size());
         Map<Host, Set<ExternalFile>> filesMap = new HashMap<>();
-        all.stream().forEach(f -> {
-            f.getItem().getHosts().stream().forEach(h -> {
+        all.forEach(f -> {
+            f.getItem().getHosts().forEach(h -> {
                 filesMap.putIfAbsent(h, new HashSet<>());
                 filesMap.get(h).add(f);
             });
@@ -128,7 +128,7 @@ public class ScheduledExternalizerService {
     private void deleteAll(final Host host, final Set<ExternalFile> files) {
         try {
             Files.walk(host.getPath()).filter(p -> p.toFile().isFile()).forEach(fsPath -> {
-                if (!files.stream().map(f -> f.resolvePath(host.getPath())).anyMatch(p -> p.equals(fsPath))) {
+                if (files.stream().map(f -> f.resolvePath(host.getPath())).noneMatch(p -> p.equals(fsPath))) {
                     delete(fsPath);
                 }
             });

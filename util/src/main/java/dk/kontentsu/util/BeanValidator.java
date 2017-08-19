@@ -62,7 +62,7 @@ public final class BeanValidator {
             return validator.validateParameters(obj, m, values, Default.class);
         } catch (NoSuchMethodException | SecurityException ex) {
             throw new ValidationException("Error validating method "
-                    + method + " on class " + obj.getClass().getName() + " with parmeters: " + Arrays.toString(values), ex);
+                    + method + " on class " + obj.getClass().getName() + " with parameters: " + Arrays.toString(values), ex);
         }
     }
 }

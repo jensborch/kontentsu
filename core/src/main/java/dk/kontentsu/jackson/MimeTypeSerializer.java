@@ -23,13 +23,12 @@
  */
 package dk.kontentsu.jackson;
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import dk.kontentsu.model.MimeType;
+
+import java.io.IOException;
 
 /**
  * Jackson serializer for {@link dk.kontentsu.model.MimeType} objects.
@@ -45,8 +44,8 @@ public class MimeTypeSerializer extends StdSerializer<MimeType> {
     }
 
     @Override
-    public void serialize(final MimeType value, final JsonGenerator jgen, final SerializerProvider provider) throws IOException, JsonGenerationException {
-        jgen.writeString(value.toString());
+    public void serialize(final MimeType value, final JsonGenerator generator, final SerializerProvider provider) throws IOException {
+        generator.writeString(value.toString());
     }
 
 }

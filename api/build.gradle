@@ -14,8 +14,8 @@ dependencies {
 
     compile 'commons-fileupload:commons-fileupload:' + fileuploadVersion
     
-    compile 'org.aeonbits.owner:owner:' + ownerVersion;
-    compile 'org.aeonbits.owner:owner-java8:' + ownerVersion;
+    compile 'org.aeonbits.owner:owner:' + ownerVersion
+    compile 'org.aeonbits.owner:owner-java8:' + ownerVersion
     
     compile 'io.swagger:swagger-jaxrs:' + swaggerVersion
     compile 'io.swagger:swagger-core:' + swaggerVersion

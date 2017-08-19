@@ -124,8 +124,8 @@ public class ExternalFileRepository extends Repository<ExternalFile> {
         List<Interval> intervals = query.getResultList();
 
         List<ZonedDateTime> tmp = Stream.concat(
-                intervals.stream().map(i -> i.getFrom()),
-                intervals.stream().map(i -> i.getTo())
+                intervals.stream().map(Interval::getFrom),
+                intervals.stream().map(Interval::getTo)
         )
                 .filter(t -> t.isAfter(from))
                 .distinct()
@@ -133,13 +133,13 @@ public class ExternalFileRepository extends Repository<ExternalFile> {
                 .collect(Collectors.toList());
 
         Set<ZonedDateTime> result = new LinkedHashSet<>();
-        ZonedDateTime previouse = null;
+        ZonedDateTime previous = null;
         for (ZonedDateTime t : tmp) {
-            if (previouse != null && previouse.plusMinutes(MIN_SCHEDULING_INTERVAL).isAfter(t)) {
-                result.remove(previouse);
+            if (previous != null && previous.plusMinutes(MIN_SCHEDULING_INTERVAL).isAfter(t)) {
+                result.remove(previous);
             }
             result.add(t);
-            previouse = t;
+            previous = t;
         }
 
         return result;

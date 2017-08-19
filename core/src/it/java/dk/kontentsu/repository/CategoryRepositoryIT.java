@@ -136,7 +136,7 @@ public class CategoryRepositoryIT {
 
             List<SemanticUriPath> categories = catRepo.findActive();
             assertEquals(1, categories.size());
-            assertEquals(2, ((SemanticUriPath) categories.get(0)).getVersionCount().intValue());
+            assertEquals(2, categories.get(0).getVersionCount().intValue());
         } finally {
             userTransaction.rollback();
         }

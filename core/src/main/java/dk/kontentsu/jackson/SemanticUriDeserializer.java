@@ -23,13 +23,12 @@
  */
 package dk.kontentsu.jackson;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import dk.kontentsu.model.SemanticUri;
+
+import java.io.IOException;
 
 /**
  * Jackson deserializer for {@link dk.kontentsu.model.SemanticUri} objects.
@@ -45,7 +44,7 @@ public class SemanticUriDeserializer extends StdDeserializer<SemanticUri> {
     }
 
     @Override
-    public SemanticUri deserialize(final JsonParser jp, final DeserializationContext dc) throws IOException, JsonProcessingException {
+    public SemanticUri deserialize(final JsonParser jp, final DeserializationContext dc) throws IOException {
         String value = jp.readValueAs(String.class);
         return SemanticUri.parse(value);
     }

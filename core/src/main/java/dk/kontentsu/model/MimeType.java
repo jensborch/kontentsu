@@ -72,7 +72,7 @@ public class MimeType implements Serializable {
 
     private static final String PARAM_CHARSET = "charset";
 
-    private static final String SEPERATOR = "/";
+    private static final String SEPARATOR = "/";
     private static final String WILDCARD = "*";
 
     // See http://www.ietf.org/rfc/rfc2045.txt for valid mime-type characters.
@@ -232,7 +232,7 @@ public class MimeType implements Serializable {
     public static List<MimeType> create(final Annotation annotation) {
         if (annotation != null && annotation.annotationType() == ContentProcessingMimeType.class) {
             return Arrays.stream(((ContentProcessingMimeType) annotation).value())
-                    .map(s -> MimeType.parse(s))
+                    .map(MimeType::parse)
                     .collect(Collectors.toList());
         } else {
             throw new IllegalArgumentException("");
@@ -242,7 +242,7 @@ public class MimeType implements Serializable {
     public Match matches(final Annotation annotation) {
         if (annotation != null && annotation.annotationType() == ContentProcessingMimeType.class) {
             return Arrays.stream(((ContentProcessingMimeType) annotation).value())
-                    .map(t -> matches(t))
+                    .map(this::matches)
                     .filter(m -> m != Match.NONE)
                     .findAny()
                     .orElse(Match.NONE);
@@ -261,7 +261,7 @@ public class MimeType implements Serializable {
         if (header == null || header.trim().isEmpty()) {
             return true;
         } else {
-            return Pattern.compile(",").splitAsStream(header).filter(h -> matches(h).isMatch()).findAny().isPresent();
+            return Pattern.compile(",").splitAsStream(header).anyMatch(h -> matches(h).isMatch());
         }
     }
 
@@ -326,7 +326,7 @@ public class MimeType implements Serializable {
     @Override
     public String toString() {
         final StringBuilder s = new StringBuilder(type);
-        s.append(SEPERATOR)
+        s.append(SEPARATOR)
                 .append(subType)
                 .append(params.isEmpty() ? "" : ";")
                 .append(params.entrySet()

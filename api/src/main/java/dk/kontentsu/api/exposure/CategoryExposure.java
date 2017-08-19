@@ -134,7 +134,7 @@ public class CategoryExposure {
     @Path("{taxonomy}/{category:.*}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Create a taxonomy and/or category",
-            notes = "The firste element in the path is the name of the taxonomy. The operation is idempotent")
+            notes = "The first element in the path is the name of the taxonomy. The operation is idempotent")
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Taxonomy and/or category has been created"),
         @ApiResponse(code = 404, message = "", response = ErrorRepresentation.class)})
@@ -155,7 +155,7 @@ public class CategoryExposure {
     @Path("{taxonomy}/{category:.*}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Delete a a taxonomy or category",
-            notes = "The firste element in the path is the name of the taxonomy. The operation is idempotent")
+            notes = "The first element in the path is the name of the taxonomy. The operation is idempotent")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Taxonomy and/or category has been deleted"),
         @ApiResponse(code = 404, message = "", response = ErrorRepresentation.class)})

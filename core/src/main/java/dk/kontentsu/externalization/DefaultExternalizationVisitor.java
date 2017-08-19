@@ -36,7 +36,7 @@ import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
 
 /**
- * Default externalization visitor for content thats should not be processed. Will throw a {@link ExternalizationException} if the content have a composition.
+ * Default externalization visitor for content that should not be processed. Will throw a {@link ExternalizationException} if the content have a composition.
  *
  * @author Jens Borch Christiansen
  */
@@ -60,7 +60,7 @@ public class DefaultExternalizationVisitor extends ExternalizationVisitor {
     @Override
     public void visit(final TemporalReferenceTree.Node node) {
         if (!node.isRoot()) {
-            throw new ExternalizationException("Content with UUID " + content.getUuid() + " is not procesd for externalization and shuld thus not have a composition");
+            throw new ExternalizationException("Content with UUID " + content.getUuid() + " is not processed for externalization and should thus not have a composition");
         }
     }
 

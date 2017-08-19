@@ -25,7 +25,6 @@ package dk.kontentsu.jackson;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
@@ -45,8 +44,8 @@ public class SemanticUriSerializer extends StdSerializer<SemanticUri> {
     }
 
     @Override
-    public void serialize(final SemanticUri value, final JsonGenerator jgen, final SerializerProvider provider) throws IOException, JsonGenerationException {
-        jgen.writeString(value.toString());
+    public void serialize(final SemanticUri value, final JsonGenerator generator, final SerializerProvider provider) throws IOException {
+        generator.writeString(value.toString());
     }
 
 }

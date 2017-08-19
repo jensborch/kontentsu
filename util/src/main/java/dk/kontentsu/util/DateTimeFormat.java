@@ -59,7 +59,7 @@ public @interface DateTimeFormat {
     Format value();
 
     /**
-     * Validator for DateTimeFormatvalidation annotation.
+     * Validator for DateTimeFormat validation annotation.
      */
     class Validator implements ConstraintValidator<DateTimeFormat, String> {
 
@@ -82,7 +82,7 @@ public @interface DateTimeFormat {
                 } catch (DateTimeParseException e) {
                     context.disableDefaultConstraintViolation();
                     context.buildConstraintViolationWithTemplate("Invalid datetime string: "
-                            + datetime + ". String must be formated using: " + formatter.toString())
+                            + datetime + ". String must be formatted using: " + formatter.toString())
                             .addConstraintViolation();
                     return false;
                 }

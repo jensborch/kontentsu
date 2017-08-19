@@ -50,7 +50,7 @@ public class ContentProducer {
     @ContentProcessingScoped
     public Content getContent() {
         LOGGER.debug("Injecting content into class");
-        return InjectableContentProcessingScope.retrive();
+        return InjectableContentProcessingScope.retrieve();
     }
 
 }

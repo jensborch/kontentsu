@@ -15,7 +15,6 @@ import javax.inject.Inject;
 
 import org.jglue.cdiunit.AdditionalClasses;
 import org.jglue.cdiunit.CdiRunner;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,13 +39,12 @@ public class ReferenceProcessorTest {
     @Inject
     private TestVisitor visitor;
 
-    private ContentTestData data;
     private Item page;
     private Version pageVersion;
 
     @Before
     public void setUp() throws Exception {
-        data = new ContentTestData();
+        ContentTestData data = new ContentTestData();
         SemanticUri semanticUri1 = new SemanticUri(new SemanticUriPath("items", "article2"), "article2");
         Item article1 = new Item(semanticUri1);
         Version articleVersion1 = Version.builder()
@@ -84,10 +82,6 @@ public class ReferenceProcessorTest {
         page.addVersion(pageVersion);
     }
 
-    @After
-    public void tearDown() {
-    }
-
     @Test
     public void testVisitor() {
         InjectableContentProcessingScope.execute(() -> {
@@ -100,9 +94,9 @@ public class ReferenceProcessorTest {
             assertEquals(2, result.get(1).getResult().names.size());
             assertArrayEquals(new String[]{"contact", "article2"}, result.get(1).getResult().names.toArray(new String[2]));
             assertNotEquals(result.get(0), result.get(1));
-            assertNotEquals(result.get(0).getInteval(), result.get(1).getInteval());
-            assertTrue(result.stream().filter(n -> n.getInteval().equals(new Interval(NOW, NOW.plusDays(10)))).findAny().isPresent());
-            assertTrue(result.stream().filter(n -> n.getInteval().equals(new Interval(NOW.plusDays(15)))).findAny().isPresent());
+            assertNotEquals(result.get(0).getInterval(), result.get(1).getInterval());
+            assertTrue(result.stream().anyMatch(n -> n.getInterval().equals(new Interval(NOW, NOW.plusDays(10)))));
+            assertTrue(result.stream().anyMatch(n -> n.getInterval().equals(new Interval(NOW.plusDays(15)))));
         });
     }
 

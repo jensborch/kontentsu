@@ -31,12 +31,10 @@ public class AuthConfigTest {
     private MessageInfo messageInfo;
 
     private AuthConfig config;
-    private Options options;
 
     @Before
     public void setup() {
-        options = new Options();
-        config = new AuthConfig("appContext", "messageLayer", handler, options);
+        config = new AuthConfig("appContext", "messageLayer", handler, new Options());
     }
 
     @Test

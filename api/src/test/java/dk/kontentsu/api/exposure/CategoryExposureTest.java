@@ -1,8 +1,23 @@
 package dk.kontentsu.api.exposure;
 
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.CoreMatchers.*;
-import static org.mockito.Mockito.*;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.ejb.EJBException;
+import javax.persistence.NoResultException;
+import javax.ws.rs.core.Application;
+
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.JerseyTest;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
@@ -11,18 +26,6 @@ import dk.kontentsu.model.Taxon;
 import dk.kontentsu.model.Taxonomy;
 import dk.kontentsu.repository.CategoryRepository;
 import dk.kontentsu.repository.TaxonomyRepository;
-import java.util.ArrayList;
-import java.util.List;
-import javax.ejb.EJBException;
-import javax.persistence.NoResultException;
-import javax.ws.rs.core.Application;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 /**
  * Test for {@link CategoryExposure}.

@@ -6,12 +6,6 @@
 package dk.kontentsu.model;
 
 
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.model.Content;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -19,7 +13,6 @@ import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,22 +34,17 @@ public class ItemTest {
     public void setUp() throws Exception {
         semanticUriPath = new SemanticUriPath("test1", "test2");
         item = new Item(new SemanticUri(semanticUriPath, "default"));
-        item.addVersion(create(NOW, Interval.INFINIT));
-    }
-
-    @After
-    public void tearDown() {
+        item.addVersion(create(NOW, Interval.INFINITE));
     }
 
     private Version create(final ZonedDateTime from, final ZonedDateTime to) throws Exception {
         Content content = new Content("This is a test".getBytes(), Charset.defaultCharset(), new MimeType("text", "plain"));
-        Version version = Version.builder()
+        return Version.builder()
                 .content(content)
                 .from(from)
                 .to(to)
                 .metadata(new Metadata.Key(MetadataType.PAGE, "key"), new Metadata("This is metadata"))
                 .build();
-        return version;
     }
 
     @Test

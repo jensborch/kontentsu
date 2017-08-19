@@ -59,9 +59,7 @@ public class ReferenceProcessor<R extends TemporalReferenceTreeVisitor.Results, 
 
     public List<TemporalReferenceTree<R, V>> process() {
         while (!processing.isEmpty()) {
-            InjectableContentProcessingScope.execute(() -> {
-                processInScope();
-            });
+            InjectableContentProcessingScope.execute(this::processInScope);
         }
         return Collections.unmodifiableList(processed);
     }
@@ -77,12 +75,12 @@ public class ReferenceProcessor<R extends TemporalReferenceTreeVisitor.Results, 
             }
             for (Map.Entry<SemanticUri, List<Version>> versions : comps.entrySet()) {
                 boolean first = true;
-                Interval startInterval = tree.getInteval();
+                Interval startInterval = tree.getInterval();
                 for (Version child : versions.getValue()) {
                     Optional<Interval> i = child.getInterval().intersection(startInterval);
                     if (i.isPresent()) {
                         if (first) {
-                            tree.setInteval(i.get());
+                            tree.setInterval(i.get());
                             Node childNode = current.addChild(child);
                             nodes.push(childNode);
                             first = false;

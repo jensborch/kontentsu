@@ -47,8 +47,8 @@ import javax.validation.constraints.Size;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Category extends AbstractBaseEntity {
 
-    public static final char SEPERATOR_CHAR = '/';
-    public static final String SEPERATOR = String.valueOf(SEPERATOR_CHAR);
+    public static final char SEPARATOR_CHAR = '/';
+    public static final String SEPARATOR = String.valueOf(SEPARATOR_CHAR);
     private static final long serialVersionUID = -2277423385038369623L;
 
     @NotNull
@@ -64,9 +64,9 @@ public abstract class Category extends AbstractBaseEntity {
     }
 
     public Category(final String... elements) {
-        List<String> tmpuri = new ArrayList<>(Arrays.asList(elements));
-        if (tmpuri.isEmpty() || tmpuri.contains(null) || tmpuri.contains("")) {
-            throw new IllegalArgumentException("Invalid category element(s): " + toString(tmpuri));
+        List<String> tmpUri = new ArrayList<>(Arrays.asList(elements));
+        if (tmpUri.isEmpty() || tmpUri.contains(null) || tmpUri.contains("")) {
+            throw new IllegalArgumentException("Invalid category element(s): " + toString(tmpUri));
         }
         this.elements = elements;
         this.path = toString(Arrays.asList(elements));
@@ -75,18 +75,18 @@ public abstract class Category extends AbstractBaseEntity {
     public abstract Taxonomy getTaxonomy();
 
     protected static String[] split(final String uri) {
-        return uri.split(SEPERATOR);
+        return uri.split(SEPARATOR);
     }
 
     public String[] getElements() {
         if (elements == null) {
-            elements = path.split(SEPERATOR);
+            elements = path.split(SEPARATOR);
         }
         return Arrays.copyOf(elements, elements.length);
     }
 
     private static String toString(final List<String> semanticUri) {
-        return semanticUri.stream().map(s -> Objects.toString(s)).collect(Collectors.joining(SEPERATOR));
+        return semanticUri.stream().map(Objects::toString).collect(Collectors.joining(SEPARATOR));
     }
 
     @Override

@@ -56,7 +56,7 @@ public class UploadItemMapper implements Function<UploadItemRepresentation, Uplo
             builder.interval(from.getInterval());
         }
 
-        from.getHost().stream().forEach(h -> builder.host(h));
+        from.getHost().forEach(builder::host);
 
         if (from.getEncoding() != null) {
             builder.encoding(Charset.forName(from.getEncoding()));

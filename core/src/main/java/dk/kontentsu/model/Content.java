@@ -126,7 +126,7 @@ public class Content implements Serializable {
     }
 
     public int getSize() {
-        return (int) data.length;
+        return data.length;
     }
 
     public String getHash() {

@@ -52,12 +52,12 @@ import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
 
 /**
- * The application class for the REST exposure.
+ * The application class for the REST API.
  *
  * @author Jens Borch Christiansen
  */
-@ApplicationPath(CdnApplication.API_ROOT)
-public class CdnApplication extends Application {
+@ApplicationPath(KontentsuApplication.API_ROOT)
+public class KontentsuApplication extends Application {
 
     public static final String API_ROOT = "/api";
 
@@ -65,15 +65,15 @@ public class CdnApplication extends Application {
     private final Set<Class<?>> classes = new HashSet<>();
 
     static {
-        LOGGER.info("Loading CDN REST publiching application...");
+        LOGGER.info("Loading Kontentsu REST API...");
     }
 
-    public CdnApplication() {
+    public KontentsuApplication() {
 
         //Swagger
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setResourcePackage(RootExposure.class.getPackage().getName());
-        beanConfig.setBasePath("cdn" + API_ROOT);
+        beanConfig.setBasePath("kontentsu" + API_ROOT);
         beanConfig.setScan(true);
         classes.add(ApiListingResource.class);
         classes.add(SwaggerSerializers.class);

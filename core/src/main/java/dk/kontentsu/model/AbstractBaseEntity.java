@@ -54,7 +54,7 @@ abstract class AbstractBaseEntity implements Serializable {
     @NotNull
     private UUID uuid;
 
-    protected AbstractBaseEntity() {
+    AbstractBaseEntity() {
         this.uuid = UUID.randomUUID();
     }
 
@@ -67,7 +67,7 @@ abstract class AbstractBaseEntity implements Serializable {
         return uuid;
     }
 
-    protected final void setUuid(final UUID uuid) {
+    final void setUuid(final UUID uuid) {
         this.uuid = uuid;
     }
 

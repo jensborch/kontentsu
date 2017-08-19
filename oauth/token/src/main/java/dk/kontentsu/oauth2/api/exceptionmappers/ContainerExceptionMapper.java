@@ -43,7 +43,7 @@ public class ContainerExceptionMapper implements ExceptionMapper<Exception> {
 
     @Override
     public Response toResponse(final Exception ex) {
-        LOGGER.info("Error occured in CDN application REST API", ex);
+        LOGGER.info("Error occurred in CDN application REST API", ex);
         return Response
                 .status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(new ErrorRepresentation("server_error", ex.getMessage()))

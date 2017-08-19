@@ -120,7 +120,7 @@ public class Version extends AbstractBaseEntity {
 
     private static Version create(final Builder builder) {
         Version result = new Version(builder);
-        builder.references.stream().forEach((i) -> {
+        builder.references.forEach((i) -> {
             result.references.add(new Reference(result, i.composition, i.type));
         });
         return result;
@@ -199,23 +199,20 @@ public class Version extends AbstractBaseEntity {
     }
 
     public List<Item> getItems() {
-        return Collections.unmodifiableList(references.stream().map(c -> c.getItem()).collect(Collectors.toList()));
+        return Collections.unmodifiableList(references.stream().map(Reference::getItem).collect(Collectors.toList()));
     }
 
     public boolean hasComposition() {
         return references.stream()
-                .filter(c -> c.getType() == ReferenceType.COMPOSITION)
-                .findAny()
-                .isPresent();
+                .anyMatch(c -> c.getType() == ReferenceType.COMPOSITION);
     }
 
     public Map<SemanticUri, List<Version>> getComposition() {
-        Map<SemanticUri, List<Version>> result = references.stream()
+        return references.stream()
                 .filter(c -> c.getType() == ReferenceType.COMPOSITION)
-                .map(c -> c.getItem())
+                .map(Reference::getItem)
                 .flatMap(i -> i.getVersions(interval).stream())
                 .collect(Collectors.groupingBy(v -> v.item.getUri()));
-        return result;
     }
 
     public List<Reference> getReferences() {
@@ -226,8 +223,7 @@ public class Version extends AbstractBaseEntity {
         return getReferences().isEmpty()
                 || !getReferences().stream()
                         .filter(c -> c.getType() == ReferenceType.COMPOSITION)
-                        .filter(c -> c.getItem().getVersions(interval).isEmpty())
-                        .findAny().isPresent();
+                        .anyMatch(c -> c.getItem().getVersions(interval).isEmpty());
     }
 
     /**
@@ -240,7 +236,7 @@ public class Version extends AbstractBaseEntity {
 
         private Content content;
         private ZonedDateTime from = ZonedDateTime.now();
-        private ZonedDateTime to = Interval.INFINIT;
+        private ZonedDateTime to = Interval.INFINITE;
         private State state = State.ACTIVE;
         private UUID uuid;
 

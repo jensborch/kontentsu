@@ -23,32 +23,6 @@
  */
 package dk.kontentsu.api.exposure;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import dk.kontentsu.api.configuration.Config;
-import dk.kontentsu.api.exposure.mappers.MultipartUploadItemMapper;
-import dk.kontentsu.api.exposure.mappers.UploadItemMapper;
-import dk.kontentsu.api.exposure.model.ErrorRepresentation;
-import dk.kontentsu.api.exposure.model.ItemRepresentation;
-import dk.kontentsu.api.exposure.model.MultipartUploadItemRepresentation;
-import dk.kontentsu.api.exposure.model.UploadItemRepresentation;
-import dk.kontentsu.api.exposure.model.VersionLinkRepresentation;
-import dk.kontentsu.api.exposure.model.VersionRepresentation;
-import dk.kontentsu.exception.ValidationException;
-import dk.kontentsu.jackson.ObjectMapperFactory;
-import dk.kontentsu.model.Item.Criteria;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.Role;
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.upload.UploadItem;
-import dk.kontentsu.upload.UploadService;
-import dk.kontentsu.util.rs.Cache;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -64,8 +38,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
@@ -88,6 +60,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadBase;
@@ -95,6 +74,26 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
+
+import dk.kontentsu.api.configuration.Config;
+import dk.kontentsu.api.exposure.mappers.MultipartUploadItemMapper;
+import dk.kontentsu.api.exposure.mappers.UploadItemMapper;
+import dk.kontentsu.api.exposure.model.ErrorRepresentation;
+import dk.kontentsu.api.exposure.model.ItemRepresentation;
+import dk.kontentsu.api.exposure.model.MultipartUploadItemRepresentation;
+import dk.kontentsu.api.exposure.model.UploadItemRepresentation;
+import dk.kontentsu.api.exposure.model.VersionLinkRepresentation;
+import dk.kontentsu.api.exposure.model.VersionRepresentation;
+import dk.kontentsu.exception.ValidationException;
+import dk.kontentsu.jackson.ObjectMapperFactory;
+import dk.kontentsu.model.Item.Criteria;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.Role;
+import dk.kontentsu.model.Version;
+import dk.kontentsu.repository.ItemRepository;
+import dk.kontentsu.upload.UploadItem;
+import dk.kontentsu.upload.Uploader;
+import dk.kontentsu.util.rs.Cache;
 
 /**
  * REST resource for listing and manipulating items on the CDN.
@@ -114,7 +113,7 @@ public class ItemExposure {
     private Config config;
 
     @Inject
-    private UploadService service;
+    private Uploader service;
 
     @Inject
     private ItemRepository repo;
@@ -188,7 +187,7 @@ public class ItemExposure {
                 .stream()
                 .filter(v -> v.getUuid().equals(UUID.fromString(version)))
                 .findAny()
-                .ifPresent(v -> v.delete()));
+                .ifPresent(Version::delete));
         return Response.ok().build();
     }
 
@@ -198,8 +197,7 @@ public class ItemExposure {
     public Response delete(@PathParam("item") final String item) {
         repo.find(UUID.fromString(item))
                 .ifPresent(i -> i.getVersions()
-                .stream()
-                .forEach(v -> v.delete()));
+                .forEach(Version::delete));
         return Response.ok().build();
     }
 
@@ -210,8 +208,6 @@ public class ItemExposure {
     @Path("{item}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-
     @ApiOperation(value = "Overwrite existing content on the CDN using a data from a URL",
             notes = "Encoding must be specified for textual content")
     @ApiResponses(value = {
@@ -229,13 +225,12 @@ public class ItemExposure {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @TransactionAttribute(TransactionAttributeType.NEVER)
     @ApiOperation(value = "Upload content to the CDN using a data from a URL",
             notes = "Encoding must be specified for textual content")
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Content has been uploaded"),
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
-    public Response uploade(@Valid final UploadItemRepresentation uploadItemRepresentation) {
+    public Response upload(@Valid final UploadItemRepresentation uploadItemRepresentation) {
         service.upload(new UploadItemMapper().apply(uploadItemRepresentation));
         URI uri = uriInfo.getAbsolutePathBuilder().build(UploadItem.class);
         return Response.created(uri).build();
@@ -245,8 +240,6 @@ public class ItemExposure {
     @Path("{item}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-
     @ApiOperation(value = "Overwrite existing content on the CDN using multipart attachment",
             notes = "Encoding must be specified for textual content", hidden = true)
     @ApiImplicitParams({
@@ -281,8 +274,6 @@ public class ItemExposure {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-
     @ApiOperation(value = "Upload content to the CDN using multipart attachment",
             notes = "Encoding must be specified for textual content", hidden = true)
     @ApiImplicitParams({
@@ -299,7 +290,7 @@ public class ItemExposure {
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Content has been uploaded"),
         @ApiResponse(code = 400, message = "If the payload is invalid", response = ErrorRepresentation.class)})
-    public Response uploade(@Context final HttpServletRequest request) {
+    public Response upload(@Context final HttpServletRequest request) {
         return processMultipartRequest(request, u -> service.upload(u));
     }
 
@@ -331,7 +322,7 @@ public class ItemExposure {
         Validator validator = vf.getValidator();
         Set<ConstraintViolation<MultipartUploadItemRepresentation>> errors = validator.validate(uploadItemRepresentation, Default.class);
         if (!errors.isEmpty()) {
-            throw new ConstraintViolationException("Error in multiparet upload for item with URI: "
+            throw new ConstraintViolationException("Error in multipart upload for item with URI: "
                     + Objects.toString(uploadItemRepresentation.getUri()), errors);
         }
         return uploadItemRepresentation;
@@ -341,7 +332,7 @@ public class ItemExposure {
         try {
             return m.getInputStream();
         } catch (IOException ex) {
-            throw new ApiErrorException("Error processing multipart data - unable to get inputstream for reference " + m.getName(), ex);
+            throw new ApiErrorException("Error processing multipart data - unable to get input stream for reference " + m.getName(), ex);
         }
     }
 
@@ -361,7 +352,7 @@ public class ItemExposure {
         return multipartItems.stream()
                 .filter(i -> i.getFieldName().equals(ref))
                 .findAny()
-                .map(f -> f.getName())
+                .map(FileItem::getName)
                 .flatMap(n -> multipartItems.stream()
                 .filter(f -> f.getFieldName().equals(n))
                 .findAny()
@@ -386,7 +377,7 @@ public class ItemExposure {
                 + uriToString(uploadItemRepresentation)));
 
         MimeType m = retrieveMimeType(multipartItems, uploadItemRepresentation.getContentRef())
-                .orElseThrow(() -> new ValidationException("Error processing multipart data. Mimetype not specified on attachement for item with URI: "
+                .orElseThrow(() -> new ValidationException("Error processing multipart data. Mime type not specified on attachment for item with URI: "
                 + uriToString(uploadItemRepresentation)));
 
         return new MultipartUploadItemMapper().apply(

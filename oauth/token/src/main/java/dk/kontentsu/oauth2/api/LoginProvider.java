@@ -23,6 +23,7 @@
  */
 package dk.kontentsu.oauth2.api;
 
+import java.security.Principal;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.enterprise.context.RequestScoped;
@@ -91,7 +92,7 @@ public class LoginProvider {
      */
     public Set<String> getRoles() throws PolicyContextException {
         return getSubject().getPrincipals().stream()
-                .map(p -> p.getName())
+                .map(Principal::getName)
                 .filter(r -> request.isUserInRole(r))
                 .collect(Collectors.toSet());
     }

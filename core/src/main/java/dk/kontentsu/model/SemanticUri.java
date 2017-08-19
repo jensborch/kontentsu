@@ -72,8 +72,8 @@ public class SemanticUri implements Serializable {
     public static SemanticUri parse(final String uri) {
         Matcher m = REGEX_PATTERN.matcher(uri);
         if (m.matches()) {
-            String newname = (m.group("name") == null) ? m.group("element") : m.group("name");
-            return new SemanticUri(SemanticUriPath.parse(m.group("elements")), newname);
+            String newName = (m.group("name") == null) ? m.group("element") : m.group("name");
+            return new SemanticUri(SemanticUriPath.parse(m.group("elements")), newName);
         } else {
             throw new IllegalArgumentException("Illegal URI: " + uri);
         }
@@ -107,7 +107,7 @@ public class SemanticUri implements Serializable {
 
     @Override
     public String toString() {
-        return path.toString() + SemanticUriPath.SEPERATOR_CHAR + name;
+        return path.toString() + SemanticUriPath.SEPARATOR_CHAR + name;
     }
 
     @Override

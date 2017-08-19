@@ -38,7 +38,7 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Class representing the JSON data for uploading an item to the CDN using multipart.
  *
- * Mimetype and charset encoding must be specified at part of attachment content type - e.g. <code>application/hal+json;charset=utf-8</code>
+ * Mime type and charset encoding must be specified at part of attachment content type - e.g. <code>application/hal+json;charset=utf-8</code>
  *
  * @author Jens Borch Christiansen
  */
@@ -46,23 +46,35 @@ import io.swagger.annotations.ApiModelProperty;
 public class MultipartUploadItemRepresentation {
 
     @NotNull
-    @ApiModelProperty(value = "The (semantic) URI of the uploaded item on the CDN", dataType = "string", example = "images/book/book-xl.png", required = true)
+    @ApiModelProperty(
+            value = "The (semantic) URI of the uploaded item on the CDN",
+            dataType = "string",
+            example = "images/book/book-xl.png",
+            required = true)
     private SemanticUri uri;
 
-    @ApiModelProperty(value = "Set to true if item should be a draft and thus not uploadet to the CDN", required = false)
+    @ApiModelProperty(value = "Set to true if item should be a draft and thus not uploaded to the CDN", required = false)
     private boolean draft;
 
     @NotNull
     @Valid
     @JsonUnwrapped
-    @ApiModelProperty(value = "Inteval item should be avilabe on the CDN", dataType = "java.time.ZonedDateTime", example = "2016-04-09:20:00:00Z", name = "from", required = true)
+    @ApiModelProperty(
+            value = "Interval item should be available on the CDN",
+            dataType = "java.time.ZonedDateTime",
+            example = "2016-04-09:20:00:00Z",
+            name = "from", required = true)
     private Interval interval;
 
     @NotNull
     @ApiModelProperty(value = "Reference to multipart attachments", required = true)
     private String contentRef;
 
-    @ApiModelProperty(value = "Destination host for CDN item", example = "Website", required = false, notes = "If not specified item will be uploade to all registred hosts")
+    @ApiModelProperty(
+            value = "Destination host for CDN item",
+            example = "Website",
+            required = false,
+            notes = "If not specified item will be upload to all registered hosts")
     private List<String> hosts = new ArrayList<>();
 
     public SemanticUri getUri() {

@@ -54,19 +54,19 @@ task payaraConf(type: Copy) {
 }
 
 task payaraStartWithRootDir(type:Exec) {
-    commandLine'java', '-jar', "${payaraJar}", '--rootDir', 'build/payara/domain', '--deploy', "build/libs/${warFile}", '--deploy', "${oauth2War}"
+    commandLine'java', '-jar', "${payaraJar}", '--rootDir', 'build/payara/domain', '--deploy', "${kontentsuWar}", '--deploy', "${oauth2War}"
 }
 
 task payaraStart(type:Exec) {
-    commandLine 'java', '-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--port', "${payaraPort}", '--deploy', "build/libs/${warFile}", '--deploy', "${oauth2War}"
+    commandLine 'java', '-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--port', "${payaraPort}", '--deploy', "${kontentsuWar}", '--deploy', "${oauth2War}"
 }
 
 task payaraStartDebug(type:Exec) {
-    commandLine 'java', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=9009', '-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--port', "${payaraPort}", '--deploy', "build/libs/${warFile}", '--deploy', "${oauth2War}"
+    commandLine 'java', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=9009', '-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--port', "${payaraPort}", '--deploy', "${kontentsuWar}", '--deploy', "${oauth2War}"
 }
 
 task payaraUberJar(type: Exec) {
-    commandLine 'java', '-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--deploy', "build/libs/${warFile}", '--deploy', "${oauth2War}", '--outputUberJar', 'build/kontentsu.jar'
+    commandLine 'java', '-jar', "${payaraJar}", '--domainConfig', 'build/payara/domain.xml', '--deploy', "${kontentsuWar}", '--deploy', "${oauth2War}", '--outputUberJar', 'build/kontentsu.jar'
 }
 
 war.dependsOn payaraConf

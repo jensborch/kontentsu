@@ -23,21 +23,6 @@
  */
 package dk.kontentsu.upload;
 
-import dk.kontentsu.externalization.ExternalizerService;
-import dk.kontentsu.model.Content;
-import dk.kontentsu.model.Host;
-import dk.kontentsu.model.Item;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.model.Version;
-import dk.kontentsu.parsers.ContentParser;
-import dk.kontentsu.parsers.Link;
-import dk.kontentsu.repository.CategoryRepository;
-import dk.kontentsu.repository.HostRepository;
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.model.processing.InjectableContentProcessingScope;
-import dk.kontentsu.spi.ContentProcessingMimeType;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -55,9 +40,25 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import dk.kontentsu.externalization.ExternalizerService;
+import dk.kontentsu.model.Content;
+import dk.kontentsu.model.Host;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.SemanticUriPath;
+import dk.kontentsu.model.Version;
+import dk.kontentsu.model.processing.InjectableContentProcessingScope;
+import dk.kontentsu.parsers.ContentParser;
+import dk.kontentsu.parsers.Link;
+import dk.kontentsu.repository.CategoryRepository;
+import dk.kontentsu.repository.HostRepository;
+import dk.kontentsu.repository.ItemRepository;
+import dk.kontentsu.spi.ContentProcessingMimeType;
 
 /**
  * Service facade for performing various operations on CDN items - like uploading new items.
@@ -65,7 +66,7 @@ import org.apache.logging.log4j.Logger;
  * @author Jens Borch Christiansen
  */
 @Stateless
-public class UploadService {
+public class Uploader {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -82,21 +83,19 @@ public class UploadService {
     private ExternalizerService externalizer;
 
     @Inject
-    private UploadService self;
+    private Uploader self;
 
     @Inject
     private BeanManager bm;
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public UUID upload(@Valid final UploadItem uploadeItem) {
-        Version version = self.save(uploadeItem);
+    public UUID upload(@Valid final UploadItem uploadItem) {
+        Version version = self.save(uploadItem);
         externalizer.externalize(version.getUuid());
         return version.getItem().getUuid();
     }
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public UUID uploadSync(@Valid final UploadItem uploadeItem) {
-        Version version = self.save(uploadeItem);
+    public UUID uploadSync(@Valid final UploadItem uploadItem) {
+        Version version = self.save(uploadItem);
         try {
             externalizer.externalize(version.getUuid()).get();
         } catch (InterruptedException | ExecutionException ex) {
@@ -110,20 +109,18 @@ public class UploadService {
      * Overwrite a existing item with a given UUID. The will if needed change the internals of the existing active versions of the item, to make room for the new item.
      *
      * @param itemId the UUID of the item to replace
-     * @param uploadeItem the new item to replace existing.
+     * @param uploadItem the new item to replace existing.
      * @return a list of the identifiers for the new versions created
      */
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Set<UUID> overwrite(final UUID itemId, @Valid final UploadItem uploadeItem) {
-        Set<UUID> externalized = self.overwriteAndSave(itemId, uploadeItem);
-        externalized.stream().forEach(u -> externalizer.externalize(u));
+    public Set<UUID> overwrite(@NotNull final UUID itemId, @Valid final UploadItem uploadItem) {
+        Set<UUID> externalized = self.overwriteAndSave(itemId, uploadItem);
+        externalized.forEach(u ->  externalizer.externalize(u));
         return externalized;
     }
 
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Set<UUID> overwriteSync(final UUID itemId, @Valid final UploadItem uploadeItem) {
-        Set<UUID> externalized = self.overwriteAndSave(itemId, uploadeItem);
-        externalized.stream().forEach(u -> {
+    public Set<UUID> overwriteSync(final UUID itemId, @Valid final UploadItem uploadItem) {
+        Set<UUID> externalized = self.overwriteAndSave(itemId, uploadItem);
+        externalized.forEach(u -> {
             try {
                 externalizer.externalize(u).get();
             } catch (InterruptedException | ExecutionException ex) {
@@ -134,21 +131,21 @@ public class UploadService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Set<UUID> overwriteAndSave(final UUID itemId, @Valid final UploadItem uploadeItem) {
+    public Set<UUID> overwriteAndSave(final UUID itemId, @Valid final UploadItem uploadItem) {
         Item item = itemRepo.get(itemId);
         Set<UUID> toExternalize = new HashSet<>();
         //We need to create tmp set to avoid ConcurrentModificationException. HasSet do not support that we loop and modify at the same time.
         Set<Version> toAdd = new HashSet<>();
         item.getVersions()
                 .stream()
-                .filter(i -> i.isActive())
-                .filter(i -> i.getInterval().overlaps(uploadeItem.getInterval()))
+                .filter(Version::isActive)
+                .filter(i -> i.getInterval().overlaps(uploadItem.getInterval()))
                 .forEach(v -> {
                     LOGGER.debug("Deleting version {} with interval {}", v.getUuid(), v.getInterval());
                     v.delete();
-                    v.getInterval().disjunctiveUnion(uploadeItem.getInterval())
+                    v.getInterval().disjunctiveUnion(uploadItem.getInterval())
                             .stream()
-                            .filter(i -> !i.overlaps(uploadeItem.getInterval()))
+                            .filter(i -> !i.overlaps(uploadItem.getInterval()))
                             .forEach(i -> {
                                 Version n = Version.builder()
                                         .version(v)
@@ -160,42 +157,38 @@ public class UploadService {
                                 toExternalize.add(n.getUuid());
                             });
                 });
-        toAdd.forEach(v -> item.addVersion(v));
-        Version version = addVersion(item, uploadeItem);
-        addHosts(item, uploadeItem);
+        toAdd.forEach(item::addVersion);
+        Version version = addVersion(item, uploadItem);
+        addHosts(item, uploadItem);
         toExternalize.add(version.getUuid());
         return toExternalize;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Version save(@Valid final UploadItem uploadeItem) {
-        Item item = findOrCreateItem(uploadeItem);
-        Version version = addVersion(item, uploadeItem);
-        addHosts(item, uploadeItem);
+    public Version save(@Valid final UploadItem uploadItem) {
+        Item item = findOrCreateItem(uploadItem);
+        Version version = addVersion(item, uploadItem);
+        addHosts(item, uploadItem);
         itemRepo.save(item);
         return version;
     }
 
-    private Item findOrCreateItem(final UploadItem uploadeItem) {
-        SemanticUriPath path = catRepo.findByUri(uploadeItem.getUri().getPath())
-                .orElse(uploadeItem.getUri().getPath());
-        Item item = path.getItem(uploadeItem.getUri().getName())
-                .orElse(new Item(new SemanticUri(path, uploadeItem.getUri().getName())));
-
-        return item;
+    private Item findOrCreateItem(final UploadItem uploadItem) {
+        SemanticUriPath path = catRepo.findByUri(uploadItem.getUri().getPath())
+                .orElse(uploadItem.getUri().getPath());
+        return path.getItem(uploadItem.getUri().getName())
+                .orElse(new Item(new SemanticUri(path, uploadItem.getUri().getName())));
     }
 
-    private void addHosts(final Item item, final UploadItem uploadeItem) {
+    private void addHosts(final Item item, final UploadItem uploadItem) {
         List<Host> hosts = hostRepo.findAll();
-        if (uploadeItem.getHosts().isEmpty()) {
-            hosts.stream().forEach(h -> item.addHost(h));
+        if (uploadItem.getHosts().isEmpty()) {
+            hosts.forEach(item::addHost);
         } else {
             hosts.stream()
-                    .filter(h -> uploadeItem.getHosts().stream()
-                    .filter(n -> h.getName().equals(n))
-                    .findAny()
-                    .isPresent())
-                    .forEach(h -> item.addHost(h));
+                    .filter(h -> uploadItem.getHosts().stream()
+                    .anyMatch(n -> h.getName().equals(n)))
+                    .forEach(item::addHost);
         }
     }
 
@@ -229,7 +222,7 @@ public class UploadService {
         }, content);
 
         Version version = builder.build();
-        LOGGER.debug("Adding newly uploadet version {} to item with interval {}", version.getUuid(), version.getInterval());
+        LOGGER.debug("Adding newly uploaded version {} to item with interval {}", version.getUuid(), version.getInterval());
         item.addVersion(version);
         return version;
     }
@@ -250,7 +243,7 @@ public class UploadService {
     }
 
     private Item findOrCreate(final Link link) {
-        Item i = itemRepo.findByUri(link.getUri())
+        return itemRepo.findByUri(link.getUri())
                 .orElseGet(() -> {
                     SemanticUriPath tmpPath = catRepo.findByUri(link.getPath())
                             .orElse(link.getPath());
@@ -258,6 +251,5 @@ public class UploadService {
                     Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));
                     return itemRepo.save(tmpItem);
                 });
-        return i;
     }
 }

@@ -4,7 +4,7 @@ import dk.kontentsu.exception.ApplicationException;
 import dk.kontentsu.exception.ErrorCode;
 
 /**
- * Thrown when an error occurs parsing the content uploaded - e.g. if hal+json content isn't formated correctly.
+ * Thrown when an error occurs parsing the content uploaded - e.g. if hal+json content isn't formatted correctly.
  *
  * @author Jens Borch Christiansen
  */
