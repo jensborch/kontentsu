@@ -34,9 +34,9 @@ import javax.validation.constraints.Size;
 import dk.kontentsu.repository.Repository;
 
 /**
- * Taxonomy definition for items on the CDN. A given item on the CDN can be
- * categorized according to different taxonomic schemes - i.e. different
- * classification types.
+ * User defined taxonomy for items in Kontentsu. A given item in Kontentsu can be
+ * categorized according to different taxonomic schemes - i.e. different user defined
+ * classification systems as needed.
  *
  * @author Jens Borch Christiansen
  */
