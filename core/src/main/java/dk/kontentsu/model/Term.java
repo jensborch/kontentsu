@@ -70,24 +70,20 @@ public class Term extends AbstractBaseEntity {
 
     @PostLoad
     public void updatePath() {
-        Deque<String> result = new ArrayDeque<>();
-        Term last = parent;
-        while (last != null) {
-            result.addFirst(last.getName());
-            last = last.getParent();
-        }
-        path = result.toArray(new String[result.size()]);
-    }
-
-    private void loadPath() {
         if (path == null) {
-            loadPath();
+            Deque<String> result = new ArrayDeque<>();
+            Term last = this;
+            while (last != null) {
+                result.addFirst(last.getName());
+                last = last.getParent();
+            }
+            path = result.toArray(new String[result.size()]);
         }
     }
 
     public Term append(Term child) {
         if (child == this) {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Child term must be different from current term");
         }
         children.add(child);
         child.setParent(this);
@@ -116,7 +112,7 @@ public class Term extends AbstractBaseEntity {
     }
 
     public String getFullPath() {
-        loadPath();
+        updatePath();
         if (path.length > 0) {
             return path[0] + ":" + toString();
         } else {
@@ -129,7 +125,7 @@ public class Term extends AbstractBaseEntity {
     }
 
     public String[] getNames() {
-        loadPath();
+        updatePath();
         if (path.length > 0) {
             return Arrays.copyOfRange(path, 1, path.length);
         } else {
@@ -138,7 +134,7 @@ public class Term extends AbstractBaseEntity {
     }
 
     public Term getTaxonomy() {
-        Term result = parent;
+        Term result = this;
         while (result.getParent() != null) {
             result = result.getParent();
         }
@@ -158,7 +154,7 @@ public class Term extends AbstractBaseEntity {
 
     @Override
     public String toString() {
-        StringJoiner joiner = new StringJoiner(SEPERATOR);
+        StringJoiner joiner = new StringJoiner(SEPERATOR, SEPERATOR, "");
         Arrays.stream(getNames()).forEach(joiner::add);
         return joiner.toString();
     }
