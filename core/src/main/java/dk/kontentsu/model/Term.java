@@ -65,7 +65,7 @@ public class Term extends AbstractBaseEntity {
     private String[] path;
 
     public Term(String name) {
-        this.name = name;
+        this.name = name.toLowerCase();
     }
 
     @PostLoad
@@ -163,7 +163,14 @@ public class Term extends AbstractBaseEntity {
         this.parent = parent;
     }
 
-    private String[] split(final String uri) {
-        return uri.split(SEPERATOR);
+    private String[] split(final String path) {
+        String tmp = path.toLowerCase();
+        if (tmp.startsWith(SEPERATOR)) {
+            tmp = tmp.substring(1);
+        }
+        if (tmp.endsWith(SEPERATOR)) {
+            tmp = tmp.substring(0, tmp.length() - 1);
+        }
+        return tmp.split(SEPERATOR);
     }
 }
