@@ -24,4 +24,30 @@ public class TermTest {
         assertEquals("uri:/test1/test2", term2.getFullPath());
         assertEquals("uri:/test1/test2/test3", term3.getFullPath());
     }
+
+    @Test
+    public void testAppend() {
+        Term test = term1.append("test2");
+        assertEquals(term2.getFullPath(), test.getFullPath());
+        assertEquals(term3.getFullPath(), term1.append("test2/test3").getFullPath());
+        Term testTerm = new Term("test2").append(new Term("TEST3"));
+        term1.append(testTerm.getParent());
+        assertEquals(term3.getFullPath(), testTerm.getFullPath());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAppendThis() {
+        term1.append(term1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAppendWithChild() {
+        term1.append(term2  );
+    }
+
+    @Test
+    public void tesGetTaxonomy() {
+        assertEquals("uri", term1.getTaxonomy().getName());
+        assertEquals("uri", term3.getTaxonomy().getName());
+    }
 }

@@ -82,21 +82,25 @@ public class Term extends AbstractBaseEntity {
     }
 
     public Term append(Term child) {
-        if (child == this) {
-            throw new IllegalArgumentException("Child term must be different from current term");
+        if (child == this || child.hasParent()) {
+            throw new IllegalArgumentException("Child term must be different from current term and must not have parent");
         }
         children.add(child);
         child.setParent(this);
         return child;
     }
 
+    private boolean hasParent() {
+        return parent != null;
+    }
+
     public Term append(final String path) {
         String[] termNames = split(path);
-        Term term = getTaxonomy();
+        Term term = this;
         for (String termName : termNames) {
-            for (Term t : term.getChildren()) {
-                if (t.getName().equals(termName)) {
-                    term = t;
+            for (Term c : term.getChildren()) {
+                if (c.getName().equals(termName)) {
+                    term = c;
                 }
             }
             if (!term.getName().equals(termName)) {
@@ -173,4 +177,5 @@ public class Term extends AbstractBaseEntity {
         }
         return tmp.split(SEPERATOR);
     }
+
 }
