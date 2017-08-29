@@ -34,20 +34,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.apache.logging.log4j.LogManager;
@@ -73,6 +62,13 @@ public class Item extends AbstractBaseEntity {
 
     private static final long serialVersionUID = 1457687095382268401L;
     private static final Logger LOGGER = LogManager.getLogger();
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @JoinTable(name = "item_terms",
+            joinColumns = @JoinColumn(name = "item_id"),
+            inverseJoinColumns = @JoinColumn(name = "term_id")
+    )
+    private Set<Term> terms;
 
     @NotNull
     @Valid
@@ -188,6 +184,22 @@ public class Item extends AbstractBaseEntity {
 
     public void delete() {
         getVersions().forEach(Version::delete);
+    }
+
+    public void addTerm(Term term) {
+        if (term.isUriTaxonomy() || term.isTaxonomy()) {
+            throw new IllegalArgumentException("Must not be a URI or a taxonomy");
+        }
+        terms.add(term);
+        term.addItem(this);
+    }
+
+    public void removeTerm(Term term) {
+        if (term.isUriTaxonomy()) {
+            throw new IllegalArgumentException("Can not remove a URI");
+        }
+        terms.remove(term);
+        term.removeItem(this);
     }
 
     /**
@@ -324,4 +336,5 @@ public class Item extends AbstractBaseEntity {
                     .fetch();
         }
     }
+
 }

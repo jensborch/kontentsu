@@ -8,21 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
-import javax.persistence.PostLoad;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -44,9 +30,13 @@ import dk.kontentsu.repository.Repository;
             query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE uuid = :uuid")})
 public class Term extends AbstractBaseEntity {
 
-    public static final char SEPERATOR_CHAR = '/';
-    public static final String SEPERATOR = String.valueOf(SEPERATOR_CHAR);
+    public static final String URI_TAXONOMY = "uri";
+    public static final char SEPARATOR_CHAR = '/';
+    public static final String SEPARATOR = String.valueOf(SEPARATOR_CHAR);
     private static final long serialVersionUID = -3974244017445628292L;
+
+    @ManyToMany(mappedBy = "terms")
+    private Set<Item> items = new HashSet<>();
 
     @OneToMany
     @OrderColumn
@@ -137,6 +127,14 @@ public class Term extends AbstractBaseEntity {
         }
     }
 
+    public boolean isUriTaxonomy() {
+        return getTaxonomy().equals(URI_TAXONOMY);
+    }
+
+    public boolean isTaxonomy() {
+        return getParent() == null;
+    }
+
     public Term getTaxonomy() {
         Term result = this;
         while (result.getParent() != null) {
@@ -158,9 +156,17 @@ public class Term extends AbstractBaseEntity {
 
     @Override
     public String toString() {
-        StringJoiner joiner = new StringJoiner(SEPERATOR, SEPERATOR, "");
+        StringJoiner joiner = new StringJoiner(SEPARATOR, SEPARATOR, "");
         Arrays.stream(getNames()).forEach(joiner::add);
         return joiner.toString();
+    }
+
+    void addItem(Item item) {
+        items.add(item);
+    }
+
+    void removeItem(Item item) {
+        items.remove(item);
     }
 
     private void setParent(Term parent) {
@@ -169,13 +175,13 @@ public class Term extends AbstractBaseEntity {
 
     private String[] split(final String path) {
         String tmp = path.toLowerCase();
-        if (tmp.startsWith(SEPERATOR)) {
+        if (tmp.startsWith(SEPARATOR)) {
             tmp = tmp.substring(1);
         }
-        if (tmp.endsWith(SEPERATOR)) {
+        if (tmp.endsWith(SEPARATOR)) {
             tmp = tmp.substring(0, tmp.length() - 1);
         }
-        return tmp.split(SEPERATOR);
+        return tmp.split(SEPARATOR);
     }
 
 }
