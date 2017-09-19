@@ -23,6 +23,9 @@
  */
 package dk.kontentsu.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -37,26 +40,43 @@ import java.util.stream.StreamSupport;
 public class MatcherSpliterator extends AbstractSpliterator<String[]> {
 
     private final Matcher matcher;
+    private final List<Integer> groups;
+    //private final boolean matches;
 
     public MatcherSpliterator(final Matcher matcher) {
         super(Long.MAX_VALUE, NONNULL | ORDERED | IMMUTABLE);
         this.matcher = matcher;
+        this.groups = null;
+        //this.matches = matcher.matches();
+    }
+
+    public MatcherSpliterator(final Matcher matcher, Integer... groups) {
+        super(Long.MAX_VALUE, NONNULL | ORDERED | IMMUTABLE);
+        this.matcher = matcher;
+        this.groups = Arrays.asList(groups);
+        //this.matches = matcher.matches();
     }
 
     @Override
     public boolean tryAdvance(final Consumer<? super String[]> action) {
         boolean found = matcher.find();
         if (found) {
-            final String[] groups = new String[matcher.groupCount() + 1];
+            final String[] gs = new String[matcher.groupCount() + 1];
             for (int i = 0; i <= matcher.groupCount(); i++) {
-                groups[i] = matcher.group(i);
+                if (this.groups == null || this.groups.contains(i)) {
+                    gs[i] = matcher.group(i);
+                }
             }
-            action.accept(groups);
+            action.accept(gs);
         }
         return found;
     }
 
     public static Stream<String[]> stream(final Matcher matcher) {
         return StreamSupport.stream(new MatcherSpliterator(matcher), false);
+    }
+
+    public static Stream<String[]> stream(final Matcher matcher, Integer... groups) {
+        return StreamSupport.stream(new MatcherSpliterator(matcher, groups), false);
     }
 }

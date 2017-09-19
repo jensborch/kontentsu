@@ -187,7 +187,7 @@ public class Item extends AbstractBaseEntity {
     }
 
     public void addTerm(Term term) {
-        if (term.isUriTaxonomy() || term.isTaxonomy()) {
+        if (term.isUri() || term.isTaxonomy()) {
             throw new IllegalArgumentException("Must not be a URI or a taxonomy");
         }
         terms.add(term);
@@ -195,7 +195,7 @@ public class Item extends AbstractBaseEntity {
     }
 
     public void removeTerm(Term term) {
-        if (term.isUriTaxonomy()) {
+        if (term.isUri()) {
             throw new IllegalArgumentException("Can not remove a URI");
         }
         terms.remove(term);

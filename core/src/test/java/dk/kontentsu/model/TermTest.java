@@ -20,9 +20,9 @@ public class TermTest {
 
     @Test
     public void testFullPath() {
-        assertEquals("uri:/test1", term1.getFullPath());
-        assertEquals("uri:/test1/test2", term2.getFullPath());
-        assertEquals("uri:/test1/test2/test3", term3.getFullPath());
+        assertEquals("uri:/test1/", term1.getFullPath());
+        assertEquals("uri:/test1/test2/", term2.getFullPath());
+        assertEquals("uri:/test1/test2/test3/", term3.getFullPath());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class TermTest {
     }
 
     @Test
-    public void tesGetTaxonomy() {
+    public void testGetTaxonomy() {
         assertEquals("uri", term1.getTaxonomy().getName());
         assertEquals("uri", term3.getTaxonomy().getName());
     }

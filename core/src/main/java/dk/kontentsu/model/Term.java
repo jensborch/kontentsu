@@ -1,39 +1,42 @@
 package dk.kontentsu.model;
 
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import dk.kontentsu.repository.Repository;
+import dk.kontentsu.util.MatcherSpliterator;
 
 /**
- *
  * @author Jens Borch Christiansen
  */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "node",
         uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"parent_id", "name"}, name = "node_constraint")})
+                @UniqueConstraint(columnNames = {"parent_id", "name"}, name = "node_constraint")})
 @NamedQueries({
-    @NamedQuery(name = Repository.TERM_FIND_ALL,
-            query = "SELECT t FROM Term t LEFT JOIN FETCH t.children"),
-    @NamedQuery(name = Repository.TERM_GET,
-            query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE uuid = :uuid")})
+        @NamedQuery(name = Repository.TERM_FIND_ALL,
+                query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE t.parent IS NULL"),
+        @NamedQuery(name = Repository.TERM_GET,
+                query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE uuid = :uuid")})
 public class Term extends AbstractBaseEntity {
 
     public static final String URI_TAXONOMY = "uri";
     public static final char SEPARATOR_CHAR = '/';
+    public static final char TAXONOMY_SEPARATOR_CHAR = ':';
     public static final String SEPARATOR = String.valueOf(SEPARATOR_CHAR);
+    public static final String TAXONOMY_SEPARATOR = String.valueOf(TAXONOMY_SEPARATOR_CHAR);
     private static final long serialVersionUID = -3974244017445628292L;
+    private static final String FULL_PATH_REGEX = "^?<taxonomy>(\\p{L}[\\p{L}\\d]*):\\/(?<term>(\\p{L}[\\p{L}\\d\\s]+)\\/)*$";
+    private static final String PATH_REGEX = "^\\/?(\\p{L}[\\p{L}\\d\\s]*\\/)*\\p{L}[\\p{L}\\d\\s]*\\/?$";
+    private static final Pattern FULL_PATH_REGEX_PATTERN = Pattern.compile(FULL_PATH_REGEX);
+    private static final Pattern PATH_REGEX_PATTERN = Pattern.compile(PATH_REGEX);
 
     @ManyToMany(mappedBy = "terms")
     private Set<Item> items = new HashSet<>();
@@ -52,23 +55,66 @@ public class Term extends AbstractBaseEntity {
     private Term parent;
 
     @Transient
-    private String[] path;
+    private String[] pathNames;
 
-    public Term(String name) {
-        this.name = name.toLowerCase();
+    @Lob
+    @Column(name = "path")
+    private String path;
+
+    @PrePersist
+    @PreUpdate
+    public void initPath() {
+        if (pathNames == null) {
+            pathNames = buildPathNames();
+        }
+        if (path == null) {
+            path = buildFullPath(pathNames);
+        }
     }
 
     @PostLoad
-    public void updatePath() {
-        if (path == null) {
-            Deque<String> result = new ArrayDeque<>();
-            Term last = this;
-            while (last != null) {
-                result.addFirst(last.getName());
-                last = last.getParent();
-            }
-            path = result.toArray(new String[result.size()]);
+    public void updatePathNames() {
+        pathNames = parse(path);
+    }
+
+    private String[] buildPathNames() {
+        Deque<String> result = new ArrayDeque<>();
+        Term last = this;
+        while (last != null) {
+            result.addFirst(last.getName());
+            last = last.getParent();
         }
+        return result.toArray(new String[result.size()]);
+    }
+
+    private String[] getPathPart(String[] p) {
+        if (p.length > 0) {
+            return Arrays.copyOfRange(p, 1, p.length);
+        } else {
+            throw new IllegalArgumentException("Path array must contain taxonomy - length must thus be > 0");
+        }
+    }
+
+    private String getTaxonomyPart(String[] p) {
+        if (p.length > 0) {
+            return p[0];
+        } else {
+            throw new IllegalArgumentException("Path array must contain taxonomy - length must thus be > 0");
+        }
+    }
+
+    private String buildPath(String[] p) {
+        StringJoiner joiner = new StringJoiner(SEPARATOR, SEPARATOR, SEPARATOR);
+        Arrays.stream(getPathPart(p)).forEach(joiner::add);
+        return joiner.toString();
+    }
+
+    private String buildFullPath(String[] p) {
+        return getTaxonomyPart(p) + TAXONOMY_SEPARATOR + buildPath(p);
+    }
+
+    public Term(String name) {
+        this.name = name.toLowerCase();
     }
 
     public Term append(Term child) {
@@ -85,7 +131,7 @@ public class Term extends AbstractBaseEntity {
     }
 
     public Term append(final String path) {
-        String[] termNames = split(path);
+        String[] termNames = parsePath(path);
         Term term = this;
         for (String termName : termNames) {
             for (Term c : term.getChildren()) {
@@ -106,12 +152,18 @@ public class Term extends AbstractBaseEntity {
     }
 
     public String getFullPath() {
-        updatePath();
-        if (path.length > 0) {
-            return path[0] + ":" + toString();
+        initPath();
+        if (pathNames.length > 0) {
+            return pathNames[0] + ":" + getPath();
         } else {
             return null;
         }
+    }
+
+    public String getPath() {
+        StringJoiner joiner = new StringJoiner(SEPARATOR, SEPARATOR, SEPARATOR);
+        Arrays.stream(getNames()).forEach(joiner::add);
+        return joiner.toString();
     }
 
     public String getName() {
@@ -119,16 +171,16 @@ public class Term extends AbstractBaseEntity {
     }
 
     public String[] getNames() {
-        updatePath();
-        if (path.length > 0) {
-            return Arrays.copyOfRange(path, 1, path.length);
+        initPath();
+        if (pathNames.length > 0) {
+            return Arrays.copyOfRange(pathNames, 1, pathNames.length);
         } else {
             return new String[0];
         }
     }
 
-    public boolean isUriTaxonomy() {
-        return getTaxonomy().equals(URI_TAXONOMY);
+    public boolean isUri() {
+        return getTaxonomy().getName().equals(URI_TAXONOMY);
     }
 
     public boolean isTaxonomy() {
@@ -156,9 +208,7 @@ public class Term extends AbstractBaseEntity {
 
     @Override
     public String toString() {
-        StringJoiner joiner = new StringJoiner(SEPARATOR, SEPARATOR, "");
-        Arrays.stream(getNames()).forEach(joiner::add);
-        return joiner.toString();
+        return getFullPath();
     }
 
     void addItem(Item item) {
@@ -173,15 +223,33 @@ public class Term extends AbstractBaseEntity {
         this.parent = parent;
     }
 
-    private String[] split(final String path) {
-        String tmp = path.toLowerCase();
-        if (tmp.startsWith(SEPARATOR)) {
-            tmp = tmp.substring(1);
+    private String[] parsePath(final String path) {
+        Matcher m = PATH_REGEX_PATTERN.matcher(path);
+        if (!m.matches()) {
+            throw new IllegalArgumentException("Illegal path: " + path);
         }
-        if (tmp.endsWith(SEPARATOR)) {
-            tmp = tmp.substring(0, tmp.length() - 1);
-        }
-        return tmp.split(SEPARATOR);
+
+        List<String> result = Arrays.stream(path.split("\\/"))
+                .filter(Objects::nonNull)
+                .filter(t -> !t.isEmpty())
+                .collect(Collectors.toList());
+        return result.toArray(new String[result.size()]);
     }
+
+    private String[] parse(final String fullPath) {
+        Matcher m = FULL_PATH_REGEX_PATTERN.matcher(fullPath);
+        List<String> result = new ArrayList<>(10);
+        if (m.matches()) {
+            result.add(m.group("taxonomy"));
+            while (m.find()) {
+                result.add(m.group("term"));
+            }
+        }
+        if (result.size() < 1) {
+            throw new IllegalArgumentException("Illegal path: " + fullPath);
+        }
+        return result.toArray(new String[result.size()]);
+    }
+
 
 }
