@@ -41,20 +41,17 @@ public class MatcherSpliterator extends AbstractSpliterator<String[]> {
 
     private final Matcher matcher;
     private final List<Integer> groups;
-    //private final boolean matches;
 
     public MatcherSpliterator(final Matcher matcher) {
         super(Long.MAX_VALUE, NONNULL | ORDERED | IMMUTABLE);
         this.matcher = matcher;
         this.groups = null;
-        //this.matches = matcher.matches();
     }
 
     public MatcherSpliterator(final Matcher matcher, Integer... groups) {
         super(Long.MAX_VALUE, NONNULL | ORDERED | IMMUTABLE);
         this.matcher = matcher;
         this.groups = Arrays.asList(groups);
-        //this.matches = matcher.matches();
     }
 
     @Override

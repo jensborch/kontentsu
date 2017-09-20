@@ -3,6 +3,7 @@ package dk.kontentsu.model;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class TermTest {
@@ -23,6 +24,13 @@ public class TermTest {
         assertEquals("uri:/test1/", term1.getFullPath());
         assertEquals("uri:/test1/test2/", term2.getFullPath());
         assertEquals("uri:/test1/test2/test3/", term3.getFullPath());
+    }
+
+    @Test
+    public void testNames() {
+        assertArrayEquals(new String[]{"test1"}, term1.getNames());
+        assertArrayEquals(new String[]{"test1", "test2"}, term2.getNames());
+        assertArrayEquals(new String[]{"test1", "test2", "test3"}, term3.getNames());
     }
 
     @Test

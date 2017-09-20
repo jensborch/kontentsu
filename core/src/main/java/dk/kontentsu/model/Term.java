@@ -33,7 +33,7 @@ public class Term extends AbstractBaseEntity {
     public static final String SEPARATOR = String.valueOf(SEPARATOR_CHAR);
     public static final String TAXONOMY_SEPARATOR = String.valueOf(TAXONOMY_SEPARATOR_CHAR);
     private static final long serialVersionUID = -3974244017445628292L;
-    private static final String FULL_PATH_REGEX = "^?<taxonomy>(\\p{L}[\\p{L}\\d]*):\\/(?<term>(\\p{L}[\\p{L}\\d\\s]+)\\/)*$";
+    private static final String FULL_PATH_REGEX = "^?<taxonomy>(\\p{L}[\\p{L}\\d]*):(?<term>\\/(\\p{L}[\\p{L}\\d\\s]+\\/)*)$";
     private static final String PATH_REGEX = "^\\/?(\\p{L}[\\p{L}\\d\\s]*\\/)*\\p{L}[\\p{L}\\d\\s]*\\/?$";
     private static final Pattern FULL_PATH_REGEX_PATTERN = Pattern.compile(FULL_PATH_REGEX);
     private static final Pattern PATH_REGEX_PATTERN = Pattern.compile(PATH_REGEX);
@@ -131,7 +131,7 @@ public class Term extends AbstractBaseEntity {
     }
 
     public Term append(final String path) {
-        String[] termNames = parsePath(path);
+        List<String> termNames = parsePath(path);
         Term term = this;
         for (String termName : termNames) {
             for (Term c : term.getChildren()) {
@@ -223,7 +223,7 @@ public class Term extends AbstractBaseEntity {
         this.parent = parent;
     }
 
-    private String[] parsePath(final String path) {
+    private List<String> parsePath(final String path) {
         Matcher m = PATH_REGEX_PATTERN.matcher(path);
         if (!m.matches()) {
             throw new IllegalArgumentException("Illegal path: " + path);
@@ -233,7 +233,7 @@ public class Term extends AbstractBaseEntity {
                 .filter(Objects::nonNull)
                 .filter(t -> !t.isEmpty())
                 .collect(Collectors.toList());
-        return result.toArray(new String[result.size()]);
+        return result;
     }
 
     private String[] parse(final String fullPath) {
@@ -241,9 +241,8 @@ public class Term extends AbstractBaseEntity {
         List<String> result = new ArrayList<>(10);
         if (m.matches()) {
             result.add(m.group("taxonomy"));
-            while (m.find()) {
-                result.add(m.group("term"));
-            }
+            result.addAll(parsePath(m.group("term")));
+
         }
         if (result.size() < 1) {
             throw new IllegalArgumentException("Illegal path: " + fullPath);
