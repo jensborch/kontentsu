@@ -58,4 +58,19 @@ public class TermTest {
         assertEquals("uri", term1.getTaxonomy().getName());
         assertEquals("uri", term3.getTaxonomy().getName());
     }
+
+    @Test
+    public void testgetPath() {
+        assertEquals("/", term1.getTaxonomy().getPath());
+        assertEquals("/test1/", term1.getPath());
+        assertEquals("/test1/test2/", term2.getPath());
+        assertEquals("/test1/test2/test3/", term3.getPath());
+    }
+
+    @Test
+    public void testPostLoad() {
+        term3.initPath();
+        term3.updatePathNames();
+        assertEquals("uri:/test1/test2/test3/", term3.getFullPath());
+    }
 }

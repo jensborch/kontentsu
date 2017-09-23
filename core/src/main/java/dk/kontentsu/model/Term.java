@@ -33,8 +33,8 @@ public class Term extends AbstractBaseEntity {
     public static final String SEPARATOR = String.valueOf(SEPARATOR_CHAR);
     public static final String TAXONOMY_SEPARATOR = String.valueOf(TAXONOMY_SEPARATOR_CHAR);
     private static final long serialVersionUID = -3974244017445628292L;
-    private static final String FULL_PATH_REGEX = "^?<taxonomy>(\\p{L}[\\p{L}\\d]*):(?<term>\\/(\\p{L}[\\p{L}\\d\\s]+\\/)*)$";
-    private static final String PATH_REGEX = "^\\/?(\\p{L}[\\p{L}\\d\\s]*\\/)*\\p{L}[\\p{L}\\d\\s]*\\/?$";
+    private static final String FULL_PATH_REGEX = "^(?<tax>\\p{L}[\\p{L}\\d]*):(?<term>\\/(?:\\p{L}[\\p{L}\\d\\s]*\\/)*)$";
+    private static final String PATH_REGEX = "^\\/?(?:\\p{L}[\\p{L}\\d\\s]*\\/)*\\p{L}[\\p{L}\\d\\s]*\\/?$";
     private static final Pattern FULL_PATH_REGEX_PATTERN = Pattern.compile(FULL_PATH_REGEX);
     private static final Pattern PATH_REGEX_PATTERN = Pattern.compile(PATH_REGEX);
 
@@ -88,8 +88,10 @@ public class Term extends AbstractBaseEntity {
     }
 
     private String[] getPathPart(String[] p) {
-        if (p.length > 0) {
+        if (p.length > 1) {
             return Arrays.copyOfRange(p, 1, p.length);
+        } else if (p.length == 1) {
+           return new String[0];
         } else {
             throw new IllegalArgumentException("Path array must contain taxonomy - length must thus be > 0");
         }
@@ -104,9 +106,13 @@ public class Term extends AbstractBaseEntity {
     }
 
     private String buildPath(String[] p) {
-        StringJoiner joiner = new StringJoiner(SEPARATOR, SEPARATOR, SEPARATOR);
-        Arrays.stream(getPathPart(p)).forEach(joiner::add);
-        return joiner.toString();
+        if (p.length > 1) {
+            StringJoiner joiner = new StringJoiner(SEPARATOR, SEPARATOR, SEPARATOR);
+            Arrays.stream(getPathPart(p)).forEach(joiner::add);
+            return joiner.toString();
+        } else {
+            return SEPARATOR;
+        }
     }
 
     private String buildFullPath(String[] p) {
@@ -153,17 +159,12 @@ public class Term extends AbstractBaseEntity {
 
     public String getFullPath() {
         initPath();
-        if (pathNames.length > 0) {
-            return pathNames[0] + ":" + getPath();
-        } else {
-            return null;
-        }
+        return path;
     }
 
     public String getPath() {
-        StringJoiner joiner = new StringJoiner(SEPARATOR, SEPARATOR, SEPARATOR);
-        Arrays.stream(getNames()).forEach(joiner::add);
-        return joiner.toString();
+        initPath();
+        return buildPath(pathNames);
     }
 
     public String getName() {
@@ -172,11 +173,7 @@ public class Term extends AbstractBaseEntity {
 
     public String[] getNames() {
         initPath();
-        if (pathNames.length > 0) {
-            return Arrays.copyOfRange(pathNames, 1, pathNames.length);
-        } else {
-            return new String[0];
-        }
+        return getPathPart(pathNames);
     }
 
     public boolean isUri() {
@@ -240,7 +237,7 @@ public class Term extends AbstractBaseEntity {
         Matcher m = FULL_PATH_REGEX_PATTERN.matcher(fullPath);
         List<String> result = new ArrayList<>(10);
         if (m.matches()) {
-            result.add(m.group("taxonomy"));
+            result.add(m.group("tax"));
             result.addAll(parsePath(m.group("term")));
 
         }
