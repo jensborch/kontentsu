@@ -16,7 +16,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
         MdMenuModule,
         MdIconModule,
         MdToolbarModule],
-    declarations: [ArticleComponent, ContentComponent, LinkDirective],
+    declarations: [ArticleComponent, LinkDirective, ContentComponent],
     providers: [],
     exports: [
         ArticleComponent,
