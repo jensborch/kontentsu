@@ -3,20 +3,22 @@ package dk.kontentsu.model;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static junit.framework.TestCase.assertFalse;
+import static org.junit.Assert.*;
 
 public class TermTest {
 
     private Term term1;
     private Term term2;
     private Term term3;
+    private Term term4;
 
     @Before
     public void setup() {
         term1 = new Term("uri").append("test1/");
         term2 = new Term("uri").append("/Test1/test2/");
         term3 = new Term("uri").append("test1/Test2/test3");
+        term4 = new Term("color").append("blue");
     }
 
     @Test
@@ -65,6 +67,34 @@ public class TermTest {
         assertEquals("/test1/", term1.getPath());
         assertEquals("/test1/test2/", term2.getPath());
         assertEquals("/test1/test2/test3/", term3.getPath());
+    }
+
+    @Test
+    public void testIsUri() {
+        assertTrue(term1.isUri());
+        assertTrue(term2.isUri());
+        assertTrue(term3.isUri());
+        assertFalse(term4.isUri());
+    }
+
+    @Test
+    public void testIsTaxonomy() {
+        assertFalse(term1.isTaxonomy());
+        assertFalse(term2.isTaxonomy());
+        assertFalse(term3.isTaxonomy());
+        assertFalse(term4.isTaxonomy());
+        assertTrue(term1.getParent().isTaxonomy());
+        assertTrue(term3.getParent().getParent().getParent().isTaxonomy());
+    }
+
+    @Test
+    public void testRemove() {
+        Term t = term3.getParent().remove(term3);
+        assertEquals(0, t.getChildren().size());
+        assertEquals("uri:/test1/test2/", t.getFullPath());
+        assertNull(term3.getParent());
+        assertEquals("test3:/", term3.getFullPath());
+
     }
 
     @Test
