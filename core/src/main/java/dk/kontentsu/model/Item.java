@@ -24,9 +24,6 @@
  */
 package dk.kontentsu.model;
 
-import com.querydsl.jpa.impl.JPAQuery;
-import dk.kontentsu.exception.ValidationException;
-import dk.kontentsu.repository.Repository;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,11 +31,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.persistence.*;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import com.querydsl.jpa.impl.JPAQuery;
+import dk.kontentsu.exception.ValidationException;
+import dk.kontentsu.repository.Repository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -68,7 +82,7 @@ public class Item extends AbstractBaseEntity {
             joinColumns = @JoinColumn(name = "item_id"),
             inverseJoinColumns = @JoinColumn(name = "term_id")
     )
-    private Set<Term> terms;
+    private Set<Term> terms = new HashSet<>();
 
     @NotNull
     @Valid
@@ -76,30 +90,26 @@ public class Item extends AbstractBaseEntity {
     private SemanticUri uri;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "items")
-    private Set<Taxon> categories;
+    private Set<Taxon> categories = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "item")
-    private Set<Version> versions;
+    private Set<Version> versions = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "item")
-    private Set<ExternalFile> files;
+    private Set<ExternalFile> files = new HashSet<>();
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, targetEntity = Provider.class)
     @JoinColumn(name = "provider_id")
     private Provider provider;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    private Set<Host> hosts;
+    private Set<Host> hosts = new HashSet<>();
 
     protected Item() {
         //Needed by JPA
     }
 
     public Item(final SemanticUri uri) {
-        this.categories = new HashSet<>();
-        this.versions = new HashSet<>();
-        this.files = new HashSet<>();
-        this.hosts = new HashSet<>();
         this.uri = uri;
         uri.getPath().addItem(this);
     }

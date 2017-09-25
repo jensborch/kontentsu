@@ -1,16 +1,42 @@
 package dk.kontentsu.model;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
+import javax.persistence.PostLoad;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import dk.kontentsu.repository.Repository;
-import dk.kontentsu.util.MatcherSpliterator;
 
 /**
  * @author Jens Borch Christiansen
@@ -43,12 +69,12 @@ public class Term extends AbstractBaseEntity {
 
     @OneToMany
     @OrderColumn
-    private final Set<Term> children = new HashSet<Term>();
+    private Set<Term> children = new HashSet<Term>();
 
     @NotNull
     @Size(min = 1, max = 200)
     @Column(name = "name", length = 200)
-    private final String name;
+    private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", insertable = false, updatable = false)
@@ -60,6 +86,14 @@ public class Term extends AbstractBaseEntity {
     @Lob
     @Column(name = "path")
     private String path;
+
+    protected Term() {
+        //Needed by JPA
+    }
+
+    public Term(final String name) {
+        this.name = name.toLowerCase();
+    }
 
     @PrePersist
     @PreUpdate
@@ -87,7 +121,7 @@ public class Term extends AbstractBaseEntity {
         return result.toArray(new String[result.size()]);
     }
 
-    private String[] getPathPart(String[] p) {
+    private String[] getPathPart(final String[] p) {
         if (p.length > 0) {
             return Arrays.copyOfRange(p, 1, p.length);
         } else {
@@ -95,7 +129,7 @@ public class Term extends AbstractBaseEntity {
         }
     }
 
-    private String getTaxonomyPart(String[] p) {
+    private String getTaxonomyPart(final String[] p) {
         if (p.length > 0) {
             return p[0];
         } else {
@@ -103,7 +137,7 @@ public class Term extends AbstractBaseEntity {
         }
     }
 
-    private String buildPath(String[] p) {
+    private String buildPath(final String[] p) {
         if (p.length > 1) {
             StringJoiner joiner = new StringJoiner(SEPARATOR, SEPARATOR, SEPARATOR);
             Arrays.stream(getPathPart(p)).forEach(joiner::add);
@@ -113,15 +147,12 @@ public class Term extends AbstractBaseEntity {
         }
     }
 
-    private String buildFullPath(String[] p) {
+    private String buildFullPath(final String[] p) {
         return getTaxonomyPart(p) + TAXONOMY_SEPARATOR + buildPath(p);
     }
 
-    public Term(String name) {
-        this.name = name.toLowerCase();
-    }
 
-    public Term append(Term child) {
+    public Term append(final Term child) {
         if (child == this || child.hasParent()) {
             throw new IllegalArgumentException("Child term must be different from current term and must not have parent");
         }
@@ -190,7 +221,7 @@ public class Term extends AbstractBaseEntity {
         return result;
     }
 
-    public Term remove(Term child) {
+    public Term remove(final Term child) {
         if (children.remove(child)) {
             child.setParent(null);
         }
@@ -199,6 +230,10 @@ public class Term extends AbstractBaseEntity {
 
     public Term getParent() {
         return parent;
+    }
+
+    private void setParent(final Term parent) {
+        this.parent = parent;
     }
 
     @Override
@@ -210,16 +245,12 @@ public class Term extends AbstractBaseEntity {
         items.add(item);
     }
 
-    void removeItem(Item item) {
+    void removeItem(final Item item) {
         items.remove(item);
     }
 
     public Set<Item> getItems() {
         return Collections.unmodifiableSet(items);
-    }
-
-    private void setParent(Term parent) {
-        this.parent = parent;
     }
 
     private List<String> parsePath(final String path) {
