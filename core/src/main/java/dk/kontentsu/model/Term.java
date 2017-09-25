@@ -88,10 +88,8 @@ public class Term extends AbstractBaseEntity {
     }
 
     private String[] getPathPart(String[] p) {
-        if (p.length > 1) {
+        if (p.length > 0) {
             return Arrays.copyOfRange(p, 1, p.length);
-        } else if (p.length == 1) {
-           return new String[0];
         } else {
             throw new IllegalArgumentException("Path array must contain taxonomy - length must thus be > 0");
         }
@@ -214,6 +212,10 @@ public class Term extends AbstractBaseEntity {
 
     void removeItem(Item item) {
         items.remove(item);
+    }
+
+    public Set<Item> getItems() {
+        return Collections.unmodifiableSet(items);
     }
 
     private void setParent(Term parent) {

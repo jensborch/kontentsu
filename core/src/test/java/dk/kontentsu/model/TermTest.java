@@ -22,10 +22,20 @@ public class TermTest {
     }
 
     @Test
+    public void testItem() {
+        Item i = new Item();
+        term3.addItem(i);
+        assertEquals(1, term3.getItems().size());
+        term3.removeItem(i);
+        assertEquals(0, term3.getItems().size());
+    }
+
+    @Test
     public void testFullPath() {
         assertEquals("uri:/test1/", term1.getFullPath());
         assertEquals("uri:/test1/test2/", term2.getFullPath());
         assertEquals("uri:/test1/test2/test3/", term3.getFullPath());
+        assertEquals(term3.toString(), term3.getFullPath());
     }
 
     @Test
@@ -75,6 +85,15 @@ public class TermTest {
         assertTrue(term2.isUri());
         assertTrue(term3.isUri());
         assertFalse(term4.isUri());
+    }
+
+    @Test
+    public void testTaxonomy() {
+        Term t = term1.getParent();
+        assertEquals("uri", t.getName());
+        assertEquals(0, t.getNames().length);
+        assertEquals("/", t.getPath());
+        assertNull(t.getParent());
     }
 
     @Test
