@@ -24,11 +24,14 @@
  */
 package dk.kontentsu.model;
 
+import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -347,4 +350,73 @@ public class Item extends AbstractBaseEntity {
         }
     }
 
+    public class URI {
+
+        private final String name;
+        private final Term path;
+
+        public URI(Term path, String name) {
+            this.name = name;
+            this.path = path;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Term getPath() {
+            return path;
+        }
+
+        public String[] getElements() {
+            String[] pathElements = path.getNames();
+            String[] result = Arrays.copyOf(pathElements, pathElements.length + 1);
+            result[pathElements.length] = name;
+            return result;
+        }
+
+        public java.nio.file.Path toPath(final MimeType mimetype) {
+            String[] elements = getElements();
+            String[] tail = (elements.length > 1) ? Arrays.copyOfRange(elements, 1, elements.length) : new String[0];
+            java.nio.file.Path p = Paths.get(elements[0], tail);
+            if (p.getFileName() == null) {
+                throw new ContentException("Filename for path " + p + " is null");
+            }
+            String filename = p.getFileName().toString() + "." + mimetype.getFileExtension();
+            return p.getParent().resolve(filename);
+        }
+
+        @Override
+        public String toString() {
+            return path.toString() + SemanticUriPath.SEPARATOR_CHAR + name;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 83 * hash + Objects.hashCode(this.name);
+            hash = 83 * hash + Objects.hashCode(this.path);
+            return hash;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final URI other = (URI) obj;
+            return this.getPath().equals(other.getPath()) && this.getName().equals(other.getName());
+        }
+
+        public boolean matches(final String uri) {
+            return uri != null && toString().equals(uri.trim());
+        }
+
+    }
 }
