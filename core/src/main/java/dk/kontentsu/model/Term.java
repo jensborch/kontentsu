@@ -50,7 +50,7 @@ import dk.kontentsu.repository.Repository;
         @NamedQuery(name = Repository.TERM_FIND_ALL,
                 query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE t.parent IS NULL"),
         @NamedQuery(name = Repository.TERM_GET,
-                query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE uuid = :uuid")})
+                query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE t.uuid = :uuid")})
 public class Term extends AbstractBaseEntity {
 
     public static final String URI_TAXONOMY = "uri";
@@ -254,16 +254,20 @@ public class Term extends AbstractBaseEntity {
     }
 
     private List<String> parsePath(final String path) {
-        Matcher m = PATH_REGEX_PATTERN.matcher(path);
-        if (!m.matches()) {
-            throw new IllegalArgumentException("Illegal path: " + path);
-        }
+        if (SEPARATOR.equals(path)) {
+            return new ArrayList<>(0);
+        } else {
+            Matcher m = PATH_REGEX_PATTERN.matcher(path);
+            if (!m.matches()) {
+                throw new IllegalArgumentException("Illegal path: " + path);
+            }
 
-        List<String> result = Arrays.stream(path.split("\\/"))
-                .filter(Objects::nonNull)
-                .filter(t -> !t.isEmpty())
-                .collect(Collectors.toList());
-        return result;
+            List<String> result = Arrays.stream(path.split("\\/"))
+                    .filter(Objects::nonNull)
+                    .filter(t -> !t.isEmpty())
+                    .collect(Collectors.toList());
+            return result;
+        }
     }
 
     private String[] parse(final String fullPath) {

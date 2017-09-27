@@ -12,6 +12,7 @@ public class TermTest {
     private Term term2;
     private Term term3;
     private Term term4;
+    private Term empty;
 
     @Before
     public void setup() {
@@ -19,6 +20,7 @@ public class TermTest {
         term2 = new Term("uri").append("/Test1/test2/");
         term3 = new Term("uri").append("test1/Test2/test3");
         term4 = new Term("color").append("blue");
+        empty = new Term("empty");
     }
 
     @Test
@@ -107,6 +109,15 @@ public class TermTest {
     }
 
     @Test
+    public void testEmpty() {
+        assertEquals("empty:/", empty.getFullPath());
+        assertEquals("/", empty.getPath());
+        assertEquals("empty", empty.getName());
+        assertEquals(0, empty.getNames().length);
+        assertTrue(empty.isTaxonomy());
+    }
+
+    @Test
     public void testRemove() {
         Term t = term3.getParent().remove(term3);
         assertEquals(0, t.getChildren().size());
@@ -118,8 +129,11 @@ public class TermTest {
 
     @Test
     public void testPostLoad() {
-        term3.initPath();
-        term3.updatePathNames();
-        assertEquals("uri:/test1/test2/test3/", term3.getFullPath());
+        //term3.initPath();
+        //term3.updatePathNames();
+        //assertEquals("uri:/test1/test2/test3/", term3.getFullPath());
+        empty.initPath();
+        empty.updatePathNames();
+        assertEquals("empty:/", empty.getFullPath());
     }
 }

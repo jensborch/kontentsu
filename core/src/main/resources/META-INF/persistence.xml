@@ -12,6 +12,7 @@
         <class>dk.kontentsu.cdn.model.SemanticUriPath</class>
         <class>dk.kontentsu.cdn.model.Taxon</class>
         <class>dk.kontentsu.cdn.model.Taxonomy</class>
+        <class>dk.kontentsu.cdn.model.Term</class>
         <!-- Internal -->
         <class>dk.kontentsu.cdn.model.Approver</class>
         <class>dk.kontentsu.cdn.model.Host</class>
