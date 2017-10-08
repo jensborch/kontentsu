@@ -24,6 +24,11 @@ public class TermTest {
     }
 
     @Test
+    public void testParse() {
+        assertEquals(term3.getFullPath(), Term.parse("uri:/test1/Test2/test3/").getFullPath());
+    }
+
+    @Test
     public void testItem() {
         Item i = new Item();
         term3.addItem(i);
@@ -74,7 +79,7 @@ public class TermTest {
     }
 
     @Test
-    public void testgetPath() {
+    public void testGetPath() {
         assertEquals("/", term1.getTaxonomy().getPath());
         assertEquals("/test1/", term1.getPath());
         assertEquals("/test1/test2/", term2.getPath());
@@ -129,9 +134,9 @@ public class TermTest {
 
     @Test
     public void testPostLoad() {
-        //term3.initPath();
-        //term3.updatePathNames();
-        //assertEquals("uri:/test1/test2/test3/", term3.getFullPath());
+        term3.initPath();
+        term3.updatePathNames();
+        assertEquals("uri:/test1/test2/test3/", term3.getFullPath());
         empty.initPath();
         empty.updatePathNames();
         assertEquals("empty:/", empty.getFullPath());

@@ -1,3 +1,26 @@
+/*
+ * The MIT License
+ *
+ * Copyright 2016 Jens Borch Christiansen.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package dk.kontentsu.model;
 
 import java.util.ArrayDeque;
@@ -95,6 +118,20 @@ public class Term extends AbstractBaseEntity {
         this.name = name.toLowerCase();
     }
 
+    public static Term parse(final String path) {
+        String[] terms = parseFullPath(path);
+        Term term = null;
+        if (terms.length > 0) {
+            term = new Term(terms[0]);
+            if (terms.length > 1) {
+                for (int i = 1; i < terms.length; i++) {
+                    term = term.append(new Term(terms[i]));
+                }
+            }
+        }
+        return term;
+    }
+
     @PrePersist
     @PreUpdate
     public void initPath() {
@@ -108,7 +145,42 @@ public class Term extends AbstractBaseEntity {
 
     @PostLoad
     public void updatePathNames() {
-        pathNames = parse(path);
+        pathNames = parseFullPath(path);
+    }
+
+    private static List<String> parsePath(final String path) {
+        if (SEPARATOR.equals(path)) {
+            return new ArrayList<>(0);
+        } else {
+            Matcher m = PATH_REGEX_PATTERN.matcher(path);
+            if (!m.matches()) {
+                throw new IllegalArgumentException("Illegal path: " + path);
+            }
+
+            List<String> result = Arrays.stream(path.split("\\/"))
+                    .filter(Objects::nonNull)
+                    .filter(t -> !t.isEmpty())
+                    .collect(Collectors.toList());
+            return result;
+        }
+    }
+
+    private static String[] parseFullPath(final String fullPath) {
+        Matcher m = FULL_PATH_REGEX_PATTERN.matcher(fullPath);
+        List<String> result = new ArrayList<>(10);
+        if (m.matches()) {
+            result.add(m.group("tax"));
+            result.addAll(parsePath(m.group("term")));
+
+        } else {
+            throw new IllegalArgumentException("Illegal path: " + fullPath
+                    + ". Path must match regular expression: " + FULL_PATH_REGEX);
+        }
+        if (result.size() < 1) {
+            throw new IllegalArgumentException("Illegal path: " + fullPath
+                    + ". Path must contain both taxonomy and path");
+        }
+        return result.toArray(new String[result.size()]);
     }
 
     private String[] buildPathNames() {
@@ -150,7 +222,6 @@ public class Term extends AbstractBaseEntity {
     private String buildFullPath(final String[] p) {
         return getTaxonomyPart(p) + TAXONOMY_SEPARATOR + buildPath(p);
     }
-
 
     public Term append(final Term child) {
         if (child == this || child.hasParent()) {
@@ -224,8 +295,14 @@ public class Term extends AbstractBaseEntity {
     public Term remove(final Term child) {
         if (children.remove(child)) {
             child.setParent(null);
+            child.resetPath();
         }
         return this;
+    }
+
+    void resetPath() {
+        this.pathNames = null;
+        this.path = null;
     }
 
     public Term getParent() {
@@ -233,6 +310,7 @@ public class Term extends AbstractBaseEntity {
     }
 
     private void setParent(final Term parent) {
+        this.resetPath();
         this.parent = parent;
     }
 
@@ -252,37 +330,5 @@ public class Term extends AbstractBaseEntity {
     public Set<Item> getItems() {
         return Collections.unmodifiableSet(items);
     }
-
-    private List<String> parsePath(final String path) {
-        if (SEPARATOR.equals(path)) {
-            return new ArrayList<>(0);
-        } else {
-            Matcher m = PATH_REGEX_PATTERN.matcher(path);
-            if (!m.matches()) {
-                throw new IllegalArgumentException("Illegal path: " + path);
-            }
-
-            List<String> result = Arrays.stream(path.split("\\/"))
-                    .filter(Objects::nonNull)
-                    .filter(t -> !t.isEmpty())
-                    .collect(Collectors.toList());
-            return result;
-        }
-    }
-
-    private String[] parse(final String fullPath) {
-        Matcher m = FULL_PATH_REGEX_PATTERN.matcher(fullPath);
-        List<String> result = new ArrayList<>(10);
-        if (m.matches()) {
-            result.add(m.group("tax"));
-            result.addAll(parsePath(m.group("term")));
-
-        }
-        if (result.size() < 1) {
-            throw new IllegalArgumentException("Illegal path: " + fullPath);
-        }
-        return result.toArray(new String[result.size()]);
-    }
-
 
 }

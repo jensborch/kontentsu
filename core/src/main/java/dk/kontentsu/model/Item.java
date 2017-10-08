@@ -1,4 +1,3 @@
-
 /*
  * The MIT License
  *
@@ -404,13 +403,10 @@ public class Item extends AbstractBaseEntity {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
+            if (obj == null || getClass() != obj.getClass()) {
                 return false;
             }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            final URI other = (URI) obj;
+            URI other = (URI) obj;
             return this.getPath().equals(other.getPath()) && this.getName().equals(other.getName());
         }
 

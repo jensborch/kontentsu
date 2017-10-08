@@ -4,23 +4,23 @@
         <description/>
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>java:global/CdnDS</jta-data-source>
+        <class>dk.kontentsu.cdn.model.Approver</class>
         <class>dk.kontentsu.cdn.model.Category</class>
         <class>dk.kontentsu.cdn.model.Content</class>
         <class>dk.kontentsu.cdn.model.ExternalFile</class>
-        <class>dk.kontentsu.cdn.model.SemanticUriPath</class>
+        <class>dk.kontentsu.cdn.model.Host</class>
+        <class>dk.kontentsu.cdn.model.Interval</class>
+        <class>dk.kontentsu.cdn.model.Item</class>
+        <class>dk.kontentsu.cdn.model.Metadata</class>
         <class>dk.kontentsu.cdn.model.MimeType</class>
+        <class>dk.kontentsu.cdn.model.Provider</class>
+        <class>dk.kontentsu.cdn.model.Reference</class>
+        <class>dk.kontentsu.cdn.model.SemanticUri</class>
         <class>dk.kontentsu.cdn.model.SemanticUriPath</class>
         <class>dk.kontentsu.cdn.model.Taxon</class>
         <class>dk.kontentsu.cdn.model.Taxonomy</class>
         <class>dk.kontentsu.cdn.model.Term</class>
-        <!-- Internal -->
-        <class>dk.kontentsu.cdn.model.Approver</class>
-        <class>dk.kontentsu.cdn.model.Host</class>
-        <class>dk.kontentsu.cdn.model.internal.Item</class>
-        <class>dk.kontentsu.cdn.model.internal.Metadata</class>
-        <class>dk.kontentsu.cdn.model.internal.Provider</class>
-        <class>dk.kontentsu.cdn.model.internal.Reference</class>
-        <class>dk.kontentsu.cdn.model.internal.Version</class>
+        <class>dk.kontentsu.cdn.model.Version</class>
         <validation-mode>CALLBACK</validation-mode>
         <properties>
             <property name="javax.persistence.validation.group.pre-persist" value="javax.validation.groups.Default"/>
