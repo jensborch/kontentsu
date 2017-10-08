@@ -3,7 +3,7 @@ import { ArticleComponent } from './article.component';
 import { Directive, Input, Component } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { ComponentFixture } from '@angular/core/testing';
-import { MdCardModule, MdCardContent } from '@angular/material';
+import { MatCardModule, MatCardContent } from '@angular/material';
 
 @Component({
   selector: 'k-content',
@@ -22,7 +22,7 @@ describe('Component: Article', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MdCardModule],
+      imports: [MatCardModule],
       declarations: [ArticleComponent, MockContentComponent]
     });
     fixture = TestBed.createComponent(ArticleComponent);
@@ -32,7 +32,7 @@ describe('Component: Article', () => {
     expect(comp).not.toBeNull();
   });
   it('should be empty with no data', () => {
-    const a = fixture.debugElement.query(By.directive(MdCardContent));
+    const a = fixture.debugElement.query(By.directive(MatCardContent));
     expect(a).toBeNull();
   });
   it('should have article and paragraph content', () => {
@@ -46,7 +46,7 @@ describe('Component: Article', () => {
       ]
     };
     fixture.detectChanges();
-    const a = fixture.debugElement.query(By.directive(MdCardContent));
+    const a = fixture.debugElement.query(By.directive(MatCardContent));
     expect(a).not.toBeNull();
     const p = fixture.debugElement.query(By.css('p'));
     expect(p).not.toBeNull();

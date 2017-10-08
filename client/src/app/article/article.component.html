@@ -1,10 +1,10 @@
-<md-card-content *ngIf="data.sections">
+<mat-card-content *ngIf="data.sections">
 	<h1 *ngIf="data.heading">{{data.heading}}</h1>
 	<div *ngFor="let section of data.sections">
 		<h2 *ngIf="section.heading">{{section.heading}}</h2>
 		<p *ngFor="let paragraph of section.paragraphs">
 			<k-content [data]="paragraph"></k-content>
 		</p>
-		<img md-card-image *ngIf="section.picture" [src]="root + section.picture.href" [alt]="section.picture?.alt" [title]="section.picture?.title">
+		<img mat-card-image *ngIf="section.picture" [src]="root + section.picture.href" [alt]="section.picture?.alt" [title]="section.picture?.title">
 	</div>
-</md-card-content>
+</mat-card-content>
