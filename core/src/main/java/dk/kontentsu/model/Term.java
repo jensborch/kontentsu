@@ -319,7 +319,7 @@ public class Term extends AbstractBaseEntity {
         return getFullPath();
     }
 
-    void addItem(Item item) {
+    void addItem(final Item item) {
         items.add(item);
     }
 

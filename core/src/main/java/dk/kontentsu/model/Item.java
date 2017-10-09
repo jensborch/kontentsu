@@ -198,7 +198,7 @@ public class Item extends AbstractBaseEntity {
         getVersions().forEach(Version::delete);
     }
 
-    public void addTerm(Term term) {
+    public void addTerm(final Term term) {
         if (term.isUri() || term.isTaxonomy()) {
             throw new IllegalArgumentException("Must not be a URI or a taxonomy");
         }
@@ -206,7 +206,7 @@ public class Item extends AbstractBaseEntity {
         term.addItem(this);
     }
 
-    public void removeTerm(Term term) {
+    public void removeTerm(final Term term) {
         if (term.isUri()) {
             throw new IllegalArgumentException("Can not remove a URI");
         }
@@ -354,7 +354,7 @@ public class Item extends AbstractBaseEntity {
         private final String name;
         private final Term path;
 
-        public URI(Term path, String name) {
+        public URI(final Term path, String name) {
             this.name = name;
             this.path = path;
         }

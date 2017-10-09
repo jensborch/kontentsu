@@ -48,7 +48,7 @@ public class MatcherSpliterator extends AbstractSpliterator<String[]> {
         this.groups = null;
     }
 
-    public MatcherSpliterator(final Matcher matcher, Integer... groups) {
+    public MatcherSpliterator(final Matcher matcher, final Integer... groups) {
         super(Long.MAX_VALUE, NONNULL | ORDERED | IMMUTABLE);
         this.matcher = matcher;
         this.groups = Arrays.asList(groups);
@@ -73,7 +73,7 @@ public class MatcherSpliterator extends AbstractSpliterator<String[]> {
         return StreamSupport.stream(new MatcherSpliterator(matcher), false);
     }
 
-    public static Stream<String[]> stream(final Matcher matcher, Integer... groups) {
+    public static Stream<String[]> stream(final Matcher matcher, final Integer... groups) {
         return StreamSupport.stream(new MatcherSpliterator(matcher, groups), false);
     }
 }

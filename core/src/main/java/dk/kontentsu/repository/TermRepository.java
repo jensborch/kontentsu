@@ -23,7 +23,9 @@
  */
 package dk.kontentsu.repository;
 
-import dk.kontentsu.model.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -31,10 +33,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+
+import dk.kontentsu.model.SemanticUriPath;
+import dk.kontentsu.model.Term;
 
 /**
  * Repository for performing CRUD operations on term objects.
