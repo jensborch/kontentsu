@@ -214,7 +214,7 @@ subprojects {
                 runtimeClasspath += output + main.output
                 srcDir file('src/it/java')
             }
-            output.classesDir = "$buildDir/classes/integration-test"
+            java.outputDir = file("$buildDir/classes/integration-test")
         }
     }
 
@@ -222,10 +222,7 @@ subprojects {
         description = 'Run integration tests'
         testClassesDirs = files(sourceSets.integrationTest.output.classesDir)
         classpath = sourceSets.main.runtimeClasspath + sourceSets.integrationTest.runtimeClasspath
-        reports {
-            html.destination = file("$buildDir/reports/integration-test")
-            junitXml.destination = file("$buildDir/integration-test-results")
-        }
+        testReportDirName = 'integration-test'
     }
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -276,10 +273,7 @@ subprojects {
         reports {
             xml.enabled = true
             csv.enabled = false
-            html {
-                enabled = true
-                destination = file("${buildDir}/reports/jacoco")
-            }
+            html.enabled = true
         }
     }
 }
