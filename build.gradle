@@ -220,7 +220,7 @@ subprojects {
 
     task integrationTest(type: Test) {
         description = 'Run integration tests'
-        testClassesDirs = files(sourceSets.integrationTest.output.classesDir)
+        testClassesDirs = files(sourceSets.integrationTest.java.outputDir)
         classpath = sourceSets.main.runtimeClasspath + sourceSets.integrationTest.runtimeClasspath
         testReportDirName = 'integration-test'
     }

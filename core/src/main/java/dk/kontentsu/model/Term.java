@@ -31,12 +31,14 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -62,13 +64,15 @@ import javax.validation.constraints.Size;
 import dk.kontentsu.repository.Repository;
 
 /**
+ * A term in a taxonomy used to categorize items.
+ *
  * @author Jens Borch Christiansen
  */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@Table(name = "node",
+@Table(name = "term",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"parent_id", "name"}, name = "node_constraint")})
+                @UniqueConstraint(columnNames = {"parent_id", "name"}, name = "term_constraint")})
 @NamedQueries({
         @NamedQuery(name = Repository.TERM_FIND_ALL,
                 query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE t.parent IS NULL"),
@@ -90,7 +94,7 @@ public class Term extends AbstractBaseEntity {
     @ManyToMany(mappedBy = "terms")
     private Set<Item> items = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "parent")
     @OrderColumn
     private Set<Term> children = new HashSet<Term>();
 
@@ -185,10 +189,10 @@ public class Term extends AbstractBaseEntity {
 
     private String[] buildPathNames() {
         Deque<String> result = new ArrayDeque<>();
-        Term last = this;
-        while (last != null) {
-            result.addFirst(last.getName());
-            last = last.getParent();
+        Optional<Term> last = Optional.of(this);
+        while (last.isPresent()) {
+            result.addFirst(last.get().getName());
+            last = last.get().getParent();
         }
         return result.toArray(new String[result.size()]);
     }
@@ -257,6 +261,19 @@ public class Term extends AbstractBaseEntity {
         return Collections.unmodifiableSet(children);
     }
 
+    public Set<Term> getChildren(boolean recursive) {
+        if (recursive) {
+            Set<Term> result = new HashSet<>();
+            for (Term t : getChildren()) {
+                result.add(t);
+                result.addAll(t.getChildren(true));
+            }
+            return result;
+        } else {
+            return getChildren();
+        }
+    }
+
     public String getFullPath() {
         initPath();
         return path;
@@ -281,13 +298,13 @@ public class Term extends AbstractBaseEntity {
     }
 
     public boolean isTaxonomy() {
-        return getParent() == null;
+        return !getParent().isPresent();
     }
 
     public Term getTaxonomy() {
         Term result = this;
-        while (result.getParent() != null) {
-            result = result.getParent();
+        while (result.getParent().isPresent()) {
+            result = result.getParent().get();
         }
         return result;
     }
@@ -305,8 +322,8 @@ public class Term extends AbstractBaseEntity {
         this.path = null;
     }
 
-    public Term getParent() {
-        return parent;
+    public Optional<Term> getParent() {
+        return Optional.ofNullable(parent);
     }
 
     private void setParent(final Term parent) {

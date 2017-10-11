@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 
 public class TermTest {
 
+    private Term root;
     private Term term1;
     private Term term2;
     private Term term3;
@@ -18,9 +19,17 @@ public class TermTest {
     public void setup() {
         term1 = new Term("uri").append("test1/");
         term2 = new Term("uri").append("/Test1/test2/");
-        term3 = new Term("uri").append("test1/Test2/test3");
+        root = new Term("uri");
+        term3 = root.append("test1/Test2/test3");
         term4 = new Term("color").append("blue");
         empty = new Term("empty");
+    }
+
+    @Test
+    public void testGetChildren() {
+        assertEquals(1, root.getChildren().size());
+        assertEquals(0, term3.getChildren().size());
+        assertEquals(3, root.getChildren(true).size());
     }
 
     @Test
@@ -58,7 +67,7 @@ public class TermTest {
         assertEquals(term2.getFullPath(), test.getFullPath());
         assertEquals(term3.getFullPath(), term1.append("test2/test3").getFullPath());
         Term testTerm = new Term("test2").append(new Term("TEST3"));
-        term1.append(testTerm.getParent());
+        term1.append(testTerm.getParent().get());
         assertEquals(term3.getFullPath(), testTerm.getFullPath());
     }
 
@@ -96,11 +105,11 @@ public class TermTest {
 
     @Test
     public void testTaxonomy() {
-        Term t = term1.getParent();
+        Term t = term1.getParent().get();
         assertEquals("uri", t.getName());
         assertEquals(0, t.getNames().length);
         assertEquals("/", t.getPath());
-        assertNull(t.getParent());
+        assertFalse(t.getParent().isPresent());
     }
 
     @Test
@@ -109,8 +118,8 @@ public class TermTest {
         assertFalse(term2.isTaxonomy());
         assertFalse(term3.isTaxonomy());
         assertFalse(term4.isTaxonomy());
-        assertTrue(term1.getParent().isTaxonomy());
-        assertTrue(term3.getParent().getParent().getParent().isTaxonomy());
+        assertTrue(term1.getParent().get().isTaxonomy());
+        assertTrue(term3.getParent().get().getParent().get().getParent().get().isTaxonomy());
     }
 
     @Test
@@ -124,10 +133,10 @@ public class TermTest {
 
     @Test
     public void testRemove() {
-        Term t = term3.getParent().remove(term3);
+        Term t = term3.getParent().get().remove(term3);
         assertEquals(0, t.getChildren().size());
         assertEquals("uri:/test1/test2/", t.getFullPath());
-        assertNull(term3.getParent());
+        assertFalse(term3.getParent().isPresent());
         assertEquals("test3:/", term3.getFullPath());
 
     }

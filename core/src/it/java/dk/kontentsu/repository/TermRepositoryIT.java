@@ -5,6 +5,9 @@ import static org.junit.Assert.assertEquals;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.ejb.EJBTransactionRequiredException;
@@ -26,6 +29,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -65,7 +69,7 @@ public class TermRepositoryIT {
         try {
             userTransaction.begin();
             term = repo.save(new Term("uri"));
-            //.append("/test1/test2"));
+            term.append("/test1/test2");
         } finally {
             userTransaction.commit();
         }
@@ -76,7 +80,11 @@ public class TermRepositoryIT {
         TestEJBContainer.inject(container, this);
         try {
             userTransaction.begin();
+            Set<UUID> delete = term.getChildren(true).stream().map(Term::getUuid).collect(Collectors.toSet());
+            assertEquals(2, delete.size());
+            delete.forEach(repo::delete);
             repo.delete(term.getUuid());
+            assertEquals(0, repo.findAll().size());
         } finally {
             userTransaction.commit();
         }
@@ -91,7 +99,7 @@ public class TermRepositoryIT {
     public void testFindAll() throws Exception {
         try {
             userTransaction.begin();
-            assertEquals(1, repo.findAll().size());
+            assertEquals(3, repo.findAll().size());
         } finally {
             userTransaction.commit();
         }

@@ -73,6 +73,8 @@ public class TermRepository extends Repository<Term> {
 
     public void delete(final UUID uuid) {
         Term t = get(uuid);
+        t.getChildren().forEach(t::remove);
+        t.getParent().ifPresent(p -> p.remove(t));
         em.remove(t);
     }
 
