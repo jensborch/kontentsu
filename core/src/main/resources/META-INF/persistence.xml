@@ -23,6 +23,8 @@
         <class>dk.kontentsu.cdn.model.Version</class>
         <validation-mode>CALLBACK</validation-mode>
         <properties>
+            <property name="tomee.jpa.cdi" value="false"/>
+            <!--<property name="tomee.jpa.factory.lazy" value="true"/>-->
             <property name="javax.persistence.validation.group.pre-persist" value="javax.validation.groups.Default"/>
             <property name="javax.persistence.validation.group.pre-update" value="javax.validation.groups.Default"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
