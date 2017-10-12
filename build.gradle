@@ -19,7 +19,7 @@ plugins {
 }
 
 ext {
-    log4jVersion = '2.9.1'
+    log4jVersion = '2.8.2'
     javaeeVersion = '7.0-1'
     h2Version = '1.4.196'
     jacksonVersion = '2.8.5'
