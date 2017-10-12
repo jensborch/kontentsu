@@ -1,6 +1,6 @@
 buildscript {
     dependencies {
-        classpath 'org.owasp:dependency-check-gradle:1.4.5.1'
+        classpath 'org.owasp:dependency-check-gradle:2.1.1'
     }
 }
 
@@ -14,28 +14,28 @@ plugins {
     id 'jdepend'
     id 'com.github.ben-manes.versions' version '0.15.0'
     id 'de.aaschmid.cpd' version '1.0'
-    id 'nebula.lint' version '7.4.0'
+    id 'nebula.lint' version '8.3.1'
     id "com.moowork.node" version "1.2.0"
 }
 
 ext {
-    log4jVersion = '2.8.2'
+    log4jVersion = '2.9.1'
     javaeeVersion = '7.0-1'
     h2Version = '1.4.196'
     jacksonVersion = '2.8.5'
     jerseyVersion = '2.22.2'
-    hibernateVersion = '5.2.10.Final'
+    hibernateVersion = '5.2.11.Final'
     querydslVersion = "4.1.4"
     fileuploadVersion = "1.3.3"
     ownerVersion = '1.0.9'
-    hashidsVersion = '1.0.2'
+    hashidsVersion = '1.0.3'
     esapiVersion = '2.1.0.1'
-    jjwtVersion = '0.7.0'
-    jschNioVersion = '1.0.4'
+    jjwtVersion = '0.9.0'
+    jschNioVersion = '1.0.5'
     findbugsAnnotationsVersion = '3.0.1u2'
 
-    swaggerUiVersion = '3.0.14'
-    swaggerVersion = '1.5.15'
+    swaggerUiVersion = '3.2.2'
+    swaggerVersion = '1.5.16'
     angularMaterialVersion = '1.1.3'
     angularVersion = '1.6.1'
     materialDesignIconsVersions = '2.2.0'
@@ -50,7 +50,7 @@ ext {
     jacocoVersion = "0.7.9"
     mockitoVersion = '1.10.19'
     catchExceptionVersion = '1.4.4'
-    restAssuredVersion = '3.0.3'
+    restAssuredVersion = '3.0.5'
     jglueVersion = '3.1.4'
 }
 
