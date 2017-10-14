@@ -109,20 +109,20 @@ public final class Transaction {
             });
         }
 
-        private ApplicationException getApplicationException(Throwable e) {
+        private ApplicationException getApplicationException(final Throwable e) {
             return getApplicationException(e.getClass());
         }
 
-        private ApplicationException getApplicationException(Class<?> c) {
+        private ApplicationException getApplicationException(final Class<?> c) {
             return c.getAnnotation(ApplicationException.class);
         }
 
-        private boolean isApplicationException(Class<?> c) {
+        private boolean isApplicationException(final Class<?> c) {
             ApplicationException annotation = getApplicationException(c);
             return annotation != null && annotation.inherited();
         }
 
-        private boolean rollback(Exception e) {
+        private boolean rollback(final Exception e) {
             return new Finder<>(this::isApplicationException, Class::getSuperclass)
                     .find(e.getClass())
                     .map(this::getApplicationException)
@@ -132,7 +132,7 @@ public final class Transaction {
                             .orElse(e instanceof RuntimeException));
         }
 
-        private void rollback(UserTransaction ut) {
+        private void rollback(final UserTransaction ut) {
             try {
                 if (ut != null) {
                     ut.rollback();

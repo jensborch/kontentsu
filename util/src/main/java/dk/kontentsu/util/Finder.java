@@ -28,24 +28,26 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * Recursively search for something matching a predicate.'
+ * Recursively search for something matching a predicate.
+ *
+ * @param T the type search in.
  *
  * @author Jens Borch Christiansen
  */
 public class Finder<T> {
 
     private final Predicate<T> predicate;
-    private Function<T, T> finder;
+    private Function<T, T> recursionFunction;
 
-    public Finder(final Predicate<T> predicate, final Function<T, T> finder) {
+    public Finder(final Predicate<T> predicate, final Function<T, T> recursionFunction) {
         this.predicate = predicate;
-        this.finder = finder;
+        this.recursionFunction = recursionFunction;
     }
 
     public Optional<T> find(final T t) {
-        T next = finder.apply(t);
-        return t != null && predicate.test(t) ?
-                Optional.of(t) :
-                t == null || next == null ? Optional.empty() : find(next);
+        T next = recursionFunction.apply(t);
+        return t != null && predicate.test(t)
+                ? Optional.of(t)
+                : t == null || next == null ? Optional.empty() : find(next);
     }
 }
