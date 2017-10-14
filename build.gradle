@@ -216,7 +216,7 @@ subprojects {
                 runtimeClasspath += output + main.output
                 srcDir file('src/it/java')
             }
-            java.outputDir = file("$buildDir/classes/integration-test")
+            java.outputDir = file("$buildDir/classes/java/integration-test")
         }
     }
 
@@ -301,6 +301,7 @@ task codeCoverageReport(type: JacocoReport) {
 
     reports {
         xml.enabled true
+        xml.destination = file("$buildDir/reports/jacoco/test/jacocoTestReport.xml")
         html.enabled false
         csv.enabled false
     }
