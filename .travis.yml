@@ -2,3 +2,4 @@ language: java
 jdk:
   - oraclejdk8
 script: gradle build integrationTest
+after_success: gradle cobertura coveralls
