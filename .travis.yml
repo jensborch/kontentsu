@@ -1,8 +1,22 @@
 language: java
+sudo: false
+install: true
+addons:
+  sonarcloud:
+    organization: "jensborch-github"
+    token:
+      secure: "krc24zOldAnWO8SKGsGBao3De0oXETV/37aoFptZv5hw5ad+Mns/oThHYu3veTrTo942SaDP0sSKoKgCxt8n7iAJo0BqBs88IddxAn7fIvQqEEOc2+8z2o5IAfB68BLtJhVvrYcSkFlP8OafRJ2q4zuWnKKzFGM6YBVgxZzu54btQe2OXlSk2H+DCfYW8WKZLzvjSlQt+XozwvyaKZ5KLKDGsElYuF+Z6gQyOX5PdVoudYK2yyzqFF4WHKlWAHgCkBBCyVklUDKEM41HDjLoTs2Y5hMo7AtceeFlOUV8mCxO8pvn4W2dK0GQlRPMdeyP9rqQUmaUEtlmM1zAAll79abOLkOKUdfzDIS5VxeGCWyhNqNAep5Lr8yzfhsxBQ0N9seWBGOkzhYAxfMVvQeyX9cCQu5Bq9aWp6HCHNyO1qxsJx2jSASs1pEozzKqflM7h6H6PmdmMvTLNEYAGEu/2sfs8H6Yuoc0TYEi1F/49txC8Vlb2lYQ3Lmg2T7nP7KaFz5kHD07wHm0N1psZ/rA2ou2/WkU3lL49BhCLWH5LFpa0XxfY4HML3wOvPp8JBbaO5dqLuaCGY3XemcZ49lIQzSI3XEZktJCr3dJu6uhipCX/U45TvGUhl3jhlQqdscwPHbPv1Xd90VO9JC5+MVB8gV2KELG5RwQzdl06ssarNA="
 jdk:
   - oraclejdk8
 script:
   - gradle build integrationTest
   - gradle codeCoverageReport
+  - gradle sonarqube
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'
+    - '$HOME/.gradle'
+    - '.gradle'
