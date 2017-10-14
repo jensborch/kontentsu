@@ -34,7 +34,7 @@ import dk.kontentsu.model.Version;
 import dk.kontentsu.repository.ExternalFileRepository;
 import dk.kontentsu.test.ContentTestData;
 import dk.kontentsu.test.TestEJBContainer;
-import dk.kontentsu.util.Transactions;
+import dk.kontentsu.util.Transaction;
 
 /**
  * Test for {@link ExternalizerService}.
@@ -165,11 +165,11 @@ public class ExternalizerServiceIT {
                 .item(page)
                 .from(NOW)
                 .build();
-        Transactions.commit(userTransaction).param(toDelete).apply(f -> repo.save(f));
+        Transaction.create(userTransaction).param(toDelete).apply(f -> repo.save(f));
 
         List<ExternalFile> result = service.externalize(pageVersion.getUuid()).get();
         assertEquals(2, result.size());
-        ExternalFile deleted = Transactions.commit(userTransaction).param(toDelete.getUuid()).apply(f -> repo.get(f));
+        ExternalFile deleted = Transaction.create(userTransaction).param(toDelete.getUuid()).apply(f -> repo.get(f));
         assertTrue(deleted.isDeleted());
     }
 

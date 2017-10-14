@@ -34,6 +34,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import dk.kontentsu.util.CauseFinder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,28 +57,28 @@ public class ContainerExceptionMapper implements ExceptionMapper<EJBException> {
 
     @Override
     public Response toResponse(final EJBException t) {
-        Optional<Throwable> ex = new CauseFinder(n -> n instanceof NoResultException).findCause(t);
+        Optional<Throwable> ex = new CauseFinder(n -> n instanceof NoResultException).find(t);
         if (ex.isPresent()) {
             return Response
                     .status(Response.Status.NOT_FOUND)
                     .entity(new ErrorRepresentation(ErrorCode.NOT_FOUND_ERROR, ex.get().getMessage()))
                     .build();
         }
-        ex = new CauseFinder(n -> n instanceof ConstraintViolationException).findCause(t);
+        ex = new CauseFinder(n -> n instanceof ConstraintViolationException).find(t);
         if (ex.isPresent()) {
             return Response
                     .status(Response.Status.BAD_REQUEST)
                     .entity(new ValidationErrorRepresentation(ErrorCode.VALIDATION_ERROR, (ConstraintViolationException) ex.get()))
                     .build();
         }
-        ex = new CauseFinder(n -> n instanceof PersistenceException).findCause(t);
+        ex = new CauseFinder(n -> n instanceof PersistenceException).find(t);
         if (ex.isPresent()) {
             return Response
                     .status(Response.Status.BAD_REQUEST)
                     .entity(new ErrorRepresentation(ErrorCode.VALIDATION_ERROR, ex.get().getMessage()))
                     .build();
         }
-        ex = new CauseFinder(n -> n instanceof AccessLocalException).findCause(t);
+        ex = new CauseFinder(n -> n instanceof AccessLocalException).find(t);
         if (ex.isPresent()) {
             return Response
                     .status(Response.Status.UNAUTHORIZED)
@@ -88,7 +89,7 @@ public class ContainerExceptionMapper implements ExceptionMapper<EJBException> {
         LOGGER.warn("Unknown container error in CDN application", t);
 
         String message = new CauseFinder(n -> n.getMessage() != null && !n.getMessage().isEmpty())
-                .findCause(t)
+                .find(t)
                 .map(Throwable::getMessage)
                 .orElse("Unknown container error");
 

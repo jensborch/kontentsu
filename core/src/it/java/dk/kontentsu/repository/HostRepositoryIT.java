@@ -1,9 +1,5 @@
 package dk.kontentsu.repository;
 
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.repository.CategoryRepository;
-import dk.kontentsu.repository.HostRepository;
-
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.junit.Assert.assertEquals;
@@ -20,17 +16,16 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.transaction.UserTransaction;
 
+import dk.kontentsu.model.Host;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.SemanticUriPath;
+import dk.kontentsu.test.TestEJBContainer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.model.Host;
-import dk.kontentsu.model.Item;
-import dk.kontentsu.test.TestEJBContainer;
 
 /**
  * Integration test for {@link HostRepository}.

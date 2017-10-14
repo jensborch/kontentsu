@@ -21,42 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.api.exceptionmappers;
+package dk.kontentsu.util;
 
-import dk.kontentsu.api.exposure.model.ErrorRepresentation;
-import dk.kontentsu.exception.ErrorCode;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
-
-import dk.kontentsu.util.CauseFinder;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
- * Exception mapper for Throwable - will map to HTTP 500.
+ * Recursively search for something matching a predicate.'
  *
  * @author Jens Borch Christiansen
  */
-@Provider
-public class DefaultExceptionMapper implements ExceptionMapper<Throwable> {
+public class Finder<T> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private final Predicate<T> predicate;
+    private Function<T, T> finder;
 
-    @Override
-    public Response toResponse(final Throwable t) {
-        LOGGER.warn("Unknown error in CDN application", t);
-
-        String message = new CauseFinder(n -> n.getMessage() != null && !n.getMessage().isEmpty())
-                .find(t)
-                .map(Throwable::getMessage)
-                .orElse("Unknown error");
-
-        return Response
-                .status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(new ErrorRepresentation(ErrorCode.UNKNOWN_ERROR, message))
-                .build();
+    public Finder(final Predicate<T> predicate, final Function<T, T> finder) {
+        this.predicate = predicate;
+        this.finder = finder;
     }
 
+    public Optional<T> find(final T t) {
+        T next = finder.apply(t);
+        return t != null && predicate.test(t) ?
+                Optional.of(t) :
+                t == null || next == null ? Optional.empty() : find(next);
+    }
 }

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.api.exceptionmappers;
+package dk.kontentsu.util;
 
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -29,17 +29,11 @@ import java.util.function.Predicate;
 /**
  * Iterates through all causes to find exception matching predicate.
  */
-public class CauseFinder {
-
-    private final Predicate<Throwable> predicate;
+public class CauseFinder extends Finder<Throwable> {
 
     public CauseFinder(final Predicate<Throwable> predicate) {
-        this.predicate = predicate;
+        super(predicate, Throwable::getCause);
+
     }
 
-    public Optional<Throwable> findCause(final Throwable t) {
-        Throwable cause = t.getCause();
-        return cause == null ? Optional.empty()
-                : predicate.test(cause) ? Optional.of(cause) : findCause(cause);
-    }
 }
