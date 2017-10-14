@@ -26,14 +26,13 @@ package dk.kontentsu.externalization;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Default externalization visitor for content that should not be processed. Will throw a {@link ExternalizationException} if the content have a composition.

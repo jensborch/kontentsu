@@ -23,14 +23,11 @@
  */
 package dk.kontentsu.oauth2.api;
 
-import dk.kontentsu.oauth2.api.configuration.Config;
-import dk.kontentsu.oauth2.api.model.TokenRepresentation;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -42,6 +39,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import dk.kontentsu.oauth2.api.configuration.Config;
+import dk.kontentsu.oauth2.api.model.TokenRepresentation;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 /**
  * Get OAuth2 access token - i.e. a JWT token.

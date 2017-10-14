@@ -26,6 +26,7 @@ package dk.kontentsu.oauth2.api;
 import java.security.Principal;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.security.auth.Subject;
@@ -34,8 +35,9 @@ import javax.security.jacc.PolicyContextException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.NotAuthorizedException;
-import org.apache.logging.log4j.Logger;
+
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class wraps Java EE functionality for performing a login and obtaining

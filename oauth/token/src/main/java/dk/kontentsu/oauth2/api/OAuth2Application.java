@@ -23,15 +23,17 @@
  */
 package dk.kontentsu.oauth2.api;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+
 import dk.kontentsu.oauth2.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.oauth2.api.exceptionmappers.ContainerExceptionMapper;
 import dk.kontentsu.oauth2.api.exceptionmappers.NotAuthorizedExceptionMapper;
 import dk.kontentsu.util.rs.CORSFilter;
 import dk.kontentsu.util.rs.DiagnosticFilter;
-import java.util.HashSet;
-import java.util.Set;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.jackson.JacksonFeature;

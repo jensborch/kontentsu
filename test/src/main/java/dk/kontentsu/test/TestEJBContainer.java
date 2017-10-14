@@ -1,6 +1,7 @@
 package dk.kontentsu.test;
 
 import java.util.Properties;
+
 import javax.ejb.embeddable.EJBContainer;
 import javax.naming.NamingException;
 

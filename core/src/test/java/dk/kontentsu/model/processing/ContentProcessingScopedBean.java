@@ -1,8 +1,9 @@
 package dk.kontentsu.model.processing;
 
+import javax.inject.Inject;
+
 import dk.kontentsu.model.Content;
 import dk.kontentsu.spi.ContentProcessingScoped;
-import javax.inject.Inject;
 
 /**
  * CDI bean for testing {@link InjectableContentProcessingScope}.

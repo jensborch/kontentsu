@@ -1,12 +1,13 @@
 package dk.kontentsu.api;
 
-import dk.kontentsu.api.configuration.Config;
-import dk.kontentsu.oauth2.module.AuthConfigProvider;
-import dk.kontentsu.oauth2.module.Options;
 import javax.inject.Inject;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+
+import dk.kontentsu.api.configuration.Config;
+import dk.kontentsu.oauth2.module.AuthConfigProvider;
+import dk.kontentsu.oauth2.module.Options;
 
 /**
  * Register OAuth2 JASPIC auth module, securing all API calls.

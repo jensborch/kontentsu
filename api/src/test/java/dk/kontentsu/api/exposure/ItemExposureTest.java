@@ -1,23 +1,25 @@
 package dk.kontentsu.api.exposure;
 
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.CoreMatchers.*;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import javax.ejb.EJBException;
+import javax.persistence.NoResultException;
+import javax.ws.rs.core.Application;
 
 import dk.kontentsu.api.ObjectMapperProvider;
 import dk.kontentsu.api.configuration.Config;
 import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
+import dk.kontentsu.model.Item;
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.model.Item;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.upload.Uploader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import javax.ejb.EJBException;
-import javax.persistence.NoResultException;
-import javax.ws.rs.core.Application;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;

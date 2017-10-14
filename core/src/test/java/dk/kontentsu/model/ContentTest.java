@@ -1,8 +1,6 @@
 
 package dk.kontentsu.model;
 
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.Content;
 import static org.junit.Assert.assertEquals;
 
 import java.nio.charset.Charset;

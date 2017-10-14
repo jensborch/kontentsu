@@ -1,10 +1,11 @@
 package dk.kontentsu.externalization;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.model.processing.TemporalReferenceTreeVisitor;
-import java.util.ArrayList;
-import java.util.List;
 import org.hashids.Hashids;
 
 /**

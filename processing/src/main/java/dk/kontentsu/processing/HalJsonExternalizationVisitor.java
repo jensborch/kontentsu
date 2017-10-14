@@ -23,19 +23,12 @@
  */
 package dk.kontentsu.processing;
 
-import static dk.kontentsu.processing.HalJsonContent.*;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import dk.kontentsu.externalization.ExternalizationException;
-import dk.kontentsu.externalization.ExternalizationVisitor;
-import dk.kontentsu.jackson.ObjectMapperFactory;
-import dk.kontentsu.model.Content;
-import dk.kontentsu.model.Version;
-import dk.kontentsu.model.processing.TemporalReferenceTree;
-import dk.kontentsu.spi.ContentProcessingMimeType;
-import dk.kontentsu.spi.ContentProcessingScoped;
+import static dk.kontentsu.processing.HalJsonContent.JSON_COMPOSITION;
+import static dk.kontentsu.processing.HalJsonContent.JSON_CONTENT;
+import static dk.kontentsu.processing.HalJsonContent.JSON_HREF;
+import static dk.kontentsu.processing.HalJsonContent.JSON_LINKS;
+import static dk.kontentsu.processing.HalJsonContent.JSON_REF;
+import static dk.kontentsu.processing.HalJsonContent.JSON_SELF_LINK;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -49,6 +42,18 @@ import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import dk.kontentsu.externalization.ExternalizationException;
+import dk.kontentsu.externalization.ExternalizationVisitor;
+import dk.kontentsu.jackson.ObjectMapperFactory;
+import dk.kontentsu.model.Content;
+import dk.kontentsu.model.Version;
+import dk.kontentsu.model.processing.TemporalReferenceTree;
+import dk.kontentsu.spi.ContentProcessingMimeType;
+import dk.kontentsu.spi.ContentProcessingScoped;
 
 /**
  * Tree visitor for creating external HAL+JSON page content.

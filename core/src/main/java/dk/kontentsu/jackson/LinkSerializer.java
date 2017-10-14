@@ -23,12 +23,13 @@
  */
 package dk.kontentsu.jackson;
 
+import java.io.IOException;
+
+import javax.ws.rs.core.Link;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-
-import javax.ws.rs.core.Link;
-import java.io.IOException;
 
 /**
  * Jackson serializer for {@link javax.ws.rs.core.Link} objects.

@@ -1,10 +1,9 @@
 package dk.kontentsu.externalization;
 
-import dk.kontentsu.externalization.ScheduledExternalizerService;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -16,22 +15,21 @@ import java.util.List;
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Timer;
 
+import dk.kontentsu.model.Content;
+import dk.kontentsu.model.ExternalFile;
+import dk.kontentsu.model.Host;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.repository.ExternalFileRepository;
+import dk.kontentsu.util.DelTreeFileVisitor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import dk.kontentsu.model.Content;
-import dk.kontentsu.model.ExternalFile;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.Host;
-import dk.kontentsu.model.Item;
-import dk.kontentsu.repository.ExternalFileRepository;
-import dk.kontentsu.util.DelTreeFileVisitor;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * Test for {@link ScheduledExternalizerService}.

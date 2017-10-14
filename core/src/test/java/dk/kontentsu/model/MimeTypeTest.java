@@ -1,15 +1,20 @@
 package dk.kontentsu.model;
 
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.spi.ContentProcessingMimeType;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.ws.rs.core.MediaType;
-import static org.junit.Assert.*;
+
+import dk.kontentsu.spi.ContentProcessingMimeType;
 import org.junit.Test;
 
 /**

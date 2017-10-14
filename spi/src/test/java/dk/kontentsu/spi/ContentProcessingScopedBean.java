@@ -1,6 +1,5 @@
 package dk.kontentsu.spi;
 
-import dk.kontentsu.spi.ContentProcessingScoped;
 import java.util.UUID;
 
 /**

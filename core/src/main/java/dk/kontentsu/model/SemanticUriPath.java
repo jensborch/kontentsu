@@ -23,11 +23,11 @@
  */
 package dk.kontentsu.model;
 
-import dk.kontentsu.repository.Repository;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
@@ -37,6 +37,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
+
+import dk.kontentsu.repository.Repository;
 
 /**
  * Represents the physical path of a item on the CDN.

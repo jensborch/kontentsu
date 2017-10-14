@@ -23,7 +23,6 @@
  */
 package dk.kontentsu.model;
 
-import dk.kontentsu.repository.Repository;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -34,6 +33,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
+
 import javax.enterprise.inject.Alternative;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -47,6 +47,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import dk.kontentsu.repository.Repository;
 
 /**
  * Container for the content distributed to the CDN server.

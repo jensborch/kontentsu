@@ -1,19 +1,20 @@
 package dk.kontentsu.oauth2.api;
 
-import dk.kontentsu.oauth2.api.configuration.Config;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.when;
 
-import dk.kontentsu.oauth2.api.exceptionmappers.ConstraintViolationExceptionMapper;
-import dk.kontentsu.oauth2.api.exceptionmappers.ContainerExceptionMapper;
-import dk.kontentsu.oauth2.api.exceptionmappers.NotAuthorizedExceptionMapper;
 import java.util.ArrayList;
 import java.util.Collection;
+
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
+
+import dk.kontentsu.oauth2.api.configuration.Config;
+import dk.kontentsu.oauth2.api.exceptionmappers.ConstraintViolationExceptionMapper;
+import dk.kontentsu.oauth2.api.exceptionmappers.ContainerExceptionMapper;
+import dk.kontentsu.oauth2.api.exceptionmappers.NotAuthorizedExceptionMapper;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;

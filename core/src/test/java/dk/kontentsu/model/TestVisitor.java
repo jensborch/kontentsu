@@ -1,10 +1,10 @@
 package dk.kontentsu.model;
 
-import dk.kontentsu.model.processing.TemporalReferenceTree;
-import dk.kontentsu.model.processing.TemporalReferenceTreeVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
+import dk.kontentsu.model.processing.TemporalReferenceTree;
+import dk.kontentsu.model.processing.TemporalReferenceTreeVisitor;
 import dk.kontentsu.spi.ContentProcessingScoped;
 
 @ContentProcessingScoped

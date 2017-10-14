@@ -1,8 +1,6 @@
 package dk.kontentsu.jpa;
 
 
-import dk.kontentsu.jpa.URIAttributeConverter;
-
 import static org.junit.Assert.assertNull;
 
 import java.net.URI;
@@ -10,7 +8,7 @@ import java.net.URI;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 
 /**

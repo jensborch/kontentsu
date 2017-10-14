@@ -15,26 +15,25 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.UserTransaction;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.Interval;
+import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.ReferenceType;
 import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.model.Item;
-import dk.kontentsu.model.ReferenceType;
 import dk.kontentsu.model.Version;
 import dk.kontentsu.repository.ExternalFileRepository;
 import dk.kontentsu.test.ContentTestData;
 import dk.kontentsu.test.TestEJBContainer;
 import dk.kontentsu.util.Transaction;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Test for {@link ExternalizerService}.

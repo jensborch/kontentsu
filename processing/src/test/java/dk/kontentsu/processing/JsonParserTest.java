@@ -3,28 +3,23 @@ package dk.kontentsu.processing;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.nio.charset.StandardCharsets;
+
 import dk.kontentsu.model.Content;
-import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.Metadata;
 import dk.kontentsu.model.MetadataType;
+import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.ReferenceType;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.test.ContentTestData;
-import java.nio.charset.StandardCharsets;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.internal.util.reflection.Whitebox;
-import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Test for {@link JsonParser}
  *
  * @author Jens Borch Christiansen
  */
-@RunWith(MockitoJUnitRunner.class
-)
 public class JsonParserTest {
 
     private ContentTestData data;
@@ -38,7 +33,7 @@ public class JsonParserTest {
     public void testParse() throws Exception {
         Content content = new Content(data.getFullPage(), StandardCharsets.UTF_8, MimeType.APPLICATION_JSON_TYPE);
         JsonParser parser = new JsonParser();
-        Whitebox.setInternalState(parser, "content", content);
+        parser.content = content;
         parser.init();
 
         ContentParser.Results result = parser.parse();

@@ -13,10 +13,9 @@ import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import dk.kontentsu.exception.ValidationException;
 import org.junit.Before;
 import org.junit.Test;
-
-import dk.kontentsu.exception.ValidationException;
 
 /**
  * Test for {@link Item}.

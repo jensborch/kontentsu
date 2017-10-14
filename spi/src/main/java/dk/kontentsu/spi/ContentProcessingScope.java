@@ -26,7 +26,9 @@ package dk.kontentsu.spi;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.enterprise.context.spi.Contextual;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

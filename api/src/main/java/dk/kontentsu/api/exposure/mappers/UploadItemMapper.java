@@ -26,12 +26,11 @@ package dk.kontentsu.api.exposure.mappers;
 import java.nio.charset.Charset;
 import java.util.function.Function;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
 import dk.kontentsu.api.exposure.model.UploadItemRepresentation;
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.upload.UploadItem;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Map upload item from REST API to domain object.

@@ -24,6 +24,7 @@
 package dk.kontentsu.oauth2.module;
 
 import java.util.Map;
+
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthException;

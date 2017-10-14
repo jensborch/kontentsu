@@ -1,7 +1,5 @@
 package dk.kontentsu.model;
 
-import dk.kontentsu.model.Host;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

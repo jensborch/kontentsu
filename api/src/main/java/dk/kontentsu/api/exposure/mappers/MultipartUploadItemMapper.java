@@ -26,15 +26,14 @@ package dk.kontentsu.api.exposure.mappers;
 import java.io.InputStream;
 import java.util.function.Function;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
 import dk.kontentsu.api.exposure.mappers.MultipartUploadItemMapper.MultipartUploadItem;
 import dk.kontentsu.api.exposure.model.MultipartUploadItemRepresentation;
 import dk.kontentsu.exception.ValidationException;
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.upload.UploadItem;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Map upload item from REST API to domain object.

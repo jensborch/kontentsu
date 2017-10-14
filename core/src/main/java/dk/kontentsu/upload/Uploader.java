@@ -42,9 +42,6 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import dk.kontentsu.externalization.ExternalizerService;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.Host;
@@ -59,6 +56,8 @@ import dk.kontentsu.repository.CategoryRepository;
 import dk.kontentsu.repository.HostRepository;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.spi.ContentProcessingMimeType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Service facade for performing various operations on CDN items - like uploading new items.

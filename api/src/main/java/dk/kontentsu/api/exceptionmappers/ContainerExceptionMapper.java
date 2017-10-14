@@ -34,13 +34,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-import dk.kontentsu.util.CauseFinder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import dk.kontentsu.api.exposure.model.ErrorRepresentation;
 import dk.kontentsu.api.exposure.model.ValidationErrorRepresentation;
 import dk.kontentsu.exception.ErrorCode;
+import dk.kontentsu.util.CauseFinder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Exception mapper for EJBException, a nested NoResultException will be mapped to at HTTP 404 and a nested ConstraintViolationException or PersistenceException will be mapped to

@@ -1,9 +1,9 @@
 package dk.kontentsu.api.exposure;
 
-import dk.kontentsu.api.exposure.ExternalFileExposure;
-
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.CoreMatchers.*;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -15,29 +15,31 @@ import javax.ejb.EJBException;
 import javax.persistence.NoResultException;
 import javax.ws.rs.core.Application;
 
+import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
+import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
+import dk.kontentsu.model.Content;
+import dk.kontentsu.model.ExternalFile;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.repository.ExternalFileRepository;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
-import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
-import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
-import dk.kontentsu.model.Content;
-import dk.kontentsu.model.ExternalFile;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.Item;
-import dk.kontentsu.repository.ExternalFileRepository;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * Test for {@link ExternalFileExposure}.
  *
  * @author Jens Borch Christiansen
  */
+@RunWith(MockitoJUnitRunner.class)
 public class ExternalFileExposureTest extends JerseyTest {
 
     private static final ZonedDateTime NOW = ZonedDateTime.now();
@@ -71,8 +73,9 @@ public class ExternalFileExposureTest extends JerseyTest {
                 .item(new Item(SemanticUri.parse("test/test")))
                 .from(NOW)
                 .build();
-        Mockito.when(repo.getByUri(Mockito.eq(SemanticUri.parse("test/test")), Mockito.any(ZonedDateTime.class))).thenReturn(file);
-        Mockito.when(repo.getByUri(Mockito.eq(SemanticUri.parse("test/not-found")), Mockito.any(ZonedDateTime.class))).thenThrow(new EJBException(new NoResultException("test")));
+        Mockito.when(repo.getByUri(eq(SemanticUri.parse("test/test")), any(ZonedDateTime.class))).thenReturn(file);
+        Mockito.when(repo.getByUri(eq(SemanticUri.parse("test/test")), eq(null))).thenReturn(file);
+        Mockito.when(repo.getByUri(eq(SemanticUri.parse("test/not-found")), eq(null))).thenThrow(new EJBException(new NoResultException("test")));
     }
 
     @Test

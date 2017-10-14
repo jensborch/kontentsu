@@ -23,9 +23,6 @@
  */
 package dk.kontentsu.externalization;
 
-import dk.kontentsu.model.ExternalFile;
-import dk.kontentsu.model.Host;
-import dk.kontentsu.repository.ExternalFileRepository;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.ScheduleExpression;
@@ -50,8 +48,12 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
-import org.apache.logging.log4j.Logger;
+
+import dk.kontentsu.model.ExternalFile;
+import dk.kontentsu.model.Host;
+import dk.kontentsu.repository.ExternalFileRepository;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Scheduler for publishing externalized content.

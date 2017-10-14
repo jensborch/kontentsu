@@ -23,20 +23,10 @@
  */
 package dk.kontentsu.processing;
 
-import static dk.kontentsu.processing.JsonContent.*;
+import static dk.kontentsu.processing.JsonContent.JSON_COMPOSITION;
+import static dk.kontentsu.processing.JsonContent.JSON_HREF;
+import static dk.kontentsu.processing.JsonContent.JSON_METADATA;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonToken;
-import dk.kontentsu.model.Content;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.Metadata;
-import dk.kontentsu.model.MetadataType;
-import dk.kontentsu.model.ReferenceType;
-import dk.kontentsu.parsers.ContentParser;
-import dk.kontentsu.parsers.ContentParserException;
-import dk.kontentsu.parsers.Link;
-import dk.kontentsu.spi.ContentProcessingMimeType;
-import dk.kontentsu.spi.ContentProcessingScoped;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -46,10 +36,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import org.apache.logging.log4j.Logger;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonToken;
+import dk.kontentsu.model.Content;
+import dk.kontentsu.model.Metadata;
+import dk.kontentsu.model.MetadataType;
+import dk.kontentsu.model.ReferenceType;
+import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.parsers.ContentParser;
+import dk.kontentsu.parsers.ContentParserException;
+import dk.kontentsu.parsers.Link;
+import dk.kontentsu.spi.ContentProcessingMimeType;
+import dk.kontentsu.spi.ContentProcessingScoped;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Parser for JSON content. The parser will find metadata and compositions in
@@ -65,7 +69,7 @@ public class JsonParser implements ContentParser {
     private com.fasterxml.jackson.core.JsonParser jsonParser;
 
     @Inject
-    private Content content;
+    Content content;
 
     @PostConstruct
     public void init() {

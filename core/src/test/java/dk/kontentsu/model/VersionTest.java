@@ -1,9 +1,5 @@
 package dk.kontentsu.model;
 
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.Content;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -12,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 

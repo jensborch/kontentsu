@@ -23,11 +23,12 @@
  */
 package dk.kontentsu.oauth2.api.exceptionmappers;
 
-import dk.kontentsu.oauth2.api.model.ErrorRepresentation;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+
+import dk.kontentsu.oauth2.api.model.ErrorRepresentation;
 
 /**
  * Exception mapper for NotAuthorizedException.

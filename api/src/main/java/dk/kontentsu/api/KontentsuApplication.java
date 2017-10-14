@@ -29,10 +29,6 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.glassfish.jersey.jackson.JacksonFeature;
-
 import dk.kontentsu.api.exceptionmappers.ApiExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ApplicationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
@@ -50,6 +46,9 @@ import dk.kontentsu.util.rs.DiagnosticFilter;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.glassfish.jersey.jackson.JacksonFeature;
 
 /**
  * The application class for the REST API.

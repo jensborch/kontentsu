@@ -1,8 +1,5 @@
 package dk.kontentsu.model;
 
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUriPath;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;

@@ -1,17 +1,18 @@
 package dk.kontentsu.api.exposure;
 
-import dk.kontentsu.api.exposure.ExternalFileExposure;
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
-import dk.kontentsu.test.TestEJBContainer;
+import static org.junit.Assert.assertTrue;
+
 import java.time.LocalDateTime;
+
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.persistence.NoResultException;
-import org.junit.After;
+
+import dk.kontentsu.test.TestEJBContainer;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

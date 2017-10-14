@@ -51,9 +51,6 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
@@ -65,6 +62,8 @@ import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.repository.ExternalFileRepository;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.spi.ContentProcessingMimeType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Service facade for externalizing internal content.

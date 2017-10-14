@@ -1,20 +1,16 @@
 package dk.kontentsu.jpa;
 
-import dk.kontentsu.jpa.CryptoAttributeConverter;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.when;
 
+import dk.kontentsu.configuration.Config;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
-import dk.kontentsu.configuration.Config;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * Test for {@link CryptoAttributeConverter}.
