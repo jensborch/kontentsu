@@ -11,6 +11,8 @@ Kontentsu is currently under development.
 
 [![Build Status](https://travis-ci.org/jensborch/kontentsu.svg?branch=master)](https://travis-ci.org/jensborch/kontentsu) [![codecov](https://codecov.io/gh/jensborch/kontentsu/branch/master/graph/badge.svg)](https://codecov.io/gh/jensborch/kontentsu)
 
+[![Quality Gate](https://sonarqube.com/api/badges/gate?key=dk.kontentsu%3AKontentsu_CMS)](https://sonarqube.com/dashboard/index/dk.kontentsu%3AKontentsu_CMS) [![Technical debt ratio](https://sonarqube.com/api/badges/measure?key=dk.kontentsu%3AKontentsu_CMS&metric=sqale_debt_ratio)](https://sonarqube.com/dashboard/index/dk.kontentsu%3AKontentsu_CMS)
+
 ## Building
 
 The Kontentsu is build using Gradle.
