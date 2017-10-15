@@ -59,6 +59,7 @@ public abstract class Category extends AbstractBaseEntity {
     @Transient
     private String[] elements;
 
+    @SuppressWarnings("squid:S2637")
     protected Category() {
         //Needed by JPA
     }

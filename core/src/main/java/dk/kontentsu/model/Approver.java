@@ -50,6 +50,7 @@ public class Approver implements Serializable {
     @NotNull
     private ZonedDateTime approved;
 
+    @SuppressWarnings("squid:S2637")
     protected Approver() {
         //Needed by JPA
         approved = ZonedDateTime.now();

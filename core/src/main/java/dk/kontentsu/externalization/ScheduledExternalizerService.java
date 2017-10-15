@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -128,8 +129,8 @@ public class ScheduledExternalizerService {
     }
 
     private void deleteAll(final Host host, final Set<ExternalFile> files) {
-        try {
-            Files.walk(host.getPath()).filter(p -> p.toFile().isFile()).forEach(fsPath -> {
+        try (Stream<Path> walker = Files.walk(host.getPath())) {
+            walker.filter(p -> p.toFile().isFile()).forEach(fsPath -> {
                 if (files.stream().map(f -> f.resolvePath(host.getPath())).noneMatch(p -> p.equals(fsPath))) {
                     delete(fsPath);
                 }
