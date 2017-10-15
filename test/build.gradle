@@ -5,7 +5,7 @@ jar {
 
 sourceSets {
     main {
-        output.resourcesDir = "build/classes/main"
+        output.resourcesDir = "build/classes/java/main"
     }
 }
 
