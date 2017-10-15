@@ -45,6 +45,7 @@ import javax.ws.rs.core.UriInfo;
 
 import dk.kontentsu.api.exposure.model.CategoryRepresentation;
 import dk.kontentsu.api.exposure.model.ErrorRepresentation;
+import dk.kontentsu.model.Category;
 import dk.kontentsu.model.Role;
 import dk.kontentsu.model.Taxon;
 import dk.kontentsu.model.Taxonomy;
@@ -54,6 +55,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * REST resource for listing and manipulating categories for items on the CDN.
@@ -66,6 +69,8 @@ import io.swagger.annotations.ApiResponses;
 @RolesAllowed(Role.ADMIN)
 @Api(tags = {"categories"})
 public class CategoryExposure {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Inject
     private CategoryRepository catRepo;
@@ -145,8 +150,9 @@ public class CategoryExposure {
             return taxRepo.save(new Taxonomy(taxonomyName));
         });
         if (categoryPath != null) {
-            catRepo.findByTaxonomy(taxonomy, categoryPath)
+            Category cat = catRepo.findByTaxonomy(taxonomy, categoryPath)
                     .orElseGet(() -> catRepo.save(Taxon.parse(taxonomy, categoryPath)));
+            LOGGER.debug("Created or found category: {}", cat);
         }
         return Response.created(uriInfo.getAbsolutePathBuilder().build()).build();
     }

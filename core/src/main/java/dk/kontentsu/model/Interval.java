@@ -154,14 +154,16 @@ public class Interval implements Serializable {
         return result;
     }
 
-    @SuppressWarnings("squid:S3655")
     public ZonedDateTime min(final Interval other) {
-        return Stream.concat(times().stream(), other.times().stream()).min(ChronoZonedDateTime::compareTo).get();
+        return Stream.concat(times().stream(), other.times().stream())
+                .min(ChronoZonedDateTime::compareTo)
+                .orElseThrow(() -> new IllegalStateException("Intervals contain no data"));
     }
 
-    @SuppressWarnings("squid:S3655")
     public ZonedDateTime max(final Interval other) {
-        return Stream.concat(times().stream(), other.times().stream()).max(ChronoZonedDateTime::compareTo).get();
+        return Stream.concat(times().stream(), other.times().stream())
+                .max(ChronoZonedDateTime::compareTo)
+                .orElseThrow(() -> new IllegalStateException("Intervals contain no data"));
     }
 
     @Override

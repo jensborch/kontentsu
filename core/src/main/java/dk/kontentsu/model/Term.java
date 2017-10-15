@@ -301,6 +301,7 @@ public class Term extends AbstractBaseEntity {
         return !getParent().isPresent();
     }
 
+    @SuppressWarnings("squid:S3655")
     public Term getTaxonomy() {
         Term result = this;
         while (result.getParent().isPresent()) {
