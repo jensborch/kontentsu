@@ -8,6 +8,9 @@ Kontentsu is headless and decoupled and can can publish content to HTTP server l
 
 Kontentsu is currently under development.
 
+
+[![Build Status](https://travis-ci.org/jensborch/kontentsu.svg?branch=master)](https://travis-ci.org/jensborch/kontentsu) [![codecov](https://codecov.io/gh/jensborch/kontentsu/branch/master/graph/badge.svg)](https://codecov.io/gh/jensborch/kontentsu)
+
 ## Building
 
 The Kontentsu is build using Gradle.
