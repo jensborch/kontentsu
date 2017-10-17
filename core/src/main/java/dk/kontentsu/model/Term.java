@@ -215,8 +215,16 @@ public class Term extends AbstractBaseEntity {
 
     private String buildPath(final String[] p) {
         if (p.length > 1) {
+            return joinPathElements(getPathPart(p));
+        } else {
+            return SEPARATOR;
+        }
+    }
+
+    public static String joinPathElements(final String[] elements) {
+        if (elements.length > 0) {
             StringJoiner joiner = new StringJoiner(SEPARATOR, SEPARATOR, SEPARATOR);
-            Arrays.stream(getPathPart(p)).forEach(joiner::add);
+            Arrays.stream(elements).forEach(joiner::add);
             return joiner.toString();
         } else {
             return SEPARATOR;

@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
@@ -86,6 +87,13 @@ public class Item extends AbstractBaseEntity {
     )
     private Set<Term> terms = new HashSet<>();
 
+    @Column(name = "itemname")
+    private String name;
+
+    @Valid
+    @Column(name = "path")
+    private Term path;
+
     @NotNull
     @Valid
     @Column(name = "uri")
@@ -109,6 +117,15 @@ public class Item extends AbstractBaseEntity {
 
     protected Item() {
         //Needed by JPA
+    }
+
+    public Item(final Term path, String name) {
+        if (!path.isUri()) {
+            throw new IllegalArgumentException("Path must be a URI");
+        }
+        this.name = name;
+        this.path = path;
+        this.terms.add(path);
     }
 
     public Item(final SemanticUri uri) {
@@ -142,7 +159,7 @@ public class Item extends AbstractBaseEntity {
     }
 
     public String getName() {
-        return uri.getName();
+        return name == null ? uri.getName() : name;
     }
 
     public SemanticUri getUri() {
@@ -349,29 +366,30 @@ public class Item extends AbstractBaseEntity {
         }
     }
 
-    public class URI {
+    public static class URI {
 
         private final String name;
-        private final Term path;
+        private final String[] path;
 
-        public URI(final Term path, String name) {
-            this.name = name;
-            this.path = path;
+        public URI(final Item item) {
+            this.name = item.getName();
+            this.path = Arrays.copyOf(item.path.getNames(), item.path.getNames().length);
         }
 
         public String getName() {
             return name;
         }
 
-        public Term getPath() {
-            return path;
+        public String[] getElements() {
+            String[] result = Arrays.copyOf(path, path.length + 1);
+            result[path.length] = name;
+            return result;
         }
 
-        public String[] getElements() {
-            String[] pathElements = path.getNames();
-            String[] result = Arrays.copyOf(pathElements, pathElements.length + 1);
-            result[pathElements.length] = name;
-            return result;
+        public String getPath() {
+            StringJoiner joiner = new StringJoiner(Term.SEPARATOR, Term.SEPARATOR, "");
+            Arrays.stream(getElements()).forEach(joiner::add);
+            return joiner.toString();
         }
 
         public java.nio.file.Path toPath(final MimeType mimetype) {
@@ -387,7 +405,7 @@ public class Item extends AbstractBaseEntity {
 
         @Override
         public String toString() {
-            return path.toString() + SemanticUriPath.SEPARATOR_CHAR + name;
+            return getPath();
         }
 
         @Override
