@@ -17,10 +17,20 @@ public class ItemURITest {
     }
 
     @Test
+    public void testConstructor() {
+        assertEquals(uri, new Item.URI("/test1/test2/test"));
+    }
+
+    @Test
     public void testGetElements() {
-        String[] elements = uri.getElements();
+        String[] elements = uri.getPathElements();
         assertEquals(3, elements.length);
         assertArrayEquals(new String[] {"test1", "test2", "test"} , elements);
+    }
+
+    @Test
+    public void testGetPath() {
+        assertEquals("/test1/test2/", uri.getPath());
     }
 
     @Test

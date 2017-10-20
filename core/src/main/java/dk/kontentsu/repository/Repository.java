@@ -69,6 +69,7 @@ public abstract class Repository<E> {
     public static final String EXTERNAL_FILE_FIND_IN_INTERVAL  = "ExternalFile.findInInterval";
     public static final String TERM_FIND_ALL = "Term.findAll";
     public static final String TERM_GET = "Term.Get";
+    public static final String TERM_FIND_BY_URI = "Term.findByUri";
 
     @Inject
     protected EntityManager em;

@@ -23,9 +23,12 @@
  */
 package dk.kontentsu.repository;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -34,7 +37,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
-import dk.kontentsu.model.SemanticUriPath;
+import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Term;
 
 /**
@@ -61,10 +64,29 @@ public class TermRepository extends Repository<Term> {
         return query.getSingleResult();
     }
 
-    public Optional<SemanticUriPath> findByUri(final SemanticUriPath path) {
+    public Term create(final Item.URI path) {
+        Term term = findAll().stream().filter(Term::isUri).findAny().orElse(new Term());
+
+        String[] elements = path.getPathElements();
+        List<String> p = Arrays.stream(elements).limit(elements.length - 1).collect(Collectors.toList());
+
+        for (String e :p) {
+            Optional<Term> found = term.getChildren().stream()
+                    .filter(t -> t.getName().equals(e))
+                    .findAny();
+            if (found.isPresent()) {
+                term = found.get();
+            } else {
+                term = term.append(new Term(e));
+            }
+        }
+        return term;
+    }
+
+    public Optional<Term> findByUri(final Item.URI path) {
         try {
-            TypedQuery<SemanticUriPath> query = em.createNamedQuery(URI_FIND_BY_PATH, SemanticUriPath.class);
-            query.setParameter("path", path.toString());
+            TypedQuery<Term> query = em.createNamedQuery(TERM_FIND_BY_URI, Term.class);
+            query.setParameter("path", path.getFullPath());
             return Optional.of(query.getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();

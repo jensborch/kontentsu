@@ -94,7 +94,6 @@ public class Item extends AbstractBaseEntity {
     @Column(name = "path")
     private Term path;
 
-    @NotNull
     @Valid
     @Column(name = "uri")
     private SemanticUri uri;
@@ -376,24 +375,40 @@ public class Item extends AbstractBaseEntity {
             this.path = Arrays.copyOf(item.path.getNames(), item.path.getNames().length);
         }
 
+        public URI(final String uri) {
+            List<String> u = new ArrayList<>(Term.parsePath(uri));
+            if (u.size() < 1) {
+                throw new IllegalArgumentException("URI '" + uri + "' must contain some path elements");
+            }
+            this.name = u.get(u.size() - 1);
+            this.path = u.subList(0, u.size() - 1).toArray(new String[u.size() - 1]);
+        }
+
         public String getName() {
             return name;
         }
 
-        public String[] getElements() {
+        public String[] getPathElements() {
             String[] result = Arrays.copyOf(path, path.length + 1);
             result[path.length] = name;
             return result;
         }
 
         public String getPath() {
+            StringJoiner joiner = new StringJoiner(Term.SEPARATOR, Term.SEPARATOR, Term.SEPARATOR);
+            String[] elements = getPathElements();
+            Arrays.stream(elements).limit(elements.length - 1).forEach(joiner::add);
+            return joiner.toString();
+        }
+
+        public String getFullPath() {
             StringJoiner joiner = new StringJoiner(Term.SEPARATOR, Term.SEPARATOR, "");
-            Arrays.stream(getElements()).forEach(joiner::add);
+            Arrays.stream(getPathElements()).forEach(joiner::add);
             return joiner.toString();
         }
 
         public java.nio.file.Path toPath(final MimeType mimetype) {
-            String[] elements = getElements();
+            String[] elements = getPathElements();
             String[] tail = (elements.length > 1) ? Arrays.copyOfRange(elements, 1, elements.length) : new String[0];
             java.nio.file.Path p = Paths.get(elements[0], tail);
             if (p.getFileName() == null) {
@@ -403,9 +418,13 @@ public class Item extends AbstractBaseEntity {
             return p.getParent().resolve(filename);
         }
 
+        public boolean matches(final String uri) {
+            return uri != null && toString().equals(uri.trim());
+        }
+
         @Override
         public String toString() {
-            return getPath();
+            return getFullPath();
         }
 
         @Override
@@ -425,11 +444,7 @@ public class Item extends AbstractBaseEntity {
                 return false;
             }
             URI other = (URI) obj;
-            return this.getPath().equals(other.getPath()) && this.getName().equals(other.getName());
-        }
-
-        public boolean matches(final String uri) {
-            return uri != null && toString().equals(uri.trim());
+            return this.getFullPath().equals(other.getFullPath()) && this.getName().equals(other.getName());
         }
 
     }

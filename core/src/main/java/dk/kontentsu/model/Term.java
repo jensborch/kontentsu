@@ -74,6 +74,8 @@ import dk.kontentsu.repository.Repository;
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"parent_id", "name"}, name = "term_constraint")})
 @NamedQueries({
+        @NamedQuery(name = Repository.TERM_FIND_BY_URI,
+                query = "SELECT t FROM Term t WHERE t.path = :path"),
         @NamedQuery(name = Repository.TERM_FIND_ALL,
                 query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE t.parent IS NULL"),
         @NamedQuery(name = Repository.TERM_GET,
@@ -114,12 +116,12 @@ public class Term extends AbstractBaseEntity {
     @Column(name = "path")
     private String path;
 
-    protected Term() {
-        //Needed by JPA
-    }
-
     public Term(final String name) {
         this.name = name.toLowerCase();
+    }
+
+    public Term() {
+        this.name = URI_TAXONOMY;
     }
 
     public static Term parse(final String path) {
@@ -152,7 +154,7 @@ public class Term extends AbstractBaseEntity {
         pathNames = parseFullPath(path);
     }
 
-    private static List<String> parsePath(final String path) {
+    public static List<String> parsePath(final String path) {
         if (SEPARATOR.equals(path)) {
             return new ArrayList<>(0);
         } else {
