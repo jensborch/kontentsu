@@ -96,7 +96,7 @@ public class Term extends AbstractBaseEntity {
     @ManyToMany(mappedBy = "terms")
     private Set<Item> items = new HashSet<>();
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "parent")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "parent", fetch = FetchType.LAZY)
     @OrderColumn
     private Set<Term> children = new HashSet<Term>();
 
@@ -106,7 +106,7 @@ public class Term extends AbstractBaseEntity {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id", insertable = false, updatable = false)
+    @JoinColumn(name = "parent_id")
     private Term parent;
 
     @Transient

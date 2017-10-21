@@ -16,6 +16,7 @@ import javax.transaction.UserTransaction;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Term;
 import dk.kontentsu.test.TestEJBContainer;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -71,7 +72,7 @@ public class TermRepositoryIT {
         try {
             userTransaction.begin();
             Set<UUID> delete = term.getChildren(true).stream().map(Term::getUuid).collect(Collectors.toSet());
-            //assertEquals(2, delete.size());
+            assertEquals(2, delete.size());
             delete.forEach(repo::delete);
             repo.delete(term.getUuid());
             //assertEquals(0, repo.findAll().size());
@@ -91,7 +92,7 @@ public class TermRepositoryIT {
             userTransaction.begin();
             Term t = repo.create(new Item.URI("/test1/test3/name"));
             assertEquals("uri:/test1/test3/", t.getFullPath());
-            //assertEquals(3, t.getParent().get().getParent().get().getChildren(true).size());
+            assertEquals(3, t.getParent().get().getParent().get().getChildren(true).size());
         } finally {
             userTransaction.commit();
         }
@@ -101,7 +102,9 @@ public class TermRepositoryIT {
     public void testFindAll() throws Exception {
         try {
             userTransaction.begin();
-            assertEquals(3, repo.findAll().size());
+            List<Term> found = repo.findAll();
+            assertEquals(1, found.size());
+            assertEquals(2, found.get(0).getChildren(true).size());
         } finally {
             userTransaction.commit();
         }

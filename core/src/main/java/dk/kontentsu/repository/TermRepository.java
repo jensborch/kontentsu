@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.ejb.LocalBean;
@@ -39,6 +38,8 @@ import javax.persistence.TypedQuery;
 
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Term;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Repository for performing CRUD operations on term objects.
@@ -95,7 +96,8 @@ public class TermRepository extends Repository<Term> {
 
     public void delete(final UUID uuid) {
         Term t = get(uuid);
-        t.getChildren().forEach(t::remove);
+        Set<Term> remove = new HashSet<>(t.getChildren());
+        remove.forEach(t::remove);
         t.getParent().ifPresent(p -> p.remove(t));
         em.remove(t);
     }
