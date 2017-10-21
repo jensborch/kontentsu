@@ -51,7 +51,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import dk.kontentsu.exception.ValidationException;
@@ -377,7 +376,7 @@ public class Item extends AbstractBaseEntity {
 
         public URI(final String uri) {
             List<String> u = new ArrayList<>(Term.parsePath(uri));
-            if (u.size() < 1) {
+            if (u.isEmpty()) {
                 throw new IllegalArgumentException("URI '" + uri + "' must contain some path elements");
             }
             this.name = u.get(u.size() - 1);
@@ -397,7 +396,7 @@ public class Item extends AbstractBaseEntity {
         public String getPath() {
             StringJoiner joiner = new StringJoiner(Term.SEPARATOR, Term.SEPARATOR, Term.SEPARATOR);
             String[] elements = getPathElements();
-            Arrays.stream(elements).limit(elements.length - 1).forEach(joiner::add);
+            Arrays.stream(elements).limit(elements.length - 1L).forEach(joiner::add);
             return joiner.toString();
         }
 

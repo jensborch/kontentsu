@@ -69,7 +69,7 @@ public class TermRepository extends Repository<Term> {
         Term term = findAll().stream().filter(Term::isUri).findAny().orElse(new Term());
 
         String[] elements = path.getPathElements();
-        List<String> p = Arrays.stream(elements).limit(elements.length - 1).collect(Collectors.toList());
+        List<String> p = Arrays.stream(elements).limit(elements.length - 1L).collect(Collectors.toList());
 
         for (String e :p) {
             Optional<Term> found = term.getChildren().stream()

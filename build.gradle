@@ -51,6 +51,7 @@ ext {
     junitVersion = '4.12'
     jacocoVersion = "0.7.9"
     mockitoVersion = '2.10.0'
+    hamcrestVersion = '2.0.0.0'
     catchExceptionVersion = '1.4.4'
     restAssuredVersion = '3.0.5'
     jglueVersion = '3.1.4'
@@ -258,10 +259,12 @@ subprojects {
         testCompile 'org.apache.logging.log4j:log4j-core:' + log4jVersion
         testCompile 'eu.codearte.catch-exception:catch-exception:' + catchExceptionVersion
         testCompile 'org.mockito:mockito-core:' + mockitoVersion
+        testCompile 'org.hamcrest:hamcrest-junit:' + hamcrestVersion;
 
         integrationTestCompile 'junit:junit:' + junitVersion
         integrationTestCompile 'org.apache.logging.log4j:log4j-core:' + log4jVersion
         integrationTestCompile 'eu.codearte.catch-exception:catch-exception:' + catchExceptionVersion
+        integrationTestCompile 'org.hamcrest:hamcrest-junit:' + hamcrestVersion;
     }
 
     tasks.withType(FindBugs) {

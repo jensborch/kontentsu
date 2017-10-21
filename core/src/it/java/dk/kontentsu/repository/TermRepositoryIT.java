@@ -1,6 +1,8 @@
 package dk.kontentsu.repository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -71,11 +73,12 @@ public class TermRepositoryIT {
         TestEJBContainer.inject(container, this);
         try {
             userTransaction.begin();
+            term = repo.get(term.getUuid());
             Set<UUID> delete = term.getChildren(true).stream().map(Term::getUuid).collect(Collectors.toSet());
-            assertEquals(2, delete.size());
+            assertThat(delete.size(), greaterThanOrEqualTo(2));
             delete.forEach(repo::delete);
             repo.delete(term.getUuid());
-            //assertEquals(0, repo.findAll().size());
+            assertEquals(0, repo.findAll().size());
         } finally {
             userTransaction.commit();
         }
