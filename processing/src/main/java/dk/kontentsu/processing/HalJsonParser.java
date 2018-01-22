@@ -39,21 +39,22 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.jackson.ObjectMapperFactory;
 import dk.kontentsu.model.Content;
+import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Metadata;
 import dk.kontentsu.model.MetadataType;
 import dk.kontentsu.model.ReferenceType;
-import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.parsers.ContentParserException;
 import dk.kontentsu.parsers.Link;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Parser for HAL+JSON CDN content. The parser will find metadata and
@@ -121,8 +122,13 @@ public class HalJsonParser implements ContentParser {
                 List<JsonNode> hrefs = link.getValue().findValues(JSON_HREF);
                 Optional<JsonNode> found = hrefs.stream().findFirst();
                 if (found.isPresent() && found.get().isTextual()) {
-                    LOGGER.debug("Adding link {}", found.get().asText());
-                    result.add(new Link(SemanticUri.parse(found.get().asText()), ReferenceType.LINK));
+                    String l = found.get().asText();
+                    LOGGER.debug("Adding link {}", l);
+                    try {
+                        result.add(new Link(new Item.URI(l), ReferenceType.LINK));
+                    } catch (IllegalArgumentException e) {
+                        LOGGER.warn("Unable to parse link {}", l, e);
+                    }
                 }
             }
         }
@@ -139,7 +145,7 @@ public class HalJsonParser implements ContentParser {
             hrefs.forEach(found -> {
                 if (found.isTextual()) {
                     LOGGER.debug("Adding composition {}", found.asText());
-                    result.add(new Link(SemanticUri.parse(found.asText()), ReferenceType.COMPOSITION));
+                    result.add(new Link(new Item.URI(found.asText()), ReferenceType.COMPOSITION));
                 }
             });
         }

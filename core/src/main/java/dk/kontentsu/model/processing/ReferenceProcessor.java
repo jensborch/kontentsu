@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Version;
 import dk.kontentsu.model.processing.TemporalReferenceTree.Node;
 
@@ -68,11 +68,11 @@ public class ReferenceProcessor<R extends TemporalReferenceTreeVisitor.Results, 
         nodes.push(tree.getRoot());
         while (!nodes.isEmpty()) {
             Node current = nodes.pop();
-            Map<SemanticUri, List<Version>> comps = current.getVersion().getComposition();
+            Map<Item.URI, List<Version>> comps = current.getVersion().getComposition();
             if (comps.isEmpty() && !processed.contains(tree)) {
                 processed.add(tree);
             }
-            for (Map.Entry<SemanticUri, List<Version>> versions : comps.entrySet()) {
+            for (Map.Entry<Item.URI, List<Version>> versions : comps.entrySet()) {
                 boolean first = true;
                 Interval startInterval = tree.getInterval();
                 for (Version child : versions.getValue()) {

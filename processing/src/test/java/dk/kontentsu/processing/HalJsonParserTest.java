@@ -30,7 +30,7 @@ public class HalJsonParserTest {
 
     @Test
     public void testParse() throws Exception {
-        Content content = new Content(data.getFullPage(), StandardCharsets.UTF_8, MimeType.APPLICATION_HAL_JSON_TYPE);
+        Content content = new Content(data.getFullPage(), StandardCharsets.UTF_8);
         HalJsonParser parser = new HalJsonParser();
         parser.content = content;
 

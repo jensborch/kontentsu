@@ -18,19 +18,19 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.transaction.UserTransaction;
 
-import dk.kontentsu.model.Content;
-import dk.kontentsu.model.ExternalFile;
-import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.Item;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.test.TestEJBContainer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import dk.kontentsu.model.Content;
+import dk.kontentsu.model.ExternalFile;
+import dk.kontentsu.model.Interval;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.Term;
+import dk.kontentsu.test.TestEJBContainer;
 
 /**
  * Integration test for {@link ExternalFileRepository}
@@ -39,6 +39,7 @@ import org.junit.Test;
  */
 public class ExternalFileRepositoryIT {
 
+    private static final Item.URI URI = new Item.URI("test1/test2/");
     private static final ZonedDateTime NOW = ZonedDateTime.now();
     private static final ZonedDateTime FROM = NOW.plusDays(42);
     private static final ZonedDateTime TO = NOW.plusDays(80);
@@ -52,13 +53,11 @@ public class ExternalFileRepositoryIT {
     private ItemRepository itemRepo;
 
     @Inject
-    private CategoryRepository catRepo;
-    private SemanticUri uri;
+    private TermRepository termRepo;
 
     @Resource
     private UserTransaction userTransaction;
 
-    private SemanticUriPath path;
     private ExternalFile file;
 
     @BeforeClass
@@ -77,18 +76,16 @@ public class ExternalFileRepositoryIT {
     public void setUp() throws Exception {
         TestEJBContainer.inject(container, this);
         userTransaction.begin();
-        SemanticUriPath tmpPath = new SemanticUriPath("test1", "test2");
-        path = catRepo.findByUri(tmpPath).orElseGet(() -> {
-            return (SemanticUriPath) catRepo.save(tmpPath);
-        });
+        Term path = termRepo.create(URI);
 
-        uri = new SemanticUri(path, "test");
+        Item item = itemRepo.findByUri(URI)
+                .orElseGet(()
+                        -> itemRepo.save(
+                        new Item(termRepo.find(path.getUuid()).orElse(path),
+                                new MimeType("text", "plain")))
+                );
 
-        Item item = itemRepo.findByUri(uri).orElseGet(() -> {
-            return itemRepo.save(new Item(uri));
-        });
-
-        Content content = new Content("This is a test".getBytes(), Charset.defaultCharset(), new MimeType("text", "plain"));
+        Content content = new Content("This is a test".getBytes(), Charset.defaultCharset());
         file = ExternalFile.builder()
                 .content(content)
                 .interval(new Interval(FROM, TO))
@@ -194,10 +191,10 @@ public class ExternalFileRepositoryIT {
     public void testFindByUri() throws Exception {
         try {
             userTransaction.begin();
-            Optional<ExternalFile> tmpFile = fileRepo.findByUri(uri, (ZonedDateTime) null);
+            Optional<ExternalFile> tmpFile = fileRepo.findByUri(URI, (ZonedDateTime) null);
             assertFalse(tmpFile.isPresent());
 
-            tmpFile = fileRepo.findByUri(uri, NOW.plusDays(43));
+            tmpFile = fileRepo.findByUri(URI, NOW.plusDays(43));
             assertTrue(tmpFile.isPresent());
 
         } finally {

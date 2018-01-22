@@ -17,7 +17,7 @@ public class ContentTest {
     @Test
     public void testByteArrayHashAndSize() {
         final Charset charset = Charset.forName("UTF-8");
-        Content content = new Content("Test test".getBytes(charset), charset, new MimeType("plain/text"));
+        Content content = new Content("Test test".getBytes(charset), charset);
         assertEquals("180fed764dbd593f1ea45b63b13d7e69", content.getHash());
         assertEquals(9, content.getSize());
     }
@@ -26,7 +26,7 @@ public class ContentTest {
     public void testStreamHash() {
         final Charset charset = Charset.forName("UTF-8");
         final byte[] data = "Test test".getBytes(charset);
-        Content content = new Content(data, charset, new MimeType("plain/text"));
+        Content content = new Content(data, charset);
         assertEquals("180fed764dbd593f1ea45b63b13d7e69", content.getHash());
     }
 }

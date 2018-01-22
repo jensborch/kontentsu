@@ -52,11 +52,11 @@ import dk.kontentsu.repository.Repository;
             query = "SELECT f "
             + "FROM ExternalFile f "
             + "JOIN f.item it "
-            + "JOIN it.uri.path p "
+            + "JOIN it.path t "
             + "JOIN f.interval i "
             + "WHERE f.state = :state "
-            + "AND p.path = :path "
-            + "AND it.uri.name = :name "
+            + "AND ((:edition IS NULL AND it.edition IS NULL) OR it.edition = :edition) "
+            + "AND t.path = :path "
             + "AND i.to >= :from AND i.from < :to"),
     @NamedQuery(name = Repository.EXTERNAL_FILE_FIND_ALL_IN_INTERVAL,
             query = "SELECT f "
@@ -82,11 +82,11 @@ import dk.kontentsu.repository.Repository;
     @NamedQuery(name = Repository.EXTERNAL_FILE_FIND_BY_URI,
             query = "SELECT f FROM ExternalFile f "
             + "JOIN f.item it "
-            + "JOIN it.uri.path p "
+            + "JOIN it.path t "
             + "JOIN f.interval i "
             + "WHERE f.state = :state "
-            + "AND p.path = :path "
-            + "AND it.uri.name = :name "
+            + "AND ((:edition IS NULL AND it.edition IS NULL) OR it.edition = :edition) "
+            + "AND t.path = :path "
             + "AND i.from <= :at AND i.to > :at")})
 public class ExternalFile extends AbstractBaseEntity {
 
@@ -169,11 +169,15 @@ public class ExternalFile extends AbstractBaseEntity {
     }
 
     public Path resolvePath(final Path path) {
-        return path.resolve(getItem().getUri().toPath(content.getMimeType()));
+        return path.resolve(getItem().getUri().toPath());
     }
 
     public boolean isDifferent(final Version version) {
         return !version.getExternalizationIds().contains(externalizationId);
+    }
+
+    public MimeType getMimeType() {
+        return item.getMimeType();
     }
 
     /**

@@ -1,10 +1,13 @@
 package dk.kontentsu.repository;
 
+import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -15,15 +18,15 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.transaction.UserTransaction;
 
-import dk.kontentsu.model.Item;
-import dk.kontentsu.model.Term;
-import dk.kontentsu.test.TestEJBContainer;
-import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.Term;
+import dk.kontentsu.test.TestEJBContainer;
 
 /**
  * Integration test for {@link TermRepository}.
@@ -93,9 +96,20 @@ public class TermRepositoryIT {
     public void testCreate() throws Exception {
         try {
             userTransaction.begin();
-            Term t = repo.create(new Item.URI("/test1/test3/name"));
-            assertEquals("uri:/test1/test3/", t.getFullPath());
+            Term t = repo.create(new Item.URI("test1/test3/test3-name"));
+            assertEquals("uri:/test1/test3/", t.getPathWithTaxonomy());
             assertEquals(3, t.getParent().get().getParent().get().getChildren(true).size());
+        } finally {
+            userTransaction.commit();
+        }
+    }
+
+    @Test
+    public void testFind() throws Exception {
+        try {
+            userTransaction.begin();
+            Optional<Term> t = repo.find(term.getUuid());
+            assertTrue(t.isPresent());
         } finally {
             userTransaction.commit();
         }
@@ -112,7 +126,5 @@ public class TermRepositoryIT {
             userTransaction.commit();
         }
     }
-
-
 
 }

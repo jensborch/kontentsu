@@ -115,4 +115,9 @@ public class Host extends AbstractBaseEntity {
         return getFilesystem().getPath(path);
     }
 
+    @Override
+    public String toString() {
+        return "Host{" + "name=" + name + ", filesystem=" + filesystem + ", path=" + path + '}';
+    }
+
 }

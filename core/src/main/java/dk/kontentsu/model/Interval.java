@@ -30,6 +30,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoZonedDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -50,7 +51,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Embeddable
 @ValidInterval
-public class Interval implements Serializable {
+public class Interval implements Serializable, Comparable<Interval> {
 
     /**
      * Max date use when "valid to" has not been set. LocalDateTime.MAX can't be used as it exceeded the maximum value of SQL Timestamp.
@@ -194,4 +195,11 @@ public class Interval implements Serializable {
         return from + " -> " + to;
     }
 
+    @Override
+    public int compareTo(final Interval interval) {
+        return Comparator
+                .comparing(Interval::getFrom)
+                .thenComparing(Interval::getTo)
+                .compare(this, interval);
+    }
 }

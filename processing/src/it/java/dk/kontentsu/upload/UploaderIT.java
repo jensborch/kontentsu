@@ -3,6 +3,7 @@ package dk.kontentsu.upload;
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -20,26 +21,26 @@ import javax.inject.Inject;
 import javax.transaction.UserTransaction;
 import javax.validation.ConstraintViolationException;
 
-import dk.kontentsu.model.Host;
-import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.Item;
-import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.Version;
-import dk.kontentsu.repository.HostRepository;
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.test.ContentTestData;
-import dk.kontentsu.test.TestEJBContainer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import dk.kontentsu.model.Host;
+import dk.kontentsu.model.Interval;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.Version;
+import dk.kontentsu.repository.HostRepository;
+import dk.kontentsu.repository.ItemRepository;
+import dk.kontentsu.test.ContentTestData;
+import dk.kontentsu.test.TestEJBContainer;
+
 /**
- * Test for {@link dk.kontentsu.cdn.service.UploadService}
+ * Test for {@link dk.kontentsu.upload.Uploader}
  *
- * @author Jens Borch Christiansen 
+ * @author Jens Borch Christiansen
  */
 public class UploaderIT {
 
@@ -118,7 +119,7 @@ public class UploaderIT {
         InputStream is = new ByteArrayInputStream("test data".getBytes());
         UploadItem uploadItem = UploadItem.builder()
                 .content("TestRef", is)
-                .uri(SemanticUri.parse("test/test/name"))
+                .uri(new Item.URI("test/test-name"))
                 .interval(new Interval(NOW))
                 .mimeType(new MimeType("text", "plain"))
                 .host("text_host")
@@ -130,7 +131,7 @@ public class UploaderIT {
         try {
             userTransaction.begin();
             Item r = itemRepo.get(id);
-            assertEquals("name", r.getName());
+            assertEquals("name", r.getEdition().get());
             assertEquals(1, r.getVersions().size());
             assertEquals(1, ((Long) r.getVersions().stream().filter(v -> v.getInterval().getFrom().toInstant().equals(NOW.toInstant())).count()).intValue());
             assertEquals(1, ((Long) r.getVersions().stream().filter(v -> v.getInterval().getTo().toInstant().equals(Interval.INFINITE.toInstant())).count()).intValue());
@@ -145,17 +146,17 @@ public class UploaderIT {
     public void testSimplePage() throws Exception {
         UploadItem uploadItem = UploadItem.builder()
                 .content("article2", new ByteArrayInputStream(data.getArticle(1)))
-                .uri(SemanticUri.parse("items/article2"))
+                .uri(new Item.URI("items/article2/"))
                 .interval(new Interval())
                 .mimeType(new MimeType("application", "hal+json"))
                 .encoding(StandardCharsets.UTF_8)
                 .build();
         Item result = getItem(service.upload(uploadItem));
-        assertEquals("article2", result.getName());
+        assertFalse(result.getEdition().isPresent());
 
         uploadItem = UploadItem.builder()
                 .content("page", new ByteArrayInputStream(data.getSimplePage()))
-                .uri(SemanticUri.parse("items/page/simple-page"))
+                .uri(new Item.URI("items/page/simple-page/"))
                 .interval(new Interval())
                 .mimeType(new MimeType("application", "hal+json"))
                 .encoding(StandardCharsets.UTF_8)
@@ -165,9 +166,10 @@ public class UploaderIT {
         try {
             userTransaction.begin();
             Item r = itemRepo.get(id);
-            assertEquals("simple-page", r.getName());
+            assertFalse(r.getEdition().isPresent());
             assertEquals(1, r.getVersions().size());
-            assertEquals(3, r.getVersions().stream().findFirst().get().getReferences().size());
+            //TODO: Validate
+            assertEquals(2, r.getVersions().stream().findFirst().get().getReferences().size());
             assertEquals(1, r.getHosts().size());
             assertEquals(host, r.getHosts().stream().findFirst().get());
         } finally {
@@ -179,7 +181,7 @@ public class UploaderIT {
     public void testOverwrite() throws Exception {
         UploadItem uploadItem = UploadItem.builder()
                 .content("article2", new ByteArrayInputStream(data.getArticle(1)))
-                .uri(SemanticUri.parse("items/article2"))
+                .uri(new Item.URI("items/article2/"))
                 .interval(new Interval(NOW))
                 .mimeType(new MimeType("application", "hal+json"))
                 .encoding(StandardCharsets.UTF_8)
@@ -187,7 +189,7 @@ public class UploaderIT {
         Item overwrite = getItem(service.upload(uploadItem));
         uploadItem = UploadItem.builder()
                 .content("page", new ByteArrayInputStream(data.getSimplePage()))
-                .uri(SemanticUri.parse("items/page/simple-page"))
+                .uri(new Item.URI("items/page/simple-page/"))
                 .interval(new Interval(NOW))
                 .mimeType(new MimeType("application", "hal+json"))
                 .encoding(StandardCharsets.UTF_8)
@@ -195,7 +197,7 @@ public class UploaderIT {
         service.upload(uploadItem);
         uploadItem = UploadItem.builder()
                 .content("article2", new ByteArrayInputStream(data.getArticle(1)))
-                .uri(SemanticUri.parse("items/article2"))
+                .uri(new Item.URI("items/article2/"))
                 .interval(new Interval(NOW.plusDays(1), NOW.plusDays(10)))
                 .mimeType(new MimeType("application", "hal+json"))
                 .encoding(StandardCharsets.UTF_8)
@@ -205,7 +207,7 @@ public class UploaderIT {
         try {
             userTransaction.begin();
             Item item = itemRepo.get(overwrite.getUuid());
-            assertEquals("article2", item.getName());
+            assertFalse(item.getEdition().isPresent());
             assertEquals(3, item.getVersions().stream().filter(Version::isActive).count());
         } finally {
             userTransaction.commit();
@@ -215,7 +217,7 @@ public class UploaderIT {
     @Test
     public void testOverwriteWithOverlap() throws Exception {
         UploadItem upload = UploadItem.builder()
-                .uri(SemanticUri.parse("items/test"))
+                .uri(new Item.URI("items/test/"))
                 .content("ref", new ByteArrayInputStream("{}".getBytes()))
                 .encoding(StandardCharsets.UTF_8)
                 .mimeType(MimeType.APPLICATION_JSON_TYPE)
@@ -223,7 +225,7 @@ public class UploaderIT {
                 .build();
         UUID id = service.uploadSync(upload);
         upload = UploadItem.builder()
-                .uri(SemanticUri.parse("items/test"))
+                .uri(new Item.URI("items/test/"))
                 .content("ref", new ByteArrayInputStream("{}".getBytes()))
                 .encoding(StandardCharsets.UTF_8)
                 .mimeType(MimeType.APPLICATION_JSON_TYPE)
@@ -246,7 +248,7 @@ public class UploaderIT {
         InputStream is = new ByteArrayInputStream("test data".getBytes());
         UploadItem uploadItem = UploadItem.builder()
                 .content("TestRef", is)
-                .uri(SemanticUri.parse("test/test/name"))
+                .uri(new Item.URI("test/test-name"))
                 .interval(new Interval())
                 .build();
 

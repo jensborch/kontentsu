@@ -23,6 +23,9 @@
  */
 package dk.kontentsu.model;
 
+import static dk.kontentsu.model.Item.URI.ALLOWED_CHARS_REGEX;
+import static dk.kontentsu.model.Item.URI.PATH_SEPARATOR;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,24 +75,25 @@ import dk.kontentsu.repository.Repository;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "term",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"parent_id", "name"}, name = "term_constraint")})
+            @UniqueConstraint(columnNames = {"parent_id", "name"}, name = "term_constraint"),
+            @UniqueConstraint(columnNames = {"path"}, name = "path_constraint")})
 @NamedQueries({
-        @NamedQuery(name = Repository.TERM_FIND_BY_URI,
-                query = "SELECT t FROM Term t WHERE t.path = :path"),
-        @NamedQuery(name = Repository.TERM_FIND_ALL,
-                query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE t.parent IS NULL"),
-        @NamedQuery(name = Repository.TERM_GET,
-                query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE t.uuid = :uuid")})
+    @NamedQuery(name = Repository.TERM_FIND_BY_URI,
+            query = "SELECT t FROM Term t WHERE t.path = :path"),
+    @NamedQuery(name = Repository.TERM_FIND_ALL,
+            query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE t.parent IS NULL"),
+    @NamedQuery(name = Repository.TERM_FIND,
+            query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE t.path = :path"),
+    @NamedQuery(name = Repository.TERM_GET,
+            query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE t.uuid = :uuid")})
 public class Term extends AbstractBaseEntity {
 
     public static final String URI_TAXONOMY = "uri";
-    public static final char SEPARATOR_CHAR = '/';
-    public static final char TAXONOMY_SEPARATOR_CHAR = ':';
-    public static final String SEPARATOR = String.valueOf(SEPARATOR_CHAR);
-    public static final String TAXONOMY_SEPARATOR = String.valueOf(TAXONOMY_SEPARATOR_CHAR);
+    public static final String TAXONOMY_SEPARATOR = ":";
     private static final long serialVersionUID = -3974244017445628292L;
-    private static final String FULL_PATH_REGEX = "^(?<tax>\\p{L}[\\p{L}\\d]*):(?<term>\\/(?:\\p{L}[\\p{L}\\d\\s]*\\/)*)$";
-    private static final String PATH_REGEX = "^\\/?(?:\\p{L}[\\p{L}\\d\\s]*\\/)*\\p{L}[\\p{L}\\d\\s]*\\/?$";
+
+    private static final String FULL_PATH_REGEX = String.format("^(?<tax>%s+):(?<term>\\/(?:%s+\\/)*)$", ALLOWED_CHARS_REGEX, ALLOWED_CHARS_REGEX);
+    private static final String PATH_REGEX = String.format("^\\/?(?:%s+\\/)*%s+\\/?$", ALLOWED_CHARS_REGEX, ALLOWED_CHARS_REGEX);
     private static final Pattern FULL_PATH_REGEX_PATTERN = Pattern.compile(FULL_PATH_REGEX);
     private static final Pattern PATH_REGEX_PATTERN = Pattern.compile(PATH_REGEX);
 
@@ -105,18 +109,19 @@ public class Term extends AbstractBaseEntity {
     @Column(name = "name", length = 200)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Term parent;
 
     @Transient
-    private String[] pathNames;
+    private String[] pathElements;
 
     @Lob
     @Column(name = "path")
     private String path;
 
     public Term(final String name) {
+        //TODO: chnage this
         this.name = name.toLowerCase();
     }
 
@@ -125,7 +130,7 @@ public class Term extends AbstractBaseEntity {
     }
 
     public static Term parse(final String path) {
-        String[] terms = parseFullPath(path);
+        String[] terms = splitPathWithTaxonomy(path);
         Term term = null;
         if (terms.length > 0) {
             term = new Term(terms[0]);
@@ -138,32 +143,45 @@ public class Term extends AbstractBaseEntity {
         return term;
     }
 
+    @PostLoad
+    public void updatePathElements() {
+        pathElements = splitPathWithTaxonomy(path);
+    }
+
     @PrePersist
     @PreUpdate
     public void initPath() {
-        if (pathNames == null) {
-            pathNames = buildPathNames();
+        if (pathElements == null) {
+            pathElements = initElements();
         }
         if (path == null) {
-            path = buildFullPath(pathNames);
+            path = initPath(pathElements);
         }
     }
 
-    @PostLoad
-    public void updatePathNames() {
-        pathNames = parseFullPath(path);
+    private String[] initElements() {
+        Deque<String> result = new ArrayDeque<>();
+        Optional<Term> last = Optional.of(this);
+        while (last.isPresent()) {
+            result.addFirst(last.get().getName());
+            last = last.get().getParent();
+        }
+        return result.toArray(new String[result.size()]);
     }
 
-    public static List<String> parsePath(final String path) {
-        if (SEPARATOR.equals(path)) {
+    private String initPath(final String[] p) {
+        return getTaxonomyPart(p) + TAXONOMY_SEPARATOR + toPathString(p);
+    }
+
+    public static List<String> splitPath(final String p) {
+        if (PATH_SEPARATOR.equals(p)) {
             return new ArrayList<>(0);
         } else {
-            Matcher m = PATH_REGEX_PATTERN.matcher(path);
+            Matcher m = PATH_REGEX_PATTERN.matcher(p);
             if (!m.matches()) {
-                throw new IllegalArgumentException("Illegal path: " + path);
+                throw new IllegalArgumentException("Path '" + p + "' mustch match regular expression " + PATH_REGEX);
             }
-
-            List<String> result = Arrays.stream(path.split("\\/"))
+            List<String> result = Arrays.stream(p.split("\\" + PATH_SEPARATOR))
                     .filter(Objects::nonNull)
                     .filter(t -> !t.isEmpty())
                     .collect(Collectors.toList());
@@ -171,30 +189,19 @@ public class Term extends AbstractBaseEntity {
         }
     }
 
-    private static String[] parseFullPath(final String fullPath) {
+    public static String[] splitPathWithTaxonomy(final String fullPath) {
         Matcher m = FULL_PATH_REGEX_PATTERN.matcher(fullPath);
         List<String> result = new ArrayList<>(10);
         if (m.matches()) {
             result.add(m.group("tax"));
-            result.addAll(parsePath(m.group("term")));
-
+            result.addAll(splitPath(m.group("term")));
         } else {
-            throw new IllegalArgumentException("Illegal path: " + fullPath
-                    + ". Path must match regular expression: " + FULL_PATH_REGEX);
+            throw new IllegalArgumentException("Path '" + fullPath
+                    + "' must match regular expression " + FULL_PATH_REGEX);
         }
         if (result.size() < 1) {
-            throw new IllegalArgumentException("Illegal path: " + fullPath
-                    + ". Path must contain both taxonomy and path");
-        }
-        return result.toArray(new String[result.size()]);
-    }
-
-    private String[] buildPathNames() {
-        Deque<String> result = new ArrayDeque<>();
-        Optional<Term> last = Optional.of(this);
-        while (last.isPresent()) {
-            result.addFirst(last.get().getName());
-            last = last.get().getParent();
+            throw new IllegalArgumentException("Path '" + fullPath
+                    + "' must contain both taxonomy and path");
         }
         return result.toArray(new String[result.size()]);
     }
@@ -215,26 +222,14 @@ public class Term extends AbstractBaseEntity {
         }
     }
 
-    private String buildPath(final String[] p) {
-        if (p.length > 1) {
-            return joinPathElements(getPathPart(p));
-        } else {
-            return SEPARATOR;
-        }
-    }
-
-    public static String joinPathElements(final String[] elements) {
-        if (elements.length > 0) {
-            StringJoiner joiner = new StringJoiner(SEPARATOR, SEPARATOR, SEPARATOR);
-            Arrays.stream(elements).forEach(joiner::add);
+    private String toPathString(final String[] elements) {
+        if (elements.length > 1) {
+            StringJoiner joiner = new StringJoiner(PATH_SEPARATOR, PATH_SEPARATOR, PATH_SEPARATOR);
+            Arrays.stream(getPathPart(elements)).forEach(joiner::add);
             return joiner.toString();
         } else {
-            return SEPARATOR;
+            return PATH_SEPARATOR;
         }
-    }
-
-    private String buildFullPath(final String[] p) {
-        return getTaxonomyPart(p) + TAXONOMY_SEPARATOR + buildPath(p);
     }
 
     public Term append(final Term child) {
@@ -251,27 +246,35 @@ public class Term extends AbstractBaseEntity {
     }
 
     public Term append(final String path) {
-        List<String> termNames = parsePath(path);
-        Term term = this;
-        for (String termName : termNames) {
-            for (Term c : term.getChildren()) {
-                if (c.getName().equals(termName)) {
-                    term = c;
-                }
-            }
-            if (!term.getName().equals(termName)) {
-                term = term.append(new Term(termName));
-            }
+        List<String> termNames = splitPath(path);
+        return append(termNames);
+    }
 
+    public Term append(final String... path) {
+        return append(Arrays.asList(path));
+    }
+
+    public Term append(final List<String> path) {
+        Term term = this;
+        for (String e : path) {
+            Optional<Term> found = term.getChildren().stream()
+                    .filter(t -> t.getName().equals(e))
+                    .findAny();
+            if (found.isPresent()) {
+                term = found.get();
+            } else {
+                term = term.append(new Term(e));
+            }
         }
         return term;
     }
+
 
     public Set<Term> getChildren() {
         return Collections.unmodifiableSet(children);
     }
 
-    public Set<Term> getChildren(boolean recursive) {
+    public Set<Term> getChildren(final boolean recursive) {
         if (recursive) {
             Set<Term> result = new HashSet<>();
             for (Term t : getChildren()) {
@@ -284,23 +287,23 @@ public class Term extends AbstractBaseEntity {
         }
     }
 
-    public String getFullPath() {
+    public String getPathWithTaxonomy() {
         initPath();
         return path;
     }
 
     public String getPath() {
         initPath();
-        return buildPath(pathNames);
+        return toPathString(pathElements);
     }
 
     public String getName() {
         return name;
     }
 
-    public String[] getNames() {
+    public String[] getElements() {
         initPath();
-        return getPathPart(pathNames);
+        return getPathPart(pathElements);
     }
 
     public boolean isUri() {
@@ -329,7 +332,7 @@ public class Term extends AbstractBaseEntity {
     }
 
     void resetPath() {
-        this.pathNames = null;
+        this.pathElements = null;
         this.path = null;
     }
 
@@ -344,7 +347,7 @@ public class Term extends AbstractBaseEntity {
 
     @Override
     public String toString() {
-        return getFullPath();
+        return getPathWithTaxonomy();
     }
 
     void addItem(final Item item) {

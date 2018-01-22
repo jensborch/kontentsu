@@ -16,13 +16,14 @@ import dk.kontentsu.api.configuration.Config;
 import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
 import dk.kontentsu.model.Item;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.SemanticUriPath;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.Term;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.upload.Uploader;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -49,6 +50,7 @@ public class ItemExposureTest extends JerseyTest {
 
     @Override
     protected Application configure() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         MockitoAnnotations.initMocks(this);
 
         return new ResourceConfig()
@@ -71,7 +73,7 @@ public class ItemExposureTest extends JerseyTest {
     public void setUp() throws Exception {
         super.setUp();
         items = new ArrayList<>();
-        Item i = new Item(new SemanticUri(new SemanticUriPath("item", "test"), "test-xl.jpg"));
+        Item i = new Item(new Term().append("item").append("test"), "xl", new MimeType("image", "jpg"));
         items.add(i);
         Mockito.when(itemRepo.find(Mockito.any(Item.Criteria.class))).thenReturn(items);
         Mockito.when(itemRepo.get(items.get(0).getUuid())).thenReturn(i);
@@ -82,7 +84,7 @@ public class ItemExposureTest extends JerseyTest {
         given().get(target("items").getUri())
                 .then()
                 .statusCode(200)
-                .body("[0].uri", is("item/test/test-xl.jpg"));
+                .body("[0].uri", is("/item/test/test-xl.jpg"));
     }
 
     @Test
@@ -90,7 +92,7 @@ public class ItemExposureTest extends JerseyTest {
         given().get(target("items").path(items.get(0).getUuid().toString()).getUri())
                 .then()
                 .statusCode(200)
-                .body("uri", is("item/test/test-xl.jpg"));
+                .body("uri", is("/item/test/test-xl.jpg"));
     }
 
     @Test

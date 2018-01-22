@@ -1,7 +1,7 @@
 {
-    "href": "items/article2",
+    "href": "/items/article2/",
     "template": {
-        "href": "templates/article-picture-right.tpl.html"
+        "href": "/templates/article-picture-right.tpl.html"
     },
     "heading": "Heading article 2",
     "summary": "Summary article 2",
@@ -21,7 +21,7 @@
             "picture": {
                 "title": "Book",
                 "alt": "Book",
-                "href": "images/book/book.jpg",
+                "href": "/images/book/book.jpg",
                 "useMetadata": "true"
             }
         },

@@ -41,9 +41,6 @@ import javax.validation.Valid;
  */
 public abstract class Repository<E> {
 
-    public static final String TAXONOMY_FIND_ALL = "Taxonomy.findAll";
-    public static final String TAXONOMY_GET = "Taxonomy.get";
-    public static final String TAXONOMY_GET_BY_NAME = "Taxonomy.getByName";
     public static final String HOST_FIND_ALL = "Host.findAll";
     public static final String HOST_GET = "Host.get";
     public static final String HOST_GET_BY_NAME = "Host.getByName";
@@ -58,6 +55,7 @@ public abstract class Repository<E> {
     public static final String ITEM_GET = "Item.get";
     public static final String ITEM_FIND_ALL = "Item.findAll";
     public static final String ITEM_FIND_BY_URI = "Item.findByUri";
+    public static final String ITEM_FIND_BY_TERM = "Item.findByTerm";
     public static final String CONTENT_GET = "Content.get";
     public static final String VERSION_GET = "Version.get";
     public static final String EXTERNAL_FILE_GET = "ExternalFile.get";
@@ -70,6 +68,7 @@ public abstract class Repository<E> {
     public static final String TERM_FIND_ALL = "Term.findAll";
     public static final String TERM_GET = "Term.Get";
     public static final String TERM_FIND_BY_URI = "Term.findByUri";
+    public static final String TERM_FIND = "Term.find";
 
     @Inject
     protected EntityManager em;

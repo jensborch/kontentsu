@@ -30,7 +30,9 @@ import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -43,20 +45,18 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import dk.kontentsu.api.exposure.model.CategoryRepresentation;
 import dk.kontentsu.api.exposure.model.ErrorRepresentation;
-import dk.kontentsu.model.Category;
 import dk.kontentsu.model.Role;
-import dk.kontentsu.model.Taxon;
-import dk.kontentsu.model.Taxonomy;
-import dk.kontentsu.repository.CategoryRepository;
-import dk.kontentsu.repository.TaxonomyRepository;
+import dk.kontentsu.model.Term;
+import dk.kontentsu.repository.TermRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * REST resource for listing and manipulating categories for items on the CDN.
@@ -73,10 +73,8 @@ public class CategoryExposure {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Inject
-    private CategoryRepository catRepo;
+    private TermRepository termRepo;
 
-    @Inject
-    private TaxonomyRepository taxRepo;
 
     @Context
     private UriInfo uriInfo;
@@ -87,7 +85,7 @@ public class CategoryExposure {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Taxonomy link list", response = Link.class, responseContainer = "List")})
     public Response findAll() {
-        List<Link> result = taxRepo.findAll()
+        List<Link> result = termRepo.findAll()
                 .stream()
                 .map(t -> Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
                         .path(CategoryExposure.class)
@@ -104,11 +102,13 @@ public class CategoryExposure {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Get categories defined in a given taxonomy")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "List of categories", response = Link.class, responseContainer = "List"),
+        @ApiResponse(code = 200, message = "List of root terms", response = Link.class, responseContainer = "List"),
         @ApiResponse(code = 404, message = "If taxonomy name can't be found", response = ErrorRepresentation.class)})
-    public Response getTaxonomy(@PathParam("taxonomy") @NotNull final String name) {
-        Taxonomy taxonomy = taxRepo.getByName(name);
-        List<Link> result = catRepo.getByTaxonomy(taxonomy)
+    public Response getTaxonomy(@PathParam("taxonomy") @NotNull @Size(min = 1) final String taxonomy) {
+        Term term = termRepo.findAll().stream()
+                .filter(t -> t.getName().equals(taxonomy)).findAny()
+                .orElseThrow(() -> new NoResultException("Taxonomy '" + taxonomy + "' not found"));
+        List<Link> result = term.getChildren()
                 .stream()
                 .map(c -> Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
                         .path(CategoryExposure.class)
@@ -121,22 +121,22 @@ public class CategoryExposure {
     }
 
     @GET
-    @Path("{taxonomy}/{category:.*}")
+    @Path("{taxonomy}/{path:.*}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Get a category definition")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "A representation of an category", response = CategoryRepresentation.class),
         @ApiResponse(code = 404, message = "If category can't be found", response = ErrorRepresentation.class)})
     public Response getCategory(
-            @PathParam("taxonomy") @NotNull final String taxonomyName,
-            @PathParam("category") @NotNull final String categoryPath) {
-        Taxonomy taxonomy = taxRepo.getByName(taxonomyName);
-        CategoryRepresentation result = new CategoryRepresentation(catRepo.getByTaxonomy(taxonomy, categoryPath), uriInfo);
+            @PathParam("taxonomy") @NotNull final String taxonomy,
+            @PathParam("path") @NotNull final String path) {
+        Term term = termRepo.get(taxonomy +  Term.TAXONOMY_SEPARATOR + path);
+        CategoryRepresentation result = new CategoryRepresentation(term, uriInfo);
         return Response.ok().entity(result).build();
     }
 
     @POST
-    @Path("{taxonomy}/{category:.*}")
+    @Path("{taxonomy}/{path:.*}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Create a taxonomy and/or category",
             notes = "The first element in the path is the name of the taxonomy. The operation is idempotent")
@@ -144,21 +144,14 @@ public class CategoryExposure {
         @ApiResponse(code = 201, message = "Taxonomy and/or category has been created"),
         @ApiResponse(code = 404, message = "", response = ErrorRepresentation.class)})
     public Response createCategory(
-            @PathParam("taxonomy") @NotNull final String taxonomyName,
-            @PathParam("category") final String categoryPath) {
-        Taxonomy taxonomy = taxRepo.findByName(taxonomyName).orElseGet(() -> {
-            return taxRepo.save(new Taxonomy(taxonomyName));
-        });
-        if (categoryPath != null) {
-            Category cat = catRepo.findByTaxonomy(taxonomy, categoryPath)
-                    .orElseGet(() -> catRepo.save(Taxon.parse(taxonomy, categoryPath)));
-            LOGGER.debug("Created or found category: {}", cat);
-        }
+            @PathParam("taxonomy") @NotNull final String taxonomy,
+            @PathParam("path") final String path) {
+        termRepo.create(taxonomy +  Term.TAXONOMY_SEPARATOR + path);
         return Response.created(uriInfo.getAbsolutePathBuilder().build()).build();
     }
 
     @DELETE
-    @Path("{taxonomy}/{category:.*}")
+    @Path("{taxonomy}/{path:.*}")
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Delete a a taxonomy or category",
             notes = "The first element in the path is the name of the taxonomy. The operation is idempotent")
@@ -166,16 +159,10 @@ public class CategoryExposure {
         @ApiResponse(code = 200, message = "Taxonomy and/or category has been deleted"),
         @ApiResponse(code = 404, message = "", response = ErrorRepresentation.class)})
     public Response deleteCategory(
-            @PathParam("taxonomy") @NotNull final String taxonomyName,
-            @PathParam("category") final String categoryPath) {
-        if (categoryPath == null) {
-            taxRepo.findByName(taxonomyName).ifPresent(t -> taxRepo.delete(t.getUuid()));
-        } else {
-            taxRepo.findByName(taxonomyName)
-                    .ifPresent(t -> catRepo
-                            .findByTaxonomy(t, categoryPath)
-                            .ifPresent(c -> catRepo.delete(c.getUuid())));
-        }
+            @PathParam("taxonomy") @NotNull final String taxonomy,
+            @PathParam("path") final String path) {
+        Term term = termRepo.get(taxonomy +  Term.TAXONOMY_SEPARATOR + path);
+        termRepo.delete(term);
         return Response.ok(uriInfo.getAbsolutePathBuilder().build()).build();
     }
 

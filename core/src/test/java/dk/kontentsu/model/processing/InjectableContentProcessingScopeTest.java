@@ -34,7 +34,7 @@ public class InjectableContentProcessingScopeTest {
 
     @Before
     public void setUp() {
-        content = new Content("scope test".getBytes(), StandardCharsets.UTF_8, MimeType.parse("text/plain"));
+        content = new Content("scope test".getBytes(), StandardCharsets.UTF_8);
     }
 
     @Test

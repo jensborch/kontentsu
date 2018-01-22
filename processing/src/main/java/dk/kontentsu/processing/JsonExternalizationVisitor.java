@@ -43,7 +43,7 @@ import dk.kontentsu.externalization.ExternalizationException;
 import dk.kontentsu.externalization.ExternalizationVisitor;
 import dk.kontentsu.jackson.ObjectMapperFactory;
 import dk.kontentsu.model.Content;
-import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Version;
 import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.spi.ContentProcessingMimeType;
@@ -82,7 +82,7 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
 
     @Override
     public ExternalizationVisitor.Results getResults() {
-        Content result = new Content(pageNode.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8, content.getMimeType());
+        Content result = new Content(pageNode.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
         return new ExternalizationVisitor.Results(result);
     }
 
@@ -120,7 +120,7 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
             Map.Entry<String, JsonNode> node = i.next();
             List<JsonNode> found = node.getValue().findParents(JSON_HREF);
             for (JsonNode n : found) {
-                if (version.getItem().getUri().equals(SemanticUri.parse(n.get(JSON_HREF).asText()))) {
+                if (version.getItem().getUri().equals(new Item.URI(n.get(JSON_HREF).asText()))) {
                     return new CompositionNode(node.getKey(), node.getValue().isArray());
                 }
             }

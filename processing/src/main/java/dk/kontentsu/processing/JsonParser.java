@@ -43,10 +43,10 @@ import javax.inject.Inject;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonToken;
 import dk.kontentsu.model.Content;
+import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Metadata;
 import dk.kontentsu.model.MetadataType;
 import dk.kontentsu.model.ReferenceType;
-import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.parsers.ContentParserException;
 import dk.kontentsu.parsers.Link;
@@ -90,7 +90,7 @@ public class JsonParser implements ContentParser {
             fieldProcessors[0] = new Processor((p, f) -> {
                 return JSON_HREF.equals(f) && p.contains(JSON_COMPOSITION);
             }, (k, v) -> {
-                links.add(new Link(SemanticUri.parse(v), ReferenceType.COMPOSITION));
+                links.add(new Link(new Item.URI(v), ReferenceType.COMPOSITION));
             });
             fieldProcessors[1] = new Processor((p, f) -> {
                 return JSON_HREF.equals(f)
@@ -98,7 +98,7 @@ public class JsonParser implements ContentParser {
                         && !"template".equals(p.peekLast())
                         && !"composition-type".equals(p.peekLast());
             }, (k, v) -> {
-                links.add(new Link(SemanticUri.parse(v), ReferenceType.LINK));
+                links.add(new Link(new Item.URI(v), ReferenceType.LINK));
             });
             fieldProcessors[2] = new Processor((p, f) -> {
                 return JSON_METADATA.equals(p.peekLast());

@@ -20,7 +20,7 @@ import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.Host;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.Term;
 import dk.kontentsu.repository.ExternalFileRepository;
 import dk.kontentsu.util.DelTreeFileVisitor;
 import org.junit.After;
@@ -55,10 +55,10 @@ public class ScheduledExternalizerServiceTest {
         path = Files.createTempDirectory("junit");
         Files.createFile(path.resolve("delete"));
         Host host = new Host("test", "desc", path.toString());
-        SemanticUri uri = SemanticUri.parse("test/file/file-xl");
-        Item item = new Item(uri);
+        Term path = Term.parse("uri:/test/file/");
+        Item item = new Item(path, "xl", MimeType.APPLICATION_JSON_TYPE);
         item.addHost(host);
-        Content content = new Content("{ \"this\": \"is a test\"}".getBytes(), Charset.defaultCharset(), MimeType.APPLICATION_JSON_TYPE);
+        Content content = new Content("{ \"this\": \"is a test\"}".getBytes(), Charset.defaultCharset());
         ExternalFile file = ExternalFile.builder()
                 .from(ZonedDateTime.now())
                 .content(content)

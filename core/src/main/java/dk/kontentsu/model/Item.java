@@ -33,7 +33,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.StringJoiner;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
@@ -48,15 +52,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import dk.kontentsu.exception.ValidationException;
 import dk.kontentsu.repository.Repository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * An item that can externalized to the CDN - i.e. a file on the CDN.
@@ -66,14 +74,24 @@ import org.apache.logging.log4j.Logger;
 @Entity
 @Table(name = "item",
         uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"path_id", "name"}, name = "item_constraint")})
+            @UniqueConstraint(columnNames = {"path_id", "edition"}, name = "item_constraint")})
 @NamedQueries({
+    @NamedQuery(name = Repository.ITEM_FIND_BY_TERM,
+            query = "SELECT i FROM Item i JOIN i.path p WHERE p.uuid = :uuid ORDER BY i.created, i.edition"),
     @NamedQuery(name = Repository.ITEM_FIND_ALL,
-            query = "SELECT DISTINCT i FROM Item i JOIN i.versions v WHERE v.state IN :state"),
+            query = "SELECT DISTINCT i FROM Item i JOIN i.versions v "
+            + "WHERE v.state IN :state "
+            + "ORDER BY i.created, i.edition"),
     @NamedQuery(name = Repository.ITEM_GET,
             query = "SELECT i FROM Item i WHERE i.uuid = :uuid"),
     @NamedQuery(name = Repository.ITEM_FIND_BY_URI,
-            query = "SELECT DISTINCT i FROM Item i JOIN i.uri.path p WHERE i.uri.name = :name AND p.path = :path")})
+            query = "SELECT DISTINCT i FROM Item i "
+            + "JOIN i.path p "
+            + "JOIN i.versions v "
+            + "WHERE p.path = :path "
+            + "AND ((:edition IS NULL AND i.edition IS NULL) OR i.edition = :edition) "
+            + "AND v.state IN :state "
+            + "ORDER BY i.created, i.edition")})
 public class Item extends AbstractBaseEntity {
 
     private static final long serialVersionUID = 1457687095382268401L;
@@ -86,22 +104,17 @@ public class Item extends AbstractBaseEntity {
     )
     private Set<Term> terms = new HashSet<>();
 
-    @Column(name = "itemname")
-    private String name;
+    @Column(name = "edition")
+    private String edition;
 
-    @Valid
-    @Column(name = "path")
+    @NotNull
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER, targetEntity = Term.class)
+    @JoinColumn(name = "path_id")
     private Term path;
 
-    @Valid
-    @Column(name = "uri")
-    private SemanticUri uri;
-
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "items")
-    private Set<Taxon> categories = new HashSet<>();
-
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "item")
-    private Set<Version> versions = new HashSet<>();
+    @OrderBy("interval.from, interval.to")
+    private SortedSet<Version> versions = new TreeSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "item")
     private Set<ExternalFile> files = new HashSet<>();
@@ -113,27 +126,27 @@ public class Item extends AbstractBaseEntity {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     private Set<Host> hosts = new HashSet<>();
 
+    @NotNull
+    @Column(name = "mimetype")
+    private MimeType mimeType;
+
     protected Item() {
         //Needed by JPA
     }
 
-    public Item(final Term path, String name) {
+    public Item(final Term path, MimeType mimeType) {
+        this(path, null, mimeType);
+    }
+
+    public Item(final Term path, final String edition, MimeType mimeType) {
         if (!path.isUri()) {
             throw new IllegalArgumentException("Path must be a URI");
         }
-        this.name = name;
         this.path = path;
         this.terms.add(path);
-    }
-
-    public Item(final SemanticUri uri) {
-        this.uri = uri;
-        uri.getPath().addItem(this);
-    }
-
-    public Item(final SemanticUri uri, final Provider provider) {
-        this(uri);
-        this.provider = provider;
+        this.edition = edition;
+        this.path.addItem(this);
+        this.mimeType = mimeType;
     }
 
     public Set<Host> getHosts() {
@@ -156,24 +169,12 @@ public class Item extends AbstractBaseEntity {
         this.provider = provider;
     }
 
-    public String getName() {
-        return name == null ? uri.getName() : name;
+    public URI getUri() {
+        return new URI(this);
     }
 
-    public SemanticUri getUri() {
-        return uri;
-    }
-
-    public Set<Taxon> getCategories() {
-        return Collections.unmodifiableSet(categories);
-    }
-
-    public void addCategory(final Taxon category) {
-        categories.add(category);
-    }
-
-    public Set<Version> getVersions() {
-        return Collections.unmodifiableSet(versions);
+    public SortedSet<Version> getVersions() {
+        return Collections.unmodifiableSortedSet(versions);
     }
 
     public List<Version> getVersions(final Interval interval) {
@@ -229,6 +230,18 @@ public class Item extends AbstractBaseEntity {
         term.removeItem(this);
     }
 
+    public MimeType getMimeType() {
+        return mimeType;
+    }
+
+    public Optional<String> getEdition() {
+        return Optional.ofNullable(edition);
+    }
+
+    public Set<Term> getTerms() {
+        return Collections.unmodifiableSet(terms);
+    }
+
     /**
      * Search criteria for finding items.
      *
@@ -242,8 +255,8 @@ public class Item extends AbstractBaseEntity {
 
         private final QItem item = QItem.item;
         private final QVersion version = QVersion.version;
-        private final QSemanticUriPath path = QSemanticUriPath.semanticUriPath;
-        private final JPAQuery<Item> query;
+        private final QTerm path = QTerm.term;
+        private final JPAQuery<Tuple> query;
 
         private Optional<ZonedDateTime> from = Optional.empty();
         private ZonedDateTime to = INFINITE;
@@ -254,7 +267,11 @@ public class Item extends AbstractBaseEntity {
 
         private Criteria(final boolean fetch) {
             query = new JPAQuery<>();
-            query.distinct().from(item).join(item.uri.path, path).fetchJoin().leftJoin(item.versions, version);
+            query.from(item)
+                    .select(item, item.path)
+                    .distinct()
+                    .leftJoin(item.versions, version)
+                    .join(item.path, path);
             if (fetch) {
                 query.fetchJoin();
             }
@@ -270,6 +287,16 @@ public class Item extends AbstractBaseEntity {
 
         public Criteria at(final ZonedDateTime at) {
             query.where(version.interval.from.loe(at), version.interval.to.gt(at));
+            return this;
+        }
+
+        public Criteria term(final String term) {
+            query.where(path.path.eq(term)).orderBy(path.path.desc());
+            return this;
+        }
+
+        public Criteria edition(final String edition) {
+            query.where(item.edition.eq(edition));
             return this;
         }
 
@@ -289,19 +316,6 @@ public class Item extends AbstractBaseEntity {
             return this;
         }
 
-        public Criteria path(final SemanticUriPath uri) {
-            query.where(path.path.eq(uri.toString()));
-            return this;
-        }
-
-        public Criteria uri(final SemanticUri uri) {
-            query.where(
-                    path.path.eq(uri.getPath().toString()),
-                    item.uri.name.eq(uri.getName())
-            );
-            return this;
-        }
-
         public Criteria host(final String name) {
             QHost host = QHost.host;
             query
@@ -310,21 +324,18 @@ public class Item extends AbstractBaseEntity {
             return this;
         }
 
-        public Criteria reference(final SemanticUri uri, final ReferenceType type) {
+        public Criteria reference(final URI uri, final ReferenceType type) {
             QReference reference = QReference.reference;
             query
                     .join(version.references, reference)
                     .where(reference.type.eq(type),
-                            reference.itemName.eq(uri.getName()),
-                            reference.itemPath.eq(uri.getPath().toString()));
+                            reference.itemPath.eq(uri.getFolder()));
+            uri.getEdition().ifPresent(e -> query.where(reference.itemName.eq(e)));
             return this;
         }
 
         public Criteria mineType(final MimeType mimeType) {
-            QContent content = QContent.content;
-            query
-                    .join(version.content, content)
-                    .where(content.mimeType.eq(mimeType));
+            query.where(item.mimeType.eq(mimeType));
             return this;
         }
 
@@ -359,78 +370,114 @@ public class Item extends AbstractBaseEntity {
 
             return query.clone(em)
                     .where(version.state.in(STATES).or(version.state.isNull()))
-                    .orderBy(path.path.asc(), item.uri.name.asc())
-                    .fetch();
+                    .orderBy(item.created.desc(), item.edition.desc())
+                    .fetch()
+                    .stream()
+                    .map(t -> t.get(item))
+                    .collect(Collectors.toList());
         }
     }
 
-    public static class URI {
+    /**
+     * URI that can be used to access an item in Kontentsu.
+     */
+    public static class URI implements Comparable<URI> {
 
-        private final String name;
-        private final String[] path;
+        public static final String PATH_SEPARATOR = "/";
+        public static final String ALLOWED_CHARS_REGEX = "[\\p{L}\\d-]";
+        private static final String REGEX = String.format(
+                "^\\/?(?<elements>(?:(?<element>%s+)\\/)+)(?:\\k<element>)?(?:-(?<edition>%s+))?(?:\\.(?<ext>\\w{3,4}))?$",
+                ALLOWED_CHARS_REGEX,
+                ALLOWED_CHARS_REGEX);
+        private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
+
+        private final Optional<String> edition;
+        private final String[] pathElements;
+        private final MimeType mimeType;
 
         public URI(final Item item) {
-            this.name = item.getName();
-            this.path = Arrays.copyOf(item.path.getNames(), item.path.getNames().length);
+            this.pathElements = item.path.getElements();
+            this.edition = item.getEdition();
+            this.mimeType = item.getMimeType();
         }
 
         public URI(final String uri) {
-            List<String> u = new ArrayList<>(Term.parsePath(uri));
-            if (u.isEmpty()) {
-                throw new IllegalArgumentException("URI '" + uri + "' must contain some path elements");
+            Matcher m = REGEX_PATTERN.matcher(uri);
+            if (!m.matches()) {
+                throw new IllegalArgumentException("URI '" + uri + "' must match regular expression " + REGEX);
             }
-            this.name = u.get(u.size() - 1);
-            this.path = u.subList(0, u.size() - 1).toArray(new String[u.size() - 1]);
+            this.edition = Optional.ofNullable(m.group("edition"));
+            List<String> p = Term.splitPath(m.group("elements"));
+            this.pathElements = p.toArray(new String[p.size()]);
+            this.mimeType = (m.group("ext") == null) ? MimeType.APPLICATION_JSON_TYPE : MimeType.formExtension(m.group("ext"));
         }
 
-        public String getName() {
-            return name;
+        public MimeType getMimeType() {
+            return mimeType;
+        }
+
+        public Optional<String> getEdition() {
+            return edition;
+        }
+
+        public String getFileName() {
+            return pathElements[pathElements.length - 1] + edition.map(e -> "-".concat(e)).orElse("") + "." + mimeType.getFileExtension();
         }
 
         public String[] getPathElements() {
-            String[] result = Arrays.copyOf(path, path.length + 1);
-            result[path.length] = name;
+            String[] result = Arrays.copyOf(pathElements, pathElements.length + 1);
+            result[pathElements.length] = getFileName();
             return result;
         }
 
-        public String getPath() {
-            StringJoiner joiner = new StringJoiner(Term.SEPARATOR, Term.SEPARATOR, Term.SEPARATOR);
-            String[] elements = getPathElements();
-            Arrays.stream(elements).limit(elements.length - 1L).forEach(joiner::add);
+        public String[] getFolderElements() {
+            return Arrays.copyOf(pathElements, pathElements.length);
+        }
+
+        public String getFolder() {
+            StringJoiner joiner = new StringJoiner(PATH_SEPARATOR, PATH_SEPARATOR, PATH_SEPARATOR);
+            Arrays.stream(pathElements).forEach(joiner::add);
             return joiner.toString();
         }
 
-        public String getFullPath() {
-            StringJoiner joiner = new StringJoiner(Term.SEPARATOR, Term.SEPARATOR, "");
+        public String getPath() {
+            StringJoiner joiner = new StringJoiner(PATH_SEPARATOR, PATH_SEPARATOR, "");
             Arrays.stream(getPathElements()).forEach(joiner::add);
             return joiner.toString();
         }
 
-        public java.nio.file.Path toPath(final MimeType mimetype) {
-            String[] elements = getPathElements();
-            String[] tail = (elements.length > 1) ? Arrays.copyOfRange(elements, 1, elements.length) : new String[0];
-            java.nio.file.Path p = Paths.get(elements[0], tail);
-            if (p.getFileName() == null) {
-                throw new ContentException("Filename for path " + p + " is null");
-            }
-            String filename = p.getFileName().toString() + "." + mimetype.getFileExtension();
-            return p.getParent().resolve(filename);
+        public java.nio.file.Path toPath() {
+            String[] tail = (pathElements.length > 1) ? Arrays.copyOfRange(pathElements, 1, pathElements.length) : new String[0];
+            return Paths.get(pathElements[0], tail).resolve(getFileName());
+        }
+
+        public String toTerm() {
+            return Term.URI_TAXONOMY + Term.TAXONOMY_SEPARATOR + getFolder();
         }
 
         public boolean matches(final String uri) {
-            return uri != null && toString().equals(uri.trim());
+            try {
+                return uri != null && new URI(uri).equals(this);
+            } catch (IllegalArgumentException e) {
+                LOGGER.debug("URI {} is not legal");
+                return false;
+            }
+        }
+
+        @Override
+        public int compareTo(final URI uri) {
+            return getPath().compareTo(uri.getPath());
         }
 
         @Override
         public String toString() {
-            return getFullPath();
+            return getPath();
         }
 
         @Override
         public int hashCode() {
             int hash = 5;
-            hash = 83 * hash + Objects.hashCode(this.name);
-            hash = 83 * hash + Objects.hashCode(this.path);
+            hash = 83 * hash + Objects.hashCode(getPath());
             return hash;
         }
 
@@ -443,8 +490,20 @@ public class Item extends AbstractBaseEntity {
                 return false;
             }
             URI other = (URI) obj;
-            return this.getFullPath().equals(other.getFullPath()) && this.getName().equals(other.getName());
+            return this.getPath().equals(other.getPath());
         }
-
     }
+
+    @Override
+    public String toString() {
+        return "Item{" + "terms=" + terms
+                + ", edition=" + edition
+                + ", path=" + path
+                + ", versions=" + versions
+                + ", files=" + files
+                + ", provider=" + provider
+                + ", hosts=" + hosts
+                + ", mimeType=" + mimeType + '}';
+    }
+
 }

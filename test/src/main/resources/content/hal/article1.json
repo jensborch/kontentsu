@@ -1,16 +1,16 @@
 {
     "_links": {
         "self": {
-            "href": "items/article"
+            "href": "/items/article/"
         },
         "article-picture-right-template": {
-            "href": "components/templates/article-picture-right.tpl.html"
+            "href": "/components/templates/article-picture-right.tpl.html"
         },
         "book-responsive": {
-            "href": "images/book"
+            "href": "/images/book/"
         },
         "page-simple": {
-            "href": "items/page2"
+            "href": "/items/page2/"
         }
     },
     "template": {

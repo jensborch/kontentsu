@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 import javax.ejb.EJBTransactionRequiredException;
@@ -21,6 +22,12 @@ import javax.persistence.PersistenceException;
 import javax.transaction.RollbackException;
 import javax.transaction.UserTransaction;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.Item;
@@ -28,22 +35,17 @@ import dk.kontentsu.model.Metadata;
 import dk.kontentsu.model.MetadataType;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.ReferenceType;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.SemanticUriPath;
+import dk.kontentsu.model.State;
+import dk.kontentsu.model.Term;
 import dk.kontentsu.model.Version;
 import dk.kontentsu.test.TestEJBContainer;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  * Integration test for {@link ItemRepository}
  *
  * @author Jens Borch Christiansen
  */
-    public class ItemRepositoryIT {
+public class ItemRepositoryIT {
 
     private static final ZonedDateTime NOW = ZonedDateTime.now();
 
@@ -53,13 +55,13 @@ import org.junit.Test;
     private ItemRepository itemRepo;
 
     @Inject
-    private CategoryRepository catRepo;
+    private TermRepository termRepo;
 
     @Resource
     private UserTransaction userTransaction;
 
     private Item item;
-    private SemanticUriPath path;
+    private Term path;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -77,11 +79,7 @@ import org.junit.Test;
     public void setUp() throws Exception {
         TestEJBContainer.inject(container, this);
         userTransaction.begin();
-        SemanticUriPath tmpPath = new SemanticUriPath("test1", "test2");
-        path = catRepo.findByUri(tmpPath).orElseGet(() -> {
-            return (SemanticUriPath) catRepo.save(tmpPath);
-        });
-
+        path = termRepo.create(new Item.URI("test1/test2/"));
         item = create("test", NOW, Interval.INFINITE);
         userTransaction.commit();
     }
@@ -94,8 +92,8 @@ import org.junit.Test;
         userTransaction.commit();
     }
 
-    private Item create(final String name, final ZonedDateTime from, final ZonedDateTime to) throws Exception {
-        Content content = new Content("This is a test".getBytes(), Charset.defaultCharset(), new MimeType("text", "plain"));
+    private Item create(final String edition, final ZonedDateTime from, final ZonedDateTime to) throws Exception {
+        Content content = new Content("This is a test".getBytes(), Charset.defaultCharset());
 
         Version version = Version.builder()
                 .content(content)
@@ -104,16 +102,18 @@ import org.junit.Test;
                 .metadata(new Metadata.Key(MetadataType.PAGE, "key"), new Metadata("This is metadata"))
                 .build();
 
-        String itemName = (name == null) ? "test" : name;
-        Item tmpItem = itemRepo.findByUri(new SemanticUri(path, itemName))
-                .orElseGet(() -> {
-                    path = (SemanticUriPath) catRepo.get(path.getUuid());
-                    Item i = new Item(new SemanticUri(path, itemName));
-                    return itemRepo.save(i);
-                });
+        String name = (edition == null) ? "" : "test2-" + edition;
+        Item i = itemRepo.findByUri(new Item.URI("test1/test2/" + name), State.ACTIVE, State.DELETED, State.DRAFT)
+                .orElseGet(()
+                        -> itemRepo.save(
+                        new Item(termRepo.find(path.getUuid()).orElse(path),
+                                edition,
+                                new MimeType("text", "plain")))
+                );
 
-        tmpItem.addVersion(version);
-        return tmpItem;
+        i.addVersion(version);
+        itemRepo.save(i);
+        return i;
     }
 
     @Test
@@ -124,7 +124,7 @@ import org.junit.Test;
             create("test1", NOW.minusDays(4), NOW.minusDays(1));
             List<Item> items = itemRepo.findAll();
             assertEquals(2, items.size());
-            assertEquals(2, items.stream().filter(i -> i.getName().equals("test1")).findFirst().get().getVersions().size());
+            assertEquals(2, items.stream().filter(i -> i.getEdition().orElse("").equals("test1")).findFirst().get().getVersions().size());
         } finally {
             userTransaction.commit();
         }
@@ -163,11 +163,36 @@ import org.junit.Test;
     }
 
     @Test
+    public void testFindByUri() throws Exception {
+        try {
+            userTransaction.begin();
+            Optional<Item> result = itemRepo.findByUri(new Item.URI("test1/test2/test2-test"));
+            assertTrue(result.isPresent());
+            assertEquals(item, result.get());
+        } finally {
+            userTransaction.commit();
+        }
+    }
+
+    @Test
+    public void testFindByUriNoEdition() throws Exception {
+        try {
+            userTransaction.begin();
+            Item i = create(null, NOW.minusDays(10), NOW.minusDays(5));
+            Optional<Item> result = itemRepo.findByUri(new Item.URI("test1/test2/"));
+            assertTrue(result.isPresent());
+            assertEquals(i, result.get());
+        } finally {
+            userTransaction.commit();
+        }
+    }
+
+    @Test
     public void testFindByCriteria() throws Exception {
         try {
             userTransaction.begin();
             List<Item> result = itemRepo.find(Item.Criteria.create()
-                    .path(new SemanticUriPath("test1", "test2"))
+                    .term("uri:/test1/test2/")
                     .mineType(new MimeType("text", "plain"))
                     .at(NOW.plusDays(1)));
             assertNotNull(result);
@@ -185,7 +210,7 @@ import org.junit.Test;
         try {
             userTransaction.begin();
             List<Item> result = itemRepo.find(Item.Criteria.create()
-                    .path(new SemanticUriPath("test1", "test2"))
+                    .term("uri:/test1/test2/")
                     .mineType(new MimeType("text", "plain"))
                     .at(NOW.plusDays(1)));
             assertNotNull(result);
@@ -206,7 +231,7 @@ import org.junit.Test;
         try {
             userTransaction.begin();
             List<Item> result = itemRepo.find(Item.Criteria.create()
-                    .path(new SemanticUriPath("test1", "test2"))
+                    .term("uri:/test1/test2/")
                     .mineType(new MimeType("text", "plain"))
                     .at(NOW.plusDays(1)));
             assertNotNull(result);
@@ -227,14 +252,15 @@ import org.junit.Test;
         try {
             userTransaction.begin();
             List<Item> result = itemRepo.find(Item.Criteria.create()
-                    .path(new SemanticUriPath("test1", "test2"))
+                    .term("uri:/test1/test2/")
                     .mineType(new MimeType("text", "plain"))
                     .at(NOW.plusDays(1)));
             assertNotNull(result);
             assertEquals(1, result.size());
 
             result = itemRepo.find(Item.Criteria.create()
-                    .uri(new SemanticUri(new SemanticUriPath("test1", "test2"), "test"))
+                    .term("uri:/test1/test2/")
+                    .edition("test")
                     .interval(new Interval(NOW.plusSeconds(10), NOW.plusSeconds(60))));
             assertNotNull(result);
             assertEquals(1, result.size());
@@ -248,7 +274,7 @@ import org.junit.Test;
         try {
             userTransaction.begin();
             List<Item> result = itemRepo.find(Item.Criteria.create()
-                    .path(new SemanticUriPath("test1", "test2"))
+                    .term("uri:/test1/test2/")
                     .mineType(new MimeType("text", "non"))
                     .at(NOW.plusDays(1)));
             assertNotNull(result);
@@ -265,10 +291,10 @@ import org.junit.Test;
     public void testNonExistingComposition() throws Exception {
         try {
             userTransaction.begin();
-            Content content = new Content("Composition".getBytes(), Charset.defaultCharset(), new MimeType("text", "plain"));
-            SemanticUriPath foundPath = (SemanticUriPath) catRepo.get(path.getUuid());
-            Item doNotExistItem = new Item(new SemanticUri(foundPath, "do-not-exist"));
-            Item compItem = new Item(new SemanticUri(foundPath, "composition"));
+            Content content = new Content("Composition".getBytes(), Charset.defaultCharset());
+            Term foundPath = termRepo.get(path.getUuid());
+            Item doNotExistItem = new Item(foundPath, "do-not-exist", new MimeType("text", "plain"));
+            Item compItem = new Item(foundPath, "composition", new MimeType("text", "plain"));
             Version compVersion = Version.builder()
                     .from(NOW.minusHours(24))
                     .to(NOW)
@@ -286,9 +312,9 @@ import org.junit.Test;
     public void testOverlap() throws Exception {
         try {
             userTransaction.begin();
-            SemanticUriPath foundPath = (SemanticUriPath) catRepo.get(path.getUuid());
-            Content content = new Content("Overlap".getBytes(), Charset.defaultCharset(), new MimeType("text", "plain"));
-            Item overlap = new Item(new SemanticUri(foundPath, "test"));
+            Term foundPath = termRepo.get(path.getUuid());
+            Content content = new Content("Overlap".getBytes(), Charset.defaultCharset());
+            Item overlap = new Item(foundPath, "test", new MimeType("text", "plain"));
             Version version = Version.builder()
                     .from(NOW.plusDays(2))
                     .metadata(new Metadata.Key(MetadataType.PAGE, "key"), new Metadata("This is metadata"))
@@ -327,5 +353,4 @@ import org.junit.Test;
             userTransaction.rollback();
         }
     }
-
 }

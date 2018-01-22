@@ -41,7 +41,7 @@ import javax.persistence.TypedQuery;
 
 import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.Item;
 import dk.kontentsu.model.State;
 
 /**
@@ -63,7 +63,7 @@ public class ExternalFileRepository extends Repository<ExternalFile> {
         return query.getSingleResult();
     }
 
-    public Optional<ExternalFile> findByUri(final SemanticUri uri, final ZonedDateTime at) {
+    public Optional<ExternalFile> findByUri(final Item.URI uri, final ZonedDateTime at) {
         try {
             return Optional.of(getByUri(uri, at));
         } catch (NoResultException e) {
@@ -71,19 +71,27 @@ public class ExternalFileRepository extends Repository<ExternalFile> {
         }
     }
 
-    public ExternalFile getByUri(final SemanticUri uri, final ZonedDateTime at) {
+    public ExternalFile getByUri(final String uri, final ZonedDateTime at) {
+        try {
+            return getByUri(new Item.URI(uri), at);
+        } catch (IllegalArgumentException e) {
+            throw new NoResultException(e.getMessage());
+        }
+    }
+
+    public ExternalFile getByUri(final Item.URI uri, final ZonedDateTime at) {
         TypedQuery<ExternalFile> query = em.createNamedQuery(EXTERNAL_FILE_FIND_BY_URI, ExternalFile.class);
-        query.setParameter("name", uri.getName());
-        query.setParameter("path", uri.getPath().toString());
+        query.setParameter("edition", uri.getEdition().orElse(null));
+        query.setParameter("path", uri.toTerm());
         query.setParameter("state", State.ACTIVE);
         query.setParameter("at", (at == null) ? ZonedDateTime.now() : at);
         return query.getSingleResult();
     }
 
-    public List<ExternalFile> findByUri(final SemanticUri uri, final Interval interval) {
+    public List<ExternalFile> findByUri(final Item.URI uri, final Interval interval) {
         TypedQuery<ExternalFile> query = em.createNamedQuery(EXTERNAL_FILE_FIND_IN_INTERVAL, ExternalFile.class);
-        query.setParameter("name", uri.getName());
-        query.setParameter("path", uri.getPath().toString());
+        query.setParameter("edition", uri.getEdition().orElse(null));
+        query.setParameter("path", uri.toTerm());
         query.setParameter("state", State.ACTIVE);
         query.setParameter("from", interval.getFrom());
         query.setParameter("to", interval.getTo());

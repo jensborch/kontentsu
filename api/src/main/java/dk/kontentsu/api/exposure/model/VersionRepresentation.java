@@ -64,7 +64,7 @@ public class VersionRepresentation {
     private final List<ReferenceRepresentation> references;
 
     public VersionRepresentation(final Version v, final UriInfo uriInfo) {
-        this.mimeType = v.getContent().getMimeType().toString();
+        this.mimeType = v.getMimeType().toString();
         this.interval = v.getInterval();
         this.state = v.getState();
         this.approver = v.getApprover();

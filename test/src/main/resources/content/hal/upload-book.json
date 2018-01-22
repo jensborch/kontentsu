@@ -1,5 +1,5 @@
 {
-    "group": "images/book",
+    "group": "/images/book",
     "name": "book",
     "draft": false,
     "to": "2016-01-01T12:00:00+00:00",

@@ -42,7 +42,6 @@ import javax.ws.rs.core.Response;
 
 import dk.kontentsu.api.exposure.model.ErrorRepresentation;
 import dk.kontentsu.model.ExternalFile;
-import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.repository.ExternalFileRepository;
 import dk.kontentsu.util.DateTimeFormat;
 import io.swagger.annotations.Api;
@@ -86,20 +85,20 @@ public class ExternalFileExposure {
             @DateTimeFormat(DateTimeFormat.Format.UTC)
             final String at) {
         ZonedDateTime time = (at == null) ? null : ZonedDateTime.parse(at);
-        ExternalFile result = repo.getByUri(SemanticUri.parse(uri), time);
+        ExternalFile result = repo.getByUri(uri, time);
         return getResponse(result, acceptHeader);
     }
 
     private Response getResponse(final ExternalFile file, final String acceptHeader) {
-        if (file.getContent().getMimeType().matchesHeader(acceptHeader)) {
+        if (file.getMimeType().matchesHeader(acceptHeader)) {
             Response.ResponseBuilder builder = Response
                     .status(Response.Status.OK)
                     .entity(file.getContent().getDataAsBinaryStream())
-                    .type(file.getContent().getMimeType().toMediaType());
+                    .type(file.getMimeType().toMediaType());
             file.getContent().getEncoding().ifPresent(e -> builder.encoding(e.toString()));
             return builder.build();
         } else {
-            throw new MimeTypeMismatchException("Accept header " + acceptHeader + " does not match resource mime type " + file.getContent().getMimeType());
+            throw new MimeTypeMismatchException("Accept header " + acceptHeader + " does not match resource mime type " + file.getMimeType());
         }
     }
 

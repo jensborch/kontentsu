@@ -1,13 +1,13 @@
 {
     "_links": {
         "self": {
-            "href": "items/article"
+            "href": "/items/article/"
         },
         "article-picture-right-template": {
-            "href": "components/templates/article-picture-right.tpl.html"
+            "href": "/components/templates/article-picture-right.tpl.html"
         },
         "book": {
-            "href": "images/book/book.jpg"
+            "href": "/images/book/book.jpg"
         }
     },
     "template": {

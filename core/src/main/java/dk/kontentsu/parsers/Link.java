@@ -23,9 +23,8 @@
  */
 package dk.kontentsu.parsers;
 
+import dk.kontentsu.model.Item;
 import dk.kontentsu.model.ReferenceType;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.SemanticUriPath;
 
 /**
  * Link in content
@@ -33,9 +32,9 @@ import dk.kontentsu.model.SemanticUriPath;
 public class Link {
 
     private final ReferenceType type;
-    private final SemanticUri uri;
+    private final Item.URI uri;
 
-    public Link(final SemanticUri uri, final ReferenceType type) {
+    public Link(final Item.URI uri, final ReferenceType type) {
         this.uri = uri;
         this.type = type;
     }
@@ -44,16 +43,12 @@ public class Link {
         return type;
     }
 
-    public SemanticUri getUri() {
+    public Item.URI getUri() {
         return uri;
     }
 
-    public SemanticUriPath getPath() {
-        return uri.getPath();
-    }
-
-    public String getName() {
-        return uri.getName();
+    public String getPath() {
+        return uri.getFolder();
     }
 
     @Override

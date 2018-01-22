@@ -26,6 +26,7 @@ package dk.kontentsu.model;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +39,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -65,9 +67,9 @@ import dk.kontentsu.repository.Repository;
 @Entity
 @Table(name = "version")
 @NamedQueries({
-    @NamedQuery(name = Repository.VERSION_GET,
-            query = "SELECT v FROM Version v WHERE v.uuid = :uuid")})
-public class Version extends AbstractBaseEntity {
+        @NamedQuery(name = Repository.VERSION_GET,
+                query = "SELECT v FROM Version v WHERE v.uuid = :uuid")})
+public class Version extends AbstractBaseEntity implements Comparable<Version> {
 
     private static final long serialVersionUID = 720940222528135649L;
 
@@ -83,7 +85,7 @@ public class Version extends AbstractBaseEntity {
 
     @NotNull
     @Valid
-    @Column(name = "interval")
+    @Embedded
     private Interval interval;
 
     @Column(name = "approver")
@@ -102,7 +104,7 @@ public class Version extends AbstractBaseEntity {
     @CollectionTable(name = "metadata",
             joinColumns = @JoinColumn(name = "version_id"),
             uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"version_id", "type", "key"})})
+                    @UniqueConstraint(columnNames = {"version_id", "type", "key"})})
     private Map<Metadata.Key, Metadata> metadata;
 
     protected Version() {
@@ -193,7 +195,7 @@ public class Version extends AbstractBaseEntity {
     }
 
     public MimeType getMimeType() {
-        return content.getMimeType();
+        return item.getMimeType();
     }
 
     public Content getContent() {
@@ -209,7 +211,7 @@ public class Version extends AbstractBaseEntity {
                 .anyMatch(c -> c.getType() == ReferenceType.COMPOSITION);
     }
 
-    public Map<SemanticUri, List<Version>> getComposition() {
+    public Map<Item.URI, List<Version>> getComposition() {
         return references.stream()
                 .filter(c -> c.getType() == ReferenceType.COMPOSITION)
                 .map(Reference::getItem)
@@ -224,8 +226,26 @@ public class Version extends AbstractBaseEntity {
     public boolean isComplete() {
         return getReferences().isEmpty()
                 || !getReferences().stream()
-                        .filter(c -> c.getType() == ReferenceType.COMPOSITION)
-                        .anyMatch(c -> c.getItem().getVersions(interval).isEmpty());
+                .filter(c -> c.getType() == ReferenceType.COMPOSITION)
+                .anyMatch(c -> c.getItem().getVersions(interval).isEmpty());
+    }
+
+    @Override
+    public String toString() {
+        return "Version{externalizationIds=" + externalizationIds
+                + ", references=" + references
+                + ", interval=" + interval
+                + ", approver=" + approver
+                + ", state=" + state
+                + ", metadata=" + metadata + '}';
+    }
+
+    @Override
+    public int compareTo(final Version version) {
+        return Comparator
+                .comparing(Version::getId, Comparator.nullsFirst(Comparator.naturalOrder()))
+                .thenComparing(Version::getInterval)
+                .compare(this, version);
     }
 
     /**

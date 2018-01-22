@@ -81,8 +81,8 @@ public class Reference extends AbstractBaseEntity {
     public Reference(final Version version, final Item item, final ReferenceType type) {
         this.version = version;
         this.item = item;
-        this.itemPath = item.getUri().getPath().toString();
-        this.itemName = item.getName();
+        this.itemPath = item.getUri().getFolder();
+        this.itemName = item.getEdition().orElse("");
         this.type = type;
     }
 

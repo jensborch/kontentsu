@@ -37,17 +37,18 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+
+import org.hibernate.internal.SessionImpl;
 
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.ContentException;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
 import dk.kontentsu.model.State;
 import dk.kontentsu.model.Version;
-import org.hibernate.internal.SessionImpl;
 
 /**
  * Repository for performing CRUD operations on CDN items.
@@ -58,6 +59,9 @@ import org.hibernate.internal.SessionImpl;
 @LocalBean
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class ItemRepository extends Repository<Item> {
+
+    @Inject
+    private TermRepository termRepo;
 
     public List<Item> find(final Item.Criteria criteria) {
         return criteria.fetch(em);
@@ -83,15 +87,30 @@ public class ItemRepository extends Repository<Item> {
         return query.getSingleResult();
     }
 
-    public Optional<Item> findByUri(final SemanticUri uri) {
+    public Optional<Item> findByUri(final Item.URI uri, State... states) {
+        if (states.length == 0) {
+            states = new State[]{State.ACTIVE, State.DRAFT};
+        }
         try {
             TypedQuery<Item> query = em.createNamedQuery(ITEM_FIND_BY_URI, Item.class);
-            query.setParameter("name", uri.getName());
-            query.setParameter("path", uri.getPath().toString());
+            query.setParameter("path", uri.toTerm());
+            query.setParameter("edition", uri.getEdition().orElse(null));
+            query.setParameter("state", Arrays.asList(states));
+
+            List<Item> tmp = query.getResultList();
+            if (tmp.size() > 1) {
+                tmp.stream().forEach(i -> System.out.println("###" + i));
+            }
             return Optional.of(query.getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();
         }
+    }
+
+    public List<Item> findByTerm(final UUID uuid) {
+        TypedQuery<Item> query = em.createNamedQuery(ITEM_FIND_BY_TERM, Item.class);
+        query.setParameter("uuid", uuid);
+        return query.getResultList();
     }
 
     public Content getContent(final UUID uuid) {
@@ -107,15 +126,13 @@ public class ItemRepository extends Repository<Item> {
 
     private UUID saveContentUsingJDBC(final InputStream content, final Charset encoding, final MimeType mimeType) {
         UUID uuid = UUID.randomUUID();
-        String sql = "INSERT INTO content (uuid, data, encoding, mimetype_type, mimetype_subtype) VALUES(?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO content (uuid, data, encoding) VALUES(?, ?, ?)";
         Connection con = getConnection();
         try (PreparedStatement statement = con.prepareStatement(sql)) {
             int i = 1;
             statement.setObject(i++, uuid);
             statement.setBinaryStream(i++, content);
             statement.setString(i++, (encoding == null) ? null : encoding.name());
-            statement.setString(i++, mimeType.getType());
-            statement.setString(i++, mimeType.getSubType());
             statement.executeUpdate();
         } catch (SQLException ex) {
             throw new ContentException("Error saving content to database", ex);

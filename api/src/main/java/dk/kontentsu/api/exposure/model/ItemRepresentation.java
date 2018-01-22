@@ -37,7 +37,6 @@ import dk.kontentsu.api.exposure.CategoryExposure;
 import dk.kontentsu.api.exposure.HostExposure;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Provider;
-import dk.kontentsu.model.SemanticUri;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -48,16 +47,16 @@ import io.swagger.annotations.ApiModelProperty;
 public class ItemRepresentation {
 
     @NotNull
-    @ApiModelProperty(value = "The (semantic) URI of item on the CDN", dataType = "string", example = "pages/book/book.en.json", required = true)
-    private final SemanticUri uri;
+    @ApiModelProperty(value = "The (semantic) URI of item", dataType = "string", example = "pages/book/book.en.json", required = true)
+    private final Item.URI uri;
 
     @NotNull
     @ApiModelProperty(value = "The UUID of the item", example = "123e4567-e89b-12d3-a456-426655440000", required = true)
     private final UUID uuid;
 
     @NotNull
-    @ApiModelProperty(value = "Additional taxonomy categories for the item", required = false)
-    private final Map<String, List<Link>> categories;
+    @ApiModelProperty(value = "Additional taxonomy terms for the item", required = false)
+    private final Map<String, List<Link>> terms;
 
     @ApiModelProperty(value = "The provider of the item", required = false)
     private final Provider provider;
@@ -81,15 +80,16 @@ public class ItemRepresentation {
 
         this.provider = from.getProvider().orElse(null);
 
-        this.categories = from.getCategories()
+        //TODO: Verify
+        this.terms = from.getTerms()
                 .stream()
-                .collect(Collectors.groupingBy(c -> c.getTaxonomy().getName(), Collectors.mapping(c -> Link
+                .collect(Collectors.groupingBy(t -> t.getTaxonomy().getName(), Collectors.mapping(t -> Link
                         .fromUriBuilder(uriInfo.getBaseUriBuilder()
                                 .path(CategoryExposure.class)
                                 .path(CategoryExposure.class, "getCategory"))
                         .rel("category")
-                        .title(c.toString())
-                        .build(c.getTaxonomy().getName(), c.toString()), Collectors.toList())));
+                        .title(t.toString())
+                        .build(t.getTaxonomy().getName(), t.toString()), Collectors.toList())));
 
         this.hosts = from.getHosts().stream().map(h -> Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
                 .path(HostExposure.class)
@@ -103,12 +103,12 @@ public class ItemRepresentation {
         return uuid;
     }
 
-    public SemanticUri getUri() {
+    public Item.URI getUri() {
         return uri;
     }
 
-    public Map<String, List<Link>> getCategories() {
-        return Collections.unmodifiableMap(categories);
+    public Map<String, List<Link>> getTerms() {
+        return Collections.unmodifiableMap(terms);
     }
 
     public Provider getProvider() {

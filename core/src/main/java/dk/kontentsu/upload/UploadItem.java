@@ -34,8 +34,8 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 
 import dk.kontentsu.model.Interval;
+import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
 
 /**
  * Class representing the information and data needed to upload a item to the CDN.
@@ -45,7 +45,7 @@ import dk.kontentsu.model.SemanticUri;
 public final class UploadItem {
 
     @NotNull
-    private final SemanticUri uri;
+    private final Item.URI uri;
 
     @NotNull
     private final Interval interval;
@@ -74,7 +74,7 @@ public final class UploadItem {
         return new Builder();
     }
 
-    public SemanticUri getUri() {
+    public Item.URI getUri() {
         return uri;
     }
 
@@ -166,7 +166,7 @@ public final class UploadItem {
     public static final class Builder {
 
         private Content content;
-        private SemanticUri uri;
+        private Item.URI uri;
         private Interval interval;
         private MimeType mimeType;
         private Charset encoding;
@@ -175,7 +175,7 @@ public final class UploadItem {
         private Builder() {
         }
 
-        public Builder uri(final SemanticUri uri) {
+        public Builder uri(final Item.URI uri) {
             this.uri = uri;
             return this;
         }

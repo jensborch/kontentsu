@@ -33,8 +33,8 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import dk.kontentsu.model.Interval;
+import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -49,7 +49,7 @@ public class UploadItemRepresentation {
             dataType = "string",
             example = "images/book/book-xl.png",
             required = true)
-    private SemanticUri uri;
+    private Item.URI uri;
 
     @ApiModelProperty(value = "Set to true if the item should be a draft and thus not uploaded to the CDN host", required = false)
     private boolean draft;
@@ -82,7 +82,7 @@ public class UploadItemRepresentation {
     @ApiModelProperty(value = "Destination host for CDN item", example = "Website", required = false, notes = "If not specified item will be upload to all registered hosts")
     private final List<String> hosts = new ArrayList<>();
 
-    public SemanticUri getUri() {
+    public Item.URI getUri() {
         return uri;
     }
 

@@ -1,3 +1,4 @@
+
 package dk.kontentsu.externalization;
 
 import static org.junit.Assert.assertEquals;
@@ -15,6 +16,12 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.UserTransaction;
 
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.ExternalFile;
@@ -22,18 +29,13 @@ import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.ReferenceType;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.SemanticUriPath;
+import dk.kontentsu.model.Term;
 import dk.kontentsu.model.Version;
 import dk.kontentsu.repository.ExternalFileRepository;
+import dk.kontentsu.repository.TermRepository;
 import dk.kontentsu.test.ContentTestData;
 import dk.kontentsu.test.TestEJBContainer;
 import dk.kontentsu.util.Transaction;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 /**
  * Test for {@link ExternalizerService}.
@@ -46,13 +48,13 @@ public class ExternalizerServiceIT {
 
     private static EJBContainer container;
     private Item article1;
-    private SemanticUri articleUri1;
+    private Term article1Path;
     private Item contact;
-    private SemanticUri contactUri;
+    private Term contactPath;
     private ContentTestData halJsonData;
     private ContentTestData jsonData;
     private Item page;
-    private SemanticUri pageUri;
+    private Term pagePath;
     private Version pageVersion;
     private ObjectMapper mapper;
 
@@ -61,6 +63,9 @@ public class ExternalizerServiceIT {
 
     @Inject
     private ExternalFileRepository repo;
+
+    @Inject
+    private TermRepository termRepo;
 
     @Inject
     private EntityManager em;
@@ -92,40 +97,42 @@ public class ExternalizerServiceIT {
     public void createItems(final MimeType mimeType, ContentTestData data) throws Exception {
         try {
             userTransaction.begin();
-            articleUri1 = SemanticUri.parse("items/article2");
-            article1 = new Item(articleUri1);
+            article1Path = termRepo.create(new Item.URI("items/article2/"));
+            article1 = new Item(article1Path, mimeType);
             Version articleVersion1 = Version.builder()
-                    .content(new Content(data.getArticle(1), StandardCharsets.UTF_8, mimeType))
+                    .content(new Content(data.getArticle(1), StandardCharsets.UTF_8))
                     .from(NOW.minusDays(1000))
                     .to(NOW.plusDays(10))
                     .build();
             article1.addVersion(articleVersion1);
 
             Version articleVersion2 = Version.builder()
-                    .content(new Content(data.getArticle(2), StandardCharsets.UTF_8, mimeType))
+                    .content(new Content(data.getArticle(2), StandardCharsets.UTF_8))
                     .from(NOW.plusDays(15))
                     .to(NOW.plusDays(20))
                     .build();
             article1.addVersion(articleVersion2);
 
-            contactUri = SemanticUri.parse("items/contact");
-            contact = new Item(contactUri);
+            contactPath = termRepo.create(new Item.URI("items/contact/"));
+            contact = new Item(contactPath, mimeType);
             Version contactVersion = Version.builder()
-                    .content(new Content(data.getContact(), StandardCharsets.UTF_8, mimeType))
+                    .content(new Content(data.getContact(), StandardCharsets.UTF_8))
                     .from(NOW)
                     .build();
             contact.addVersion(contactVersion);
 
-            pageUri = SemanticUri.parse("items/page-simple");
-            page = new Item(pageUri);
+            pagePath = termRepo.create(new Item.URI("items/page-simple/"));
+            page = new Item(pagePath, mimeType);
             pageVersion = Version.builder()
-                    .content(new Content(data.getSimplePage(), StandardCharsets.UTF_8, mimeType))
+                    .content(new Content(data.getSimplePage(), StandardCharsets.UTF_8))
                     .reference(article1, ReferenceType.COMPOSITION)
                     .reference(contact, ReferenceType.COMPOSITION)
                     .from(NOW)
                     .to(NOW.plusDays(100))
                     .build();
             page.addVersion(pageVersion);
+
+
 
             em.persist(article1);
             em.persist(contact);
@@ -149,15 +156,13 @@ public class ExternalizerServiceIT {
 
     private void deleteItem(Item item) {
         item = em.find(Item.class, item.getId());
-        SemanticUriPath path = item.getUri().getPath();
         em.remove(item);
-        em.remove(path);
     }
 
     @Test
     public void testDelete() throws Exception {
         createItems(MimeType.APPLICATION_HAL_JSON_TYPE, halJsonData);
-        Content content = new Content("{\"test\": \"test\"}".getBytes(), Charset.defaultCharset(), new MimeType("application", "hal+json"));
+        Content content = new Content("{\"test\": \"test\"}".getBytes(), Charset.defaultCharset());
         ExternalFile toDelete = ExternalFile.builder()
                 .externalizationId("42")
                 .content(content)
@@ -212,7 +217,7 @@ public class ExternalizerServiceIT {
             userTransaction.begin();
             article1 = em.find(Item.class, article1.getId());
             articleVersion = Version.builder()
-                    .content(new Content(halJsonData.getArticle(2), StandardCharsets.UTF_8, MimeType.APPLICATION_HAL_JSON_TYPE))
+                    .content(new Content(halJsonData.getArticle(2), StandardCharsets.UTF_8))
                     .from(NOW.plusDays(21))
                     .to(NOW.plusDays(25))
                     .build();
@@ -225,7 +230,7 @@ public class ExternalizerServiceIT {
         assertEquals(3, result.size());
         ExternalFile file = result.stream().filter(f -> f.getInterval().equals(new Interval(NOW.plusDays(21), NOW.plusDays(25)))).findAny().get();
         assertNotNull(file);
-        assertEquals(halJsonData.getSimplePageResults(2), file.getContent().getData());
+        assertEquals(mapper.readTree(halJsonData.getSimplePageResults(2)), mapper.readTree(file.getContent().getData()));
     }
 
     @Test
@@ -237,7 +242,7 @@ public class ExternalizerServiceIT {
             page = em.find(Item.class, page.getId());
 
             pageVersion = Version.builder()
-                    .content(new Content(halJsonData.getSimplePage(), StandardCharsets.UTF_8, MimeType.APPLICATION_HAL_JSON_TYPE))
+                    .content(new Content(halJsonData.getSimplePage(), StandardCharsets.UTF_8))
                     .reference(article1, ReferenceType.COMPOSITION)
                     .reference(contact, ReferenceType.COMPOSITION)
                     .from(NOW.plusDays(101))

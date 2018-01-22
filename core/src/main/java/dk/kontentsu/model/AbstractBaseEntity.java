@@ -24,6 +24,7 @@
 package dk.kontentsu.model;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -31,6 +32,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -54,8 +57,25 @@ abstract class AbstractBaseEntity implements Serializable {
     @NotNull
     private UUID uuid;
 
+    @Column(name = "created", nullable = false)
+    private ZonedDateTime created;
+
+    @Column(name = "modified", nullable = false)
+    private ZonedDateTime modified;
+
     AbstractBaseEntity() {
         this.uuid = UUID.randomUUID();
+    }
+
+    @PrePersist
+    void initCreated() {
+        this.created = ZonedDateTime.now();
+        this.modified = ZonedDateTime.now();
+    }
+
+    @PreUpdate
+    void updateModified() {
+        this.modified = ZonedDateTime.now();
     }
 
     @JsonIgnore
@@ -69,6 +89,14 @@ abstract class AbstractBaseEntity implements Serializable {
 
     final void setUuid(final UUID uuid) {
         this.uuid = uuid;
+    }
+
+    public ZonedDateTime getCreated() {
+        return created;
+    }
+
+    public ZonedDateTime getModified() {
+        return modified;
     }
 
     @Override

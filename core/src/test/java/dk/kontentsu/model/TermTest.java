@@ -36,7 +36,7 @@ public class TermTest {
 
     @Test
     public void testParse() {
-        assertEquals(term3.getFullPath(), Term.parse("uri:/test1/Test2/test3/").getFullPath());
+        assertEquals(term3.getPathWithTaxonomy(), Term.parse("uri:/test1/Test2/test3/").getPathWithTaxonomy());
     }
 
     @Test
@@ -50,27 +50,27 @@ public class TermTest {
 
     @Test
     public void testFullPath() {
-        assertEquals("uri:/test1/", term1.getFullPath());
-        assertEquals("uri:/test1/test2/", term2.getFullPath());
-        assertEquals("uri:/test1/test2/test3/", term3.getFullPath());
-        assertEquals(term3.toString(), term3.getFullPath());
+        assertEquals("uri:/test1/", term1.getPathWithTaxonomy());
+        assertEquals("uri:/test1/test2/", term2.getPathWithTaxonomy());
+        assertEquals("uri:/test1/test2/test3/", term3.getPathWithTaxonomy());
+        assertEquals(term3.toString(), term3.getPathWithTaxonomy());
     }
 
     @Test
     public void testNames() {
-        assertArrayEquals(new String[]{"test1"}, term1.getNames());
-        assertArrayEquals(new String[]{"test1", "test2"}, term2.getNames());
-        assertArrayEquals(new String[]{"test1", "test2", "test3"}, term3.getNames());
+        assertArrayEquals(new String[]{"test1"}, term1.getElements());
+        assertArrayEquals(new String[]{"test1", "test2"}, term2.getElements());
+        assertArrayEquals(new String[]{"test1", "test2", "test3"}, term3.getElements());
     }
 
     @Test
     public void testAppend() {
         Term test = term1.append("test2");
-        assertEquals(term2.getFullPath(), test.getFullPath());
-        assertEquals(term3.getFullPath(), term1.append("test2/test3").getFullPath());
+        assertEquals(term2.getPathWithTaxonomy(), test.getPathWithTaxonomy());
+        assertEquals(term3.getPathWithTaxonomy(), term1.append("test2/test3").getPathWithTaxonomy());
         Term testTerm = new Term("test2").append(new Term("TEST3"));
         term1.append(testTerm.getParent().get());
-        assertEquals(term3.getFullPath(), testTerm.getFullPath());
+        assertEquals(term3.getPathWithTaxonomy(), testTerm.getPathWithTaxonomy());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -109,7 +109,7 @@ public class TermTest {
     public void testTaxonomy() {
         Term t = term1.getParent().get();
         assertEquals("uri", t.getName());
-        assertEquals(0, t.getNames().length);
+        assertEquals(0, t.getElements().length);
         assertEquals("/", t.getPath());
         assertFalse(t.getParent().isPresent());
     }
@@ -126,10 +126,10 @@ public class TermTest {
 
     @Test
     public void testEmpty() {
-        assertEquals("empty:/", empty.getFullPath());
+        assertEquals("empty:/", empty.getPathWithTaxonomy());
         assertEquals("/", empty.getPath());
         assertEquals("empty", empty.getName());
-        assertEquals(0, empty.getNames().length);
+        assertEquals(0, empty.getElements().length);
         assertTrue(empty.isTaxonomy());
     }
 
@@ -137,19 +137,19 @@ public class TermTest {
     public void testRemove() {
         Term t = term3.getParent().get().remove(term3);
         assertEquals(0, t.getChildren().size());
-        assertEquals("uri:/test1/test2/", t.getFullPath());
+        assertEquals("uri:/test1/test2/", t.getPathWithTaxonomy());
         assertFalse(term3.getParent().isPresent());
-        assertEquals("test3:/", term3.getFullPath());
+        assertEquals("test3:/", term3.getPathWithTaxonomy());
 
     }
 
     @Test
     public void testPostLoad() {
         term3.initPath();
-        term3.updatePathNames();
-        assertEquals("uri:/test1/test2/test3/", term3.getFullPath());
+        term3.updatePathElements();
+        assertEquals("uri:/test1/test2/test3/", term3.getPathWithTaxonomy());
         empty.initPath();
-        empty.updatePathNames();
-        assertEquals("empty:/", empty.getFullPath());
+        empty.updatePathElements();
+        assertEquals("empty:/", empty.getPathWithTaxonomy());
     }
 }

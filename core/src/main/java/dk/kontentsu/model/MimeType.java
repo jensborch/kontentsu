@@ -46,9 +46,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.core.MediaType;
 
-import dk.kontentsu.spi.ContentProcessingMimeType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import dk.kontentsu.spi.ContentProcessingMimeType;
 
 /**
  * Class representing the content Mime Type of a item in the CDN, but also
@@ -66,8 +67,13 @@ public class MimeType implements Serializable {
     public static final String APPLICATION_HAL_JSON = "application/hal+json";
     public static final MimeType APPLICATION_HAL_JSON_TYPE = new MimeType("application", "hal+json");
     public static final MimeType APPLICATION_JSON_TYPE = new MimeType("application", "json");
+    public static final MimeType IMAGE_PNG_TYPE = new MimeType("image", "png");
+    public static final MimeType IMAGE_GIF_TYPE = new MimeType("image", "gif");
+    public static final MimeType IMAGE_JPG_TYPE = new MimeType("image", "jpg");
     public static final MimeType IMAGE_ANY_TYPE = new MimeType("image");
     public static final MimeType VIDEO_ANY_TYPE = new MimeType("video");
+
+    public static final Map<String, MimeType> EXTENSIONS = new HashMap<>(10);
 
     private static final String PARAM_CHARSET = "charset";
 
@@ -85,6 +91,16 @@ public class MimeType implements Serializable {
     private static final long serialVersionUID = -6748129010939249437L;
 
     private static final Logger LOGGER = LogManager.getLogger();
+
+    static {
+        EXTENSIONS.put("xml", APPLICATION_XML_TYPE);
+        EXTENSIONS.put("json", APPLICATION_JSON_TYPE);
+        EXTENSIONS.put("json", APPLICATION_HAL_JSON_TYPE);
+        EXTENSIONS.put("gif", IMAGE_GIF_TYPE);
+        EXTENSIONS.put("jpeg", IMAGE_JPG_TYPE);
+        EXTENSIONS.put("jpg", IMAGE_JPG_TYPE);
+        EXTENSIONS.put("png", IMAGE_PNG_TYPE);
+    }
 
     @Size(min = 1, max = 64)
     @Column(name = "mimetype_type", length = 64)
@@ -116,6 +132,11 @@ public class MimeType implements Serializable {
     public MimeType(final String type, final String subtype, final Map<String, String> params) {
         this(type, subtype);
         this.params.putAll(params);
+    }
+
+    public static MimeType formExtension(String ext) {
+        return Optional.ofNullable(EXTENSIONS.get(ext))
+                .orElseThrow(() -> new IllegalArgumentException("Unknown MIME type extension: " + ext));
     }
 
     public String getType() {

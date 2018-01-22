@@ -91,7 +91,7 @@ public class HalJsonExternalizationVisitor extends ExternalizationVisitor {
     @Override
     public ExternalizationVisitor.Results getResults() {
         removeComposition(pageNode);
-        Content result = new Content(pageNode.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8, content.getMimeType());
+        Content result = new Content(pageNode.toString().getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
         return new ExternalizationVisitor.Results(result);
     }
 

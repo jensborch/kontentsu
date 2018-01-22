@@ -5,15 +5,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.Metadata;
 import dk.kontentsu.model.MetadataType;
-import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.ReferenceType;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.test.ContentTestData;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Test for {@link JsonParser}
@@ -31,7 +31,7 @@ public class JsonParserTest {
 
     @Test
     public void testParse() throws Exception {
-        Content content = new Content(data.getFullPage(), StandardCharsets.UTF_8, MimeType.APPLICATION_JSON_TYPE);
+        Content content = new Content(data.getFullPage(), StandardCharsets.UTF_8);
         JsonParser parser = new JsonParser();
         parser.content = content;
         parser.init();

@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import dk.kontentsu.model.Interval;
-import dk.kontentsu.model.SemanticUri;
+import dk.kontentsu.model.Item;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -51,7 +51,7 @@ public class MultipartUploadItemRepresentation {
             dataType = "string",
             example = "images/book/book-xl.png",
             required = true)
-    private SemanticUri uri;
+    private Item.URI uri;
 
     @ApiModelProperty(value = "Set to true if item should be a draft and thus not uploaded to the CDN", required = false)
     private boolean draft;
@@ -77,7 +77,7 @@ public class MultipartUploadItemRepresentation {
             notes = "If not specified item will be upload to all registered hosts")
     private List<String> hosts = new ArrayList<>();
 
-    public SemanticUri getUri() {
+    public Item.URI getUri() {
         return uri;
     }
 

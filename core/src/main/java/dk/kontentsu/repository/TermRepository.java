@@ -24,8 +24,10 @@
 package dk.kontentsu.repository;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -38,8 +40,6 @@ import javax.persistence.TypedQuery;
 
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Term;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Repository for performing CRUD operations on term objects.
@@ -57,7 +57,6 @@ public class TermRepository extends Repository<Term> {
         return query.getResultList();
     }
 
-
     @Override
     public Term get(final UUID uuid) {
         TypedQuery<Term> query = em.createNamedQuery(TERM_GET, Term.class);
@@ -67,39 +66,51 @@ public class TermRepository extends Repository<Term> {
 
     public Term create(final Item.URI path) {
         Term term = findAll().stream().filter(Term::isUri).findAny().orElse(new Term());
+        return term.append(path.getFolderElements());
+    }
 
-        String[] elements = path.getPathElements();
-        List<String> p = Arrays.stream(elements).limit(elements.length - 1L).collect(Collectors.toList());
-
-        for (String e :p) {
-            Optional<Term> found = term.getChildren().stream()
-                    .filter(t -> t.getName().equals(e))
-                    .findAny();
-            if (found.isPresent()) {
-                term = found.get();
-            } else {
-                term = term.append(new Term(e));
-            }
-        }
-        return term;
+    public Term create(final String path) {
+        String[] elements = Term.splitPathWithTaxonomy(path);
+        Term taxonomy = findAll().stream().filter(t -> t.getName().equals(elements[0])).findAny().orElse(new Term(elements[0]));
+        //TODO: test + validate
+        List<String> p = Arrays.stream(elements).skip(1L).collect(Collectors.toList());
+        return taxonomy.append(p);
     }
 
     public Optional<Term> findByUri(final Item.URI path) {
         try {
             TypedQuery<Term> query = em.createNamedQuery(TERM_FIND_BY_URI, Term.class);
-            query.setParameter("path", path.getFullPath());
+            query.setParameter("path", path.toTerm());
             return Optional.of(query.getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();
         }
     }
 
+    public Optional<Term> find(final String path) {
+        try {
+            return Optional.of(get(path));
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    public Term get(final String path) {
+        TypedQuery<Term> query = em.createNamedQuery(TERM_FIND, Term.class);
+        query.setParameter("path", path);
+        return query.getSingleResult();
+    }
+
+    public void delete(final Term term) {
+        Set<Term> remove = new HashSet<>(term.getChildren());
+        remove.forEach(term::remove);
+        term.getParent().ifPresent(p -> p.remove(term));
+        em.remove(term);
+    }
+
     public void delete(final UUID uuid) {
         Term t = get(uuid);
-        Set<Term> remove = new HashSet<>(t.getChildren());
-        remove.forEach(t::remove);
-        t.getParent().ifPresent(p -> p.remove(t));
-        em.remove(t);
+        delete(t);
     }
 
 }

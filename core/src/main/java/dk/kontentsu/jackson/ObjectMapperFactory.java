@@ -29,8 +29,8 @@ import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.SemanticUri;
 
 /**
  *
@@ -59,8 +59,8 @@ public final class ObjectMapperFactory {
         result.registerModule(mod);
 
         mod = new SimpleModule("Semantic URI type module");
-        mod.addSerializer(new SemanticUriSerializer());
-        mod.addDeserializer(SemanticUri.class, new SemanticUriDeserializer());
+        mod.addSerializer(new ItemUriSerializer());
+        mod.addDeserializer(Item.URI.class, new ItemUriDeserializer());
         result.registerModule(mod);
 
         mod = new SimpleModule("Link module");

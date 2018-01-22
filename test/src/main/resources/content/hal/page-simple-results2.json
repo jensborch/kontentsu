@@ -1,19 +1,19 @@
 {
    "_links":{
       "self":{
-         "href":"pages/page-simple"
+         "href":"/pages/page-simple/"
       },
       "template":{
-         "href":"components/templates/responsive-one-article.tpl.html"
+         "href":"/components/templates/responsive-one-article.tpl.html"
       },
       "composition-type":{
-         "href":"compositiontypes/default/page-one-article.json"
+         "href":"/compositiontypes/default/page-one-article.json"
       },
       "articles1-article-picture-right-template":{
-         "href":"components/templates/article-picture-right.tpl.html"
+         "href":"/components/templates/article-picture-right.tpl.html"
       },
       "articles1-book":{
-         "href":"images/book/book.jpg"
+         "href":"/images/book/book.jpg"
       }
    },
    "seo":{

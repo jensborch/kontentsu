@@ -28,7 +28,7 @@ import javax.ws.rs.core.Link;
 import javax.ws.rs.core.UriInfo;
 
 import dk.kontentsu.api.exposure.CategoryExposure;
-import dk.kontentsu.model.Category;
+import dk.kontentsu.model.Term;
 
 /**
  *
@@ -42,7 +42,7 @@ public class CategoryRepresentation {
     @NotNull
     private final String path;
 
-    public CategoryRepresentation(final Category c, final UriInfo uriInfo) {
+    public CategoryRepresentation(final Term c, final UriInfo uriInfo) {
         this.taxonomy = Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
                 .path(CategoryExposure.class)
                 .path(CategoryExposure.class, "getTaxonomy"))

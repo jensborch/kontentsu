@@ -42,22 +42,22 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import dk.kontentsu.externalization.ExternalizerService;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.Host;
 import dk.kontentsu.model.Item;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.SemanticUriPath;
+import dk.kontentsu.model.Term;
 import dk.kontentsu.model.Version;
 import dk.kontentsu.model.processing.InjectableContentProcessingScope;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.parsers.Link;
-import dk.kontentsu.repository.CategoryRepository;
 import dk.kontentsu.repository.HostRepository;
 import dk.kontentsu.repository.ItemRepository;
+import dk.kontentsu.repository.TermRepository;
 import dk.kontentsu.spi.ContentProcessingMimeType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Service facade for performing various operations on CDN items - like uploading new items.
@@ -76,7 +76,7 @@ public class Uploader {
     private HostRepository hostRepo;
 
     @Inject
-    private CategoryRepository catRepo;
+    private TermRepository termRepo;
 
     @Inject
     private ExternalizerService externalizer;
@@ -173,10 +173,12 @@ public class Uploader {
     }
 
     private Item findOrCreateItem(final UploadItem uploadItem) {
-        SemanticUriPath path = catRepo.findByUri(uploadItem.getUri().getPath())
-                .orElse(uploadItem.getUri().getPath());
-        return path.getItem(uploadItem.getUri().getName())
-                .orElse(new Item(new SemanticUri(path, uploadItem.getUri().getName())));
+        Item.URI itemUri = uploadItem.getUri();
+        Term term = termRepo.create(itemUri);
+        return term.getItems()
+                .stream().filter(i -> i.getEdition().equals(itemUri.getEdition()))
+                .findAny()
+                .orElse(new Item(term, itemUri.getEdition().orElse(null), uploadItem.getMimeType()));
     }
 
     private void addHosts(final Item item, final UploadItem uploadItem) {
@@ -213,7 +215,7 @@ public class Uploader {
         InjectableContentProcessingScope.execute(() -> {
             findAllContentParserBeans().forEach(bean -> {
                 Arrays.stream(bean.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
-                    if (content.getMimeType().matches(a).isMatch()) {
+                    if (item.getMimeType().matches(a).isMatch()) {
                         parse(getContentParser(bean), item.getUri(), builder);
                     }
                 });
@@ -226,7 +228,7 @@ public class Uploader {
         return version;
     }
 
-    private void parse(final ContentParser parser, final SemanticUri uri, final Version.Builder builder) {
+    private void parse(final ContentParser parser, final Item.URI uri, final Version.Builder builder) {
         ContentParser.Results parsedContent = parser.parse();
         parsedContent.getLinks()
                 .stream()
@@ -244,10 +246,9 @@ public class Uploader {
     private Item findOrCreate(final Link link) {
         return itemRepo.findByUri(link.getUri())
                 .orElseGet(() -> {
-                    SemanticUriPath tmpPath = catRepo.findByUri(link.getPath())
-                            .orElse(link.getPath());
-                    LOGGER.debug("Found link in content with path {} and name {}", tmpPath, link.getUri().getName());
-                    Item tmpItem = new Item(new SemanticUri(tmpPath, link.getUri().getName()));
+                    Term path = termRepo.create(link.getUri());
+                    LOGGER.debug("Found link in content with path {} and name {}", path, link.getUri().getEdition());
+                    Item tmpItem = new Item(path, link.getUri().getEdition().orElse(null), link.getUri().getMimeType());
                     return itemRepo.save(tmpItem);
                 });
     }

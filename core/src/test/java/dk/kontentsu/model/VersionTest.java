@@ -13,6 +13,7 @@ import org.junit.Test;
 
 
 /**
+ * Test for {@link Version}.
  *
  * @author Jens Borch Christiansen
  */
@@ -25,10 +26,9 @@ public class VersionTest {
 
     @Before
     public void setUp() throws Exception  {
-        content = new Content("This is a test".getBytes(), Charset.defaultCharset(), new MimeType("text", "plain"));
-        //Group group = new Group("test1", "test2");
-        SemanticUri semanticUri = SemanticUri.parse("test1/test2");
-        item = new Item(semanticUri);
+        content = new Content("This is a test".getBytes(), Charset.defaultCharset());
+        Term path = Term.parse("uri:/test1/test2/");
+        item = new Item(path, new MimeType("text", "plain"));
         version = Version.builder()
                 .from(NOW.plusDays(2))
                 .metadata(new Metadata.Key(MetadataType.PAGE, "key"), new Metadata("This is metadata"))
@@ -38,7 +38,7 @@ public class VersionTest {
     }
 
     @Test
-    public void testOverlaps() {
+    public void testRelations() {
         assertEquals(1, item.getVersions().size());
         assertNotNull(version.getItem());
         assertEquals(item, version.getItem());
@@ -47,9 +47,8 @@ public class VersionTest {
     @Test
     public void testIsComplete() {
         assertTrue(version.isComplete());
-        //Group compGrp = new Group("test2", "test3");
-        SemanticUri semanticUri = SemanticUri.parse("test2/test3");
-        Item compItem = new Item(semanticUri);
+        Term path = Term.parse("uri:/test2/test3/");
+        Item compItem = new Item(path, MimeType.APPLICATION_JSON_TYPE);
         Version compVersion = Version.builder()
                 .from(NOW.plusDays(2))
                 .content(content)
@@ -62,9 +61,8 @@ public class VersionTest {
     @Test
     public void testIsNotComplete() {
         assertTrue(version.isComplete());
-        //Group compGrp = new Group("test2", "test3");
-        SemanticUri semanticUri = SemanticUri.parse("test2/test3");
-        Item compItem = new Item(semanticUri);
+        Term path = Term.parse("uri:/test2/test3/");
+        Item compItem = new Item(path, MimeType.APPLICATION_JSON_TYPE);
         Version compVersion = Version.builder()
                 .from(NOW.minusDays(2))
                 .to(NOW.minusSeconds(1))

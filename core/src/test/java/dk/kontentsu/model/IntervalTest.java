@@ -1,7 +1,10 @@
 package dk.kontentsu.model;
 
+import static org.hamcrest.number.OrderingComparison.greaterThan;
+import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
@@ -40,6 +43,12 @@ public class IntervalTest {
         nowPlus4days = new Interval(NOW, NOW.plusDays(4));
         plus4daysPlus8days = new Interval(NOW.plusDays(4), NOW.plusDays(8));
         nowMax = new Interval(NOW, null);
+    }
+
+    @Test
+    public void testSorting() {
+        assertThat(nowPlus2days.compareTo(nowPlus4days), lessThan(0));
+        assertThat(plus4daysPlus8days.compareTo(nowPlus2days), greaterThan(0));
     }
 
     @Test

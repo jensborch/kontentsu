@@ -1,7 +1,7 @@
 {
     "links": [
         {
-            "href": "items/footer",
+            "href": "/items/footer/",
             "rel": "self"
         }
     ],

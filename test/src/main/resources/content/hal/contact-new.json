@@ -1,7 +1,7 @@
 {
     "_links": {
         "self": {
-            "href": "items/contact"
+            "href": "/items/contact/"
         }
     },
     "heading": "New Contact us",

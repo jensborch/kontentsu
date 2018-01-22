@@ -19,7 +19,7 @@ public class TestVisitor implements TemporalReferenceTreeVisitor<TestVisitor.Tes
 
     @Override
     public void visit(TemporalReferenceTree.Node node) {
-        names.add(node.getVersion().getItem().getName());
+        names.add(node.getVersion().getItem().getUri().getFileName());
     }
 
     public static class TestResults implements TemporalReferenceTreeVisitor.Results {

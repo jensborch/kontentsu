@@ -87,22 +87,16 @@ public class Content implements Serializable {
     @Column(name = "encoding", length = 50)
     private String encoding;
 
-    @NotNull
-    @Column(name = "mimetype")
-    private MimeType mimeType;
+
 
     protected Content() {
         //Needed by JPA
     }
 
-    public Content(final byte[] content, final Charset encoding, final String mimeType) {
-        this(content, encoding, MimeType.parse(mimeType));
-    }
 
-    public Content(final byte[] content, final Charset encoding, final MimeType mimeType) {
+    public Content(final byte[] content, final Charset encoding) {
         this.uuid = UUID.randomUUID();
         setEncoding(encoding);
-        this.mimeType = mimeType;
         this.data = Arrays.copyOf(content, content.length);
         initHash();
     }
@@ -166,10 +160,6 @@ public class Content implements Serializable {
 
     public Optional<Charset> getEncoding() {
         return (encoding == null) ? Optional.empty() : Optional.of(Charset.forName(encoding));
-    }
-
-    public MimeType getMimeType() {
-        return mimeType;
     }
 
     @Override

@@ -15,6 +15,7 @@ import dk.kontentsu.test.TestEJBContainer;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -22,6 +23,7 @@ import org.junit.Test;
  *
  * @author Jens Borch Christiansen
  */
+@Ignore
 public class ExternalFileExposureIT {
 
     private static final LocalDateTime NOW = LocalDateTime.now();

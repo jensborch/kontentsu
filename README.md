@@ -31,7 +31,7 @@ release of the Payara Java EE 7 container.
 To run Kontentsu using Gradle use the following command (default port is 9090):
 
 ```
-gradle :api:startPayara
+gradle :payara:payaraStart
 ```
 
 To run from command line use and start the Kontentsu on port 8080:

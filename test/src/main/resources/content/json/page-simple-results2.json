@@ -1,20 +1,20 @@
 {
-    "href": "pages/page-simple",
+    "href": "/pages/page-simple/",
     "template": {
-        "href": "templates/responsive-one-article.tpl.html"
+        "href": "/templates/responsive-one-article.tpl.html"
     },
     "composition-type": {
-        "href": "compositiontypes/default/page-one-article.json"
+        "href": "/compositiontypes/default/page-one-article.json"
     },
     "composition": {
         "articles": [
             {
-                "href": "items/article2"
+                "href": "/items/article2/"
             }
         ],
         "contact":
                 {
-                    "href": "items/contact"
+                    "href": "/items/contact/"
                 }
     },
     "metadata": {
@@ -27,25 +27,11 @@
     },
     "content": {
         "heading": "Lorem Ipsum",
-        "contact": {
-            "href":"items/contact",
-            "heading": "Contact us",
-            "telephone": {
-                "legend": "Call",
-                "text": "Call us:",
-                "number": "campaign"
-            },
-            "mail": {
-                "legend": "Email us",
-                "text": "Send an email:",
-                "address": "campaign"
-            }
-        },
         "articles": [
             {
-                "href": "items/article2",
+                "href": "/items/article2/",
                 "template": {
-                    "href": "templates/article-picture-right.tpl.html"
+                    "href": "/templates/article-picture-right.tpl.html"
                 },
                 "heading": "Heading article 2",
                 "summary": "Summary article 2",
@@ -65,7 +51,7 @@
                         "picture": {
                             "title": "Book",
                             "alt": "Book",
-                            "href": "images/book/book.jpg",
+                            "href": "/images/book/book.jpg",
                             "useMetadata": "true"
                         }
                     },
@@ -79,6 +65,20 @@
                     }
                 ]
             }
-        ]
+        ],
+        "contact": {
+            "href":"/items/contact/",
+            "heading": "Contact us",
+            "telephone": {
+                "legend": "Call",
+                "text": "Call us:",
+                "number": "campaign"
+            },
+            "mail": {
+                "legend": "Email us",
+                "text": "Send an email:",
+                "address": "campaign"
+            }
+        }
     }
 }

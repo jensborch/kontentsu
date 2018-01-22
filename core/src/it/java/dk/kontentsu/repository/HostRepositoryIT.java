@@ -16,16 +16,17 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.transaction.UserTransaction;
 
-import dk.kontentsu.model.Host;
-import dk.kontentsu.model.Item;
-import dk.kontentsu.model.SemanticUri;
-import dk.kontentsu.model.SemanticUriPath;
-import dk.kontentsu.test.TestEJBContainer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import dk.kontentsu.model.Host;
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.MimeType;
+import dk.kontentsu.model.Term;
+import dk.kontentsu.test.TestEJBContainer;
 
 /**
  * Integration test for {@link HostRepository}.
@@ -40,7 +41,7 @@ public class HostRepositoryIT {
     private HostRepository hostRepo;
 
     @Inject
-    private CategoryRepository catRepo;
+    private TermRepository catRepo;
 
     @Inject
     private ItemRepository itemRepo;
@@ -70,13 +71,12 @@ public class HostRepositoryIT {
             hosts[0] = hostRepo.save(new Host("name1", "test test", URI.create("ftp://myusername:mypassword@somehost/"), "cdn/upload"));
             hosts[1] = hostRepo.save(new Host("name2", "test test", URI.create("sftp://myusername:mypassword@somehost/"), "cdn/upload"));
 
-            SemanticUriPath tmpPath = new SemanticUriPath("test1", "test2");
-            SemanticUriPath path = catRepo.findByUri(tmpPath).orElseGet(() -> {
-                return (SemanticUriPath) catRepo.save(tmpPath);
-            });
-            Item item = itemRepo.findByUri(new SemanticUri(path, "test2"))
+            Item.URI uri = new Item.URI("test1/test2/");
+            Term path = catRepo.create(uri);
+
+            Item item = itemRepo.findByUri(uri)
                     .orElseGet(() -> {
-                        return itemRepo.save(new Item(new SemanticUri(path, "test2")));
+                        return itemRepo.save(new Item(path, MimeType.APPLICATION_JSON_TYPE));
                     });
             item.addHost(hostRepo.getByName("name2"));
         } finally {

@@ -25,27 +25,28 @@ package dk.kontentsu.jackson;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import dk.kontentsu.model.SemanticUri;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import dk.kontentsu.model.Item;
 
 /**
- * Jackson serializer for {@link dk.kontentsu.model.SemanticUri} objects.
+ * Jackson deserializer for {@link dk.kontentsu.model.Item.URI} objects.
  *
  * @author Jens Borch Christiansen
  */
-public class SemanticUriSerializer extends StdSerializer<SemanticUri> {
+public class ItemUriDeserializer extends StdDeserializer<Item.URI> {
 
-    private static final long serialVersionUID = 6036713960773087294L;
+    private static final long serialVersionUID = -1380789047079880654L;
 
-    public SemanticUriSerializer() {
-        super(SemanticUri.class);
+    public ItemUriDeserializer() {
+        super(Item.URI.class);
     }
 
     @Override
-    public void serialize(final SemanticUri value, final JsonGenerator generator, final SerializerProvider provider) throws IOException {
-        generator.writeString(value.toString());
+    public Item.URI deserialize(final JsonParser jp, final DeserializationContext dc) throws IOException {
+        String value = jp.readValueAs(String.class);
+        return new Item.URI(value);
     }
 
 }

@@ -28,7 +28,7 @@ public class ExternalFileTest {
 
     @Before
     public void setUp() {
-        item = new Item(SemanticUri.parse("hello/hello"));
+        item = new Item(Term.parse("uri:/hello/hello/"), MimeType.APPLICATION_JSON_TYPE);
         version = Version.builder()
                 .from(NOW)
                 .build();

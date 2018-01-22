@@ -6,8 +6,11 @@
 package dk.kontentsu.model;
 
 
+import static org.hamcrest.number.OrderingComparison.greaterThan;
+import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 
 import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
@@ -26,18 +29,18 @@ public class ItemTest {
 
     private static final ZonedDateTime NOW = ZonedDateTime.now();
 
-    private SemanticUriPath semanticUriPath;
+    private Term path;
     private Item item;
 
     @Before
     public void setUp() throws Exception {
-        semanticUriPath = new SemanticUriPath("test1", "test2");
-        item = new Item(new SemanticUri(semanticUriPath, "default"));
+        path = new Term().append("test1").append("test2");
+        item = new Item(path, "default", new MimeType("text", "plain"));
         item.addVersion(create(NOW, Interval.INFINITE));
     }
 
     private Version create(final ZonedDateTime from, final ZonedDateTime to) throws Exception {
-        Content content = new Content("This is a test".getBytes(), Charset.defaultCharset(), new MimeType("text", "plain"));
+        Content content = new Content("This is a test".getBytes(), Charset.defaultCharset());
         return Version.builder()
                 .content(content)
                 .from(from)
@@ -47,10 +50,16 @@ public class ItemTest {
     }
 
     @Test
+    public void testSorting() throws Exception {
+        assertThat(create(NOW, NOW.plusMinutes(5)).compareTo(create(NOW.plusMinutes(5), NOW.plusMinutes(10))), lessThan(0));
+        assertThat(create(NOW.minusMinutes(10), NOW.minusMinutes(5)).compareTo(create(NOW.minusDays(10), NOW.minusDays(5))), greaterThan(0));
+    }
+
+    @Test
     public void testNoOverlaps() throws Exception {
         Version nooverlap = create(NOW.minusHours(1), NOW.minusNanos(1));
         item.addVersion(nooverlap);
-        assertEquals(1, semanticUriPath.getItems().size());
+        assertEquals(1, path.getItems().size());
         assertEquals(2, item.getVersions().size());
     }
 
@@ -62,7 +71,7 @@ public class ItemTest {
 
     @Test(expected = ValidationException.class)
     public void testVersionOverlap() throws Exception {
-        Content content = new Content("Overlap".getBytes(), Charset.defaultCharset(), new MimeType("text", "plain"));
+        Content content = new Content("Overlap".getBytes(), Charset.defaultCharset());
 
         Version version = Version.builder()
                 .from(NOW.plusDays(2))
