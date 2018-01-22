@@ -63,12 +63,12 @@ import io.swagger.annotations.ApiResponses;
  *
  * @author Jens Borch Christiansen
  */
-@Path("/categories")
+@Path("/terms")
 @Stateless
 @DeclareRoles(Role.ADMIN)
 @RolesAllowed(Role.ADMIN)
 @Api(tags = {"categories"})
-public class CategoryExposure {
+public class TermExposure {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -88,8 +88,8 @@ public class CategoryExposure {
         List<Link> result = termRepo.findAll()
                 .stream()
                 .map(t -> Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
-                        .path(CategoryExposure.class)
-                        .path(CategoryExposure.class, "getTaxonomy"))
+                        .path(TermExposure.class)
+                        .path(TermExposure.class, "getTaxonomy"))
                         .rel("taxonomy")
                         .title(t.getName())
                         .build(t.getName()))
@@ -110,12 +110,12 @@ public class CategoryExposure {
                 .orElseThrow(() -> new NoResultException("Taxonomy '" + taxonomy + "' not found"));
         List<Link> result = term.getChildren()
                 .stream()
-                .map(c -> Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
-                        .path(CategoryExposure.class)
-                        .path(CategoryExposure.class, "getCategory"))
-                        .rel("category")
-                        .title(c.toString())
-                        .build(c.getTaxonomy().getName(), c.toString()))
+                .map(t -> Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
+                        .path(TermExposure.class)
+                        .path(TermExposure.class, "getTerm"))
+                        .rel("term")
+                        .title(t.toString())
+                        .build(t.getTaxonomy().getName(), t.getURIPath()))
                 .collect(Collectors.toList());
         return Response.ok().entity(result).build();
     }
@@ -123,14 +123,14 @@ public class CategoryExposure {
     @GET
     @Path("{taxonomy}/{path:.*}")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get a category definition")
+    @ApiOperation(value = "Get a term definition")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "A representation of an category", response = CategoryRepresentation.class),
-        @ApiResponse(code = 404, message = "If category can't be found", response = ErrorRepresentation.class)})
-    public Response getCategory(
+        @ApiResponse(code = 200, message = "A representation of a term", response = CategoryRepresentation.class),
+        @ApiResponse(code = 404, message = "If term can't be found", response = ErrorRepresentation.class)})
+    public Response getTerm(
             @PathParam("taxonomy") @NotNull final String taxonomy,
             @PathParam("path") @NotNull final String path) {
-        Term term = termRepo.get(taxonomy +  Term.TAXONOMY_SEPARATOR + path);
+        Term term = termRepo.get(Term.toPath(taxonomy, path));
         CategoryRepresentation result = new CategoryRepresentation(term, uriInfo);
         return Response.ok().entity(result).build();
     }
@@ -138,30 +138,30 @@ public class CategoryExposure {
     @POST
     @Path("{taxonomy}/{path:.*}")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Create a taxonomy and/or category",
+    @ApiOperation(value = "Create a taxonomy and/or term in taxonomy",
             notes = "The first element in the path is the name of the taxonomy. The operation is idempotent")
     @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "Taxonomy and/or category has been created"),
+        @ApiResponse(code = 201, message = "Taxonomy and/or term has been created"),
         @ApiResponse(code = 404, message = "", response = ErrorRepresentation.class)})
-    public Response createCategory(
+    public Response createTerm(
             @PathParam("taxonomy") @NotNull final String taxonomy,
             @PathParam("path") final String path) {
-        termRepo.create(taxonomy +  Term.TAXONOMY_SEPARATOR + path);
+        termRepo.create(Term.toPath(taxonomy, path));
         return Response.created(uriInfo.getAbsolutePathBuilder().build()).build();
     }
 
     @DELETE
     @Path("{taxonomy}/{path:.*}")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Delete a a taxonomy or category",
+    @ApiOperation(value = "Delete a a taxonomy or term in taxonomy",
             notes = "The first element in the path is the name of the taxonomy. The operation is idempotent")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Taxonomy and/or category has been deleted"),
+        @ApiResponse(code = 200, message = "Taxonomy and/or term has been deleted"),
         @ApiResponse(code = 404, message = "", response = ErrorRepresentation.class)})
-    public Response deleteCategory(
+    public Response deleteTerm(
             @PathParam("taxonomy") @NotNull final String taxonomy,
             @PathParam("path") final String path) {
-        Term term = termRepo.get(taxonomy +  Term.TAXONOMY_SEPARATOR + path);
+        Term term = termRepo.get(Term.toPath(taxonomy, path));
         termRepo.delete(term);
         return Response.ok(uriInfo.getAbsolutePathBuilder().build()).build();
     }

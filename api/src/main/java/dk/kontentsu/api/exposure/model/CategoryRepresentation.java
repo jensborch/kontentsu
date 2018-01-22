@@ -27,7 +27,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.UriInfo;
 
-import dk.kontentsu.api.exposure.CategoryExposure;
+import dk.kontentsu.api.exposure.TermExposure;
 import dk.kontentsu.model.Term;
 
 /**
@@ -44,8 +44,8 @@ public class CategoryRepresentation {
 
     public CategoryRepresentation(final Term c, final UriInfo uriInfo) {
         this.taxonomy = Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
-                .path(CategoryExposure.class)
-                .path(CategoryExposure.class, "getTaxonomy"))
+                .path(TermExposure.class)
+                .path(TermExposure.class, "getTaxonomy"))
                 .rel("taxonomy")
                 .title(c.getTaxonomy().getName())
                 .build(c.getTaxonomy().getName());

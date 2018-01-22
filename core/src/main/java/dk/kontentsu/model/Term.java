@@ -81,11 +81,11 @@ import dk.kontentsu.repository.Repository;
     @NamedQuery(name = Repository.TERM_FIND_BY_URI,
             query = "SELECT t FROM Term t WHERE t.path = :path"),
     @NamedQuery(name = Repository.TERM_FIND_ALL,
-            query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE t.parent IS NULL"),
+            query = "SELECT DISTINCT t FROM Term t LEFT JOIN FETCH t.children WHERE t.parent IS NULL"),
     @NamedQuery(name = Repository.TERM_FIND,
-            query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE t.path = :path"),
+            query = "SELECT DISTINCT t FROM Term t LEFT JOIN FETCH t.children WHERE t.path = :path"),
     @NamedQuery(name = Repository.TERM_GET,
-            query = "SELECT t FROM Term t LEFT JOIN FETCH t.children WHERE t.uuid = :uuid")})
+            query = "SELECT DISTINCT t FROM Term t LEFT JOIN FETCH t.children WHERE t.uuid = :uuid")})
 public class Term extends AbstractBaseEntity {
 
     public static final String URI_TAXONOMY = "uri";
@@ -141,6 +141,14 @@ public class Term extends AbstractBaseEntity {
             }
         }
         return term;
+    }
+
+    public static String toPath(final String taxonomy, final String path) {
+        return taxonomy
+                + Term.TAXONOMY_SEPARATOR
+                + (path.startsWith(Item.URI.PATH_SEPARATOR) ? "" : Item.URI.PATH_SEPARATOR)
+                + path
+                + (path.endsWith(Item.URI.PATH_SEPARATOR) ? "" : Item.URI.PATH_SEPARATOR);
     }
 
     @PostLoad
@@ -269,7 +277,6 @@ public class Term extends AbstractBaseEntity {
         return term;
     }
 
-
     public Set<Term> getChildren() {
         return Collections.unmodifiableSet(children);
     }
@@ -295,6 +302,12 @@ public class Term extends AbstractBaseEntity {
     public String getPath() {
         initPath();
         return toPathString(pathElements);
+    }
+
+    public String getURIPath() {
+        StringJoiner joiner = new StringJoiner(PATH_SEPARATOR);
+        Arrays.stream(getPathPart(pathElements)).forEach(joiner::add);
+        return joiner.toString();
     }
 
     public String getName() {

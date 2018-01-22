@@ -33,8 +33,8 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.UriInfo;
 
-import dk.kontentsu.api.exposure.CategoryExposure;
 import dk.kontentsu.api.exposure.HostExposure;
+import dk.kontentsu.api.exposure.TermExposure;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Provider;
 import io.swagger.annotations.ApiModelProperty;
@@ -85,11 +85,11 @@ public class ItemRepresentation {
                 .stream()
                 .collect(Collectors.groupingBy(t -> t.getTaxonomy().getName(), Collectors.mapping(t -> Link
                         .fromUriBuilder(uriInfo.getBaseUriBuilder()
-                                .path(CategoryExposure.class)
-                                .path(CategoryExposure.class, "getCategory"))
-                        .rel("category")
+                                .path(TermExposure.class)
+                                .path(TermExposure.class, "getTerm"))
+                        .rel("term")
                         .title(t.toString())
-                        .build(t.getTaxonomy().getName(), t.toString()), Collectors.toList())));
+                        .build(t.getTaxonomy().getName(), t.getURIPath()), Collectors.toList())));
 
         this.hosts = from.getHosts().stream().map(h -> Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
                 .path(HostExposure.class)

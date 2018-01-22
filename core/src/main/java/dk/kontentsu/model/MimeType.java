@@ -73,7 +73,8 @@ public class MimeType implements Serializable {
     public static final MimeType IMAGE_ANY_TYPE = new MimeType("image");
     public static final MimeType VIDEO_ANY_TYPE = new MimeType("video");
 
-    public static final Map<String, MimeType> EXTENSIONS = new HashMap<>(10);
+    private static final Map<String, MimeType> EXTENSIONS = new HashMap<>(10);
+
 
     private static final String PARAM_CHARSET = "charset";
 

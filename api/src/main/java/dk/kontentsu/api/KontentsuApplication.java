@@ -35,7 +35,7 @@ import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.DefaultExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.WebApplicationExceptionMapper;
-import dk.kontentsu.api.exposure.CategoryExposure;
+import dk.kontentsu.api.exposure.TermExposure;
 import dk.kontentsu.api.exposure.ExternalFileExposure;
 import dk.kontentsu.api.exposure.HostExposure;
 import dk.kontentsu.api.exposure.ItemExposure;
@@ -46,6 +46,7 @@ import dk.kontentsu.util.rs.DiagnosticFilter;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.jackson.JacksonFeature;
@@ -81,7 +82,7 @@ public class KontentsuApplication extends Application {
         classes.add(ExternalFileExposure.class);
         classes.add(ItemExposure.class);
         classes.add(RootExposure.class);
-        classes.add(CategoryExposure.class);
+        classes.add(TermExposure.class);
         classes.add(HostExposure.class);
 
         //Filters

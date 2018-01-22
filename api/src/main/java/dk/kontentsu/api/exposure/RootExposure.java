@@ -69,7 +69,7 @@ import io.swagger.annotations.Tag;
         tags = {
             @Tag(name = "root", description = "Kontentsu API root resource"),
             @Tag(name = "hosts", description = "CDN publishing destination hosts"),
-            @Tag(name = "categories", description = "Categories for items in Kontentsu"),
+            @Tag(name = "terms", description = "Taxonomy term for items in Kontentsu"),
             @Tag(name = "items", description = "Internal API for manipulation items in Kontentsu"),
             @Tag(name = "files", description = "External exposure of the files that can be published to a CDN host - similarly to a HTTP server")
         })
@@ -89,7 +89,7 @@ public class RootExposure {
     public Response get() {
         List<Link> links = new ArrayList<>();
         links.add(Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
-                .path(CategoryExposure.class))
+                .path(TermExposure.class))
                 .rel("categories")
                 .title("Categories for items on the CDN")
                 .build());
