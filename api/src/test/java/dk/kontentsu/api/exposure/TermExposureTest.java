@@ -79,7 +79,7 @@ public class TermExposureTest extends JerseyTest {
 
     @Test
     public void testFindTaxonomy() throws Exception {
-        given().get(target("terms/taxonomy1").getUri())
+        given().get(target("terms/uri").getUri())
                 .then()
                 .statusCode(200);
     }
