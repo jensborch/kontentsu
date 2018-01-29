@@ -4,6 +4,7 @@ import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.ejb.EJBException;
 import javax.ejb.EJBTransactionRequiredException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
@@ -101,6 +103,31 @@ public class TermRepositoryIT {
             assertEquals(3, t.getParent().get().getParent().get().getChildren(true).size());
         } finally {
             userTransaction.commit();
+        }
+    }
+
+    @Test
+    public void testCreateUsingStr() throws Exception {
+        try {
+            userTransaction.begin();
+            Term t = repo.create("uri:/test1/test3/");
+            assertEquals("uri:/test1/test3/", t.getPathWithTaxonomy());
+            assertEquals(3, t.getParent().get().getParent().get().getChildren(true).size());
+        } finally {
+            userTransaction.commit();
+        }
+    }
+
+    @Test
+    public void testCreateUsingWrongStr() throws Exception {
+        try {
+            userTransaction.begin();
+            repo.create("uri");
+            fail("Must throw exception");
+        } catch (EJBException e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+        } finally {
+            userTransaction.rollback();
         }
     }
 

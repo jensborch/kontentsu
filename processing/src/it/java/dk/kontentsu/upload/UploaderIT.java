@@ -168,7 +168,6 @@ public class UploaderIT {
             Item r = itemRepo.get(id);
             assertFalse(r.getEdition().isPresent());
             assertEquals(1, r.getVersions().size());
-            //TODO: Validate
             assertEquals(2, r.getVersions().stream().findFirst().get().getReferences().size());
             assertEquals(1, r.getHosts().size());
             assertEquals(host, r.getHosts().stream().findFirst().get());

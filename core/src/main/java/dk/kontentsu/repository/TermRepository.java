@@ -72,7 +72,6 @@ public class TermRepository extends Repository<Term> {
     public Term create(final String path) {
         String[] elements = Term.splitPathWithTaxonomy(path);
         Term taxonomy = findAll().stream().filter(t -> t.getName().equals(elements[0])).findAny().orElse(new Term(elements[0]));
-        //TODO: test + validate
         List<String> p = Arrays.stream(elements).skip(1L).collect(Collectors.toList());
         return taxonomy.append(p);
     }

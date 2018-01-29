@@ -135,7 +135,7 @@ public class MimeType implements Serializable {
         this.params.putAll(params);
     }
 
-    public static MimeType formExtension(String ext) {
+    public static MimeType formExtension(final String ext) {
         return Optional.ofNullable(EXTENSIONS.get(ext))
                 .orElseThrow(() -> new IllegalArgumentException("Unknown MIME type extension: " + ext));
     }

@@ -40,6 +40,9 @@ import java.util.function.BiFunction;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonToken;
 import dk.kontentsu.model.Content;
@@ -52,12 +55,9 @@ import dk.kontentsu.parsers.ContentParserException;
 import dk.kontentsu.parsers.Link;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
- * Parser for JSON content. The parser will find metadata and compositions in
- * the data.
+ * Parser for JSON content. The parser will find metadata and compositions in the data.
  *
  * @author Jens Borch Christiansen
  */
@@ -66,10 +66,11 @@ import org.apache.logging.log4j.Logger;
 public class JsonParser implements ContentParser {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private com.fasterxml.jackson.core.JsonParser jsonParser;
 
     @Inject
     Content content;
+
+    private com.fasterxml.jackson.core.JsonParser jsonParser;
 
     @PostConstruct
     public void init() {

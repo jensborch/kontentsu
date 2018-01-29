@@ -57,8 +57,7 @@ import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
 
 /**
- * Parser for HAL+JSON CDN content. The parser will find metadata and
- * compositions in the data.
+ * Parser for HAL+JSON CDN content. The parser will find metadata and compositions in the data.
  *
  * @author Jens Borch Christiansen
  */
@@ -67,10 +66,11 @@ import dk.kontentsu.spi.ContentProcessingScoped;
 public class HalJsonParser implements ContentParser {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
     @Inject
     Content content;
+
+    private final ObjectMapper objectMapper = ObjectMapperFactory.create();
 
     @Override
     public Results parse() {

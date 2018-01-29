@@ -138,15 +138,15 @@ public class Item extends AbstractBaseEntity {
         this(path, null, mimeType);
     }
 
-    public Item(final Term path, final String edition, MimeType mimeType) {
+    public Item(final Term path, final String edition, final MimeType mimeType) {
         if (!path.isUri()) {
             throw new IllegalArgumentException("Path must be a URI");
         }
         this.path = path;
         this.terms.add(path);
         this.edition = edition;
-        this.path.addItem(this);
         this.mimeType = mimeType;
+        this.path.addItem(this);
     }
 
     public Set<Host> getHosts() {

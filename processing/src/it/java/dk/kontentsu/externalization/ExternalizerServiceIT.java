@@ -226,7 +226,6 @@ public class ExternalizerServiceIT {
             userTransaction.commit();
         }
         List<ExternalFile> result = service.externalize(articleVersion.getUuid()).get();
-        //TODO: Validate
         assertEquals(3, result.size());
         ExternalFile file = result.stream().filter(f -> f.getInterval().equals(new Interval(NOW.plusDays(21), NOW.plusDays(25)))).findAny().get();
         assertNotNull(file);
