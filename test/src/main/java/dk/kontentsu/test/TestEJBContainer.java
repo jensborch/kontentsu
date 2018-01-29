@@ -14,7 +14,7 @@ public final class TestEJBContainer {
     private TestEJBContainer() {
     }
 
-    public static EJBContainer create() throws NamingException {
+    public static EJBContainer create() {
         Properties props = new Properties();
         props.put("CdnDS", "new://Resource?type=DataSource");
         props.put("CdnDS.JdbcDriver", "org.h2.Driver");

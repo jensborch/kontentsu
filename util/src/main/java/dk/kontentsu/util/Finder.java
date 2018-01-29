@@ -30,14 +30,14 @@ import java.util.function.Predicate;
 /**
  * Recursively search for something matching a predicate.
  *
- * @param T the type search in.
+ * @param <T> the type search in.
  *
  * @author Jens Borch Christiansen
  */
 public class Finder<T> {
 
     private final Predicate<T> predicate;
-    private Function<T, T> recursionFunction;
+    private final Function<T, T> recursionFunction;
 
     public Finder(final Predicate<T> predicate, final Function<T, T> recursionFunction) {
         this.predicate = predicate;

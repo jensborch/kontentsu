@@ -113,7 +113,7 @@ public class Uploader {
      */
     public Set<UUID> overwrite(@NotNull final UUID itemId, @Valid final UploadItem uploadItem) {
         Set<UUID> externalized = self.overwriteAndSave(itemId, uploadItem);
-        externalized.forEach(u ->  externalizer.externalize(u));
+        externalized.forEach(u -> externalizer.externalize(u));
         return externalized;
     }
 
@@ -212,15 +212,14 @@ public class Uploader {
                 .from(uploadeItem.getInterval().getFrom())
                 .to(uploadeItem.getInterval().getTo());
 
-        InjectableContentProcessingScope.execute(() -> {
-            findAllContentParserBeans().forEach(bean -> {
-                Arrays.stream(bean.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
+        InjectableContentProcessingScope.execute(()
+                -> findAllContentParserBeans().forEach(bean
+                        -> Arrays.stream(bean.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
                     if (item.getMimeType().matches(a).isMatch()) {
                         parse(getContentParser(bean), item.getUri(), builder);
                     }
-                });
-            });
-        }, content);
+                })),
+                content);
 
         Version version = builder.build();
         LOGGER.debug("Adding newly uploaded version {} to item with interval {}", version.getUuid(), version.getInterval());
