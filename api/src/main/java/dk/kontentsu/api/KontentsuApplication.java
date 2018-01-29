@@ -29,27 +29,28 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.glassfish.jersey.jackson.JacksonFeature;
+
 import dk.kontentsu.api.exceptionmappers.ApiExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ApplicationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.DefaultExceptionMapper;
+import dk.kontentsu.api.exceptionmappers.NoResultExceptionMapper;
 import dk.kontentsu.api.exceptionmappers.WebApplicationExceptionMapper;
-import dk.kontentsu.api.exposure.TermExposure;
 import dk.kontentsu.api.exposure.ExternalFileExposure;
 import dk.kontentsu.api.exposure.HostExposure;
 import dk.kontentsu.api.exposure.ItemExposure;
 import dk.kontentsu.api.exposure.RootExposure;
+import dk.kontentsu.api.exposure.TermExposure;
 import dk.kontentsu.util.rs.CORSFilter;
 import dk.kontentsu.util.rs.CacheFeature;
 import dk.kontentsu.util.rs.DiagnosticFilter;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.glassfish.jersey.jackson.JacksonFeature;
 
 /**
  * The application class for the REST API.
@@ -97,6 +98,7 @@ public class KontentsuApplication extends Application {
         classes.add(ContainerExceptionMapper.class);
         classes.add(DefaultExceptionMapper.class);
         classes.add(WebApplicationExceptionMapper.class);
+        classes.add(NoResultExceptionMapper.class);
 
         //Jackson
         classes.add(JacksonFeature.class);
