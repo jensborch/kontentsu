@@ -421,7 +421,7 @@ public class Item extends AbstractBaseEntity {
         }
 
         public String getFileName() {
-            return pathElements[pathElements.length - 1] + edition.map(e -> "-".concat(e)).orElse("") + "." + mimeType.getFileExtension();
+            return pathElements[pathElements.length - 1] + edition.map("-"::concat).orElse("") + "." + mimeType.getFileExtension();
         }
 
         public String[] getPathElements() {

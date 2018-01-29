@@ -102,7 +102,7 @@ public class Term extends AbstractBaseEntity {
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "parent", fetch = FetchType.LAZY)
     @OrderColumn
-    private Set<Term> children = new HashSet<Term>();
+    private Set<Term> children = new HashSet<>();
 
     @NotNull
     @Size(min = 1, max = 200)
@@ -189,11 +189,10 @@ public class Term extends AbstractBaseEntity {
             if (!m.matches()) {
                 throw new IllegalArgumentException("Path '" + p + "' mustch match regular expression " + PATH_REGEX);
             }
-            List<String> result = Arrays.stream(p.split("\\" + PATH_SEPARATOR))
+            return Arrays.stream(p.split("\\" + PATH_SEPARATOR))
                     .filter(Objects::nonNull)
                     .filter(t -> !t.isEmpty())
                     .collect(Collectors.toList());
-            return result;
         }
     }
 

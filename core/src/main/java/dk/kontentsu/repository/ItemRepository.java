@@ -96,11 +96,6 @@ public class ItemRepository extends Repository<Item> {
             query.setParameter("path", uri.toTerm());
             query.setParameter("edition", uri.getEdition().orElse(null));
             query.setParameter("state", Arrays.asList(states));
-
-            List<Item> tmp = query.getResultList();
-            if (tmp.size() > 1) {
-                tmp.stream().forEach(i -> System.out.println("###" + i));
-            }
             return Optional.of(query.getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();

@@ -85,7 +85,7 @@ public class AuthConfig implements ServerAuthConfig, ClientAuthConfig {
      * supported
      */
     @Override
-    public String getAuthContextID(final MessageInfo messageInfo) throws IllegalArgumentException {
+    public String getAuthContextID(final MessageInfo messageInfo) {
         if (Options.parse(messageInfo).isMandatory()) {
             return messageInfo.toString();
         }

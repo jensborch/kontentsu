@@ -45,9 +45,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import dk.kontentsu.api.exposure.model.ErrorRepresentation;
 import dk.kontentsu.api.exposure.model.TermRepresentation;
 import dk.kontentsu.model.Role;
@@ -69,8 +66,6 @@ import io.swagger.annotations.ApiResponses;
 @RolesAllowed(Role.ADMIN)
 @Api(tags = {"terms"})
 public class TermExposure {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     @Inject
     private TermRepository termRepo;

@@ -50,11 +50,12 @@ import javax.ejb.Timer;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.Host;
 import dk.kontentsu.repository.ExternalFileRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Scheduler for publishing externalized content.
@@ -115,12 +116,12 @@ public class ScheduledExternalizerService {
         List<ExternalFile> all = fileRepo.findAll(time);
         LOGGER.info("Found {} files to publish", all.size());
         Map<Host, Set<ExternalFile>> filesMap = new HashMap<>();
-        all.forEach(f -> {
-            f.getItem().getHosts().forEach(h -> {
-                filesMap.putIfAbsent(h, new HashSet<>());
-                filesMap.get(h).add(f);
-            });
-        });
+        all.forEach(f
+                -> f.getItem().getHosts().forEach(h -> {
+                    filesMap.putIfAbsent(h, new HashSet<>());
+                    filesMap.get(h).add(f);
+                })
+        );
 
         filesMap.forEach((host, files) -> {
             deleteAll(host, files);
@@ -159,7 +160,7 @@ public class ScheduledExternalizerService {
             if (hasParent(filePath)) {
                 Files.createDirectories(filePath.getParent());
             }
-            if (Files.notExists(filePath)) {
+            if (!filePath.toFile().exists()) {
                 Files.createFile(filePath);
             }
             Files.copy(f.getContent().getDataAsBinaryStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
@@ -170,7 +171,7 @@ public class ScheduledExternalizerService {
 
     private boolean hasParent(final Path file) {
         Path parent = file.getParent();
-        return parent != null && Files.notExists(parent);
+        return parent != null && !parent.toFile().exists();
     }
 
     private ZonedDateTime getZonedDateTimeFromExpression(final ScheduleExpression expression) {
