@@ -34,7 +34,7 @@ import dk.kontentsu.model.Term;
  *
  * @author Jens Borch Christiansen
  */
-public class CategoryRepresentation {
+public class TermRepresentation {
 
     @NotNull
     private final Link taxonomy;
@@ -42,7 +42,7 @@ public class CategoryRepresentation {
     @NotNull
     private final String path;
 
-    public CategoryRepresentation(final Term c, final UriInfo uriInfo) {
+    public TermRepresentation(final Term c, final UriInfo uriInfo) {
         this.taxonomy = Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
                 .path(TermExposure.class)
                 .path(TermExposure.class, "getTaxonomy"))

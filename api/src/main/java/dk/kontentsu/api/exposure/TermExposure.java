@@ -48,8 +48,8 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import dk.kontentsu.api.exposure.model.CategoryRepresentation;
 import dk.kontentsu.api.exposure.model.ErrorRepresentation;
+import dk.kontentsu.api.exposure.model.TermRepresentation;
 import dk.kontentsu.model.Role;
 import dk.kontentsu.model.Term;
 import dk.kontentsu.repository.TermRepository;
@@ -59,7 +59,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 /**
- * REST resource for listing and manipulating categories for items on the CDN.
+ * REST resource for listing and manipulating taxonomy terms for items in Kontentsu.
  *
  * @author Jens Borch Christiansen
  */
@@ -67,7 +67,7 @@ import io.swagger.annotations.ApiResponses;
 @Stateless
 @DeclareRoles(Role.ADMIN)
 @RolesAllowed(Role.ADMIN)
-@Api(tags = {"categories"})
+@Api(tags = {"terms"})
 public class TermExposure {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -100,7 +100,7 @@ public class TermExposure {
     @GET
     @Path("{taxonomy}")
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "Get categories defined in a given taxonomy")
+    @ApiOperation(value = "Get terms defined in a given taxonomy")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "List of root terms", response = Link.class, responseContainer = "List"),
         @ApiResponse(code = 404, message = "If taxonomy name can't be found", response = ErrorRepresentation.class)})
@@ -125,13 +125,13 @@ public class TermExposure {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Get a term definition")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "A representation of a term", response = CategoryRepresentation.class),
+        @ApiResponse(code = 200, message = "A representation of a term", response = TermRepresentation.class),
         @ApiResponse(code = 404, message = "If term can't be found", response = ErrorRepresentation.class)})
     public Response getTerm(
             @PathParam("taxonomy") @NotNull final String taxonomy,
             @PathParam("path") @NotNull final String path) {
         Term term = termRepo.get(Term.toPath(taxonomy, path));
-        CategoryRepresentation result = new CategoryRepresentation(term, uriInfo);
+        TermRepresentation result = new TermRepresentation(term, uriInfo);
         return Response.ok().entity(result).build();
     }
 

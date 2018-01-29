@@ -80,16 +80,16 @@ public class ItemRepresentation {
 
         this.provider = from.getProvider().orElse(null);
 
-        //TODO: Verify
         this.terms = from.getTerms()
                 .stream()
                 .collect(Collectors.groupingBy(t -> t.getTaxonomy().getName(), Collectors.mapping(t -> Link
                         .fromUriBuilder(uriInfo.getBaseUriBuilder()
                                 .path(TermExposure.class)
-                                .path(TermExposure.class, "getTerm"))
+                                .path(t.getTaxonomy().getName())
+                                .path(t.getURIPath()))
                         .rel("term")
                         .title(t.toString())
-                        .build(t.getTaxonomy().getName(), t.getURIPath()), Collectors.toList())));
+                        .build(), Collectors.toList())));
 
         this.hosts = from.getHosts().stream().map(h -> Link.fromUriBuilder(uriInfo.getBaseUriBuilder()
                 .path(HostExposure.class)
