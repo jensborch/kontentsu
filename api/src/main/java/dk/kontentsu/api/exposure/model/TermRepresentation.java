@@ -31,6 +31,7 @@ import dk.kontentsu.api.exposure.TermExposure;
 import dk.kontentsu.model.Term;
 
 /**
+ * Representation of a taxonomy term.
  *
  * @author Jens Borch Christiansen
  */
