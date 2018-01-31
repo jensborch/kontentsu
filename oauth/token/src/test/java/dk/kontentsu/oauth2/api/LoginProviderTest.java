@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.security.auth.Subject;
-import javax.security.jacc.PolicyContextException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Before;

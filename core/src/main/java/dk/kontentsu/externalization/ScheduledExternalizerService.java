@@ -50,12 +50,11 @@ import javax.ejb.Timer;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.Host;
 import dk.kontentsu.repository.ExternalFileRepository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Scheduler for publishing externalized content.

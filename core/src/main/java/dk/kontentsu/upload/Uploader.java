@@ -42,9 +42,6 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import dk.kontentsu.externalization.ExternalizerService;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.Host;
@@ -58,6 +55,8 @@ import dk.kontentsu.repository.HostRepository;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.repository.TermRepository;
 import dk.kontentsu.spi.ContentProcessingMimeType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Service facade for performing various operations on CDN items - like uploading new items.
@@ -104,10 +103,9 @@ public class Uploader {
     }
 
     /**
-     *
      * Overwrite a existing item with a given UUID. The will if needed change the internals of the existing active versions of the item, to make room for the new item.
      *
-     * @param itemId the UUID of the item to replace
+     * @param itemId     the UUID of the item to replace
      * @param uploadItem the new item to replace existing.
      * @return a list of the identifiers for the new versions created
      */
@@ -136,26 +134,26 @@ public class Uploader {
         //We need to create tmp set to avoid ConcurrentModificationException. HasSet do not support that we loop and modify at the same time.
         Set<Version> toAdd = new HashSet<>();
         item.getVersions()
-                .stream()
-                .filter(Version::isActive)
-                .filter(i -> i.getInterval().overlaps(uploadItem.getInterval()))
-                .forEach(v -> {
-                    LOGGER.debug("Deleting version {} with interval {}", v.getUuid(), v.getInterval());
-                    v.delete();
-                    v.getInterval().disjunctiveUnion(uploadItem.getInterval())
-                            .stream()
-                            .filter(i -> !i.overlaps(uploadItem.getInterval()))
-                            .forEach(i -> {
-                                Version n = Version.builder()
-                                        .version(v)
-                                        .interval(i)
-                                        .active()
-                                        .build();
-                                LOGGER.debug("Adding new version {} with interval {}", n.getUuid(), n.getInterval());
-                                toAdd.add(n);
-                                toExternalize.add(n.getUuid());
-                            });
-                });
+            .stream()
+            .filter(Version::isActive)
+            .filter(i -> i.getInterval().overlaps(uploadItem.getInterval()))
+            .forEach(v -> {
+                LOGGER.debug("Deleting version {} with interval {}", v.getUuid(), v.getInterval());
+                v.delete();
+                v.getInterval().disjunctiveUnion(uploadItem.getInterval())
+                    .stream()
+                    .filter(i -> !i.overlaps(uploadItem.getInterval()))
+                    .forEach(i -> {
+                        Version n = Version.builder()
+                            .version(v)
+                            .interval(i)
+                            .active()
+                            .build();
+                        LOGGER.debug("Adding new version {} with interval {}", n.getUuid(), n.getInterval());
+                        toAdd.add(n);
+                        toExternalize.add(n.getUuid());
+                    });
+            });
         toAdd.forEach(item::addVersion);
         Version version = addVersion(item, uploadItem);
         addHosts(item, uploadItem);
@@ -176,9 +174,9 @@ public class Uploader {
         Item.URI itemUri = uploadItem.getUri();
         Term term = termRepo.create(itemUri);
         return term.getItems()
-                .stream().filter(i -> i.getEdition().equals(itemUri.getEdition()))
-                .findAny()
-                .orElse(new Item(term, itemUri.getEdition().orElse(null), uploadItem.getMimeType()));
+            .stream().filter(i -> i.getEdition().equals(itemUri.getEdition()))
+            .findAny()
+            .orElse(new Item(term, itemUri.getEdition().orElse(null), uploadItem.getMimeType()));
     }
 
     private void addHosts(final Item item, final UploadItem uploadItem) {
@@ -187,9 +185,9 @@ public class Uploader {
             hosts.forEach(item::addHost);
         } else {
             hosts.stream()
-                    .filter(h -> uploadItem.getHosts().stream()
+                .filter(h -> uploadItem.getHosts().stream()
                     .anyMatch(n -> h.getName().equals(n)))
-                    .forEach(item::addHost);
+                .forEach(item::addHost);
         }
     }
 
@@ -208,18 +206,18 @@ public class Uploader {
         Content content = itemRepo.saveContent(uploadItem.getContent(), uploadItem.getEncoding(), uploadItem.getMimeType());
 
         Version.Builder builder = Version.builder()
-                .content(content)
-                .from(uploadItem.getInterval().getFrom())
-                .to(uploadItem.getInterval().getTo());
+            .content(content)
+            .from(uploadItem.getInterval().getFrom())
+            .to(uploadItem.getInterval().getTo());
 
-        InjectableContentProcessingScope.execute(()
-                -> findAllContentParserBeans().forEach(bean
-                        -> Arrays.stream(bean.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
+        InjectableContentProcessingScope.execute(
+            () -> findAllContentParserBeans().forEach(
+                bean -> Arrays.stream(bean.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
                     if (item.getMimeType().matches(a).isMatch()) {
                         parse(getContentParser(bean), item.getUri(), builder);
                     }
                 })),
-                content);
+            content);
 
         Version version = builder.build();
         LOGGER.debug("Adding newly uploaded version {} to item with interval {}", version.getUuid(), version.getInterval());
@@ -230,12 +228,12 @@ public class Uploader {
     private void parse(final ContentParser parser, final Item.URI uri, final Version.Builder builder) {
         ContentParser.Results parsedContent = parser.parse();
         parsedContent.getLinks()
-                .stream()
-                .filter(link -> !link.getUri().equals(uri))
-                .forEach(link -> {
-                    Item i = findOrCreate(link);
-                    builder.reference(i, link.getType());
-                });
+            .stream()
+            .filter(link -> !link.getUri().equals(uri))
+            .forEach(link -> {
+                Item i = findOrCreate(link);
+                builder.reference(i, link.getType());
+            });
         parsedContent.getMetadata().forEach((k, v) -> {
             LOGGER.debug("Found metadata in content with key {} and value {}", k, v);
             builder.metadata(k, v);
@@ -244,11 +242,11 @@ public class Uploader {
 
     private Item findOrCreate(final Link link) {
         return itemRepo.findByUri(link.getUri())
-                .orElseGet(() -> {
-                    Term path = termRepo.create(link.getUri());
-                    LOGGER.debug("Found link in content with path {} and name {}", path, link.getUri().getEdition());
-                    Item tmpItem = new Item(path, link.getUri().getEdition().orElse(null), link.getUri().getMimeType());
-                    return itemRepo.save(tmpItem);
-                });
+            .orElseGet(() -> {
+                Term path = termRepo.create(link.getUri());
+                LOGGER.debug("Found link in content with path {} and name {}", path, link.getUri().getEdition());
+                Item tmpItem = new Item(path, link.getUri().getEdition().orElse(null), link.getUri().getMimeType());
+                return itemRepo.save(tmpItem);
+            });
     }
 }

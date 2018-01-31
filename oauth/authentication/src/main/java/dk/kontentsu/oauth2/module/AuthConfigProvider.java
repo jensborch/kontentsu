@@ -26,7 +26,6 @@ package dk.kontentsu.oauth2.module;
 import java.util.Map;
 
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.message.AuthException;
 import javax.security.auth.message.config.AuthConfigFactory;
 import javax.security.auth.message.config.ClientAuthConfig;
 import javax.security.auth.message.config.ServerAuthConfig;
@@ -59,7 +58,6 @@ public final class AuthConfigProvider implements javax.security.auth.message.con
      *
      * @param options to parse to the configuration provider
      * @param factory for registration or null
-     *
      */
     public AuthConfigProvider(final Map<String, String> options, final AuthConfigFactory factory) {
         this(new Options(options));
@@ -77,9 +75,9 @@ public final class AuthConfigProvider implements javax.security.auth.message.con
      */
     public static void register(final Options options, final ServletContext context) {
         AuthConfigFactory.getFactory().registerConfigProvider(new AuthConfigProvider(options),
-                LAYER,
-                getAppContextID(context),
-                DESCRIPTION
+            LAYER,
+            getAppContextID(context),
+            DESCRIPTION
         );
     }
 
@@ -89,15 +87,15 @@ public final class AuthConfigProvider implements javax.security.auth.message.con
 
     @Override
     public ClientAuthConfig getClientAuthConfig(final String layer,
-            final String appContext,
-            final CallbackHandler handler) {
+                                                final String appContext,
+                                                final CallbackHandler handler) {
         return new AuthConfig(appContext, layer, handler, options);
     }
 
     @Override
     public ServerAuthConfig getServerAuthConfig(final String layer,
-            final String appContext,
-            final CallbackHandler handler) {
+                                                final String appContext,
+                                                final CallbackHandler handler) {
         return new AuthConfig(appContext, layer, handler, options);
     }
 

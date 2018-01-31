@@ -23,8 +23,6 @@
  */
 package dk.kontentsu.util.rs;
 
-import java.io.IOException;
-
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;

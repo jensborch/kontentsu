@@ -46,10 +46,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.ws.rs.core.MediaType;
 
+import dk.kontentsu.spi.ContentProcessingMimeType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import dk.kontentsu.spi.ContentProcessingMimeType;
 
 /**
  * Class representing the content Mime Type of a item in the CDN, but also

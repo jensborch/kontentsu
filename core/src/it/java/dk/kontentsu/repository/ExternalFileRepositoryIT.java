@@ -18,12 +18,6 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.transaction.UserTransaction;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.Interval;
@@ -31,6 +25,11 @@ import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.Term;
 import dk.kontentsu.test.TestEJBContainer;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Integration test for {@link ExternalFileRepository}

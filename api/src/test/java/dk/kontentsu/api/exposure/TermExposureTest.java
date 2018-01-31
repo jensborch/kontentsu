@@ -9,6 +9,11 @@ import java.util.List;
 
 import javax.ws.rs.core.Application;
 
+import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
+import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
+import dk.kontentsu.api.exceptionmappers.NoResultExceptionMapper;
+import dk.kontentsu.model.Term;
+import dk.kontentsu.repository.TermRepository;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -16,12 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import dk.kontentsu.api.exceptionmappers.ConstraintViolationExceptionMapper;
-import dk.kontentsu.api.exceptionmappers.ContainerExceptionMapper;
-import dk.kontentsu.api.exceptionmappers.NoResultExceptionMapper;
-import dk.kontentsu.model.Term;
-import dk.kontentsu.repository.TermRepository;
 
 /**
  * Test for {@link TermExposure}.

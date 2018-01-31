@@ -21,12 +21,6 @@ import javax.inject.Inject;
 import javax.transaction.UserTransaction;
 import javax.validation.ConstraintViolationException;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import dk.kontentsu.model.Host;
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.Item;
@@ -36,6 +30,11 @@ import dk.kontentsu.repository.HostRepository;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.test.ContentTestData;
 import dk.kontentsu.test.TestEJBContainer;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Test for {@link dk.kontentsu.upload.Uploader}

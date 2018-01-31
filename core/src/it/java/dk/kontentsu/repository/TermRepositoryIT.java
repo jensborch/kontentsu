@@ -20,15 +20,14 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.transaction.UserTransaction;
 
+import dk.kontentsu.model.Item;
+import dk.kontentsu.model.Term;
+import dk.kontentsu.test.TestEJBContainer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import dk.kontentsu.model.Item;
-import dk.kontentsu.model.Term;
-import dk.kontentsu.test.TestEJBContainer;
 
 /**
  * Integration test for {@link TermRepository}.

@@ -58,13 +58,12 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import dk.kontentsu.exception.ValidationException;
 import dk.kontentsu.repository.Repository;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * An item that can externalized to the CDN - i.e. a file on the CDN.
@@ -73,19 +72,19 @@ import dk.kontentsu.repository.Repository;
  */
 @Entity
 @Table(name = "item",
-        uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"path_id", "edition"}, name = "item_constraint")})
-@NamedQueries({
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"path_id", "edition"}, name = "item_constraint")})
+@NamedQueries( {
     @NamedQuery(name = Repository.ITEM_FIND_BY_TERM,
-            query = "SELECT i FROM Item i JOIN i.path p WHERE p.uuid = :uuid ORDER BY i.created, i.edition"),
+        query = "SELECT i FROM Item i JOIN i.path p WHERE p.uuid = :uuid ORDER BY i.created, i.edition"),
     @NamedQuery(name = Repository.ITEM_FIND_ALL,
-            query = "SELECT DISTINCT i FROM Item i JOIN i.versions v "
+        query = "SELECT DISTINCT i FROM Item i JOIN i.versions v "
             + "WHERE v.state IN :state "
             + "ORDER BY i.created, i.edition"),
     @NamedQuery(name = Repository.ITEM_GET,
-            query = "SELECT i FROM Item i WHERE i.uuid = :uuid"),
+        query = "SELECT i FROM Item i WHERE i.uuid = :uuid"),
     @NamedQuery(name = Repository.ITEM_FIND_BY_URI,
-            query = "SELECT DISTINCT i FROM Item i "
+        query = "SELECT DISTINCT i FROM Item i "
             + "JOIN i.path p "
             + "JOIN i.versions v "
             + "WHERE p.path = :path "
@@ -99,8 +98,8 @@ public class Item extends AbstractBaseEntity {
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "item_terms",
-            joinColumns = @JoinColumn(name = "item_id"),
-            inverseJoinColumns = @JoinColumn(name = "term_id")
+        joinColumns = @JoinColumn(name = "item_id"),
+        inverseJoinColumns = @JoinColumn(name = "term_id")
     )
     private Set<Term> terms = new HashSet<>();
 
@@ -134,7 +133,7 @@ public class Item extends AbstractBaseEntity {
         //Needed by JPA
     }
 
-    public Item(final Term path, MimeType mimeType) {
+    public Item(final Term path, final MimeType mimeType) {
         this(path, null, mimeType);
     }
 
@@ -179,9 +178,9 @@ public class Item extends AbstractBaseEntity {
 
     public List<Version> getVersions(final Interval interval) {
         return versions.stream()
-                .filter(Version::isActive)
-                .filter(v -> v.getInterval().overlaps(interval))
-                .collect(Collectors.toList());
+            .filter(Version::isActive)
+            .filter(v -> v.getInterval().overlaps(interval))
+            .collect(Collectors.toList());
     }
 
     public void addVersion(final Version version) {
@@ -202,10 +201,10 @@ public class Item extends AbstractBaseEntity {
 
     public boolean overlaps(final Version other) {
         boolean result = !getVersions().isEmpty() && getVersions()
-                .stream()
-                .filter(v -> !v.equals(other))
-                .filter(Version::isActive)
-                .anyMatch(v -> v.getInterval().overlaps(other.getInterval()));
+            .stream()
+            .filter(v -> !v.equals(other))
+            .filter(Version::isActive)
+            .anyMatch(v -> v.getInterval().overlaps(other.getInterval()));
         LOGGER.debug("Overlaps between {} and {} returned {}", other.getUuid(), this.getUuid(), result);
         return result;
     }
@@ -268,10 +267,10 @@ public class Item extends AbstractBaseEntity {
         private Criteria(final boolean fetch) {
             query = new JPAQuery<>();
             query.from(item)
-                    .select(item, item.path)
-                    .distinct()
-                    .leftJoin(item.versions, version)
-                    .join(item.path, path);
+                .select(item, item.path)
+                .distinct()
+                .leftJoin(item.versions, version)
+                .join(item.path, path);
             if (fetch) {
                 query.fetchJoin();
             }
@@ -319,17 +318,17 @@ public class Item extends AbstractBaseEntity {
         public Criteria host(final String name) {
             QHost host = QHost.host;
             query
-                    .join(item.hosts, host)
-                    .where(host.name.eq(name));
+                .join(item.hosts, host)
+                .where(host.name.eq(name));
             return this;
         }
 
         public Criteria reference(final URI uri, final ReferenceType type) {
             QReference reference = QReference.reference;
             query
-                    .join(version.references, reference)
-                    .where(reference.type.eq(type),
-                            reference.itemPath.eq(uri.getFolder()));
+                .join(version.references, reference)
+                .where(reference.type.eq(type),
+                    reference.itemPath.eq(uri.getFolder()));
             uri.getEdition().ifPresent(e -> query.where(reference.itemName.eq(e)));
             return this;
         }
@@ -369,12 +368,12 @@ public class Item extends AbstractBaseEntity {
             from.ifPresent(f -> query.where(version.interval.to.goe(f), version.interval.from.loe(to)));
 
             return query.clone(em)
-                    .where(version.state.in(STATES).or(version.state.isNull()))
-                    .orderBy(item.created.desc(), item.edition.desc())
-                    .fetch()
-                    .stream()
-                    .map(t -> t.get(item))
-                    .collect(Collectors.toList());
+                .where(version.state.in(STATES).or(version.state.isNull()))
+                .orderBy(item.created.desc(), item.edition.desc())
+                .fetch()
+                .stream()
+                .map(t -> t.get(item))
+                .collect(Collectors.toList());
         }
     }
 
@@ -386,9 +385,9 @@ public class Item extends AbstractBaseEntity {
         public static final String PATH_SEPARATOR = "/";
         public static final String ALLOWED_CHARS_REGEX = "[\\p{L}\\d-]";
         private static final String REGEX = String.format(
-                "^\\/?(?<elements>(?:(?<element>%s+)\\/)+)(?:\\k<element>)?(?:-(?<edition>%s+))?(?:\\.(?<ext>\\w{3,4}))?$",
-                ALLOWED_CHARS_REGEX,
-                ALLOWED_CHARS_REGEX);
+            "^\\/?(?<elements>(?:(?<element>%s+)\\/)+)(?:\\k<element>)?(?:-(?<edition>%s+))?(?:\\.(?<ext>\\w{3,4}))?$",
+            ALLOWED_CHARS_REGEX,
+            ALLOWED_CHARS_REGEX);
         private static final Pattern REGEX_PATTERN = Pattern.compile(REGEX);
 
         private final Optional<String> edition;
@@ -497,13 +496,13 @@ public class Item extends AbstractBaseEntity {
     @Override
     public String toString() {
         return "Item{" + "terms=" + terms
-                + ", edition=" + edition
-                + ", path=" + path
-                + ", versions=" + versions
-                + ", files=" + files
-                + ", provider=" + provider
-                + ", hosts=" + hosts
-                + ", mimeType=" + mimeType + '}';
+            + ", edition=" + edition
+            + ", path=" + path
+            + ", versions=" + versions
+            + ", files=" + files
+            + ", provider=" + provider
+            + ", hosts=" + hosts
+            + ", mimeType=" + mimeType + '}';
     }
 
 }

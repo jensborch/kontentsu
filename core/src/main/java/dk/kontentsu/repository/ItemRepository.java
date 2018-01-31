@@ -41,14 +41,13 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
-import org.hibernate.internal.SessionImpl;
-
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.ContentException;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.State;
 import dk.kontentsu.model.Version;
+import org.hibernate.internal.SessionImpl;
 
 /**
  * Repository for performing CRUD operations on CDN items.

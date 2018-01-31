@@ -39,9 +39,6 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.jackson.ObjectMapperFactory;
@@ -55,6 +52,8 @@ import dk.kontentsu.parsers.ContentParserException;
 import dk.kontentsu.parsers.Link;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Parser for HAL+JSON CDN content. The parser will find metadata and compositions in the data.
