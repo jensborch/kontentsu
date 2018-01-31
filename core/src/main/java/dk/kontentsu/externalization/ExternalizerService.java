@@ -128,26 +128,26 @@ public class ExternalizerService {
     public List<ExternalFile> externalize(final Version version) {
         List<Version> versions = findVersionsToExternalize(version);
         return versions.stream()
-                .flatMap(v -> externalizeVersion(v).stream())
-                .sorted((f1, f2) -> f1.getInterval().getFrom().compareTo(f2.getInterval().getFrom()))
-                .collect(Collectors.toList());
+            .flatMap(v -> externalizeVersion(v).stream())
+            .sorted((f1, f2) -> f1.getInterval().getFrom().compareTo(f2.getInterval().getFrom()))
+            .collect(Collectors.toList());
 
     }
 
     private List<Version> findVersionsToExternalize(final Version version) {
         LOGGER.debug("Externalizing version with uri {} and its references", version.getItem().getUri().toString());
         List<Item> items = itemRepo.find(Item.Criteria
-                .create()
-                .interval(version.getInterval())
-                .reference(version.getItem().getUri(), ReferenceType.COMPOSITION)
+            .create()
+            .interval(version.getInterval())
+            .reference(version.getItem().getUri(), ReferenceType.COMPOSITION)
         );
         LOGGER.info("Found {} reference(s) that also needs to be externalized", items.size());
         List<Version> versions = items
-                .stream()
-                .flatMap(i -> i.getVersions(version.getInterval()).stream())
-                .filter(Version::hasComposition)
-                .filter(Version::isComplete)
-                .collect(Collectors.toList());
+            .stream()
+            .flatMap(i -> i.getVersions(version.getInterval()).stream())
+            .filter(Version::hasComposition)
+            .filter(Version::isComplete)
+            .collect(Collectors.toList());
 
         boolean defaultVisitor = getHighestPriorityExternalizationVisitorBean(version).map(Bean::getBeanClass).filter(DefaultExternalizationVisitor.class::equals).isPresent();
 
@@ -176,11 +176,11 @@ public class ExternalizerService {
     private Map<MimeType, Bean<?>> getExternalizationVisitorBeansMap() {
         Map<MimeType, Bean<?>> map = new HashMap<>();
         findAllExternalizationVisitorBeans().forEach(b ->
-                Arrays.stream(b.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class))
-                        .forEach(a ->
-                                Arrays.stream(a.value()).map(MimeType::parse)
-                                        .forEach(m -> map.put(m, b))
-                        )
+            Arrays.stream(b.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class))
+                .forEach(a ->
+                    Arrays.stream(a.value()).map(MimeType::parse)
+                        .forEach(m -> map.put(m, b))
+                )
         );
         LOGGER.debug("Found {} CDI externalization visitors", map.size());
         return map;
@@ -199,10 +199,10 @@ public class ExternalizerService {
 
     private Optional<Bean<?>> getHighestPriorityExternalizationVisitorBean(final Version version) {
         return getMatchingExternalizationVisitorBeans(version).entrySet()
-                .stream()
-                .sorted((e1, e2) -> Integer.compare(e2.getKey().getPriority(), e1.getKey().getPriority()))
-                .findFirst()
-                .map(Map.Entry::getValue);
+            .stream()
+            .sorted((e1, e2) -> Integer.compare(e2.getKey().getPriority(), e1.getKey().getPriority()))
+            .findFirst()
+            .map(Map.Entry::getValue);
     }
 
     private List<ExternalFile> externalizeVersion(final Version version) {
@@ -212,28 +212,28 @@ public class ExternalizerService {
         } else {
             LOGGER.info("Externalizing version {} with uri {}", version.getUuid(), version.getItem().getUri());
             List<TemporalReferenceTree<ExternalizationIdentifierVisitor.Results, ExternalizationIdentifierVisitor>> trees = new ArrayList<>();
-            InjectableContentProcessingScope.execute(() ->
-                            trees.addAll(externalizeVersionInScope(version))
-                    , version.getContent());
+            InjectableContentProcessingScope.execute(
+                () -> trees.addAll(externalizeVersionInScope(version)),
+                version.getContent());
             LOGGER.debug("Found {} files to externalize", trees.size());
             fileRepo.findByUri(version.getItem().getUri(), version.getInterval())
-                    .stream()
-                    .filter(f -> f.isDifferent(version))
-                    .sorted((v1, v2) -> v1.getItem().getUri().compareTo(v2.getItem().getUri()))
-                    .forEach(f -> {
-                        LOGGER.debug("Deleting file {}", f.getUuid());
-                        version.removeExternalizationId(f.getExternalizationId());
-                        f.delete();
-                    });
+                .stream()
+                .filter(f -> f.isDifferent(version))
+                .sorted((v1, v2) -> v1.getItem().getUri().compareTo(v2.getItem().getUri()))
+                .forEach(f -> {
+                    LOGGER.debug("Deleting file {}", f.getUuid());
+                    version.removeExternalizationId(f.getExternalizationId());
+                    f.delete();
+                });
 
             trees.stream()
-                    .map(t -> createExternalFile(t, version))
-                    .filter(f -> f.isDifferent(version))
-                    .forEach(f -> {
-                        LOGGER.debug("Saving file {}", f.getUuid());
-                        fileRepo.save(f);
-                        results.add(f);
-                    });
+                .map(t -> createExternalFile(t, version))
+                .filter(f -> f.isDifferent(version))
+                .forEach(f -> {
+                    LOGGER.debug("Saving file {}", f.getUuid());
+                    fileRepo.save(f);
+                    results.add(f);
+                });
 
             processed(version.getUuid());
             scheduleService.reschedule();
@@ -247,11 +247,11 @@ public class ExternalizerService {
         if (bean.isPresent()) {
             ExternalizationIdentifierVisitor visitor = new ExternalizationIdentifierVisitor(getExternalizationVisitor(bean.get()));
             LOGGER.info("Using visitor {} to externalize version {} with mime type {}",
-                    bean.get().getBeanClass().getCanonicalName(),
-                    version.getUuid(),
-                    version.getMimeType());
+                bean.get().getBeanClass().getCanonicalName(),
+                version.getUuid(),
+                version.getMimeType());
             ReferenceProcessor<ExternalizationIdentifierVisitor.Results, ExternalizationIdentifierVisitor> processor
-                    = new ReferenceProcessor<>(version, visitor);
+                = new ReferenceProcessor<>(version, visitor);
             trees.addAll(processor.process());
         } else {
             LOGGER.warn("No visitor found to externalizer version {} with mime type {}", version.getUuid(), version.getMimeType());
@@ -261,11 +261,11 @@ public class ExternalizerService {
 
     private ExternalFile createExternalFile(final TemporalReferenceTree<ExternalizationIdentifierVisitor.Results, ExternalizationIdentifierVisitor> t, final Version version) {
         ExternalFile.Builder builder = ExternalFile.builder()
-                .item(version.getItem())
-                .content(t.getResult().getContent())
-                .interval(t.getInterval())
-                .externalizationId(t.getResult().getId())
-                .state(version.getState());
+            .item(version.getItem())
+            .content(t.getResult().getContent())
+            .interval(t.getInterval())
+            .externalizationId(t.getResult().getId())
+            .state(version.getState());
         return builder.build();
     }
 
