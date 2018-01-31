@@ -57,7 +57,7 @@ public class AuthConfigTest {
     @SuppressWarnings("unchecked")
     public void testGetAuthContextIDNotMandatory() {
         Map map = new HashMap();
-        map.put("javax.security.auth.message.MessagsePolicy.isMandatory", "wrong");
+        map.put("javax.security.auth.message.MessagePolicy.isMandatory", "wrong");
         when(messageInfo.getMap()).thenReturn(map);
         String result = config.getAuthContextID(messageInfo);
         assertNull(result);
@@ -67,7 +67,7 @@ public class AuthConfigTest {
     @SuppressWarnings("unchecked")
     public void testGetAuthContextIDMandatory() {
         Map map = new HashMap();
-        map.put("javax.security.auth.message.MessagsePolicy.isMandatory", "true");
+        map.put("javax.security.auth.message.MessagePolicy.isMandatory", "true");
         when(messageInfo.getMap()).thenReturn(map);
         when(messageInfo.toString()).thenReturn("junit");
         String result = config.getAuthContextID(messageInfo);

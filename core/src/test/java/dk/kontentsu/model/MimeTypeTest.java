@@ -53,7 +53,7 @@ public class MimeTypeTest {
     public void wildcard() {
         assertTrue("Equals should work", MimeType.parse("*/*").equals(new MimeType("*", "*")));
         assertTrue("Single wildcard should work", MimeType.parse("*").equals(MimeType.parse("*/*")));
-        assertTrue("Wildcarde should match type and subtype", MimeType.parse("*/*").matches(MimeType.parse("application/json")).isMatch());
+        assertTrue("Wildcard should match type and subtype", MimeType.parse("*/*").matches(MimeType.parse("application/json")).isMatch());
     }
 
     @Test
@@ -126,7 +126,7 @@ public class MimeTypeTest {
 
     @Test
     public void test2String() {
-        String test = "applocation/*;q=0.1;version=42";
+        String test = "application/*;q=0.1;version=42";
         assertTrue(MimeType.parse(test).toString().equals(test));
     }
 
@@ -138,16 +138,16 @@ public class MimeTypeTest {
 
     @Test
     public void testEqualsSymmetric() {
-        MimeType x = MimeType.parse("applocation/*;q=0.1");
-        MimeType y = MimeType.parse("applocation/*;q=0.1");
+        MimeType x = MimeType.parse("application/*;q=0.1");
+        MimeType y = MimeType.parse("application/*;q=0.1");
         assertTrue(x.equals(y) && y.equals(x));
         assertTrue(x.hashCode() == y.hashCode());
     }
 
     @Test
     public void testNotEquals() {
-        MimeType x = MimeType.parse("applocation/*;q=0.5");
-        MimeType y = MimeType.parse("applocation/*;q=0.1");
+        MimeType x = MimeType.parse("application/*;q=0.5");
+        MimeType y = MimeType.parse("application/*;q=0.1");
         assertFalse(x.equals(y) && y.equals(x));
         assertFalse(x.equals(null));
         assertFalse(x.equals(""));

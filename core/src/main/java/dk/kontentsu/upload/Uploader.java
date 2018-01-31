@@ -204,13 +204,13 @@ public class Uploader {
         });
     }
 
-    private Version addVersion(final Item item, final UploadItem uploadeItem) {
-        Content content = itemRepo.saveContent(uploadeItem.getContent(), uploadeItem.getEncoding(), uploadeItem.getMimeType());
+    private Version addVersion(final Item item, final UploadItem uploadItem) {
+        Content content = itemRepo.saveContent(uploadItem.getContent(), uploadItem.getEncoding(), uploadItem.getMimeType());
 
         Version.Builder builder = Version.builder()
                 .content(content)
-                .from(uploadeItem.getInterval().getFrom())
-                .to(uploadeItem.getInterval().getTo());
+                .from(uploadItem.getInterval().getFrom())
+                .to(uploadItem.getInterval().getTo());
 
         InjectableContentProcessingScope.execute(()
                 -> findAllContentParserBeans().forEach(bean

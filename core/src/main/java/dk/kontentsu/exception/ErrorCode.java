@@ -45,7 +45,7 @@ public enum ErrorCode {
     EXTERNALIZATION_ERROR,
     NOT_FOUND_ERROR,
     MIME_TYPE_MISMATCH_ERROR,
-    DB_CYPTO_ERROR;
+    DB_CRYPTO_ERROR;
 
     public String getErrorCode() {
         return name().toLowerCase(Locale.ENGLISH).replace('_', '-');

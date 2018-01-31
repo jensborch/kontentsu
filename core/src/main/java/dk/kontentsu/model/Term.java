@@ -121,7 +121,7 @@ public class Term extends AbstractBaseEntity {
     private String path;
 
     public Term(final String name) {
-        //TODO: chnage this
+        //TODO: change this
         this.name = name.toLowerCase();
     }
 
@@ -187,7 +187,7 @@ public class Term extends AbstractBaseEntity {
         } else {
             Matcher m = PATH_REGEX_PATTERN.matcher(p);
             if (!m.matches()) {
-                throw new IllegalArgumentException("Path '" + p + "' mustch match regular expression " + PATH_REGEX);
+                throw new IllegalArgumentException("Path '" + p + "' must match regular expression " + PATH_REGEX);
             }
             return Arrays.stream(p.split("\\" + PATH_SEPARATOR))
                     .filter(Objects::nonNull)

@@ -354,8 +354,8 @@ public class Item extends AbstractBaseEntity {
             return this;
         }
 
-        public Criteria offset(final int offecet) {
-            query.offset(offecet);
+        public Criteria offset(final int offset) {
+            query.offset(offset);
             return this;
         }
 

@@ -54,7 +54,7 @@ public class ItemURITest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testUnknowExtension() {
+    public void testUnknownExtension() {
         new Item.URI("/test1/test2/test2-test.test");
     }
 

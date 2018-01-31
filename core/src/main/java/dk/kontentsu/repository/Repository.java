@@ -44,14 +44,6 @@ public abstract class Repository<E> {
     public static final String HOST_FIND_ALL = "Host.findAll";
     public static final String HOST_GET = "Host.get";
     public static final String HOST_GET_BY_NAME = "Host.getByName";
-    public static final String URI_FIND_ALL = "Uri.findAll";
-    public static final String URI_GET = "Uri.get";
-    public static final String URI_FIND_ACTIVE = "Uri.findActive";
-    public static final String URI_FIND_BY_PATH = "Uri.findByUri";
-    public static final String TAXON_FIND_ALL = "Taxon.findAll";
-    public static final String TAXON_GET = "Taxon.get";
-    public static final String TAXON_FIND_BY_TAXONOMY_PATH = "Taxon.findByTaxonomyAndPath";
-    public static final String TAXON_FIND_BY_TAXONOMY = "Taxon.findByTaxonomy";
     public static final String ITEM_GET = "Item.get";
     public static final String ITEM_FIND_ALL = "Item.findAll";
     public static final String ITEM_FIND_BY_URI = "Item.findByUri";

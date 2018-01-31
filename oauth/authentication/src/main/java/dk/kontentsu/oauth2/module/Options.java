@@ -41,7 +41,7 @@ import javax.security.auth.message.MessageInfo;
  */
 public class Options {
 
-    public static final String IS_MANDATORY = "javax.security.auth.message.MessagsePolicy.isMandatory";
+    public static final String IS_MANDATORY = "javax.security.auth.message.MessagePolicy.isMandatory";
     public static final String OAUTH2_JWT_SIGNATURE_KEY = "oauth2.jwt.signature.key";
 
     private final Map<String, String> values;
@@ -76,7 +76,7 @@ public class Options {
 
     /**
      * Returns true if message policy is mandatory - i.e. if the key
-     * javax.security.auth.message.MessagsePolicy.isMandatory is equal to the
+     * javax.security.auth.message.MessagePolicy.isMandatory is equal to the
      * string true.
      */
     public boolean isMandatory() {

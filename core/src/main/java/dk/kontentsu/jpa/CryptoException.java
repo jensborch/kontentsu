@@ -45,7 +45,7 @@ public class CryptoException extends ApplicationException {
 
     @Override
     public ErrorCode getErrorCode() {
-        return ErrorCode.DB_CYPTO_ERROR;
+        return ErrorCode.DB_CRYPTO_ERROR;
     }
 
 }

@@ -74,7 +74,7 @@ public class AuthConfig implements ServerAuthConfig, ClientAuthConfig {
     /**
      * Will as defined by the JASPIC specifications return a authentication
      * context identifier if
-     * <code>javax.security.auth.message.MessagsePolicy.isMandatory</code> is
+     * <code>javax.security.auth.message.MessagePolicy.isMandatory</code> is
      * true, otherwise null will be returned.
      *
      * @param messageInfo A contextual Object that encapsulates the client
@@ -104,6 +104,6 @@ public class AuthConfig implements ServerAuthConfig, ClientAuthConfig {
 
     @Override
     public void refresh() {
-        ///Do nothng...
+        ///Do nothing...
     }
 }
