@@ -59,7 +59,7 @@ public class AuthConfig implements ServerAuthConfig, ClientAuthConfig {
     public AuthModule getAuthContext(
             final String authContextID,
             final Subject serviceSubject,
-            @SuppressWarnings("rawtypes") final Map properties) throws AuthException {
+            @SuppressWarnings("rawtypes") final Map properties) {
         options.augment(properties);
         AuthModule module = new AuthModule();
         module.initialize(null, null, handler, options.asMap());

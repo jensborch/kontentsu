@@ -32,7 +32,7 @@ public class CacheFilterTest {
     private ContainerResponseContext response;
 
     @Test
-    public void testNullFilter() throws Exception {
+    public void testNullFilter() {
         CacheFilter filter = new CacheFilter((Cache) null);
         filter.filter(request, response);
         verify(response, times(0)).getHeaders();
@@ -40,7 +40,7 @@ public class CacheFilterTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testFilter() throws Exception {
+    public void testFilter() {
         Cache cc = mock(Cache.class);
         when(cc.maxAge()).thenReturn(40);
         when(cc.sMaxAge()).thenReturn(-1);

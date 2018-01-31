@@ -33,7 +33,7 @@ public class ItemTest {
     private Item item;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         path = new Term().append("test1").append("test2");
         item = new Item(path, "default", new MimeType("text", "plain"));
         item.addVersion(create(NOW, Interval.INFINITE));
@@ -50,13 +50,13 @@ public class ItemTest {
     }
 
     @Test
-    public void testSorting() throws Exception {
+    public void testSorting() {
         assertThat(create(NOW, NOW.plusMinutes(5)).compareTo(create(NOW.plusMinutes(5), NOW.plusMinutes(10))), lessThan(0));
         assertThat(create(NOW.minusMinutes(10), NOW.minusMinutes(5)).compareTo(create(NOW.minusDays(10), NOW.minusDays(5))), greaterThan(0));
     }
 
     @Test
-    public void testNoOverlaps() throws Exception {
+    public void testNoOverlaps() {
         Version nooverlap = create(NOW.minusHours(1), NOW.minusNanos(1));
         item.addVersion(nooverlap);
         assertEquals(1, path.getItems().size());
@@ -64,7 +64,7 @@ public class ItemTest {
     }
 
     @Test
-    public void testOverlapsEmpty() throws Exception {
+    public void testOverlapsEmpty() {
         Version nooverlap = create(NOW.minusHours(1), NOW.minusNanos(1));
         assertFalse(item.overlaps(nooverlap));
     }
@@ -82,7 +82,7 @@ public class ItemTest {
     }
 
     @Test
-    public void testGetVersions() throws Exception {
+    public void testGetVersions() {
         Version overlap = create(NOW.minusHours(1), NOW.minusNanos(1));
         item.addVersion(overlap);
         List<Version> result = item.getVersions(new Interval(NOW.minusDays(1), NOW.plusDays(2)));

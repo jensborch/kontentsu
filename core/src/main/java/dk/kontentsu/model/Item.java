@@ -74,7 +74,7 @@ import org.apache.logging.log4j.Logger;
 @Table(name = "item",
     uniqueConstraints = {
         @UniqueConstraint(columnNames = {"path_id", "edition"}, name = "item_constraint")})
-@NamedQueries( {
+@NamedQueries({
     @NamedQuery(name = Repository.ITEM_FIND_BY_TERM,
         query = "SELECT i FROM Item i JOIN i.path p WHERE p.uuid = :uuid ORDER BY i.created, i.edition"),
     @NamedQuery(name = Repository.ITEM_FIND_ALL,

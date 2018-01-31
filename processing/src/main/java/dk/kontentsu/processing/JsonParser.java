@@ -61,7 +61,7 @@ import org.apache.logging.log4j.Logger;
  * @author Jens Borch Christiansen
  */
 @ContentProcessingScoped
-@ContentProcessingMimeType( {"application/json"})
+@ContentProcessingMimeType({"application/json"})
 public class JsonParser implements ContentParser {
 
     private static final Logger LOGGER = LogManager.getLogger();
