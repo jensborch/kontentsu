@@ -68,7 +68,7 @@ public class AuthModuleTest {
     private JwtBuilder token;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         module = new AuthModule();
         options = new Options().setSignatureKey("signature_key");
         clientSubject = new Subject();
