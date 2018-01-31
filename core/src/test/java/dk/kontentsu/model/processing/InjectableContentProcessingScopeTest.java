@@ -40,9 +40,9 @@ public class InjectableContentProcessingScopeTest {
     @Test
     public void testScope() throws Exception {
         final StringBuilder result = new StringBuilder();
-        InjectableContentProcessingScope.execute(() -> {
-            result.append(bean.uppercase());
-        }, content);
+        InjectableContentProcessingScope.execute(() ->
+                        result.append(bean.uppercase())
+                , content);
         assertNotNull(result);
         assertEquals("SCOPE TEST", result.toString());
     }
@@ -51,9 +51,9 @@ public class InjectableContentProcessingScopeTest {
     public void testNestedScope() throws Exception {
         InjectableContentProcessingScope.execute(() -> {
             UUID outerContentId = bean.getContent().getUuid();
-            InjectableContentProcessingScope.execute(() -> {
-                assertEquals(outerContentId, bean.getContent().getUuid());
-            });
+            InjectableContentProcessingScope.execute(() ->
+                    assertEquals(outerContentId, bean.getContent().getUuid())
+            );
         }, content);
     }
 

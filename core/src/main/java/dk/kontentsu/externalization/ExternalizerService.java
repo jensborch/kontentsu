@@ -175,14 +175,13 @@ public class ExternalizerService {
 
     private Map<MimeType, Bean<?>> getExternalizationVisitorBeansMap() {
         Map<MimeType, Bean<?>> map = new HashMap<>();
-        findAllExternalizationVisitorBeans().forEach(b -> {
-            Arrays.stream(b.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class
-            )).forEach(a -> {
-                Arrays.stream(a.value()).map(MimeType::parse).forEach(m -> {
-                    map.put(m, b);
-                });
-            });
-        });
+        findAllExternalizationVisitorBeans().forEach(b ->
+                Arrays.stream(b.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class))
+                        .forEach(a ->
+                                Arrays.stream(a.value()).map(MimeType::parse)
+                                        .forEach(m -> map.put(m, b))
+                        )
+        );
         LOGGER.debug("Found {} CDI externalization visitors", map.size());
         return map;
     }
@@ -213,9 +212,9 @@ public class ExternalizerService {
         } else {
             LOGGER.info("Externalizing version {} with uri {}", version.getUuid(), version.getItem().getUri());
             List<TemporalReferenceTree<ExternalizationIdentifierVisitor.Results, ExternalizationIdentifierVisitor>> trees = new ArrayList<>();
-            InjectableContentProcessingScope.execute(() -> {
-                trees.addAll(externalizeVersionInScope(version));
-            }, version.getContent());
+            InjectableContentProcessingScope.execute(() ->
+                            trees.addAll(externalizeVersionInScope(version))
+                    , version.getContent());
             LOGGER.debug("Found {} files to externalize", trees.size());
             fileRepo.findByUri(version.getItem().getUri(), version.getInterval())
                     .stream()

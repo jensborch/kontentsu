@@ -25,9 +25,7 @@ public class TransactionTest {
 
     @Test
     public void testApply() throws Exception {
-        String result = Transaction.create(transaction).param("test").apply(s -> {
-            return s;
-        });
+        String result = Transaction.create(transaction).param("test").apply(s -> s);
         verify(transaction, times(1)).begin();
         verify(transaction, times(1)).commit();
         assertEquals("test", result);

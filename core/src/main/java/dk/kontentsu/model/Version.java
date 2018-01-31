@@ -124,9 +124,9 @@ public class Version extends AbstractBaseEntity implements Comparable<Version> {
 
     private static Version create(final Builder builder) {
         Version result = new Version(builder);
-        builder.references.forEach((i) -> {
-            result.references.add(new Reference(result, i.composition, i.type));
-        });
+        builder.references.forEach((i) ->
+                result.references.add(new Reference(result, i.composition, i.type))
+        );
         return result;
     }
 

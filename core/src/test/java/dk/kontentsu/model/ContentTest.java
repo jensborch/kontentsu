@@ -8,7 +8,7 @@ import java.nio.charset.Charset;
 import org.junit.Test;
 
 /**
- * Test for {@link dk.kontentsu.cdn.model.Content}
+ * Test for {@link dk.kontentsu.model.Content}
  *
  * @author Jens Borch Christiansen
  */

@@ -88,22 +88,22 @@ public class JsonParser implements ContentParser {
             Map<Metadata.Key, Metadata> metadata = new HashMap<>();
             List<Link> links = new ArrayList<>();
             Processor[] fieldProcessors = new Processor[3];
-            fieldProcessors[0] = new Processor((p, f) -> {
-                return JSON_HREF.equals(f) && p.contains(JSON_COMPOSITION);
-            }, (k, v) -> {
-                links.add(new Link(new Item.URI(v), ReferenceType.COMPOSITION));
-            });
-            fieldProcessors[1] = new Processor((p, f) -> {
-                return JSON_HREF.equals(f)
-                        && !p.contains(JSON_COMPOSITION)
-                        && !"template".equals(p.peekLast())
-                        && !"composition-type".equals(p.peekLast());
-            }, (k, v) -> {
-                links.add(new Link(new Item.URI(v), ReferenceType.LINK));
-            });
-            fieldProcessors[2] = new Processor((p, f) -> {
-                return JSON_METADATA.equals(p.peekLast());
-            }, (k, v) -> {
+            fieldProcessors[0] = new Processor((p, f) ->
+                    JSON_HREF.equals(f) && p.contains(JSON_COMPOSITION)
+                    , (k, v) ->
+                    links.add(new Link(new Item.URI(v), ReferenceType.COMPOSITION))
+            );
+            fieldProcessors[1] = new Processor((p, f) ->
+                    JSON_HREF.equals(f)
+                            && !p.contains(JSON_COMPOSITION)
+                            && !"template".equals(p.peekLast())
+                            && !"composition-type".equals(p.peekLast())
+                    , (k, v) ->
+                    links.add(new Link(new Item.URI(v), ReferenceType.LINK))
+            );
+            fieldProcessors[2] = new Processor((p, f) ->
+                    JSON_METADATA.equals(p.peekLast())
+                    , (k, v) -> {
                 LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", k, MetadataType.PAGE, v);
                 metadata.put(new Metadata.Key(MetadataType.PAGE, k), new Metadata(v));
             });

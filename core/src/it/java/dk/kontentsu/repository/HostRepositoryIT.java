@@ -75,9 +75,9 @@ public class HostRepositoryIT {
             Term path = catRepo.create(uri);
 
             Item item = itemRepo.findByUri(uri)
-                    .orElseGet(() -> {
-                        return itemRepo.save(new Item(path, MimeType.APPLICATION_JSON_TYPE));
-                    });
+                    .orElseGet(() ->
+                            itemRepo.save(new Item(path, MimeType.APPLICATION_JSON_TYPE))
+                    );
             item.addHost(hostRepo.getByName("name2"));
         } finally {
             userTransaction.commit();

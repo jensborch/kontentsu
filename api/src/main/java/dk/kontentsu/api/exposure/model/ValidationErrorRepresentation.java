@@ -22,9 +22,9 @@ public class ValidationErrorRepresentation extends ErrorRepresentation {
 
     public ValidationErrorRepresentation(final ErrorCode code, final ConstraintViolationException e) {
         super(code, e.getMessage());
-        e.getConstraintViolations().forEach(v -> {
-            violations.add(new Violation(v.getMessage(), Objects.toString(v.getPropertyPath())));
-        });
+        e.getConstraintViolations().forEach(v ->
+                violations.add(new Violation(v.getMessage(), Objects.toString(v.getPropertyPath())))
+        );
     }
 
     public List<Violation> getViolations() {

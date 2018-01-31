@@ -85,9 +85,12 @@ public class UploaderIT {
     private Host createHost(String name) throws Exception {
         try {
             userTransaction.begin();
-            return hostRepo.findByName(name).orElseGet(() -> {
-                return hostRepo.save(new Host(name, "Test description", URI.create("ftp://myusername:mypassword@somehost/"), "cdn/upload"));
-            });
+            return hostRepo.findByName(name).orElseGet(() ->
+                    hostRepo.save(new Host(name,
+                            "Test description",
+                            URI.create("ftp://myusername:mypassword@somehost/"),
+                            "cdn/upload"))
+            );
         } finally {
             userTransaction.commit();
         }
