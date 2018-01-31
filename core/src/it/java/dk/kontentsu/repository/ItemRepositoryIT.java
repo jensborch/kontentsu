@@ -64,7 +64,7 @@ public class ItemRepositoryIT {
     private Term path;
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         container = TestEJBContainer.create();
     }
 
@@ -92,7 +92,7 @@ public class ItemRepositoryIT {
         userTransaction.commit();
     }
 
-    private Item create(final String edition, final ZonedDateTime from, final ZonedDateTime to) throws Exception {
+    private Item create(final String edition, final ZonedDateTime from, final ZonedDateTime to) {
         Content content = new Content("This is a test".getBytes(), Charset.defaultCharset());
 
         Version version = Version.builder()
@@ -131,7 +131,7 @@ public class ItemRepositoryIT {
     }
 
     @Test(expected = EJBTransactionRequiredException.class)
-    public void testNoTransaction() throws Exception {
+    public void testNoTransaction() {
         itemRepo.findAll();
     }
 

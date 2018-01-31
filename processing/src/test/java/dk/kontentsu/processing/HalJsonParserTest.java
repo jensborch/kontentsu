@@ -8,7 +8,6 @@ import java.nio.charset.StandardCharsets;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.Metadata;
 import dk.kontentsu.model.MetadataType;
-import dk.kontentsu.model.MimeType;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.test.ContentTestData;
 import org.junit.Before;

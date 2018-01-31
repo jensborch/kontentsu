@@ -80,7 +80,7 @@ public class ItemExposureTest extends JerseyTest {
     }
 
     @Test
-    public void testList() throws Exception {
+    public void testList() {
         given().get(target("items").getUri())
                 .then()
                 .statusCode(200)
@@ -88,7 +88,7 @@ public class ItemExposureTest extends JerseyTest {
     }
 
     @Test
-    public void testGet() throws Exception {
+    public void testGet() {
         given().get(target("items").path(items.get(0).getUuid().toString()).getUri())
                 .then()
                 .statusCode(200)
@@ -96,7 +96,7 @@ public class ItemExposureTest extends JerseyTest {
     }
 
     @Test
-    public void testGetNoResults() throws Exception {
+    public void testGetNoResults() {
         UUID uuid = UUID.randomUUID();
         Mockito.when(itemRepo.get(uuid)).thenThrow(new EJBException(new NoResultException("Test")));
         given().get(target("items").path(uuid.toString()).getUri())

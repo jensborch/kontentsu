@@ -57,7 +57,7 @@ public class TokenExposureTest extends JerseyTest {
     }
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         Collection<String> roles = new ArrayList<>();
         roles.add("test");
         when(config.issuer()).thenReturn("junit");

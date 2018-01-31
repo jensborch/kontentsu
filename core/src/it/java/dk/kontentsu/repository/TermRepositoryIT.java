@@ -50,7 +50,7 @@ public class TermRepositoryIT {
     private UserTransaction userTransaction;
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         container = TestEJBContainer.create();
     }
 
@@ -90,7 +90,7 @@ public class TermRepositoryIT {
     }
 
     @Test(expected = EJBTransactionRequiredException.class)
-    public void testNoTransaction() throws Exception {
+    public void testNoTransaction() {
         repo.findAll();
     }
 

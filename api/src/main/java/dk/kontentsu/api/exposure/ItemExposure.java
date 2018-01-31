@@ -293,7 +293,7 @@ public class ItemExposure {
         return processMultipartRequest(request, u -> service.upload(u));
     }
 
-    public Response processMultipartRequest(final HttpServletRequest request, final Function<UploadItem, UUID> strategy) {
+    private Response processMultipartRequest(final HttpServletRequest request, final Function<UploadItem, UUID> strategy) {
         try {
             if (isMultipartContent(request)) {
                 ServletFileUpload upload = new ServletFileUpload(itemFactory);

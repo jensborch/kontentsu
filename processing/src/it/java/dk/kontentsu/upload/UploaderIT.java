@@ -63,7 +63,7 @@ public class UploaderIT {
     private UserTransaction userTransaction;
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         container = TestEJBContainer.create();
     }
 
@@ -246,7 +246,7 @@ public class UploaderIT {
     }
 
     @Test
-    public void testIncompleteUpload() throws Exception {
+    public void testIncompleteUpload() {
         InputStream is = new ByteArrayInputStream("test data".getBytes());
         UploadItem uploadItem = UploadItem.builder()
                 .content("TestRef", is)

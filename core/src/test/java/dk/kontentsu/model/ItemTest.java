@@ -39,7 +39,7 @@ public class ItemTest {
         item.addVersion(create(NOW, Interval.INFINITE));
     }
 
-    private Version create(final ZonedDateTime from, final ZonedDateTime to) throws Exception {
+    private Version create(final ZonedDateTime from, final ZonedDateTime to) {
         Content content = new Content("This is a test".getBytes(), Charset.defaultCharset());
         return Version.builder()
                 .content(content)
@@ -70,7 +70,7 @@ public class ItemTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void testVersionOverlap() throws Exception {
+    public void testVersionOverlap() {
         Content content = new Content("Overlap".getBytes(), Charset.defaultCharset());
 
         Version version = Version.builder()

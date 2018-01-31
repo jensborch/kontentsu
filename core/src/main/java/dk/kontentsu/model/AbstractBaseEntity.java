@@ -112,9 +112,6 @@ abstract class AbstractBaseEntity implements Serializable {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof AbstractBaseEntity)) {
-            return false;
-        }
-        return getUuid().equals(((AbstractBaseEntity) obj).getUuid());
+        return obj instanceof AbstractBaseEntity && getUuid().equals(((AbstractBaseEntity) obj).getUuid());
     }
 }

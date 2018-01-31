@@ -76,7 +76,7 @@ public class ScheduledExternalizerServiceTest {
     }
 
     @Test
-    public void testExecute() throws Exception {
+    public void testExecute() {
         service.execute(timer);
         assertTrue(path.resolve("test/file/file-xl.json").toFile().exists());
         assertFalse(path.resolve("delete").toFile().exists());

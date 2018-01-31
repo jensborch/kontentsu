@@ -52,7 +52,7 @@ public class HostRepositoryIT {
     private final Host[] hosts = new Host[2];
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         container = TestEJBContainer.create();
     }
 
@@ -98,7 +98,7 @@ public class HostRepositoryIT {
     }
 
     @Test(expected = EJBTransactionRequiredException.class)
-    public void testNoTransaction() throws Exception {
+    public void testNoTransaction() {
         hostRepo.findAll();
     }
 

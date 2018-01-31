@@ -75,20 +75,20 @@ public class AuthModule implements ServerAuthModule, ServerAuthContext, ClientAu
     public void initialize(final MessagePolicy requestPolicy,
             final MessagePolicy responsePolicy,
             final CallbackHandler handler,
-            @SuppressWarnings("rawtypes") final Map options) throws AuthException {
+            @SuppressWarnings("rawtypes") final Map options) {
         this.handler = handler;
         this.config = new Options(options);
     }
 
     @Override
-    public void cleanSubject(final MessageInfo info, final Subject subject) throws AuthException {
+    public void cleanSubject(final MessageInfo info, final Subject subject) {
         subject.getPrincipals().clear();
         subject.getPublicCredentials().clear();
         subject.getPrivateCredentials().clear();
     }
 
     @Override
-    public AuthStatus secureResponse(final MessageInfo messageInfo, final Subject serviceSubject) throws AuthException {
+    public AuthStatus secureResponse(final MessageInfo messageInfo, final Subject serviceSubject) {
         return AuthStatus.SEND_SUCCESS;
     }
 
@@ -139,12 +139,12 @@ public class AuthModule implements ServerAuthModule, ServerAuthContext, ClientAu
     }
 
     @Override
-    public AuthStatus secureRequest(final MessageInfo messageInfo, final Subject clientSubject) throws AuthException {
+    public AuthStatus secureRequest(final MessageInfo messageInfo, final Subject clientSubject) {
         return AuthStatus.SUCCESS;
     }
 
     @Override
-    public AuthStatus validateResponse(final MessageInfo messageInfo, final Subject clientSubject, final Subject serviceSubject) throws AuthException {
+    public AuthStatus validateResponse(final MessageInfo messageInfo, final Subject clientSubject, final Subject serviceSubject) {
         return AuthStatus.SUCCESS;
     }
 

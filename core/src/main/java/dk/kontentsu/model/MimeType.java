@@ -279,11 +279,7 @@ public class MimeType implements Serializable {
      * @return true if the header matches the mime type
      */
     public boolean matchesHeader(final String header) {
-        if (header == null || header.trim().isEmpty()) {
-            return true;
-        } else {
-            return Pattern.compile(",").splitAsStream(header).anyMatch(h -> matches(h).isMatch());
-        }
+        return header == null || header.trim().isEmpty() || Pattern.compile(",").splitAsStream(header).anyMatch(h -> matches(h).isMatch());
     }
 
     public boolean isText() {

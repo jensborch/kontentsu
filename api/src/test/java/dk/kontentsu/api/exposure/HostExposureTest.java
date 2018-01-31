@@ -61,7 +61,7 @@ public class HostExposureTest extends JerseyTest {
     }
 
     @Test
-    public void testFind() throws Exception {
+    public void testFind() {
         given().get(target("hosts").getUri())
                 .then()
                 .statusCode(200)

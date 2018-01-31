@@ -74,7 +74,7 @@ public class ExternalizerServiceIT {
     private UserTransaction userTransaction;
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
 
         container = TestEJBContainer.create();
     }

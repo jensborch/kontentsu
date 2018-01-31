@@ -25,7 +25,7 @@ public class VersionTest {
     private Version version;
 
     @Before
-    public void setUp() throws Exception  {
+    public void setUp() {
         content = new Content("This is a test".getBytes(), Charset.defaultCharset());
         Term path = Term.parse("uri:/test1/test2/");
         item = new Item(path, new MimeType("text", "plain"));

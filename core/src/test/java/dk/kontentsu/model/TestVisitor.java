@@ -10,7 +10,7 @@ import dk.kontentsu.spi.ContentProcessingScoped;
 @ContentProcessingScoped
 public class TestVisitor implements TemporalReferenceTreeVisitor<TestVisitor.TestResults> {
 
-    List<String> names = new ArrayList<>();
+    final List<String> names = new ArrayList<>();
 
     @Override
     public TestResults getResults() {
@@ -24,7 +24,7 @@ public class TestVisitor implements TemporalReferenceTreeVisitor<TestVisitor.Tes
 
     public static class TestResults implements TemporalReferenceTreeVisitor.Results {
 
-        List<String> names;
+        final List<String> names;
 
         public TestResults(List<String> names) {
             this.names = names;

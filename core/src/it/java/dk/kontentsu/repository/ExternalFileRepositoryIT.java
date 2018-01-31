@@ -61,7 +61,7 @@ public class ExternalFileRepositoryIT {
     private ExternalFile file;
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         container = TestEJBContainer.create();
     }
 
@@ -169,7 +169,7 @@ public class ExternalFileRepositoryIT {
     }
 
     @Test(expected = EJBTransactionRequiredException.class)
-    public void testNoTransaction() throws Exception {
+    public void testNoTransaction() {
         fileRepo.findAll();
     }
 

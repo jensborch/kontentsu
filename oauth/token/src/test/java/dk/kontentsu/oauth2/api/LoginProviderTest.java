@@ -61,7 +61,7 @@ public class LoginProviderTest {
         Subject subject = new Subject();
 
         @Override
-        public Subject getSubject() throws PolicyContextException {
+        public Subject getSubject() {
             return subject;
         }
 

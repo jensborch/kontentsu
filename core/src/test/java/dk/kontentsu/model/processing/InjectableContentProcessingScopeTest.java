@@ -9,7 +9,6 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import dk.kontentsu.model.Content;
-import dk.kontentsu.model.MimeType;
 import dk.kontentsu.spi.ContentProcessingExtension;
 import org.jboss.weld.context.ContextNotActiveException;
 import org.jglue.cdiunit.AdditionalClasses;
@@ -38,7 +37,7 @@ public class InjectableContentProcessingScopeTest {
     }
 
     @Test
-    public void testScope() throws Exception {
+    public void testScope() {
         final StringBuilder result = new StringBuilder();
         InjectableContentProcessingScope.execute(() ->
                         result.append(bean.uppercase())
@@ -48,7 +47,7 @@ public class InjectableContentProcessingScopeTest {
     }
 
     @Test
-    public void testNestedScope() throws Exception {
+    public void testNestedScope() {
         InjectableContentProcessingScope.execute(() -> {
             UUID outerContentId = bean.getContent().getUuid();
             InjectableContentProcessingScope.execute(() ->
@@ -58,7 +57,7 @@ public class InjectableContentProcessingScopeTest {
     }
 
     @Test(expected = ContextNotActiveException.class)
-    public void testNotActive() throws Exception {
+    public void testNotActive() {
         bean.uppercase();
     }
 

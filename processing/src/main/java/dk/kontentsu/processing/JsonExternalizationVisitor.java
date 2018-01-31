@@ -141,8 +141,8 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
      */
     private static class CompositionNode {
 
-        boolean array;
-        String name;
+        final boolean array;
+        final String name;
 
         CompositionNode(final String name, final boolean array) {
             this.name = name;

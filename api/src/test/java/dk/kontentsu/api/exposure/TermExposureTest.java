@@ -63,7 +63,7 @@ public class TermExposureTest extends JerseyTest {
     }
 
     @Test
-    public void testFindTaxonomies() throws Exception {
+    public void testFindTaxonomies() {
         given().get(target("terms").getUri())
                 .then()
                 .statusCode(200)
@@ -71,21 +71,21 @@ public class TermExposureTest extends JerseyTest {
     }
 
     @Test
-    public void testUnknownTaxonomy() throws Exception {
+    public void testUnknownTaxonomy() {
         given().get(target("terms/unknown").getUri())
                 .then()
                 .statusCode(404);
     }
 
     @Test
-    public void testFindTaxonomy() throws Exception {
+    public void testFindTaxonomy() {
         given().get(target("terms/uri").getUri())
                 .then()
                 .statusCode(200);
     }
 
     @Test
-    public void testFindTerms() throws Exception {
+    public void testFindTerms() {
         given().get(target("terms/uri/test1/test2").getUri())
                 .then()
                 .statusCode(200)

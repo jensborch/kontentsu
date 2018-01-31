@@ -81,7 +81,7 @@ public class ExternalFileExposureTest extends JerseyTest {
     }
 
     @Test
-    public void testGetContent() throws Exception {
+    public void testGetContent() {
         given().when()
                 .contentType(MimeType.APPLICATION_JSON_TYPE.toString())
                 .get(target("/files/test/test").getUri())
@@ -92,7 +92,7 @@ public class ExternalFileExposureTest extends JerseyTest {
     }
 
     @Test
-    public void testNotFound() throws Exception {
+    public void testNotFound() {
         given().when()
                 .contentType(MimeType.APPLICATION_JSON_TYPE.toString())
                 .get(target("/files/test/not-found/").getUri())
@@ -103,7 +103,7 @@ public class ExternalFileExposureTest extends JerseyTest {
     }
 
     @Test
-    public void testWrongDateTimeFormat() throws Exception {
+    public void testWrongDateTimeFormat() {
         given().when()
                 .contentType(MimeType.APPLICATION_JSON_TYPE.toString())
                 .get(target("/files/test/test").queryParam("at", "not-a-date-time").getUri())
@@ -114,7 +114,7 @@ public class ExternalFileExposureTest extends JerseyTest {
     }
 
     @Test
-    public void testDateTimeFormat() throws Exception {
+    public void testDateTimeFormat() {
         given().when()
                 .contentType(MimeType.APPLICATION_JSON_TYPE.toString())
                 .get(target("/files/test/test").queryParam("at", "2010-12-24T20:00:00Z").getUri().toString().replace("%3A", ":"))

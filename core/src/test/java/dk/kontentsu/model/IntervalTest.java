@@ -63,7 +63,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testInvalid() throws Exception {
+    public void testInvalid() {
         Interval invalid = new Interval(NOW, NOW);
         ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
         Validator validator = vf.getValidator();
@@ -73,7 +73,7 @@ public class IntervalTest {
     }
 
     @Test
-    public void testEquals() throws Exception {
+    public void testEquals() {
         assertFalse(new Interval(NOW, NOW).equals(null));
         assertFalse(new Interval(NOW, NOW).equals(new Object()));
         assertTrue(new Interval(NOW, NOW).equals(new Interval(NOW, NOW)));
@@ -81,13 +81,13 @@ public class IntervalTest {
     }
 
     @Test
-    public void testIntersection() throws Exception {
+    public void testIntersection() {
         assertEquals(new Interval(NOW, NOW.plusDays(2)), nowPlus2days.intersection(nowPlus4days).get());
         assertFalse(nowPlus2days.intersection(plus4daysPlus8days).isPresent());
     }
 
     @Test
-    public void testDisjunctiveUnion() throws Exception {
+    public void testDisjunctiveUnion() {
         Set<Interval> results = nowPlus2days.disjunctiveUnion(nowPlus4days);
         assertEquals(1, results.size());
         assertTrue(results.contains(new Interval(NOW.plusDays(2), NOW.plusDays(4))));

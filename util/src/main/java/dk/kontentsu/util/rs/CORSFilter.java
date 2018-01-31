@@ -44,7 +44,7 @@ public class CORSFilter implements ContainerResponseFilter {
     private static final String ALLOW_ORIGIN = "Access-Control-Allow-Origin";
 
     @Override
-    public void filter(final ContainerRequestContext request, final ContainerResponseContext response) throws IOException {
+    public void filter(final ContainerRequestContext request, final ContainerResponseContext response) {
         response.getHeaders().add(ALLOW_ORIGIN, "*");
         response.getHeaders().add(ALLOW_HEADERS, "origin, content-type, accept, authorization");
         response.getHeaders().add(ALLOW_CREDENTIALS, "true");

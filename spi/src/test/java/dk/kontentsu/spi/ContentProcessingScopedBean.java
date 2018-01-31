@@ -12,7 +12,7 @@ public class ContentProcessingScopedBean {
 
     private static int count = 1;
 
-    private UUID id;
+    private final UUID id;
 
     public ContentProcessingScopedBean() {
         count++;

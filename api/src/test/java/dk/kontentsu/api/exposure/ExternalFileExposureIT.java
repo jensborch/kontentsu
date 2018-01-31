@@ -34,7 +34,7 @@ public class ExternalFileExposureIT {
     private ExternalFileExposure exposure;
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         container = TestEJBContainer.create();
     }
 
@@ -51,7 +51,7 @@ public class ExternalFileExposureIT {
     }
 
     @Test
-    public void notFound() throws Exception {
+    public void notFound() {
         catchException(exposure).get("test/notfound", null, null);
         assertTrue(caughtException() instanceof EJBException);
         assertTrue(caughtException().getCause().getCause() instanceof NoResultException);

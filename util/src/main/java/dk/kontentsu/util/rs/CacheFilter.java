@@ -77,7 +77,7 @@ public class CacheFilter implements ContainerResponseFilter {
     }
 
     @Override
-    public void filter(final ContainerRequestContext request, final ContainerResponseContext response) throws IOException {
+    public void filter(final ContainerRequestContext request, final ContainerResponseContext response) {
         if (!cacheControl.isEmpty()) {
             response.getHeaders().putSingle(HttpHeaders.CACHE_CONTROL, cacheControl
                     .stream()

@@ -26,7 +26,7 @@ public class ContentProcessingScopeTest {
     private ContentProcessingScopedBean bean;
 
     @Test
-    public void testScope() throws Exception {
+    public void testScope() {
         UUID id;
         try (ContentProcessingScope scope = new ContentProcessingScope()) {
             scope.start();
@@ -37,7 +37,7 @@ public class ContentProcessingScopeTest {
     }
 
     @Test
-    public void testNestedScope() throws Exception {
+    public void testNestedScope() {
         try (ContentProcessingScope scope1 = new ContentProcessingScope()) {
             scope1.start();
             final int count = bean.getCount();
@@ -57,7 +57,7 @@ public class ContentProcessingScopeTest {
     }
 
     @Test(expected = ContextNotActiveException.class)
-    public void testNotActive() throws Exception {
+    public void testNotActive() {
         bean.getId();
     }
 

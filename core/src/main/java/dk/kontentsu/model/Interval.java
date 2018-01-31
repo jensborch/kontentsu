@@ -100,12 +100,7 @@ public class Interval implements Serializable, Comparable<Interval> {
      * @return true if intervals overlaps
      */
     public boolean overlaps(final Interval other) {
-        if (other == null) {
-            return false;
-        } else {
-            return other.equals(this)
-                    || from.compareTo(other.to) < 0 && other.from.compareTo(to) < 0;
-        }
+        return other != null && (other.equals(this) || from.compareTo(other.to) < 0 && other.from.compareTo(to) < 0);
     }
 
     /**

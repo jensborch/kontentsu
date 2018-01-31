@@ -90,14 +90,14 @@ public final class AuthConfigProvider implements javax.security.auth.message.con
     @Override
     public ClientAuthConfig getClientAuthConfig(final String layer,
             final String appContext,
-            final CallbackHandler handler) throws AuthException {
+            final CallbackHandler handler) {
         return new AuthConfig(appContext, layer, handler, options);
     }
 
     @Override
     public ServerAuthConfig getServerAuthConfig(final String layer,
             final String appContext,
-            final CallbackHandler handler) throws AuthException {
+            final CallbackHandler handler) {
         return new AuthConfig(appContext, layer, handler, options);
     }
 
