@@ -28,6 +28,7 @@ pipeline {
                 sh 'gradle pmd pmdMain'
                 sh 'gradle checkstyle checkstyleMain'
                 sh 'gradle findbugs findbugsMain'
+                sh 'gradle infer'
                 dir('client') {
                     sh "mkdir -p checkstyle"
                     sh "rm -f checkstyle/main.xml"
@@ -53,4 +54,5 @@ pipeline {
             }
         }
     }
+
 }
