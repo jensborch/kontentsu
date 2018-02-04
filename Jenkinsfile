@@ -44,7 +44,7 @@ pipeline {
         }
         stage('Infer') {
             steps {
-                sh 'gradle build'
+                sh 'gradle clean'
                 sh 'infer --pmd-xml run -- gradle build'
             }
         }
