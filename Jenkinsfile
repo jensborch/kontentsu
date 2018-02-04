@@ -1,7 +1,9 @@
 #!/usr/bin/env groovy
 pipeline {
     agent any
-
+    environment {
+        PATH = "/opt/infer/bin:$PATH"
+    }
     stages {
         stage('Clean') {
             steps {
@@ -28,7 +30,6 @@ pipeline {
                 sh 'gradle pmd pmdMain'
                 sh 'gradle checkstyle checkstyleMain'
                 sh 'gradle findbugs findbugsMain'
-                sh 'gradle infer'
                 dir('client') {
                     sh "mkdir -p checkstyle"
                     sh "rm -f checkstyle/main.xml"
@@ -41,6 +42,10 @@ pipeline {
                 sh 'gradle integrationTest'
             }
         }
+        stage('Infer') {
+            sh 'gradle build'
+            sh 'infer --pmd-xml run -- gradle build'
+        }
         stage("Reports") {
             steps {
                 junit '**/build/test-results/test/*.xml'
@@ -48,7 +53,7 @@ pipeline {
                 step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'client/coverage/cobertura.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
                 findbugs canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', pattern: '**/findbugs/main.xml', unHealthy: ''
                 checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/checkstyle/main.xml', unHealthy: ''
-                pmd canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/pmd/main.xml', unHealthy: ''
+                pmd canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/pmd/main.xml, infer-out/report.xml', unHealthy: ''
                 openTasks canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', high: 'FIXME,HACK', ignoreCase: true, low: 'NOTE', normal: 'TODO', pattern: '**/*java,client/src/**/*.ts', unHealthy: ''
                 dry canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/build/**/cpd/cpdCheck.xml', unHealthy: ''
             }
