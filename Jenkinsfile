@@ -15,10 +15,10 @@ pipeline {
                     sh 'npm install'
                 }
             }
-        }        
+        }
         stage('Build') {
             steps {
-                sh 'gradle build'
+                sh 'infer capture -- gradle build'
                 dir('client') {
                     sh 'npm run-script build'
                     sh 'npm run-script test -- --single-run --code-coverage --browsers ChromeHeadless'
@@ -36,7 +36,7 @@ pipeline {
                     sh "npm run-script lint -- --format checkstyle --force true | awk '{if(NR > 4) print \$0}' > checkstyle/main.xml"
                 }
             }
-        }   
+        }
         stage('Integration tests') {
             steps {
                 sh 'gradle integrationTest'
@@ -44,8 +44,7 @@ pipeline {
         }
         stage('Infer') {
             steps {
-                sh 'gradle clean'
-                sh 'infer --pmd-xml run -- gradle build'
+                sh 'infer analyze --pmd-xml || true'
             }
         }
         stage("Reports") {
