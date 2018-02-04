@@ -43,8 +43,10 @@ pipeline {
             }
         }
         stage('Infer') {
-            sh 'gradle build'
-            sh 'infer --pmd-xml run -- gradle build'
+            steps {
+                sh 'gradle build'
+                sh 'infer --pmd-xml run -- gradle build'
+            }
         }
         stage("Reports") {
             steps {
