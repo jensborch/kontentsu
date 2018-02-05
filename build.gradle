@@ -1,7 +1,6 @@
 buildscript {
     dependencies {
         classpath 'org.owasp:dependency-check-gradle:2.1.1'
-        classpath "com.uber:infer-plugin:0.7.4"
     }
 }
 
@@ -36,6 +35,7 @@ ext {
     jjwtVersion = '0.9.0'
     jschNioVersion = '1.0.5'
     findbugsAnnotationsVersion = '3.0.1u2'
+    inferVersion = '0.11.2'
 
     swaggerUiVersion = '3.2.2'
     swaggerVersion = '1.5.16'
@@ -121,8 +121,7 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'org.owasp.dependencycheck'
     apply plugin: 'jdepend'
-    apply plugin: 'com.uber.infer.java'
-    
+
     gradle.taskGraph.whenReady { taskGraph ->
         tasks.findbugsMain.onlyIf {
             taskGraph.hasTask((tasks.findbugs))
@@ -256,6 +255,7 @@ subprojects {
 
         compile 'org.apache.logging.log4j:log4j-api:' + log4jVersion
         compile 'com.google.code.findbugs:annotations:' + findbugsAnnotationsVersion
+        compile 'com.facebook.infer.annotation:infer-annotation:' + inferVersion
 
         testCompile 'junit:junit:' + junitVersion
         testCompile 'org.apache.logging.log4j:log4j-core:' + log4jVersion
@@ -306,7 +306,7 @@ task codeCoverageReport(type: JacocoReport) {
 
     reports {
         xml.enabled true
-        xml.destination = file("$buildDir/reports/jacoco/test/jacocoTestReport.xml")
+        xml.destination file("$buildDir/reports/jacoco/test/jacocoTestReport.xml")
         html.enabled false
         csv.enabled false
     }
