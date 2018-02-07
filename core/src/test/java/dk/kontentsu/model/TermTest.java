@@ -20,9 +20,9 @@ public class TermTest {
     @Before
     public void setup() {
         term1 = new Term("uri").append("test1/");
-        term2 = new Term("uri").append("/Test1/test2/");
+        term2 = new Term("uri").append("/test1/test2/");
         root = new Term("uri");
-        term3 = root.append("test1/Test2/test3");
+        term3 = root.append("test1/test2/test3");
         term4 = new Term("color").append("blue");
         empty = new Term("empty");
     }
@@ -36,7 +36,7 @@ public class TermTest {
 
     @Test
     public void testParse() {
-        assertEquals(term3.getPathWithTaxonomy(), Term.parse("uri:/test1/Test2/test3/").getPathWithTaxonomy());
+        assertEquals(term3.getPathWithTaxonomy(), Term.parse("uri:/test1/test2/test3/").getPathWithTaxonomy());
     }
 
     @Test
@@ -68,7 +68,7 @@ public class TermTest {
         Term test = term1.append("test2");
         assertEquals(term2.getPathWithTaxonomy(), test.getPathWithTaxonomy());
         assertEquals(term3.getPathWithTaxonomy(), term1.append("test2/test3").getPathWithTaxonomy());
-        Term testTerm = new Term("test2").append(new Term("TEST3"));
+        Term testTerm = new Term("test2").append(new Term("test3"));
         term1.append(testTerm.getParent().get());
         assertEquals(term3.getPathWithTaxonomy(), testTerm.getPathWithTaxonomy());
     }

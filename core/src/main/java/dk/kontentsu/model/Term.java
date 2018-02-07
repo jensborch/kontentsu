@@ -121,8 +121,7 @@ public class Term extends AbstractBaseEntity {
     private String path;
 
     public Term(final String name) {
-        //TODO: change this
-        this.name = name.toLowerCase();
+        this.name = name;
     }
 
     public Term() {
