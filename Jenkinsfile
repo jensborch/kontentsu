@@ -29,7 +29,7 @@ pipeline {
             steps {
                 sh 'gradle pmd pmdMain'
                 sh 'gradle checkstyle checkstyleMain'
-                sh 'gradle findbugs findbugsMain'
+                sh 'gradle spotbugs spotbugsMain'
                 dir('client') {
                     sh "mkdir -p checkstyle"
                     sh "rm -f checkstyle/main.xml"
@@ -52,7 +52,7 @@ pipeline {
                 junit '**/build/test-results/test/*.xml'
                 jacoco changeBuildStatus: true, exclusionPattern: ' **/*Test*.class, **/*IT.class, **/model/**/Q*.class', maximumBranchCoverage: '60', maximumClassCoverage: '70', maximumComplexityCoverage: '60', maximumInstructionCoverage: '60', maximumLineCoverage: '60', maximumMethodCoverage: '60', minimumBranchCoverage: '40', minimumClassCoverage: '50', minimumComplexityCoverage: '40', minimumInstructionCoverage: '40', minimumLineCoverage: '40', minimumMethodCoverage: '40'
                 step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'client/coverage/cobertura.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
-                findbugs canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', pattern: '**/findbugs/main.xml', unHealthy: ''
+                findbugs canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', pattern: '**/spotbugs/main.xml', unHealthy: ''
                 checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/checkstyle/main.xml', unHealthy: ''
                 pmd canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/pmd/main.xml, infer-out/report.xml', unHealthy: ''
                 openTasks canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', high: 'FIXME,HACK', ignoreCase: true, low: 'NOTE', normal: 'TODO', pattern: '**/*java,client/src/**/*.ts', unHealthy: ''
