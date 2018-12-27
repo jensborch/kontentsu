@@ -10,6 +10,7 @@ sourceSets {
 }
 
 dependencies {
+    compile 'junit:junit:' + junitVersion
     compile 'org.apache.tomee:openejb-core:' + openejbVersion
     compile 'org.apache.tomee:tomee-jaxrs:' + openejbVersion
     compile 'com.h2database:h2:' + h2Version
