@@ -6,7 +6,7 @@ import { ArticleComponent } from '../article/article.component';
 import { Logger} from '../logger/logger.service';
 import { Page } from './../page';
 import { ContentService } from '../content/content.service';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'k-template',

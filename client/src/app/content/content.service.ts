@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http, Response } from '@angular/http';
 import { environment } from '../../environments/environment';
-import { Subject } from 'rxjs/Subject';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import { Subject ,  Observable } from 'rxjs';
+import { map } from "rxjs/operators";
 import { Page } from '../page';
 import { Logger } from '../logger/logger.service';
 import { Title } from '@angular/platform-browser';
@@ -27,8 +26,8 @@ export class ContentService {
             path = environment.frontPage;
         }
         const pageUrl = environment.filesApi + path;
-        this.http.get(pageUrl, { headers: this.headers })
-            .map((res: Response) => res.json())
+        this.http.get(pageUrl, { headers: this.headers }).pipe(
+            map((res: Response) => res.json()))
             .subscribe(p => {
                 if (p.content && p.content.heading) {
                     this.log.info('Setting heading from content "' + p.content.heading + '"');
