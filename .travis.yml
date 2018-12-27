@@ -6,6 +6,8 @@ addons:
     organization: "jensborch-github"
 jdk:
   - oraclejdk8
+before_install:
+  - gradle -b wrapper.gradle wrapper
 script:
   - gradle build integrationTest
   - gradle codeCoverageReport

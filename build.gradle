@@ -284,9 +284,5 @@ task lintAngular(type: NpmTask) {
     args = [ 'run-script', 'lint', '--', '--single-run']
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '5.0'
-}
-
 testAngular.dependsOn(npm_install)
 lintAngular.dependsOn(npm_install)
