@@ -50,7 +50,8 @@ describe("Service: Content", () => {
       service.getPage().subscribe(page => {
         expect(page).toBeDefined();
         expect(page.data).toBeDefined();
-        //expect(page.data.heading).toEqual("Testing");
+        expect(page.data.content.heading).toBeDefined();
+        expect(page.data.content.heading).toEqual("Testing");
       });
       service.load();
       backend.expectOne("http://localhost:9090/kontentsu/api/files/pages/page1/").flush(mockResponse);
@@ -61,7 +62,7 @@ describe("Service: Content", () => {
     [ContentService, Title, HttpClient, HttpTestingController],
     (service: ContentService, title: Title, http: HttpClient, backend: HttpTestingController) => {
       service.getPage().subscribe(page => {
-        //expect(title.getTitle()).toEqual("Test title");
+        expect(title.getTitle()).toEqual("Testing");
       });
       service.load();
       backend.expectOne("http://localhost:9090/kontentsu/api/files/pages/page1/").flush(mockResponse);
