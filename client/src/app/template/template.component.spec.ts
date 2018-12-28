@@ -1,11 +1,11 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HttpModule, XHRBackend } from '@angular/http';
-import { MockBackend } from '@angular/http/testing';
+import {
+  HttpClientTestingModule,
+} from "@angular/common/http/testing";
 import { TemplateComponent } from './template.component';
 import { ContentService } from '../content/content.service';
 import { Logger } from '../logger/logger.service';
-import { Location, LocationStrategy, PathLocationStrategy, APP_BASE_HREF } from '@angular/common';
 import { Compiler } from '@angular/core';
 
 describe('Component: Template', () => {
@@ -14,10 +14,9 @@ describe('Component: Template', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpModule],
+      imports: [HttpClientTestingModule],
       declarations: [TemplateComponent],
       providers: [
-        { provide: XHRBackend, useClass: MockBackend },
         Compiler,
         ContentService,
         Logger

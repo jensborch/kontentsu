@@ -1,12 +1,10 @@
 import { OnInit, NgModule, Component, ViewContainerRef, AfterViewInit, Compiler, ComponentRef, ViewChild } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { PageModule } from '../page.module';
-import { ArticleComponent } from '../article/article.component';
 import { Logger} from '../logger/logger.service';
 import { Page } from './../page';
 import { ContentService } from '../content/content.service';
-import { Observable } from 'rxjs';
 
 @Component({
     selector: 'k-template',
@@ -20,7 +18,7 @@ export class TemplateComponent implements OnInit {
 
     constructor(
         private contentService: ContentService,
-        private http: Http,
+        private http: HttpClient,
         private compiler: Compiler,
         private log: Logger) { }
 
@@ -59,10 +57,9 @@ export class TemplateComponent implements OnInit {
     }
 
     private loadTemplate() {
-        this.http.get(this.page.template)
-            .subscribe((res: Response) => {
+        this.http.get<string>(this.page.template)
+            .subscribe(template => {
                 this.log.info('Template: ' + this.page.template);
-                const template = res.text();
                 this.log.debug('Template data: ' + template);
                 this.createComponent(template, this.page.data);
             }, e => {
