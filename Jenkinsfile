@@ -21,7 +21,7 @@ pipeline {
                 sh 'infer capture -- gradle build'
                 dir('client') {
                     sh 'npm run-script build'
-                    sh 'npm run-script test -- --single-run --code-coverage --browsers ChromeHeadless'
+                    sh 'npm run-script test -- --watch=false --code-coverage --browsers ChromeHeadless'
                 }
             }
         }
