@@ -3,14 +3,11 @@
 import { Component } from '@angular/core';
 import { TestBed, async  } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { TemplateComponent } from './template/template.component';
 import { Page } from './page';
 import { ContentService } from './content/content.service';
 import { Logger } from './logger/logger.service';
-import { Observable } from 'rxjs/Rx';
-import { DOCUMENT } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { Observable, of } from 'rxjs';
 
 class MockContentService {
 
@@ -18,7 +15,7 @@ class MockContentService {
   };
 
   getPage(): Observable<Page> {
-    return Observable.of(new Page(
+    return of(new Page(
       'template',
       {
         content: { heading: 'Test title' }
