@@ -256,8 +256,8 @@ idea {
 }
 
 node {
-    version = '8.9.4'
-    npmVersion = '5.6.0'
+    version = '10.15.0'
+    npmVersion = '6.4.1'
     nodeModulesDir = file("${project.projectDir}/client")
 }
 
@@ -277,7 +277,7 @@ task codeCoverageReport(type: JacocoReport) {
 }
 
 task testAngular(type: NpmTask) {
-    args = ['test', '--', '--single-run', '--code-coverage', "--browsers ChromeHeadless"]
+    args = ['test', '--', '--watch=false', '--code-coverage', "--browsers ChromeHeadless"]
 }
 
 task lintAngular(type: NpmTask) {
