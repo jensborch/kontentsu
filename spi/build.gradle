@@ -13,5 +13,6 @@ dependencies {
 
     testCompile project(':test')
     testCompile 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
+    testCompile 'org.jboss.weld.se:weld-se-core:' + weldVersion
 }
 

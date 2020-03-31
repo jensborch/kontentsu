@@ -33,7 +33,8 @@ public class CacheFilterTest {
 
     @Test
     public void testNullFilter() {
-        CacheFilter filter = new CacheFilter((Cache) null);
+        Cache c = null;
+        CacheFilter filter = new CacheFilter(c);
         filter.filter(request, response);
         verify(response, times(0)).getHeaders();
     }
