@@ -1,5 +1,5 @@
 
-task wrapper(type: Wrapper) {
+task addwrapper(type: Wrapper) {
     gradleVersion = '6.3'
 }
 
