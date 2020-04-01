@@ -7,7 +7,7 @@ apply plugin: 'war'
 def warFile = 'kontentsu.war'
 
 war {
-    archiveName = "${warFile}"
+    archiveFileName = "${warFile}"
 }
 
 configurations {
@@ -26,18 +26,18 @@ configurations {
 }
 
 dependencies {
-    compile project(':oauth:authentication')
-    compile project(':api')
-    compile project(':processing')
+    implementation project(':oauth:authentication')
+    implementation project(':api')
+    implementation project(':processing')
     
     runtime files("${project(':core').libsDir}/kontentsu-core-javadoc-${version}.jar")
 
-    compile 'org.apache.logging.log4j:log4j-web:' + log4jVersion
-    compile 'com.h2database:h2:' + h2Version
+    implementation 'org.apache.logging.log4j:log4j-web:' + log4jVersion
+    implementation 'com.h2database:h2:' + h2Version
 
-    compile 'org.webjars:angular-material:' + angularMaterialVersion
-    compile 'org.webjars:angularjs:' + angularVersion
-    compile 'org.webjars:swagger-ui:' + swaggerUiVersion
+    implementation 'org.webjars:angular-material:' + angularMaterialVersion
+    implementation 'org.webjars:angularjs:' + angularVersion
+    implementation 'org.webjars:swagger-ui:' + swaggerUiVersion
 
     payara 'fish.payara.extras:payara-micro:' + payaraVersion
 }

@@ -1,5 +1,5 @@
 jar {
-    baseName = 'kontentsu-spi'
+    archiveBaseName = 'kontentsu-spi'
 }
 
 sourceSets {
@@ -9,10 +9,10 @@ sourceSets {
 }
 
 dependencies {
-    compile 'org.apache.tomee:javaee-api:' + javaeeVersion
+    implementation 'org.apache.tomee:javaee-api:' + javaeeVersion
 
-    testCompile project(':test')
-    testCompile 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
-    testCompile 'org.jboss.weld.se:weld-se-core:' + weldVersion
+    testImplementation project(':test')
+    testImplementation 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
+    testImplementation 'org.jboss.weld.se:weld-se-core:' + weldVersion
 }
 

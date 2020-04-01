@@ -1,8 +1,8 @@
 
 jar {
-    baseName = 'util'
+    archiveBaseName = 'util'
 }
 
 dependencies {
-    compile 'org.apache.tomee:javaee-api:' + javaeeVersion
+    api 'org.apache.tomee:javaee-api:' + javaeeVersion
 }

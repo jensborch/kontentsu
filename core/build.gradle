@@ -1,10 +1,10 @@
 
 jar {
-    baseName = 'kontentsu-core'
+    archiveBaseName = 'kontentsu-core'
 }
 
 javadocJar {
-    baseName = 'kontentsu-core'
+    archiveBaseName = 'kontentsu-core'
 }
 
 sourceSets {
@@ -20,25 +20,25 @@ sourceSets {
 }
 
 dependencies {
-    compile project(':spi')
-    compile project(':util')
+    api project(':spi')
+    api project(':util')
 
-    compile 'org.hashids:hashids:' + hashidsVersion
+    implementation 'org.hashids:hashids:' + hashidsVersion
 
-    compile 'org.apache.tomee:javaee-api:' + javaeeVersion
-    compile 'org.glassfish.jersey.media:jersey-media-json-jackson:' + jerseyVersion
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:' + jacksonVersion
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:' + jacksonVersion
-    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:' + jacksonVersion
+    api 'org.apache.tomee:javaee-api:' + javaeeVersion
+    api 'org.glassfish.jersey.media:jersey-media-json-jackson:' + jerseyVersion
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:' + jacksonVersion
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:' + jacksonVersion
+    api 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:' + jacksonVersion
 
-    compile 'com.pastdev:jsch-nio:' + jschNioVersion
+    api 'com.pastdev:jsch-nio:' + jschNioVersion
 
-    compile 'com.querydsl:querydsl-apt:' + querydslVersion + ':jpa'
-    compile 'com.querydsl:querydsl-jpa:' + querydslVersion
-    compile 'org.hibernate:hibernate-entitymanager:' + hibernateVersion
-    compile 'org.aeonbits.owner:owner:' + ownerVersion
-    compile 'org.aeonbits.owner:owner-java8:' + ownerVersion
-    compile ('io.swagger:swagger-jersey2-jaxrs:' + swaggerVersion) {
+    api 'com.querydsl:querydsl-apt:' + querydslVersion + ':jpa'
+    api 'com.querydsl:querydsl-jpa:' + querydslVersion
+    api 'org.hibernate:hibernate-entitymanager:' + hibernateVersion
+    api 'org.aeonbits.owner:owner:' + ownerVersion
+    api 'org.aeonbits.owner:owner-java8:' + ownerVersion
+    implementation ('io.swagger:swagger-jersey2-jaxrs:' + swaggerVersion) {
         exclude group: 'org.glassfish.jersey.containers'
         exclude group: 'javax.servlet.media'
         exclude group: 'javax.validation'
@@ -47,9 +47,9 @@ dependencies {
         exclude group: 'com.fasterxml.jackson.core'
     }
 
-    compile 'org.apache.logging.log4j:log4j-slf4j-impl:' + log4jVersion
-    compile 'org.apache.logging.log4j:log4j-1.2-api:' + log4jVersion
-    compile ('org.owasp.esapi:esapi:' + esapiVersion) {
+    api 'org.apache.logging.log4j:log4j-slf4j-impl:' + log4jVersion
+    api 'org.apache.logging.log4j:log4j-1.2-api:' + log4jVersion
+    implementation ('org.owasp.esapi:esapi:' + esapiVersion) {
         exclude group: 'log4j'
         exclude group: 'xom'
         exclude group: 'xml-apis'
@@ -59,9 +59,9 @@ dependencies {
         exclude group: 'commons-io'
     }
 
-    testCompile project(':test')
-    testCompile 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
-    testCompile 'org.jboss.weld.se:weld-se-core:' + weldVersion
+    testImplementation project(':test')
+    testImplementation 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
+    testImplementation 'org.jboss.weld.se:weld-se-core:' + weldVersion
     
     integrationTestCompile project(':util')
     integrationTestCompile project(':spi')
