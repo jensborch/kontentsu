@@ -45,7 +45,7 @@ ext {
     payaraVersion = '4.1.2.181'
 
     checkstyleVersion = "7.8.1"
-    spotbugsVersion =  "3.1.9"
+    spotbugsVersion =  "4.0.1"
     pmdVersion = "6.22.0"
     openejbVersion = '7.1.0'
     junitVersion = '4.13'
@@ -153,7 +153,7 @@ subprojects {
     spotbugs {
         toolVersion = spotbugsVersion
         ignoreFailures = true
-        onlyAnalyze = [sourceSets.main]
+        //onlyAnalyze = [sourceSets.main]
         excludeFilter = file("$rootProject.projectDir/config/spotbugs/exclude.xml")
     }
 
