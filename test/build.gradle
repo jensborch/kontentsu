@@ -1,5 +1,6 @@
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveBaseName = 'cdn-test'
 }
 

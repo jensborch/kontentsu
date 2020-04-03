@@ -1,5 +1,6 @@
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveBaseName = 'kontentsu-core'
 }
 
@@ -63,9 +64,9 @@ dependencies {
     testImplementation 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
     testImplementation 'org.jboss.weld.se:weld-se-core:' + weldVersion
     
-    integrationTestCompile project(':util')
-    integrationTestCompile project(':spi')
-    integrationTestCompile project(':test')
+    integrationTestImplementation project(':util')
+    integrationTestImplementation project(':spi')
+    integrationTestImplementation project(':test')
         
     annotationProcessor (
         "com.querydsl:querydsl-apt:${querydslVersion}:jpa",

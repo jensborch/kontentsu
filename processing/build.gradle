@@ -1,5 +1,6 @@
     
 jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveBaseName = 'kontentsu-processing'
 }
 
@@ -15,6 +16,6 @@ sourceSets {
 dependencies {
     api project(':core')
     testImplementation project(':test')
-    integrationTestCompile project(':core')
-    integrationTestCompile project(':test')
+    integrationTestImplementation project(':core')
+    integrationTestImplementation project(':test')
 }

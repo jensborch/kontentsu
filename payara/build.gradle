@@ -30,7 +30,7 @@ dependencies {
     implementation project(':api')
     implementation project(':processing')
     
-    runtime files("${project(':core').libsDir}/kontentsu-core-javadoc-${version}.jar")
+    runtimeOnly files("${project(':core').libsDirectory}/kontentsu-core-javadoc-${version}.jar")
 
     implementation 'org.apache.logging.log4j:log4j-web:' + log4jVersion
     implementation 'com.h2database:h2:' + h2Version
@@ -43,8 +43,8 @@ dependencies {
 }
 
 def payaraJar = configurations.payara.find { it.name == "payara-micro-" + payaraVersion + ".jar" }
-def oauth2War = new File("${project(':oauth:token').libsDir}/oauth.war")
-def kontentsuWar = new File("${libsDir}/${warFile}")
+def oauth2War = new File("${project(':oauth:token').libsDirectory}/oauth.war")
+def kontentsuWar = new File("${libsDirectory}/${warFile}")
 def payaraPort = 9090
 
 
