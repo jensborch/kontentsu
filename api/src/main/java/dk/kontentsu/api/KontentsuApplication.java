@@ -47,8 +47,6 @@ import dk.kontentsu.util.rs.DiagnosticFilter;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.jackson.JacksonFeature;
 
 /**
@@ -61,12 +59,7 @@ public class KontentsuApplication extends Application {
 
     public static final String API_ROOT = "/api";
 
-    private static final Logger LOGGER = LogManager.getLogger();
     private final Set<Class<?>> classes = new HashSet<>();
-
-    static {
-        LOGGER.info("Loading Kontentsu REST API...");
-    }
 
     public KontentsuApplication() {
 

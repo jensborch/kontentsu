@@ -34,8 +34,6 @@ import dk.kontentsu.oauth2.api.exceptionmappers.ContainerExceptionMapper;
 import dk.kontentsu.oauth2.api.exceptionmappers.NotAuthorizedExceptionMapper;
 import dk.kontentsu.util.rs.CORSFilter;
 import dk.kontentsu.util.rs.DiagnosticFilter;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.jackson.JacksonFeature;
 
 /**
@@ -48,12 +46,7 @@ public class OAuth2Application extends Application {
 
     public static final String API_ROOT = "/";
 
-    private static final Logger LOGGER = LogManager.getLogger();
     private final Set<Class<?>> classes = new HashSet<>();
-
-    static {
-        LOGGER.info("Loading OAuth application...");
-    }
 
     public OAuth2Application() {
         classes.add(TokenExposure.class);
