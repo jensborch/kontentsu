@@ -9,19 +9,21 @@ war {
 }
 
 dependencies {
-    implementation project(':util')
+    api project(':util')
     
-    api 'org.apache.logging.log4j:log4j-web:' + log4jVersion
-    api 'org.aeonbits.owner:owner:' + ownerVersion
-    api 'org.aeonbits.owner:owner-java8:' + ownerVersion
-    api 'io.jsonwebtoken:jjwt:' + jjwtVersion    
+    implementation 'org.apache.logging.log4j:log4j-web:' + log4jVersion
+    implementation 'org.aeonbits.owner:owner:' + ownerVersion
+    implementation 'org.aeonbits.owner:owner-java8:' + ownerVersion
+    implementation 'io.jsonwebtoken:jjwt:' + jjwtVersion    
 
-    providedCompile 'org.apache.tomee:javaee-api:' + javaeeVersion
+    compileOnly 'org.apache.tomee:javaee-api:' + javaeeVersion
     providedCompile 'org.glassfish.jersey.media:jersey-media-json-jackson:' + jerseyVersion
-    
+        
     testImplementation project(':test')
     testImplementation 'org.glassfish.jersey.ext:jersey-bean-validation:'  + jerseyVersion
+    testImplementation 'org.glassfish:jakarta.el:3.0.2'
     testImplementation 'org.glassfish.jersey.test-framework:jersey-test-framework-core:' + jerseyVersion
+    testImplementation 'org.glassfish.jersey.inject:jersey-hk2:' + jerseyVersion
     testImplementation 'org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-jetty:' + jerseyVersion
     testImplementation 'io.rest-assured:rest-assured:' + restAssuredVersion    
 }

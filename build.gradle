@@ -16,10 +16,10 @@ plugins {
 
 ext {
     log4jVersion = '2.13.1'
-    javaeeVersion = '7.0-1'
+    javaeeVersion = '8.0-4'
     h2Version = '1.4.200'
     jacksonVersion = '2.10.2'
-    jerseyVersion = '2.22.2'
+    jerseyVersion = '2.30.1'
     hibernateVersion = '5.4.13.Final'
     querydslVersion = "4.3.1"
     fileuploadVersion = "1.4"
@@ -32,7 +32,7 @@ ext {
     inferVersion = '0.17.2'
 
     swaggerUiVersion = '3.25.0'
-    swaggerVersion = '1.6.1'
+    swaggerVersion = '1.5.16'
     angularMaterialVersion = '1.1.3'
     angularVersion = '1.6.1'
     materialDesignIconsVersions = '2.2.0'
@@ -42,7 +42,7 @@ ext {
     checkstyleVersion = "7.8.1"
     spotbugsVersion =  "4.0.1"
     pmdVersion = "6.22.0"
-    openejbVersion = '7.1.0'
+    openejbVersion = '8.0.1'
     junitVersion = '4.13'
     jacocoVersion = "0.8.2"
     mockitoVersion = '3.3.3'

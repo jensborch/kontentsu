@@ -11,9 +11,9 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'junit:junit:' + junitVersion
-    implementation 'org.apache.tomee:openejb-core:' + openejbVersion
-    implementation 'org.apache.tomee:tomee-jaxrs:' + openejbVersion
+    api 'junit:junit:' + junitVersion
+    api 'org.apache.tomee:openejb-core:' + openejbVersion
+    api 'org.apache.tomee:tomee-jaxrs:' + openejbVersion
     implementation 'com.h2database:h2:' + h2Version
 }
 

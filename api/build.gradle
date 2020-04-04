@@ -1,12 +1,12 @@
 
-jar {
+jar {   
     archiveBaseName = 'kontentsu-api'
 }
 
 dependencies {
-    implementation project(':oauth:authentication')
-    implementation project(':core')
-    implementation project(':processing')
+    api project(':oauth:authentication')
+    api project(':core')
+    api project(':processing')
 
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:' + jacksonVersion    
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:' + jacksonVersion
@@ -22,12 +22,13 @@ dependencies {
     implementation 'io.swagger:swagger-models:'  + swaggerVersion
     implementation 'io.swagger:swagger-annotations:' + swaggerVersion
 
-    implementation 'org.apache.tomee:javaee-api:' + javaeeVersion
-    implementation 'org.glassfish.jersey.media:jersey-media-json-jackson:' + jerseyVersion
+    compileOnly 'org.apache.tomee:javaee-api:' + javaeeVersion
+    compileOnly 'org.glassfish.jersey.media:jersey-media-json-jackson:' + jerseyVersion
 
     testImplementation project(':test')
     testImplementation 'org.glassfish.jersey.ext:jersey-bean-validation:'  + jerseyVersion
     testImplementation 'org.glassfish.jersey.test-framework:jersey-test-framework-core:' + jerseyVersion
+    testImplementation 'org.glassfish.jersey.inject:jersey-hk2:' + jerseyVersion
     testImplementation 'org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-jetty:' + jerseyVersion
     testImplementation 'io.rest-assured:rest-assured:' + restAssuredVersion
 }
