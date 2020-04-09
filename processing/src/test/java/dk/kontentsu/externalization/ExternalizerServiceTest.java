@@ -11,7 +11,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.UserTransaction;
@@ -28,12 +27,11 @@ import dk.kontentsu.model.Version;
 import dk.kontentsu.repository.ExternalFileRepository;
 import dk.kontentsu.repository.TermRepository;
 import dk.kontentsu.test.ContentTestData;
-import dk.kontentsu.test.TestEJBContainer;
 import dk.kontentsu.util.Transaction;
-import org.junit.After;
-import org.junit.AfterClass;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.h2.H2DatabaseTestResource;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -41,11 +39,11 @@ import org.junit.jupiter.api.Test;
  *
  * @author Jens Borch Christiansen
  */
-public class ExternalizerServiceIT {
+@QuarkusTestResource(H2DatabaseTestResource.class)
+ public class ExternalizerServiceTest {
 
     private static final ZonedDateTime NOW = ZonedDateTime.now();
 
-    private static EJBContainer container;
     private Item article1;
     private Term article1Path;
     private Item contact;
@@ -72,22 +70,9 @@ public class ExternalizerServiceIT {
     @Resource
     private UserTransaction userTransaction;
 
-    @BeforeEachClass
-    public static void setUpClass() {
-
-        container = TestEJBContainer.create();
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-        if (container != null) {
-            container.close();
-        }
-    }
 
     @BeforeEach
     public void setUp() throws Exception {
-        TestEJBContainer.inject(container, this);
         mapper = new ObjectMapper();
         halJsonData = new ContentTestData(ContentTestData.Type.HAL);
         jsonData = new ContentTestData(ContentTestData.Type.JSON);
@@ -141,7 +126,7 @@ public class ExternalizerServiceIT {
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         try {
             userTransaction.begin();

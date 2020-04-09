@@ -6,4 +6,6 @@ dependencies {
     implementation project(':core')
     implementation project(':spi')
     testImplementation project(':test')
+    testImplementation project(':util')
+    testImplementation 'io.quarkus:quarkus-test-h2'
 }

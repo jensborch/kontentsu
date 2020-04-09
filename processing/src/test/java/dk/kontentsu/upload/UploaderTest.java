@@ -16,7 +16,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Resource;
-import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.transaction.UserTransaction;
 import javax.validation.ConstraintViolationException;
@@ -29,11 +28,11 @@ import dk.kontentsu.model.Version;
 import dk.kontentsu.repository.HostRepository;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.test.ContentTestData;
-import dk.kontentsu.test.TestEJBContainer;
-import org.junit.After;
-import org.junit.AfterClass;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.h2.H2DatabaseTestResource;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -41,11 +40,11 @@ import org.junit.jupiter.api.Test;
  *
  * @author Jens Borch Christiansen
  */
-public class UploaderIT {
+@QuarkusTestResource(H2DatabaseTestResource.class)
+public class UploaderTest {
 
     private static final ZonedDateTime NOW = ZonedDateTime.now();
 
-    private static EJBContainer container;
     private static ContentTestData data;
     private Host host;
 
@@ -61,21 +60,8 @@ public class UploaderIT {
     @Resource
     private UserTransaction userTransaction;
 
-    @BeforeEachClass
-    public static void setUpClass() {
-        container = TestEJBContainer.create();
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-        if (container != null) {
-            container.close();
-        }
-    }
-
     @BeforeEach
     public void setUp() throws Exception {
-        TestEJBContainer.inject(container, this);
         data = new ContentTestData();
         host = createHost("test_host");
 
@@ -104,7 +90,7 @@ public class UploaderIT {
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         try {
             userTransaction.begin();

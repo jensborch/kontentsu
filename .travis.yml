@@ -9,7 +9,7 @@ jdk:
 before_install:
   gradle -b wrapper.gradle addwrapper
 script:
-  - ./gradlew build integrationTest
+  - ./gradlew build
   - ./gradlew codeCoverageReport
   - ./gradlew sonarqube
 after_success:
