@@ -30,9 +30,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
+import javax.persistence.TypedQuery;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.spi.Bean;
@@ -64,7 +64,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Jens Borch Christiansen
  */
-@Stateless
+@ApplicationScoped
 public class Uploader {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -136,7 +136,7 @@ public class Uploader {
         return externalized;
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Set<UUID> overwriteAndSave(final UUID itemId, @Valid final UploadItem uploadItem) {
         Item item = itemRepo.get(itemId);
         Set<UUID> toExternalize = new HashSet<>();
@@ -170,7 +170,7 @@ public class Uploader {
         return toExternalize;
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Version save(@Valid final UploadItem uploadItem) {
         Item item = findOrCreateItem(uploadItem);
         Version version = addVersion(item, uploadItem);

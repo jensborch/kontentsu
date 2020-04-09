@@ -2,10 +2,10 @@ package dk.kontentsu.upload;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -32,9 +32,9 @@ import dk.kontentsu.test.ContentTestData;
 import dk.kontentsu.test.TestEJBContainer;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link dk.kontentsu.upload.Uploader}
@@ -61,7 +61,7 @@ public class UploaderIT {
     @Resource
     private UserTransaction userTransaction;
 
-    @BeforeClass
+    @BeforeEachClass
     public static void setUpClass() {
         container = TestEJBContainer.create();
     }
@@ -73,7 +73,7 @@ public class UploaderIT {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         TestEJBContainer.inject(container, this);
         data = new ContentTestData();

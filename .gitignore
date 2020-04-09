@@ -1,7 +1,12 @@
 build
 generated
 out
+bin
 node_modules
+.project
+.classpath
+*.log
+.settings
 .vscode
 .idea/*
 !.idea/dictionaries

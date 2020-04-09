@@ -1,23 +1,23 @@
 package dk.kontentsu.jpa;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.when;
 
 import dk.kontentsu.configuration.Config;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Test for {@link CryptoAttributeConverter}.
  *
  * @author Jens Borch Christiansen
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CryptoAttributeConverterTest {
 
     private static final String DATA = "sensitiveDataæøå";
@@ -28,7 +28,7 @@ public class CryptoAttributeConverterTest {
     @InjectMocks
     private CryptoAttributeConverter converter;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         when(conf.dbEncryptionKey()).thenReturn("Pa$$w0rd");
     }

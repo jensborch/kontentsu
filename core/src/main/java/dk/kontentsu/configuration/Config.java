@@ -23,6 +23,10 @@
  */
 package dk.kontentsu.configuration;
 
+import javax.enterprise.context.ApplicationScoped;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -30,11 +34,10 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @author Jens Borch Christiansen
  */
-@SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
-public interface Config extends org.aeonbits.owner.Config {
+@ApplicationScoped
+public interface Config {
 
-    @Key("db.encryption.key")
-    @DefaultValue("CdnEncryptionKey")
+    @ConfigProperty(name = "db.encryption.key", defaultValue="CdnEncryptionKey")
     String dbEncryptionKey();
 
 }

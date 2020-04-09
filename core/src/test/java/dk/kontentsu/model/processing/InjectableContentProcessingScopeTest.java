@@ -1,7 +1,8 @@
 package dk.kontentsu.model.processing;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -10,20 +11,21 @@ import javax.inject.Inject;
 
 import dk.kontentsu.model.Content;
 import dk.kontentsu.spi.ContentProcessingExtension;
-import org.jboss.weld.context.ContextNotActiveException;
-import org.jglue.cdiunit.AdditionalClasses;
-import org.jglue.cdiunit.CdiRunner;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.jboss.weld.contexts.ContextNotActiveException;
+import org.jboss.weld.junit5.auto.AddExtensions;
+import org.jboss.weld.junit5.auto.AddPackages;
+import org.jboss.weld.junit5.auto.EnableAutoWeld;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link InjectableContentProcessingScope}.
  *
  * @author Jens Borch Christiansen
  */
-@RunWith(CdiRunner.class)
-@AdditionalClasses({ContentProcessingScopedBean.class, ContentProcessingExtension.class, ContentProducer.class})
+@EnableAutoWeld
+@AddPackages(ContentProcessingScopedBean.class)
+@AddExtensions(ContentProcessingExtension.class)
 public class InjectableContentProcessingScopeTest {
 
     @Inject
@@ -31,7 +33,7 @@ public class InjectableContentProcessingScopeTest {
 
     private Content content;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         content = new Content("scope test".getBytes(), StandardCharsets.UTF_8);
     }
@@ -39,9 +41,9 @@ public class InjectableContentProcessingScopeTest {
     @Test
     public void testScope() {
         final StringBuilder result = new StringBuilder();
-        InjectableContentProcessingScope.execute(() ->
-                        result.append(bean.uppercase())
-                , content);
+        InjectableContentProcessingScope.execute(()
+                -> result.append(bean.uppercase()),
+                content);
         assertNotNull(result);
         assertEquals("SCOPE TEST", result.toString());
     }
@@ -50,15 +52,15 @@ public class InjectableContentProcessingScopeTest {
     public void testNestedScope() {
         InjectableContentProcessingScope.execute(() -> {
             UUID outerContentId = bean.getContent().getUuid();
-            InjectableContentProcessingScope.execute(() ->
-                    assertEquals(outerContentId, bean.getContent().getUuid())
+            InjectableContentProcessingScope.execute(()
+                    -> assertEquals(outerContentId, bean.getContent().getUuid())
             );
         }, content);
     }
 
-    @Test(expected = ContextNotActiveException.class)
+    @Test
     public void testNotActive() {
-        bean.uppercase();
+        assertThrows(ContextNotActiveException.class, () -> bean.uppercase());
     }
 
 }

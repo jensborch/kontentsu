@@ -26,12 +26,12 @@ package dk.kontentsu.util.rs;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.logging.log4j.ThreadContext;
@@ -49,12 +49,12 @@ public class DiagnosticFilter implements ContainerRequestFilter, ContainerRespon
     private static final String MDC_LOG_TOKEN = "token";
 
     @Context
-    private HttpServletRequest servletRequest;
+    private HttpHeaders headers;
 
     @Override
     public void filter(final ContainerRequestContext requestContext) {
         ThreadContext.put(MDC_LOG_TOKEN, Optional
-                .ofNullable(servletRequest.getHeader(HEADER_LOG_TOKEN))
+                .ofNullable(headers.getHeaderString(HEADER_LOG_TOKEN))
                 .orElse(UUID.randomUUID().toString()));
     }
 

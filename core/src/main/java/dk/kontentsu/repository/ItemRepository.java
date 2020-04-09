@@ -33,10 +33,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
+import javax.persistence.TypedQuery;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -54,9 +53,9 @@ import org.hibernate.internal.SessionImpl;
  *
  * @author Jens Borch Christiansen
  */
-@Stateless
-@LocalBean
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
+@ApplicationScoped
+
+@Transactional(Transactional.TxType.MANDATORY)
 public class ItemRepository extends Repository<Item> {
 
     @Inject

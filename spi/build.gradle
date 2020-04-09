@@ -9,10 +9,6 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'org.apache.tomee:javaee-api:' + javaeeVersion
-
     testImplementation project(':test')
-    testImplementation 'org.jglue.cdi-unit:cdi-unit:' + jglueVersion
-    testImplementation 'org.jboss.weld.se:weld-se-core:' + weldVersion
+    testImplementation 'org.jboss.weld:weld-junit5:' + weldJunitVersion
 }
-

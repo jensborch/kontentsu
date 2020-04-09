@@ -1,9 +1,9 @@
 package dk.kontentsu.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.Charset;
 import java.time.ZoneOffset;
@@ -27,9 +27,9 @@ import dk.kontentsu.model.Term;
 import dk.kontentsu.test.TestEJBContainer;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration test for {@link ExternalFileRepository}
@@ -59,7 +59,7 @@ public class ExternalFileRepositoryIT {
 
     private ExternalFile file;
 
-    @BeforeClass
+    @BeforeEachClass
     public static void setUpClass() {
         container = TestEJBContainer.create();
     }
@@ -71,7 +71,7 @@ public class ExternalFileRepositoryIT {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         TestEJBContainer.inject(container, this);
         userTransaction.begin();

@@ -27,13 +27,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 
 import dk.kontentsu.model.Host;
 import dk.kontentsu.model.Item;
@@ -43,9 +42,8 @@ import dk.kontentsu.model.Item;
  *
  * @author Jens Borch Christiansen
  */
-@Stateless
-@LocalBean
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
+@ApplicationScoped
+@Transactional(Transactional.TxType.MANDATORY)
 public class HostRepository extends Repository<Host> {
 
     @Inject

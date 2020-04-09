@@ -1,8 +1,4 @@
 
 jar {
-    archiveBaseName = 'util'
-}
-
-dependencies {
-    api 'org.apache.tomee:javaee-api:' + javaeeVersion
+    archiveBaseName = 'kontentsu-util'
 }

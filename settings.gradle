@@ -1,3 +1,14 @@
-rootProject.name = 'Kontentsu_CMS'
-include 'api', 'processing', 'core', 'spi', 'util', 'test', 'payara', 'oauth:authentication', 'oauth:token'
+pluginManagement {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        gradlePluginPortal()
+    }
+    plugins {
+      id 'io.quarkus' version "${quarkusPluginVersion}"
+    }
+}
+rootProject.name = 'kontentsu-cms'
+include 'processing', 'core', 'spi', 'util', 'test', 'quarkus'
 

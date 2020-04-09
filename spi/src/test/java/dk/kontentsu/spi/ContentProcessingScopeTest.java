@@ -1,25 +1,27 @@
 package dk.kontentsu.spi;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.UUID;
 
+import javax.enterprise.context.ContextNotActiveException;
 import javax.inject.Inject;
 
-import org.jboss.weld.context.ContextNotActiveException;
-import org.jglue.cdiunit.AdditionalClasses;
-import org.jglue.cdiunit.CdiRunner;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.jboss.weld.junit5.auto.AddExtensions;
+import org.jboss.weld.junit5.auto.AddPackages;
+import org.jboss.weld.junit5.auto.EnableAutoWeld;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link ContentProcessingScope}.
  *
  * @author Jens Borch Christiansen
  */
-@RunWith(CdiRunner.class)
-@AdditionalClasses({ContentProcessingScopedBean.class, ContentProcessingExtension.class})
+@EnableAutoWeld
+@AddPackages(ContentProcessingScopedBean.class)
+@AddExtensions(ContentProcessingExtension.class)
 public class ContentProcessingScopeTest {
 
     @Inject
@@ -28,7 +30,7 @@ public class ContentProcessingScopeTest {
     @Test
     public void testScope() {
         UUID id;
-        try ( ContentProcessingScope scope = new ContentProcessingScope()) {
+        try (ContentProcessingScope scope = new ContentProcessingScope()) {
             scope.start();
             assertNotNull(bean);
             id = bean.getId();
@@ -38,16 +40,16 @@ public class ContentProcessingScopeTest {
 
     @Test
     public void testNestedScope() {
-        try ( ContentProcessingScope scope1 = new ContentProcessingScope()) {
+        try (ContentProcessingScope scope1 = new ContentProcessingScope()) {
             scope1.start();
             final int count = bean.getCount();
             UUID outerId = bean.getId();
             assertNotEquals(1, count);
-            try ( ContentProcessingScope scope2 = new ContentProcessingScope()) {
+            try (ContentProcessingScope scope2 = new ContentProcessingScope()) {
                 scope2.start();
                 assertNotEquals(2, bean.getCount());
                 assertNotEquals(outerId, bean.getId());
-                try ( ContentProcessingScope scope3 = new ContentProcessingScope()) {
+                try (ContentProcessingScope scope3 = new ContentProcessingScope()) {
                     scope3.start();
                     assertNotEquals(3, bean.getCount());
                     assertNotEquals(outerId, bean.getId());
@@ -56,9 +58,10 @@ public class ContentProcessingScopeTest {
         }
     }
 
-    @Test(expected = ContextNotActiveException.class)
+    @Test
     public void testNotActive() {
-        bean.getId();
+        ContextNotActiveException e = assertThrows(ContextNotActiveException.class, () -> bean.getId());
+        assertNotNull(e);
     }
 
 }

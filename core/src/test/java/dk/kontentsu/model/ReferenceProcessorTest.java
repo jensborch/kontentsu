@@ -1,8 +1,8 @@
 package dk.kontentsu.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -17,19 +17,21 @@ import dk.kontentsu.model.processing.ReferenceProcessor;
 import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.spi.ContentProcessingExtension;
 import dk.kontentsu.test.ContentTestData;
-import org.jglue.cdiunit.AdditionalClasses;
-import org.jglue.cdiunit.CdiRunner;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.jboss.weld.junit5.auto.AddExtensions;
+import org.jboss.weld.junit5.auto.AddPackages;
+import org.jboss.weld.junit5.auto.EnableAutoWeld;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Test for {@link ReferenceProcessor}
  *
  * @author Jens Borch Christiansen
  */
-@RunWith(CdiRunner.class)
-@AdditionalClasses({TestVisitor.class, ContentProcessingExtension.class})
+@EnableAutoWeld
+@AddPackages(TestVisitor.class)
+@AddExtensions(ContentProcessingExtension.class)
 public class ReferenceProcessorTest {
 
     private static final ZonedDateTime NOW = ZonedDateTime.now();
@@ -40,7 +42,7 @@ public class ReferenceProcessorTest {
     private Item page;
     private Version pageVersion;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ContentTestData data = new ContentTestData();
         Term path = new Term().append("items").append("article2");

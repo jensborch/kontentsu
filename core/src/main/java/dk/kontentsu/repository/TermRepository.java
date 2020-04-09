@@ -31,10 +31,9 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
+import javax.persistence.TypedQuery;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
@@ -46,9 +45,9 @@ import dk.kontentsu.model.Term;
  *
  * @author Jens Borch Christiansen
  */
-@Stateless
-@LocalBean
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
+@ApplicationScoped
+
+@Transactional(Transactional.TxType.MANDATORY)
 public class TermRepository extends Repository<Term> {
 
     @Override

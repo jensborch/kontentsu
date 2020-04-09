@@ -1,15 +1,15 @@
 package dk.kontentsu.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -24,7 +24,7 @@ public class VersionTest {
     private Item item;
     private Version version;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         content = new Content("This is a test".getBytes(), Charset.defaultCharset());
         Term path = Term.parse("uri:/test1/test2/");

@@ -5,20 +5,20 @@
  */
 package dk.kontentsu.model;
 
-
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.number.OrderingComparison.lessThan;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 import dk.kontentsu.exception.ValidationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link Item}.
@@ -32,7 +32,7 @@ public class ItemTest {
     private Term path;
     private Item item;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         path = new Term().append("test1").append("test2");
         item = new Item(path, "default", new MimeType("text", "plain"));
@@ -69,16 +69,18 @@ public class ItemTest {
         assertFalse(item.overlaps(nooverlap));
     }
 
-    @Test(expected = ValidationException.class)
+    @Test
     public void testVersionOverlap() {
-        Content content = new Content("Overlap".getBytes(), Charset.defaultCharset());
+        assertThrows(IllegalArgumentException.class, () -> {
+            Content content = new Content("Overlap".getBytes(), Charset.defaultCharset());
 
-        Version version = Version.builder()
-                .from(NOW.plusDays(2))
-                .metadata(new Metadata.Key(MetadataType.PAGE, "key"), new Metadata("This is metadata"))
-                .content(content)
-                .build();
-        item.addVersion(version);
+            Version version = Version.builder()
+                    .from(NOW.plusDays(2))
+                    .metadata(new Metadata.Key(MetadataType.PAGE, "key"), new Metadata("This is metadata"))
+                    .content(content)
+                    .build();
+            item.addVersion(version);
+        });
     }
 
     @Test

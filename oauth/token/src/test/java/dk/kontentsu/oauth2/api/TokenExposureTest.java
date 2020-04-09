@@ -20,8 +20,8 @@ import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -56,7 +56,7 @@ public class TokenExposureTest extends JerseyTest {
                 });
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         Collection<String> roles = new ArrayList<>();
         roles.add("test");

@@ -2,7 +2,7 @@ package dk.kontentsu.api.exposure;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 
@@ -13,10 +13,10 @@ import javax.persistence.NoResultException;
 
 import dk.kontentsu.test.TestEJBContainer;
 import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration test for {@link ExternalFileExposure}.
@@ -33,7 +33,7 @@ public class ExternalFileExposureIT {
     @EJB
     private ExternalFileExposure exposure;
 
-    @BeforeClass
+    @BeforeEachClass
     public static void setUpClass() {
         container = TestEJBContainer.create();
     }
@@ -45,7 +45,7 @@ public class ExternalFileExposureIT {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         TestEJBContainer.inject(container, this);
     }

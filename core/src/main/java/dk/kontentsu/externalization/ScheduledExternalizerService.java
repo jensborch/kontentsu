@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
@@ -38,31 +39,38 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 import java.util.stream.Stream;
 
 import javax.annotation.Resource;
-import javax.ejb.Asynchronous;
-import javax.ejb.ScheduleExpression;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.Timeout;
-import javax.ejb.Timer;
-import javax.ejb.TimerService;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.Host;
 import dk.kontentsu.repository.ExternalFileRepository;
+import io.quarkus.arc.Arc;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.eclipse.microprofile.faulttolerance.Asynchronous;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 
 /**
  * Scheduler for publishing externalized content.
  *
  * @author Jens Borch Christiansen
  */
-@Singleton
-@Startup
+@ApplicationScoped
 public class ScheduledExternalizerService {
 
     private static final int START_OFFSET = 2;
@@ -70,11 +78,11 @@ public class ScheduledExternalizerService {
 
     private final AtomicBoolean first = new AtomicBoolean(true);
 
-    @Resource
-    private TimerService timerService;
+    @Inject
+    Scheduler scheduler;
 
     @Inject
-    private ExternalFileRepository fileRepo;
+    ExternalFileRepository fileRepo;
 
     @Asynchronous
     public void reschedule() {
@@ -90,27 +98,41 @@ public class ScheduledExternalizerService {
             }
         }
 
-        ScheduleExpression expression = new ScheduleExpression();
+        JobDetail job = JobBuilder.newJob(ExternalizerJob.class)
+                .withIdentity("externalizerJob", "kontentsu")
+                .build();
+
         for (ZonedDateTime dateTime : schedule) {
 
             ZonedDateTime t = dateTime.withZoneSameInstant(ZoneId.systemDefault());
             LOGGER.info("Files will be published at: " + t.format(DateTimeFormatter.ISO_DATE_TIME));
-            expression
-                    .second(t.getSecond())
-                    .minute(t.getMinute())
-                    .hour(t.getHour())
-                    .dayOfMonth(t.getDayOfMonth())
-                    .month(t.getMonthValue())
-                    .year(t.getYear());
-
-            timerService.createCalendarTimer(expression);
+            Trigger trigger = TriggerBuilder.newTrigger()
+                    .withIdentity("myTrigger", "myGroup")
+                    .startNow()
+                    .withSchedule(
+                            SimpleScheduleBuilder.simpleSchedule()
+                                    .withRepeatCount(0)
+                                    .withIntervalInMilliseconds(t.toInstant().toEpochMilli() - Instant.now().toEpochMilli()))
+                    .build();
+            try {
+                scheduler.scheduleJob(job, trigger);
+            } catch (SchedulerException ex) {
+                LOGGER.error("Error scheduling publishing", ex);
+            }
         }
     }
 
-    @Timeout
+    static class ExternalizerJob implements Job {
+
+        public void execute(JobExecutionContext context) throws JobExecutionException {
+            Arc.container().instance(ScheduledExternalizerService.class).get().execute(context);
+        }
+
+    }
+
     @SuppressWarnings("PMD.UseConcurrentHashMap")
-    public void execute(final Timer timer) {
-        ZonedDateTime time = getZonedDateTimeFromExpression(timer.getSchedule());
+    public void execute(JobExecutionContext context) {
+        ZonedDateTime time = context.getFireTime().toInstant().atZone(ZoneId.systemDefault());
         LOGGER.info("Publishing externalised files available at: {}", time.format(DateTimeFormatter.ISO_DATE_TIME));
         List<ExternalFile> all = fileRepo.findAll(time);
         LOGGER.info("Found {} files to publish", all.size());
@@ -171,18 +193,6 @@ public class ScheduledExternalizerService {
     private boolean hasParent(final Path file) {
         Path parent = file.getParent();
         return parent != null && !parent.toFile().exists();
-    }
-
-    private ZonedDateTime getZonedDateTimeFromExpression(final ScheduleExpression expression) {
-        return ZonedDateTime.of(LocalDateTime
-                .of(
-                        Integer.parseInt(expression.getYear()),
-                        Month.of(Integer.parseInt(expression.getMonth())),
-                        Integer.parseInt(expression.getDayOfMonth()),
-                        Integer.parseInt(expression.getHour()),
-                        Integer.parseInt(expression.getMinute()),
-                        Integer.parseInt(expression.getSecond())),
-                ZoneId.systemDefault());
     }
 
 }

@@ -1,7 +1,7 @@
 
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    archiveBaseName = 'cdn-test'
+    archiveBaseName = 'kontentsu-test'
 }
 
 sourceSets {
@@ -11,12 +11,5 @@ sourceSets {
 }
 
 dependencies {
-    api 'junit:junit:' + junitVersion
-    api 'org.apache.tomee:openejb-core:' + openejbVersion
-    api 'org.apache.tomee:tomee-jaxrs:' + openejbVersion
-    implementation 'com.h2database:h2:' + h2Version
-}
-
-configurations {
-    all*.exclude group: 'org.hsqldb'
+    implementation 'org.junit.jupiter:junit-jupiter-api'
 }

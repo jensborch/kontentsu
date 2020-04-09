@@ -1,12 +1,13 @@
 package dk.kontentsu.model;
 
-import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TermTest {
 
@@ -17,7 +18,7 @@ public class TermTest {
     private Term term4;
     private Term empty;
 
-    @Before
+    @BeforeEach
     public void setup() {
         term1 = new Term("uri").append("test1/");
         term2 = new Term("uri").append("/test1/test2/");
@@ -73,14 +74,14 @@ public class TermTest {
         assertEquals(term3.getPathWithTaxonomy(), testTerm.getPathWithTaxonomy());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAppendThis() {
-        term1.append(term1);
+        assertThrows(IllegalArgumentException.class, () -> term1.append(term1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAppendWithChild() {
-        term1.append(term2  );
+        assertThrows(IllegalArgumentException.class, () -> term1.append(term2));
     }
 
     @Test

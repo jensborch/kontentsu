@@ -1,8 +1,8 @@
 package dk.kontentsu.oauth2.module;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -12,18 +12,18 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.MessageInfo;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Test for {@link AuthConfig}.
  *
  * @author Jens Borch Christiansen
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AuthConfigTest {
 
     @Mock
@@ -34,7 +34,7 @@ public class AuthConfigTest {
 
     private AuthConfig config;
 
-    @Before
+    @BeforeEach
     public void setup() {
         config = new AuthConfig("appContext", "messageLayer", handler, new Options());
     }

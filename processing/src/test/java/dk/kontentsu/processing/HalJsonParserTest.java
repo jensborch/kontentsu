@@ -1,7 +1,7 @@
 package dk.kontentsu.processing;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 
@@ -10,8 +10,8 @@ import dk.kontentsu.model.Metadata;
 import dk.kontentsu.model.MetadataType;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.test.ContentTestData;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link HalJsonParser}
@@ -22,7 +22,7 @@ public class HalJsonParserTest {
 
     private ContentTestData data;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         data = new ContentTestData();
     }

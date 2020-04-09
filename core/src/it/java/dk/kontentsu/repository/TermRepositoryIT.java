@@ -1,10 +1,10 @@
 package dk.kontentsu.repository;
 
 import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,9 +25,9 @@ import dk.kontentsu.model.Term;
 import dk.kontentsu.test.TestEJBContainer;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration test for {@link TermRepository}.
@@ -48,7 +48,7 @@ public class TermRepositoryIT {
     @Resource
     private UserTransaction userTransaction;
 
-    @BeforeClass
+    @BeforeEachClass
     public static void setUpClass() {
         container = TestEJBContainer.create();
     }
@@ -60,7 +60,7 @@ public class TermRepositoryIT {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         TestEJBContainer.inject(container, this);
         try {

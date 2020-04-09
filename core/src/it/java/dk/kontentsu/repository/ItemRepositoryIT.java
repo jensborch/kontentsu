@@ -2,9 +2,9 @@ package dk.kontentsu.repository;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
@@ -35,9 +35,9 @@ import dk.kontentsu.model.Version;
 import dk.kontentsu.test.TestEJBContainer;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Integration test for {@link ItemRepository}
@@ -62,7 +62,7 @@ public class ItemRepositoryIT {
     private Item item;
     private Term path;
 
-    @BeforeClass
+    @BeforeEachClass
     public static void setUpClass() {
         container = TestEJBContainer.create();
     }
@@ -74,7 +74,7 @@ public class ItemRepositoryIT {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         TestEJBContainer.inject(container, this);
         userTransaction.begin();

@@ -1,19 +1,19 @@
 package dk.kontentsu.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class CauseFinderTest {
 
     private Exception cause;
     private Throwable throwable;
 
-    @Before
+    @BeforeEach
     public void setup() {
         cause = new Exception("test");
         throwable = new Exception(new Exception(new Exception(cause)));

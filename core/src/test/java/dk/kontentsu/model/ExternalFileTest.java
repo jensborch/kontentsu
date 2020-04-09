@@ -5,13 +5,13 @@
  */
 package dk.kontentsu.model;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.ZonedDateTime;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link ExternalFile}.
@@ -26,7 +26,7 @@ public class ExternalFileTest {
     private Version version;
     private Item item;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         item = new Item(Term.parse("uri:/hello/hello/"), MimeType.APPLICATION_JSON_TYPE);
         version = Version.builder()

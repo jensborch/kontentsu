@@ -35,15 +35,12 @@ import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import org.eclipse.microprofile.faulttolerance.Asynchronous;
+
 import javax.annotation.PostConstruct;
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
-import javax.ejb.ConcurrencyManagement;
-import javax.ejb.ConcurrencyManagementType;
-import javax.ejb.LocalBean;
-import javax.ejb.Singleton;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+
+import javax.transaction.Transactional;
+import javax.persistence.TypedQuery;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.spi.Bean;
@@ -62,7 +59,12 @@ import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.repository.ExternalFileRepository;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.spi.ContentProcessingMimeType;
+
 import java.util.EnumMap;
+import java.util.concurrent.CompletableFuture;
+
+import javax.inject.Singleton;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -71,9 +73,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Jens Borch Christiansen
  */
-@LocalBean
 @Singleton
-@ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class ExternalizerService {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -120,11 +120,11 @@ public class ExternalizerService {
     public Future<List<ExternalFile>> externalize(final UUID version) {
         Version v = itemRepo.getVersion(version);
         LOGGER.info("Externalizing version {} and its references", version);
-        return new AsyncResult<>(externalize(v));
+        return CompletableFuture.completedFuture(externalize(v));
 
     }
 
-    @TransactionAttribute(TransactionAttributeType.MANDATORY)
+    @Transactional(Transactional.TxType.MANDATORY)
     public List<ExternalFile> externalize(final Version version) {
         List<Version> versions = findVersionsToExternalize(version);
         return versions.stream()

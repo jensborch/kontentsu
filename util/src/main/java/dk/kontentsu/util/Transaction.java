@@ -23,11 +23,9 @@
  */
 package dk.kontentsu.util;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import javax.ejb.ApplicationException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
@@ -78,7 +76,7 @@ public final class Transaction {
         private final T param;
 
         private Parameter(final UserTransaction transaction, final T parameter) {
-            if (transaction == null  || parameter == null) {
+            if (transaction == null || parameter == null) {
                 throw new IllegalArgumentException("Transaction and parameter can't be null");
             }
             this.param = parameter;
@@ -109,27 +107,8 @@ public final class Transaction {
             });
         }
 
-        private ApplicationException getApplicationException(final Throwable e) {
-            return getApplicationException(e.getClass());
-        }
-
-        private ApplicationException getApplicationException(final Class<?> c) {
-            return c.getAnnotation(ApplicationException.class);
-        }
-
-        private boolean isApplicationException(final Class<?> c) {
-            ApplicationException annotation = getApplicationException(c);
-            return annotation != null && annotation.inherited();
-        }
-
         private boolean rollback(final Exception e) {
-            return new Finder<>(this::isApplicationException, Class::getSuperclass)
-                    .find(e.getClass())
-                    .map(this::getApplicationException)
-                    .map(ApplicationException::rollback)
-                    .orElseGet(() -> Optional.ofNullable(getApplicationException(e))
-                            .map(ApplicationException::rollback)
-                            .orElse(e instanceof RuntimeException));
+            return e instanceof RuntimeException;
         }
 
         private void rollback(final UserTransaction ut) {
@@ -142,6 +121,5 @@ public final class Transaction {
             }
         }
     }
-
 
 }

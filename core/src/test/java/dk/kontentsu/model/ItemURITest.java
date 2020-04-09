@@ -1,21 +1,22 @@
 package dk.kontentsu.model;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Paths;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ItemURITest {
 
     private Item.URI uri;
 
-    @Before
+    @BeforeEach
     public void setup() {
         Term term = new Term("uri").append("test1/test2");
         uri = new Item.URI(new Item(term, "test", MimeType.APPLICATION_JSON_TYPE));
@@ -41,7 +42,7 @@ public class ItemURITest {
     }
 
     @Test
-   public void testMatches() {
+    public void testMatches() {
         assertTrue(uri.matches("test1/test2/test2-test"));
         assertFalse(uri.matches("test1/test3/"));
         assertFalse(uri.matches("i1"));
@@ -53,14 +54,14 @@ public class ItemURITest {
         assertEquals(MimeType.IMAGE_PNG_TYPE, new Item.URI("images/i1/i1.png").getMimeType());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testUnknownExtension() {
-        new Item.URI("/test1/test2/test2-test.test");
+        assertThrows(IllegalArgumentException.class, () -> new Item.URI("/test1/test2/test2-test.test"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegalUri() {
-        new Item.URI("/test1/test2/test3-test.gif");
+        assertThrows(IllegalArgumentException.class, () -> new Item.URI("/test1/test2/test3-test.gif"));
     }
 
     @Test

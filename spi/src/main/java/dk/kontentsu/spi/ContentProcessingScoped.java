@@ -28,14 +28,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.inject.Scope;
+import javax.enterprise.context.NormalScope;
 
 /**
- * Content scope annotation for implementing plug-ins that processes content like a parser.
+ * Content scope annotation for implementing plug-ins that processes content
+ * like a parser.
  *
  * @author Jens Borch Christiansen
  */
-@Scope
+@NormalScope
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
 public @interface ContentProcessingScoped {

@@ -3,9 +3,9 @@ package dk.kontentsu.model;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.number.OrderingComparison.greaterThan;
 import static org.hamcrest.number.OrderingComparison.lessThan;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -18,8 +18,8 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.groups.Default;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link Interval}
@@ -36,7 +36,7 @@ public class IntervalTest {
     private Interval nowPlus4days;
     private Interval plus4daysPlus8days;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         max = new Interval(ZonedDateTime.of(LocalDateTime.MIN, ZoneId.systemDefault()), ZonedDateTime.of(LocalDateTime.MAX, ZoneId.systemDefault()));
         nowPlus2days = new Interval(NOW, NOW.plusDays(2));

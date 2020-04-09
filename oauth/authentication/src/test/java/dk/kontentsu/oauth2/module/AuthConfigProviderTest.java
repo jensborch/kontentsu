@@ -7,17 +7,17 @@ import java.util.HashMap;
 
 import javax.security.auth.message.config.AuthConfigFactory;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Test for {@link AuthConfigProvider}.
  *
  * @author Jens Borch Christiansen
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AuthConfigProviderTest {
 
     @Mock

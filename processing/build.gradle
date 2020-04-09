@@ -1,21 +1,9 @@
-    
 jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveBaseName = 'kontentsu-processing'
 }
 
-sourceSets {
-    integrationTest {
-        resources.srcDir file('src/test/resources')
-    }
-    main {
-        output.resourcesDir = "$buildDir/classes/java/main"
-    }
-}
-
 dependencies {
-    api project(':core')
+    implementation project(':core')
+    implementation project(':spi')
     testImplementation project(':test')
-    integrationTestImplementation project(':core')
-    integrationTestImplementation project(':test')
 }

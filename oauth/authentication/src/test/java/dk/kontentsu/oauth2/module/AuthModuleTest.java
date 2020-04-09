@@ -1,6 +1,6 @@
 package dk.kontentsu.oauth2.module;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -27,19 +27,19 @@ import javax.ws.rs.core.HttpHeaders;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * Test for {@link AuthModule}
  *
  * @author Jens Borch Christiansen
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AuthModuleTest {
 
     @Mock
@@ -67,7 +67,7 @@ public class AuthModuleTest {
 
     private JwtBuilder token;
 
-    @Before
+    @BeforeEach
     public void setup() {
         module = new AuthModule();
         options = new Options().setSignatureKey("signature_key");

@@ -26,7 +26,7 @@ package dk.kontentsu.api.exposure;
 import java.time.ZonedDateTime;
 
 import javax.annotation.security.PermitAll;
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

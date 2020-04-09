@@ -28,7 +28,6 @@ package dk.kontentsu.exception;
  *
  * @author Jens Borch Christiansen
  */
-@javax.ejb.ApplicationException
 public abstract class ApplicationException extends RuntimeException implements Identifiable {
 
     private static final long serialVersionUID = -8111435885468944003L;

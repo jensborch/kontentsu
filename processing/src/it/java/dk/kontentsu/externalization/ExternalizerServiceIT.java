@@ -1,9 +1,9 @@
 
 package dk.kontentsu.externalization;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -32,9 +32,9 @@ import dk.kontentsu.test.TestEJBContainer;
 import dk.kontentsu.util.Transaction;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link ExternalizerService}.
@@ -72,7 +72,7 @@ public class ExternalizerServiceIT {
     @Resource
     private UserTransaction userTransaction;
 
-    @BeforeClass
+    @BeforeEachClass
     public static void setUpClass() {
 
         container = TestEJBContainer.create();
@@ -85,7 +85,7 @@ public class ExternalizerServiceIT {
         }
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         TestEJBContainer.inject(container, this);
         mapper = new ObjectMapper();

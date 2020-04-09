@@ -32,10 +32,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.enterprise.context.ApplicationScoped;
+import javax.transaction.Transactional;
+import javax.persistence.TypedQuery;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
@@ -45,13 +44,13 @@ import dk.kontentsu.model.Item;
 import dk.kontentsu.model.State;
 
 /**
- * Repository class for e.g. persisting external files that can be published directly to the CDN.
+ * Repository class for e.g. persisting external files that can be published
+ * directly to the CDN.
  *
  * @author Jens Borch Christiansen
  */
-@Stateless
-@LocalBean
-@TransactionAttribute(TransactionAttributeType.MANDATORY)
+@ApplicationScoped
+@Transactional(Transactional.TxType.MANDATORY)
 public class ExternalFileRepository extends Repository<ExternalFile> {
 
     private static final int MIN_SCHEDULING_INTERVAL = 5;

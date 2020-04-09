@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * Repository interface used for data access to CDN database.
@@ -56,7 +57,7 @@ public abstract class Repository<E> {
     public static final String EXTERNAL_FILE_FIND_ALL_AT_DATE_TIME = "ExternalFile.findAllAt";
     public static final String EXTERNAL_FILE_SCHEDULE = "ExternalFile.schedule";
     public static final String EXTERNAL_FILE_FIND_ALL_IN_INTERVAL = "ExternalFile.findAllInInterval";
-    public static final String EXTERNAL_FILE_FIND_IN_INTERVAL  = "ExternalFile.findInInterval";
+    public static final String EXTERNAL_FILE_FIND_IN_INTERVAL = "ExternalFile.findInInterval";
     public static final String TERM_FIND_ALL = "Term.findAll";
     public static final String TERM_GET = "Term.Get";
     public static final String TERM_FIND_BY_URI = "Term.findByUri";
@@ -77,7 +78,7 @@ public abstract class Repository<E> {
 
     public abstract List<E> findAll();
 
-    public E save(@Valid final E entity) {
+    public E save(@NotNull @Valid final E entity) {
         em.persist(entity);
         return entity;
     }

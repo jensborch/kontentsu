@@ -1,0 +1,10 @@
+apply plugin: 'io.quarkus'
+
+dependencies {
+    implementation project(':core')
+    
+    implementation 'org.webjars:angular-material:' + angularMaterialVersion
+    implementation 'org.webjars:angularjs:' + angularVersion
+    implementation 'org.webjars:swagger-ui:' + swaggerUiVersion
+}
+
