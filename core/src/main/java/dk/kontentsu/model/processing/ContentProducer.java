@@ -23,13 +23,16 @@
  */
 package dk.kontentsu.model.processing;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 
 import dk.kontentsu.model.Content;
 import dk.kontentsu.spi.ContentProcessingScoped;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Producer for injection content into a CDI bean that is annotated with {@link ContentProcessingScoped}.
@@ -39,9 +42,10 @@ import org.apache.logging.log4j.Logger;
 @ApplicationScoped
 public class ContentProducer {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContentProducer.class);
 
-    static {
+    @PostConstruct
+    public void init() {
         LOGGER.info("Loading CDI content producer...");
     }
 

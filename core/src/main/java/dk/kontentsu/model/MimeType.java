@@ -47,8 +47,9 @@ import javax.validation.constraints.Size;
 import javax.ws.rs.core.MediaType;
 
 import dk.kontentsu.spi.ContentProcessingMimeType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class representing the content Mime Type of a item in the CDN, but also
@@ -90,7 +91,7 @@ public class MimeType implements Serializable {
     private static final Pattern MIME_PARAMS_REGEX = Pattern.compile(MIME_PARAMS_REGEX_STR);
     private static final long serialVersionUID = -6748129010939249437L;
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(MimeType.class);
 
     static {
         EXTENSIONS.put("xml", APPLICATION_XML_TYPE);

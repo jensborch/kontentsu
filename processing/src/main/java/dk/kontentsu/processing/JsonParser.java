@@ -52,8 +52,9 @@ import dk.kontentsu.parsers.ContentParserException;
 import dk.kontentsu.parsers.Link;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Parser for JSON content. The parser will find metadata and compositions in the data.
@@ -64,7 +65,7 @@ import org.apache.logging.log4j.Logger;
 @ContentProcessingMimeType({"application/json"})
 public class JsonParser implements ContentParser {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonParser.class);
 
     @Inject
     Content content;

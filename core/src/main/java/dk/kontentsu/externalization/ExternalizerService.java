@@ -65,8 +65,8 @@ import java.util.concurrent.CompletableFuture;
 
 import javax.inject.Singleton;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Service facade for externalizing internal content.
@@ -76,7 +76,7 @@ import org.apache.logging.log4j.Logger;
 @Singleton
 public class ExternalizerService {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalizerService.class);
 
     private final Set<UUID> processing = new HashSet<>();
 

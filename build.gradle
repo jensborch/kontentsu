@@ -68,6 +68,7 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'io.quarkus'
     apply plugin: 'com.github.ben-manes.versions'
     apply plugin: 'checkstyle'
     apply plugin: 'com.github.spotbugs'
@@ -176,13 +177,16 @@ subprojects {
         implementation 'io.quarkus:quarkus-resteasy-jackson'
         implementation 'io.quarkus:quarkus-hibernate-validator'
         
-        implementation 'org.apache.logging.log4j:log4j-api:' + log4jVersion
+        //implementation 'org.apache.logging.log4j:log4j-api:' + log4jVersion
+
         implementation 'com.google.code.findbugs:annotations:' + findbugsAnnotationsVersion
         implementation 'com.facebook.infer.annotation:infer-annotation:' + inferVersion
 
+        //testImplementation 'org.apache.logging.log4j:log4j-web:' + log4jVersion
+
         testImplementation 'io.quarkus:quarkus-junit5'
         testImplementation 'io.rest-assured:rest-assured'
-        testImplementation 'org.apache.logging.log4j:log4j-core:' + log4jVersion
+
         testImplementation 'eu.codearte.catch-exception:catch-exception:' + catchExceptionVersion
         testImplementation 'org.mockito:mockito-core:' + mockitoVersion
         testImplementation 'org.mockito:mockito-junit-jupiter:' + mockitoVersion

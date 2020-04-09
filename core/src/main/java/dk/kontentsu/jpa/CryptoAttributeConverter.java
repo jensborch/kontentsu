@@ -48,8 +48,9 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 import dk.kontentsu.configuration.Config;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JPA converter for encrypting columns.
@@ -59,7 +60,7 @@ import org.apache.logging.log4j.Logger;
 @Converter
 public class CryptoAttributeConverter implements AttributeConverter<String, String> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(CryptoAttributeConverter.class);
     private static final String KEY_ALGORITHM = "AES";
     private static final Charset ENCODING = StandardCharsets.UTF_8;
     private static final String ALGORITHM = "AES/CBC/PKCS5Padding";

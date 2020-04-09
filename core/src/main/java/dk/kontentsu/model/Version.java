@@ -77,7 +77,7 @@ public class Version extends AbstractBaseEntity implements Comparable<Version> {
     private Set<String> externalizationIds;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private final List<Reference> references = new ArrayList<>();
+    private List<Reference> references = new ArrayList<>();
 
     @NotNull
     @OneToOne(cascade = CascadeType.ALL)

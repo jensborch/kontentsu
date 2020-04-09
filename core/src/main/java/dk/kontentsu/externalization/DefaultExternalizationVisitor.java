@@ -31,8 +31,9 @@ import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default externalization visitor for content that should not be processed. Will throw a {@link ExternalizationException} if the content have a composition.
@@ -43,7 +44,7 @@ import org.apache.logging.log4j.Logger;
 @ContentProcessingMimeType({"*/*"})
 public class DefaultExternalizationVisitor extends ExternalizationVisitor {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExternalizationVisitor.class);
 
     @Inject
     private Content content;

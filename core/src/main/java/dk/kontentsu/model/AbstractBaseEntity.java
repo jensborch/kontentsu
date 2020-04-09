@@ -87,7 +87,7 @@ abstract class AbstractBaseEntity implements Serializable {
         return uuid;
     }
 
-    final void setUuid(final UUID uuid) {
+    void setUuid(final UUID uuid) {
         this.uuid = uuid;
     }
 

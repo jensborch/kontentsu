@@ -29,8 +29,9 @@ import java.util.function.Function;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Fluent API for running code in a transaction.
@@ -39,7 +40,7 @@ import org.apache.logging.log4j.Logger;
  */
 public final class Transaction {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(Transaction.class);
 
     private Transaction() {
     }

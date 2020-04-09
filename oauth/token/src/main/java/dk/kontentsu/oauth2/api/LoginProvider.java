@@ -36,8 +36,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.NotAuthorizedException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
 
 /**
  * This class wraps Java EE functionality for performing a login and obtaining
@@ -49,7 +49,7 @@ import org.apache.logging.log4j.Logger;
 public class LoginProvider {
 
     private static final String JAVAX_SUBJECT_CONTAINER = "javax.security.auth.Subject.container";
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Inject
     private HttpServletRequest request;

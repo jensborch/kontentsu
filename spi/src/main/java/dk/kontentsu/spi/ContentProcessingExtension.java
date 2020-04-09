@@ -30,8 +30,9 @@ import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CDI extension for {@link ContentProcessingScoped}.
@@ -41,7 +42,7 @@ import org.apache.logging.log4j.Logger;
 public class ContentProcessingExtension implements Extension, Serializable {
 
     private static final long serialVersionUID = -2791994163919507379L;
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContentProcessingExtension.class);
 
     static {
         LOGGER.info("Loading CDI content extension...");

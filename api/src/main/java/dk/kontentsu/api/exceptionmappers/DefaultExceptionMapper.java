@@ -30,8 +30,8 @@ import javax.ws.rs.ext.Provider;
 import dk.kontentsu.api.exposure.model.ErrorRepresentation;
 import dk.kontentsu.exception.ErrorCode;
 import dk.kontentsu.util.CauseFinder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
 
 /**
  * Exception mapper for Throwable - will map to HTTP 500.
@@ -41,7 +41,7 @@ import org.apache.logging.log4j.Logger;
 @Provider
 public class DefaultExceptionMapper implements ExceptionMapper<Throwable> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     public Response toResponse(final Throwable t) {

@@ -29,8 +29,9 @@ import java.net.URISyntaxException;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Convert URI to string in database.
@@ -40,7 +41,7 @@ import org.apache.logging.log4j.Logger;
 @Converter(autoApply = true)
 public class URIAttributeConverter implements AttributeConverter<URI, String> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(URIAttributeConverter.class);
 
     @Override
     public String convertToDatabaseColumn(final URI uri) {

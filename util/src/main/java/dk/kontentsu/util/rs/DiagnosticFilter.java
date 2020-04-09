@@ -34,7 +34,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
 
-import org.apache.logging.log4j.ThreadContext;
+import org.slf4j.MDC;
 
 /**
  * Simple diagnostic filter that add a log token to log4j's Mapped Diagnostic
@@ -53,13 +53,13 @@ public class DiagnosticFilter implements ContainerRequestFilter, ContainerRespon
 
     @Override
     public void filter(final ContainerRequestContext requestContext) {
-        ThreadContext.put(MDC_LOG_TOKEN, Optional
+        MDC.put(MDC_LOG_TOKEN, Optional
                 .ofNullable(headers.getHeaderString(HEADER_LOG_TOKEN))
                 .orElse(UUID.randomUUID().toString()));
     }
 
     @Override
     public void filter(final ContainerRequestContext request, final ContainerResponseContext response) {
-        ThreadContext.clearAll();
+        MDC.clear();
     }
 }

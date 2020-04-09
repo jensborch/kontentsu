@@ -29,8 +29,8 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.ext.Provider;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Register and configure cache filter for all methods with a cache annotation.
@@ -40,7 +40,7 @@ import org.apache.logging.log4j.Logger;
 @Provider
 public class CacheFeature implements DynamicFeature {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(CacheFeature.class);
 
     @Override
     public void configure(final ResourceInfo resourceInfo, final FeatureContext context) {

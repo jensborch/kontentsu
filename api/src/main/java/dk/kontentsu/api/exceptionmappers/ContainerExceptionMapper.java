@@ -38,8 +38,8 @@ import dk.kontentsu.api.exposure.model.ErrorRepresentation;
 import dk.kontentsu.api.exposure.model.ValidationErrorRepresentation;
 import dk.kontentsu.exception.ErrorCode;
 import dk.kontentsu.util.CauseFinder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
 
 /**
  * Exception mapper for EJBException, a nested NoResultException will be mapped to at HTTP 404 and a nested ConstraintViolationException or PersistenceException will be mapped to
@@ -52,7 +52,7 @@ import org.apache.logging.log4j.Logger;
 @Provider
 public class ContainerExceptionMapper implements ExceptionMapper<EJBException> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     public Response toResponse(final EJBException t) {

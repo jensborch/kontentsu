@@ -28,8 +28,8 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import dk.kontentsu.oauth2.api.model.ErrorRepresentation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
 
 
 /**
@@ -40,7 +40,7 @@ import org.apache.logging.log4j.Logger;
 @Provider
 public class ContainerExceptionMapper implements ExceptionMapper<Exception> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
 
     @Override
     public Response toResponse(final Exception ex) {

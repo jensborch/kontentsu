@@ -51,9 +51,9 @@ import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.Host;
 import dk.kontentsu.repository.ExternalFileRepository;
 import io.quarkus.arc.Arc;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.eclipse.microprofile.faulttolerance.Asynchronous;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -74,7 +74,7 @@ import org.quartz.TriggerBuilder;
 public class ScheduledExternalizerService {
 
     private static final int START_OFFSET = 2;
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledExternalizerService.class);
 
     private final AtomicBoolean first = new AtomicBoolean(true);
 
@@ -84,7 +84,6 @@ public class ScheduledExternalizerService {
     @Inject
     ExternalFileRepository fileRepo;
 
-    @Asynchronous
     public void reschedule() {
         Set<ZonedDateTime> schedule = fileRepo.getSchedule();
         reschedule(schedule);

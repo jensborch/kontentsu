@@ -55,8 +55,9 @@ import dk.kontentsu.repository.HostRepository;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.repository.TermRepository;
 import dk.kontentsu.spi.ContentProcessingMimeType;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Service facade for performing various operations on CDN items - like
@@ -67,7 +68,7 @@ import org.apache.logging.log4j.Logger;
 @ApplicationScoped
 public class Uploader {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(Uploader.class);
 
     @Inject
     private ItemRepository itemRepo;

@@ -1,11 +1,14 @@
 jar {
     archiveBaseName = 'kontentsu-processing'
+    manifest.attributes(
+     'Multi-Release': 'true'
+  )
 }
 
 dependencies {
     implementation project(':core')
     implementation project(':spi')
+    implementation project(':util')
     testImplementation project(':test')
-    testImplementation project(':util')
     testImplementation 'io.quarkus:quarkus-test-h2'
 }

@@ -62,8 +62,9 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import dk.kontentsu.exception.ValidationException;
 import dk.kontentsu.repository.Repository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An item that can externalized to the CDN - i.e. a file on the CDN.
@@ -94,7 +95,7 @@ import org.apache.logging.log4j.Logger;
 public class Item extends AbstractBaseEntity {
 
     private static final long serialVersionUID = 1457687095382268401L;
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(Item.class);
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "item_terms",

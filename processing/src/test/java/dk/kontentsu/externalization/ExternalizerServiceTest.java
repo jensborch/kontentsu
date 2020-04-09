@@ -30,6 +30,8 @@ import dk.kontentsu.test.ContentTestData;
 import dk.kontentsu.util.Transaction;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +41,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Jens Borch Christiansen
  */
+@QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
  public class ExternalizerServiceTest {
 
@@ -56,20 +59,19 @@ import org.junit.jupiter.api.Test;
     private ObjectMapper mapper;
 
     @Inject
-    private ExternalizerService service;
+    ExternalizerService service;
 
     @Inject
-    private ExternalFileRepository repo;
+    ExternalFileRepository repo;
 
     @Inject
-    private TermRepository termRepo;
+    TermRepository termRepo;
 
     @Inject
-    private EntityManager em;
+    EntityManager em;
 
-    @Resource
-    private UserTransaction userTransaction;
-
+    @Inject
+    UserTransaction userTransaction;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -121,8 +123,10 @@ import org.junit.jupiter.api.Test;
             em.persist(article1);
             em.persist(contact);
             em.persist(page);
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            throw e;
         }
     }
 

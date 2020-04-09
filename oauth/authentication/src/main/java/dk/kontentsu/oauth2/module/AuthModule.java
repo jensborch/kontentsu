@@ -52,8 +52,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import org.slf4j.Logger;
 
 /**
  * OAuth2 JASPIC server authentication module.
@@ -62,7 +62,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class AuthModule implements ServerAuthModule, ServerAuthContext, ClientAuthContext, ClientAuthModule {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger();
     private Options config;
     private CallbackHandler handler;
 

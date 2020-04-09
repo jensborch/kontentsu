@@ -1,13 +1,6 @@
 
 jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveBaseName = 'kontentsu-test'
-}
-
-sourceSets {
-    main {
-        output.resourcesDir = "build/classes/java/main"
-    }
 }
 
 dependencies {
