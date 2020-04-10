@@ -171,20 +171,15 @@ subprojects {
         implementation 'io.quarkus:quarkus-hibernate-orm'
         implementation 'io.quarkus:quarkus-jdbc-h2'
         implementation 'io.quarkus:quarkus-narayana-jta'
-
-
         implementation 'io.quarkus:quarkus-resteasy'
         implementation 'io.quarkus:quarkus-resteasy-jackson'
         implementation 'io.quarkus:quarkus-hibernate-validator'
         
-        //implementation 'org.apache.logging.log4j:log4j-api:' + log4jVersion
-
         implementation 'com.google.code.findbugs:annotations:' + findbugsAnnotationsVersion
         implementation 'com.facebook.infer.annotation:infer-annotation:' + inferVersion
 
-        //testImplementation 'org.apache.logging.log4j:log4j-web:' + log4jVersion
-
         testImplementation 'io.quarkus:quarkus-junit5'
+        testImplementation 'io.quarkus:quarkus-test-h2'        
         testImplementation 'io.rest-assured:rest-assured'
 
         testImplementation 'eu.codearte.catch-exception:catch-exception:' + catchExceptionVersion

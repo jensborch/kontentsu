@@ -74,6 +74,7 @@ import org.slf4j.LoggerFactory;
  * @author Jens Borch Christiansen
  */
 @Singleton
+@Transactional
 public class ExternalizerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExternalizerService.class);

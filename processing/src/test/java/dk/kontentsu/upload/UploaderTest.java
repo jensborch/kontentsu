@@ -30,6 +30,7 @@ import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.test.ContentTestData;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
+import io.quarkus.test.junit.QuarkusTest;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +41,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Jens Borch Christiansen
  */
+@QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
 public class UploaderTest {
 
@@ -57,7 +59,7 @@ public class UploaderTest {
     @Inject
     private Uploader service;
 
-    @Resource
+    @Inject
     private UserTransaction userTransaction;
 
     @BeforeEach
