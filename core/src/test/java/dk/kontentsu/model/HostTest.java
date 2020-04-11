@@ -1,7 +1,8 @@
 package dk.kontentsu.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.startsWith;
 
 import java.net.URI;
 import java.util.Set;
@@ -28,7 +29,7 @@ public class HostTest {
         Validator validator = vf.getValidator();
         Set<ConstraintViolation<Host>> errors = validator.validate(invalid, Default.class);
         assertEquals(1, errors.size());
-        assertTrue(errors.stream().findFirst().get().getMessage().startsWith("must match the following regular expression"));
+        assertThat(errors.stream().findFirst().get().getMessage(), startsWith("must match"));
     }
 
     @Test

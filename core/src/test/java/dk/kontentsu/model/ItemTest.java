@@ -10,15 +10,17 @@ import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import dk.kontentsu.exception.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import dk.kontentsu.exception.ValidationException;
 
 /**
  * Test for {@link Item}.
@@ -71,16 +73,15 @@ public class ItemTest {
 
     @Test
     public void testVersionOverlap() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        ValidationException e = assertThrows(ValidationException.class, () -> {
             Content content = new Content("Overlap".getBytes(), Charset.defaultCharset());
 
-            Version version = Version.builder()
-                    .from(NOW.plusDays(2))
+            Version version = Version.builder().from(NOW.plusDays(2))
                     .metadata(new Metadata.Key(MetadataType.PAGE, "key"), new Metadata("This is metadata"))
-                    .content(content)
-                    .build();
+                    .content(content).build();
             item.addVersion(version);
         });
+        assertThat(e.getMessage(), startsWith("Version with interva"));
     }
 
     @Test

@@ -22,11 +22,11 @@ import io.quarkus.arc.impl.ContextInstanceHandleImpl;
  */
 public class QuarkusContentProcessingContext implements InjectableContext {
 
-    private static final ThreadLocal<ContentProcessingContextState> STATE = new ThreadLocal<>();
+    private static final ThreadLocal<ContentProcessingContextState> THREAD_LOCAL_STATE = new ThreadLocal<>();
 
     @Override
     public void destroy(Contextual<?> contextual) {
-        Optional.ofNullable(STATE.get()).ifPresent(ContentProcessingContextState::destroy);
+        Optional.ofNullable(THREAD_LOCAL_STATE.get()).ifPresent(ContentProcessingContextState::destroy);
     }
 
     @Override
@@ -36,17 +36,17 @@ public class QuarkusContentProcessingContext implements InjectableContext {
 
     private ContentProcessingContextState initContextState() {
         ContentProcessingContextState s = new ContentProcessingContextState();
-        STATE.set(s);
+        THREAD_LOCAL_STATE.set(s);
         return s;
     }
 
     @Override
     public <T> T get(Contextual<T> contextual, CreationalContext<T> creationalContext) {
-        Objects.requireNonNull(contextual, "Contextual must not be null");
+        Objects.requireNonNull(contextual, "Contextual must not be null.");
         if (!isActive()) {
-            throw new ContextNotActiveException(ContentProcessingScoped.class.getName() + " is not active.");
+            throw new ContextNotActiveException("Content processing scope is not active.");
         }
-        ContentProcessingContextState state = Optional.ofNullable(STATE.get()).orElseGet(this::initContextState);
+        ContentProcessingContextState state = Optional.ofNullable(THREAD_LOCAL_STATE.get()).orElseGet(this::initContextState);
         ContextInstanceHandle<T> instanceHandle = state.get(contextual);
         if (instanceHandle != null) {
             return instanceHandle.get();
@@ -68,23 +68,23 @@ public class QuarkusContentProcessingContext implements InjectableContext {
 
     @Override
     public boolean isActive() {
-        return STATE.get() != null;
+        return THREAD_LOCAL_STATE.get() != null;
     }
 
     @Override
     public void destroy() {
         if (isActive()) {
-            Optional.ofNullable(STATE.get()).ifPresent(ContentProcessingContextState::destroy);
+            Optional.ofNullable(THREAD_LOCAL_STATE.get()).ifPresent(ContentProcessingContextState::destroy);
         }
-        STATE.remove();
+        THREAD_LOCAL_STATE.remove();
     }
 
     @Override
     public ContextState getState() {
         if (!isActive()) {
-            throw new ContextNotActiveException("No active transaction on the current thread");
+            throw new ContextNotActiveException("Content processing scoped is not active.");
         }
-        return Optional.ofNullable(STATE.get()).orElse(new ContentProcessingContextState());
+        return Optional.ofNullable(THREAD_LOCAL_STATE.get()).orElse(new ContentProcessingContextState());
     }
 
     /**
@@ -102,8 +102,8 @@ public class QuarkusContentProcessingContext implements InjectableContext {
             beanToInstanceHandleMap.remove(bean);
         }
 
-
-        <T> ContextInstanceHandle<T> get(Contextual<T> bean) {
+        @SuppressWarnings("unchecked")
+        <T> ContextInstanceHandle<T> get(Contextual<T> bean) {            
             return (ContextInstanceHandle<T>) beanToInstanceHandleMap.get(bean);
         }
 

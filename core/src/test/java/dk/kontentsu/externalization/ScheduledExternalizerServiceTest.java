@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import dk.kontentsu.model.Content;
@@ -69,6 +70,7 @@ public class ScheduledExternalizerServiceTest {
         List<ExternalFile> list = new ArrayList<>(1);
         list.add(file);
         when(fileRepo.findAll(any(ZonedDateTime.class))).thenReturn(list);
+        when(context.getFireTime()).thenReturn(new Date());
     }
 
     @AfterEach
