@@ -9,6 +9,13 @@ sourceSets {
 }
 
 dependencies {
+    implementation "io.quarkus:quarkus-core-deployment:" + quarkusPlatformVersion
+    implementation "io.quarkus:quarkus-arc-deployment:" + quarkusPlatformVersion
+
     testImplementation project(':test')
     testImplementation 'org.jboss.weld:weld-junit5:' + weldJunitVersion
+
+    annotationProcessor ( 
+        "io.quarkus:quarkus-extension-processor:${quarkusPlatformVersion}"
+    )
 }
