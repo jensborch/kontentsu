@@ -13,8 +13,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.ejb.EJBTransactionRequiredException;
-import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.transaction.UserTransaction;
 
@@ -24,11 +22,12 @@ import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.Term;
-import dk.kontentsu.test.TestEJBContainer;
-import org.junit.After;
-import org.junit.AfterClass;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.h2.H2DatabaseTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -36,14 +35,15 @@ import org.junit.jupiter.api.Test;
  *
  * @author Jens Borch Christiansen
  */
-public class ExternalFileRepositoryIT {
+@QuarkusTest
+@QuarkusTestResource(H2DatabaseTestResource.class)
+ public class ExternalFileRepositoryIT {
 
     private static final Item.URI URI = new Item.URI("test1/test2/");
     private static final ZonedDateTime NOW = ZonedDateTime.now();
     private static final ZonedDateTime FROM = NOW.plusDays(42);
     private static final ZonedDateTime TO = NOW.plusDays(80);
 
-    private static EJBContainer container;
 
     @Inject
     private ExternalFileRepository fileRepo;
@@ -59,21 +59,8 @@ public class ExternalFileRepositoryIT {
 
     private ExternalFile file;
 
-    @BeforeEachClass
-    public static void setUpClass() {
-        container = TestEJBContainer.create();
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-        if (container != null) {
-            container.close();
-        }
-    }
-
     @BeforeEach
     public void setUp() throws Exception {
-        TestEJBContainer.inject(container, this);
         userTransaction.begin();
         Term path = termRepo.create(URI);
 
@@ -114,7 +101,7 @@ public class ExternalFileRepositoryIT {
         userTransaction.commit();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         try {
             userTransaction.begin();
@@ -167,7 +154,7 @@ public class ExternalFileRepositoryIT {
         }
     }
 
-    @Test(expected = EJBTransactionRequiredException.class)
+    @Test
     public void testNoTransaction() {
         fileRepo.findAll();
     }

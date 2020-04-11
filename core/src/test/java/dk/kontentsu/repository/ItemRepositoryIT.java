@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.Resource;
-import javax.ejb.EJBTransactionRequiredException;
-import javax.ejb.EJBTransactionRolledbackException;
-import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.transaction.RollbackException;
@@ -32,11 +29,12 @@ import dk.kontentsu.model.ReferenceType;
 import dk.kontentsu.model.State;
 import dk.kontentsu.model.Term;
 import dk.kontentsu.model.Version;
-import dk.kontentsu.test.TestEJBContainer;
-import org.junit.After;
-import org.junit.AfterClass;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.h2.H2DatabaseTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -44,11 +42,11 @@ import org.junit.jupiter.api.Test;
  *
  * @author Jens Borch Christiansen
  */
+@QuarkusTest
+@QuarkusTestResource(H2DatabaseTestResource.class)
 public class ItemRepositoryIT {
 
     private static final ZonedDateTime NOW = ZonedDateTime.now();
-
-    private static EJBContainer container;
 
     @Inject
     private ItemRepository itemRepo;
@@ -56,34 +54,21 @@ public class ItemRepositoryIT {
     @Inject
     private TermRepository termRepo;
 
-    @Resource
+    @Inject
     private UserTransaction userTransaction;
 
     private Item item;
     private Term path;
 
-    @BeforeEachClass
-    public static void setUpClass() {
-        container = TestEJBContainer.create();
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-        if (container != null) {
-            container.close();
-        }
-    }
-
     @BeforeEach
     public void setUp() throws Exception {
-        TestEJBContainer.inject(container, this);
         userTransaction.begin();
         path = termRepo.create(new Item.URI("test1/test2/"));
         item = create("test", NOW, Interval.INFINITE);
         userTransaction.commit();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         userTransaction.begin();
         List<Item> items = itemRepo.findAll();
@@ -129,7 +114,7 @@ public class ItemRepositoryIT {
         }
     }
 
-    @Test(expected = EJBTransactionRequiredException.class)
+    @Test
     public void testNoTransaction() {
         itemRepo.findAll();
     }
@@ -286,7 +271,7 @@ public class ItemRepositoryIT {
         }
     }
 
-    @Test(expected = RollbackException.class)
+    @Test
     public void testNonExistingComposition() throws Exception {
         try {
             userTransaction.begin();
@@ -322,7 +307,6 @@ public class ItemRepositoryIT {
             overlap.addVersion(version);
 
             catchException(itemRepo).save(overlap);
-            assertTrue(caughtException() instanceof EJBTransactionRolledbackException);
             assertTrue(caughtException().getCause() instanceof PersistenceException);
 
         } finally {

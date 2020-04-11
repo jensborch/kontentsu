@@ -8,10 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.net.URI;
 import java.util.UUID;
 
-import javax.annotation.Resource;
-import javax.ejb.EJBTransactionRequiredException;
-import javax.ejb.EJBTransactionRolledbackException;
-import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.transaction.UserTransaction;
@@ -20,11 +16,12 @@ import dk.kontentsu.model.Host;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.Term;
-import dk.kontentsu.test.TestEJBContainer;
-import org.junit.After;
-import org.junit.AfterClass;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.h2.H2DatabaseTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -32,9 +29,9 @@ import org.junit.jupiter.api.Test;
  *
  * @author Jens Borch Christiansen
  */
+@QuarkusTest
+@QuarkusTestResource(H2DatabaseTestResource.class)
 public class HostRepositoryIT {
-
-    private static EJBContainer container;
 
     @Inject
     private HostRepository hostRepo;
@@ -45,26 +42,13 @@ public class HostRepositoryIT {
     @Inject
     private ItemRepository itemRepo;
 
-    @Resource
+    @Inject
     private UserTransaction userTransaction;
 
     private final Host[] hosts = new Host[2];
 
-    @BeforeEachClass
-    public static void setUpClass() {
-        container = TestEJBContainer.create();
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-        if (container != null) {
-            container.close();
-        }
-    }
-
     @BeforeEach
     public void setUp() throws Exception {
-        TestEJBContainer.inject(container, this);
         try {
             userTransaction.begin();
             hosts[0] = hostRepo.save(new Host("name1", "test test", URI.create("ftp://myusername:mypassword@somehost/"), "cdn/upload"));
@@ -83,7 +67,7 @@ public class HostRepositoryIT {
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         try {
             userTransaction.begin();
@@ -96,7 +80,7 @@ public class HostRepositoryIT {
 
     }
 
-    @Test(expected = EJBTransactionRequiredException.class)
+    @Test
     public void testNoTransaction() {
         hostRepo.findAll();
     }
@@ -126,7 +110,6 @@ public class HostRepositoryIT {
         try {
             userTransaction.begin();
             catchException(hostRepo).get(UUID.randomUUID());
-            assertTrue(caughtException() instanceof EJBTransactionRolledbackException);
             assertTrue(caughtException().getCause() instanceof NoResultException);
         } finally {
             userTransaction.rollback();
@@ -148,7 +131,6 @@ public class HostRepositoryIT {
         try {
             userTransaction.begin();
             catchException(hostRepo).getByName("test test");
-            assertTrue(caughtException() instanceof EJBTransactionRolledbackException);
             assertTrue(caughtException().getCause() instanceof NoResultException);
         } finally {
             userTransaction.rollback();

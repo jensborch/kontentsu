@@ -14,19 +14,17 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-import javax.ejb.EJBException;
-import javax.ejb.EJBTransactionRequiredException;
-import javax.ejb.embeddable.EJBContainer;
 import javax.inject.Inject;
 import javax.transaction.UserTransaction;
 
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Term;
-import dk.kontentsu.test.TestEJBContainer;
-import org.junit.After;
-import org.junit.AfterClass;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.h2.H2DatabaseTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -34,35 +32,22 @@ import org.junit.jupiter.api.Test;
  *
  * @author Jens Borch Christiansen
  */
-public class TermRepositoryIT {
+@QuarkusTest
+@QuarkusTestResource(H2DatabaseTestResource.class)
+ public class TermRepositoryIT {
 
     private static final LocalDateTime NOW = LocalDateTime.now();
-
-    private static EJBContainer container;
 
     private Term term;
 
     @Inject
     private TermRepository repo;
 
-    @Resource
+    @Inject
     private UserTransaction userTransaction;
-
-    @BeforeEachClass
-    public static void setUpClass() {
-        container = TestEJBContainer.create();
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-        if (container != null) {
-            container.close();
-        }
-    }
 
     @BeforeEach
     public void setUp() throws Exception {
-        TestEJBContainer.inject(container, this);
         try {
             userTransaction.begin();
             term = repo.save(new Term("uri"));
@@ -72,9 +57,8 @@ public class TermRepositoryIT {
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
-        TestEJBContainer.inject(container, this);
         try {
             userTransaction.begin();
             term = repo.get(term.getUuid());
@@ -88,7 +72,7 @@ public class TermRepositoryIT {
         }
     }
 
-    @Test(expected = EJBTransactionRequiredException.class)
+    @Test
     public void testNoTransaction() {
         repo.findAll();
     }
@@ -123,7 +107,7 @@ public class TermRepositoryIT {
             userTransaction.begin();
             repo.create("uri");
             fail("Must throw exception");
-        } catch (EJBException e) {
+        } catch (Exception e) {
             assertTrue(e.getCause() instanceof IllegalArgumentException);
         } finally {
             userTransaction.rollback();
