@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  * @author Jens Borch Christiansen
  */
 @EnableAutoWeld
-@AddPackages(TestVisitor.class)
+@AddPackages({TestVisitor.class, Content.class})
 @AddExtensions(ContentProcessingExtension.class)
 public class ReferenceProcessorTest {
 

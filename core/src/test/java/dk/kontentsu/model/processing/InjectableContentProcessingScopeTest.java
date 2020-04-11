@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
  * @author Jens Borch Christiansen
  */
 @EnableAutoWeld
-@AddPackages(ContentProcessingScopedBean.class)
+@AddPackages({ContentProcessingScopedBean.class, Content.class})
 @AddExtensions(ContentProcessingExtension.class)
 public class InjectableContentProcessingScopeTest {
 
