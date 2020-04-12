@@ -6,14 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.charset.Charset;
-import java.time.ZoneOffset;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.TransactionalException;
@@ -40,13 +42,12 @@ import org.junit.jupiter.api.Test;
  */
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
- public class ExternalFileRepositoryIT {
+public class ExternalFileRepositoryIT {
 
     private static final Item.URI URI = new Item.URI("test1/test2/");
     private static final ZonedDateTime NOW = ZonedDateTime.now();
     private static final ZonedDateTime FROM = NOW.plusDays(42);
     private static final ZonedDateTime TO = NOW.plusDays(80);
-
 
     @Inject
     private ExternalFileRepository fileRepo;
@@ -67,39 +68,22 @@ import org.junit.jupiter.api.Test;
         userTransaction.begin();
         Term path = termRepo.create(URI);
 
-        Item item = itemRepo.findByUri(URI)
-                .orElseGet(()
-                        -> itemRepo.save(
-                        new Item(termRepo.find(path.getUuid()).orElse(path),
-                                new MimeType("text", "plain")))
-                );
+        Item item = itemRepo.findByUri(URI).orElseGet(() -> itemRepo
+                .save(new Item(termRepo.find(path.getUuid()).orElse(path), new MimeType("text", "plain"))));
 
         Content content = new Content("This is a test".getBytes(), Charset.defaultCharset());
-        file = ExternalFile.builder()
-                .content(content)
-                .interval(new Interval(FROM, TO))
-                .item(item)
-                .build();
+        file = ExternalFile.builder().content(content).interval(new Interval(FROM, TO)).item(item).build();
 
         fileRepo.save(file);
 
-        fileRepo.save(ExternalFile.builder()
-                .content(content)
-                .interval(new Interval(FROM.minusHours(12), FROM))
-                .item(item)
+        fileRepo.save(ExternalFile.builder().content(content).interval(new Interval(FROM.minusHours(12), FROM))
+                .item(item).build());
+
+        fileRepo.save(ExternalFile.builder().content(content).interval(new Interval(TO, TO.plusMinutes(4))).item(item)
                 .build());
 
-        fileRepo.save(ExternalFile.builder()
-                .content(content)
-                .interval(new Interval(TO, TO.plusMinutes(4)))
-                .item(item)
-                .build());
-
-        fileRepo.save(ExternalFile.builder()
-                .content(content)
-                .interval(new Interval(NOW.minusDays(2), NOW.minusDays(1)))
-                .item(item)
-                .build());
+        fileRepo.save(ExternalFile.builder().content(content).interval(new Interval(NOW.minusDays(2), NOW.minusDays(1)))
+                .item(item).build());
 
         userTransaction.commit();
     }
@@ -196,11 +180,10 @@ import org.junit.jupiter.api.Test;
     public void testGetSchedule() throws Exception {
         try {
             userTransaction.begin();
-            Set<ZonedDateTime> result = fileRepo.getSchedule();
+            Set<Instant> result = fileRepo.getSchedule().stream().map(ZonedDateTime::toInstant)
+                    .collect(Collectors.toSet());
             assertEquals(3, result.size());
-            assertTrue(result.contains(FROM.withZoneSameInstant(ZoneOffset.UTC)));
-            assertTrue(result.contains(TO.plusMinutes(4).withZoneSameInstant(ZoneOffset.UTC)));
-            assertTrue(result.contains(FROM.minusHours(12).withZoneSameInstant(ZoneOffset.UTC)));
+            assertThat(result, containsInAnyOrder(FROM.toInstant(), TO.plusMinutes(4).toInstant(), FROM.minusHours(12).toInstant()));
         } finally {
             userTransaction.commit();
         }
