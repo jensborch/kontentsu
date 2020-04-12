@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
-import javax.persistence.TypedQuery;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
@@ -46,7 +45,6 @@ import dk.kontentsu.model.Term;
  * @author Jens Borch Christiansen
  */
 @ApplicationScoped
-
 @Transactional(Transactional.TxType.MANDATORY)
 public class TermRepository extends Repository<Term> {
 

@@ -47,7 +47,7 @@ import dk.kontentsu.model.Item;
 public class HostRepository extends Repository<Host> {
 
     @Inject
-    private ItemRepository itemRepo;
+    ItemRepository itemRepo;
 
     @Override
     public List<Host> findAll() {

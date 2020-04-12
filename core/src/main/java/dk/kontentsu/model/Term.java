@@ -116,7 +116,7 @@ public class Term extends AbstractBaseEntity {
     @Transient
     private String[] pathElements;
 
-    @Column(name = "path", columnDefinition = "varchar(max)")
+    @Column(name = "path", length = 500)
     private String path;
 
     public Term(final String name) {

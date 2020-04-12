@@ -2,9 +2,13 @@ package dk.kontentsu.repository;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
@@ -13,10 +17,9 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
-import javax.transaction.RollbackException;
+import javax.transaction.TransactionalException;
 import javax.transaction.UserTransaction;
 
 import dk.kontentsu.model.Content;
@@ -49,31 +52,41 @@ public class ItemRepositoryIT {
     private static final ZonedDateTime NOW = ZonedDateTime.now();
 
     @Inject
-    private ItemRepository itemRepo;
+    ItemRepository itemRepo;
 
     @Inject
-    private TermRepository termRepo;
+    TermRepository termRepo;
 
     @Inject
-    private UserTransaction userTransaction;
+    UserTransaction userTransaction;
 
     private Item item;
     private Term path;
 
     @BeforeEach
     public void setUp() throws Exception {
-        userTransaction.begin();
-        path = termRepo.create(new Item.URI("test1/test2/"));
-        item = create("test", NOW, Interval.INFINITE);
-        userTransaction.commit();
+        try {
+            userTransaction.begin();
+            path = termRepo.create(new Item.URI("test1/test2/"));
+            item = create("test", NOW, Interval.INFINITE);
+            userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
+        }
     }
 
     @AfterEach
     public void tearDown() throws Exception {
-        userTransaction.begin();
-        List<Item> items = itemRepo.findAll();
-        items.forEach(Item::delete);
-        userTransaction.commit();
+        try {
+            userTransaction.begin();
+            List<Item> items = itemRepo.findAll();
+            items.forEach(Item::delete);
+            userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
+        }
     }
 
     private Item create(final String edition, final ZonedDateTime from, final ZonedDateTime to) {
@@ -109,14 +122,17 @@ public class ItemRepositoryIT {
             List<Item> items = itemRepo.findAll();
             assertEquals(2, items.size());
             assertEquals(2, items.stream().filter(i -> i.getEdition().orElse("").equals("test1")).findFirst().get().getVersions().size());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
     @Test
     public void testNoTransaction() {
-        itemRepo.findAll();
+        TransactionalException e = assertThrows(TransactionalException.class, () -> itemRepo.findAll());
+        assertThat(e.getMessage(), endsWith("Transaction is required for invocation"));
     }
 
     @Test
@@ -128,8 +144,10 @@ public class ItemRepositoryIT {
             List<Item> result = itemRepo.findAll();
             assertNotNull(result);
             assertEquals(0, result.size());
-        } finally {
+            userTransaction.commit();
+        } catch (Exception e) {
             userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -141,8 +159,10 @@ public class ItemRepositoryIT {
             assertNotNull(result);
             assertEquals(1, result.size());
             assertEquals(item, result.get(0));
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -153,8 +173,10 @@ public class ItemRepositoryIT {
             Optional<Item> result = itemRepo.findByUri(new Item.URI("test1/test2/test2-test"));
             assertTrue(result.isPresent());
             assertEquals(item, result.get());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -166,8 +188,10 @@ public class ItemRepositoryIT {
             Optional<Item> result = itemRepo.findByUri(new Item.URI("test1/test2/"));
             assertTrue(result.isPresent());
             assertEquals(i, result.get());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -184,8 +208,10 @@ public class ItemRepositoryIT {
             result = itemRepo.find(Item.Criteria.create().at(NOW.plusSeconds(1)));
             assertNotNull(result);
             assertEquals(1, result.size());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -205,8 +231,10 @@ public class ItemRepositoryIT {
                     .to(NOW.plusSeconds(1)));
             assertNotNull(result);
             assertEquals(1, result.size());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -226,8 +254,10 @@ public class ItemRepositoryIT {
                     .to(NOW.plusSeconds(60)));
             assertNotNull(result);
             assertEquals(1, result.size());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -248,8 +278,10 @@ public class ItemRepositoryIT {
                     .interval(new Interval(NOW.plusSeconds(10), NOW.plusSeconds(60))));
             assertNotNull(result);
             assertEquals(1, result.size());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -266,8 +298,10 @@ public class ItemRepositoryIT {
             result = itemRepo.find(Item.Criteria.create().at(NOW.minusDays(100)));
             assertNotNull(result);
             assertEquals(0, result.size());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -287,8 +321,10 @@ public class ItemRepositoryIT {
                     .build();
             compItem.addVersion(compVersion);
             itemRepo.save(compItem);
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -308,9 +344,10 @@ public class ItemRepositoryIT {
 
             catchException(itemRepo).save(overlap);
             assertTrue(caughtException().getCause() instanceof PersistenceException);
-
-        } finally {
+            userTransaction.commit();
+        } catch (Exception e) {
             userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -332,8 +369,10 @@ public class ItemRepositoryIT {
 
             assertNotNull(content.getData());
             assertEquals(1, content.getSize());
-        } finally {
+            userTransaction.commit();
+        } catch (Exception e) {
             userTransaction.rollback();
+            fail(e);
         }
     }
 }

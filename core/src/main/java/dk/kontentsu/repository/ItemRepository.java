@@ -35,7 +35,6 @@ import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
-import javax.persistence.TypedQuery;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -54,12 +53,11 @@ import org.hibernate.internal.SessionImpl;
  * @author Jens Borch Christiansen
  */
 @ApplicationScoped
-
 @Transactional(Transactional.TxType.MANDATORY)
 public class ItemRepository extends Repository<Item> {
 
     @Inject
-    private TermRepository termRepo;
+    TermRepository termRepo;
 
     public List<Item> find(final Item.Criteria criteria) {
         return criteria.fetch(em);

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -50,16 +51,16 @@ public class ExternalFileRepositoryIT {
     private static final ZonedDateTime TO = NOW.plusDays(80);
 
     @Inject
-    private ExternalFileRepository fileRepo;
+    ExternalFileRepository fileRepo;
 
     @Inject
-    private ItemRepository itemRepo;
+    ItemRepository itemRepo;
 
     @Inject
-    private TermRepository termRepo;
+    TermRepository termRepo;
 
     @Inject
-    private UserTransaction userTransaction;
+    UserTransaction userTransaction;
 
     private ExternalFile file;
 
@@ -93,8 +94,10 @@ public class ExternalFileRepositoryIT {
         try {
             userTransaction.begin();
             fileRepo.findAll().forEach(ExternalFile::delete);
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -104,8 +107,10 @@ public class ExternalFileRepositoryIT {
             userTransaction.begin();
             List<ExternalFile> files = fileRepo.findAll();
             assertEquals(4, files.size());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -117,8 +122,10 @@ public class ExternalFileRepositoryIT {
             assertEquals(0, files.size());
             files = fileRepo.findAll(NOW.plusDays(43));
             assertEquals(1, files.size());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -136,8 +143,10 @@ public class ExternalFileRepositoryIT {
             assertEquals(1, files.size());
             files = fileRepo.findAll(new Interval(NOW.plusDays(50), NOW.plusDays(100)));
             assertEquals(2, files.size());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -170,9 +179,10 @@ public class ExternalFileRepositoryIT {
 
             tmpFile = fileRepo.findByUri(URI, NOW.plusDays(43));
             assertTrue(tmpFile.isPresent());
-
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -184,8 +194,10 @@ public class ExternalFileRepositoryIT {
                     .collect(Collectors.toSet());
             assertEquals(3, result.size());
             assertThat(result, containsInAnyOrder(FROM.toInstant(), TO.plusMinutes(4).toInstant(), FROM.minusHours(12).toInstant()));
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 

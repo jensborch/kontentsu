@@ -82,16 +82,16 @@ public class ExternalizerService {
     private final Set<UUID> processing = new HashSet<>();
 
     @Inject
-    private ExternalFileRepository fileRepo;
+    ExternalFileRepository fileRepo;
 
     @Inject
-    private ItemRepository itemRepo;
+    ItemRepository itemRepo;
 
     @Inject
-    private ScheduledExternalizerService scheduleService;
+    ScheduledExternalizerService scheduleService;
 
     @Inject
-    private BeanManager bm;
+    BeanManager bm;
 
     private Map<MimeType, Bean<?>> externalizationVisitorBeans;
 

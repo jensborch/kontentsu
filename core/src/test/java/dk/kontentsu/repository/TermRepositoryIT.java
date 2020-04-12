@@ -1,8 +1,10 @@
 package dk.kontentsu.repository;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.transaction.TransactionalException;
 import javax.transaction.UserTransaction;
 
 import dk.kontentsu.model.Item;
@@ -34,17 +37,17 @@ import org.junit.jupiter.api.Test;
  */
 @QuarkusTest
 @QuarkusTestResource(H2DatabaseTestResource.class)
- public class TermRepositoryIT {
+public class TermRepositoryIT {
 
     private static final LocalDateTime NOW = LocalDateTime.now();
 
     private Term term;
 
     @Inject
-    private TermRepository repo;
+    TermRepository repo;
 
     @Inject
-    private UserTransaction userTransaction;
+    UserTransaction userTransaction;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -52,8 +55,10 @@ import org.junit.jupiter.api.Test;
             userTransaction.begin();
             term = repo.save(new Term("uri"));
             term.append("/test1/test2");
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -67,14 +72,17 @@ import org.junit.jupiter.api.Test;
             delete.forEach(repo::delete);
             repo.delete(term.getUuid());
             assertEquals(0, repo.findAll().size());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
     @Test
     public void testNoTransaction() {
-        repo.findAll();
+        TransactionalException e = assertThrows(TransactionalException.class, () -> repo.findAll());
+        assertThat(e.getMessage(), endsWith("Transaction is required for invocation"));
     }
 
     @Test
@@ -84,8 +92,10 @@ import org.junit.jupiter.api.Test;
             Term t = repo.create(new Item.URI("test1/test3/test3-name"));
             assertEquals("uri:/test1/test3/", t.getPathWithTaxonomy());
             assertEquals(3, t.getParent().get().getParent().get().getChildren(true).size());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -96,8 +106,10 @@ import org.junit.jupiter.api.Test;
             Term t = repo.create("uri:/test1/test3/");
             assertEquals("uri:/test1/test3/", t.getPathWithTaxonomy());
             assertEquals(3, t.getParent().get().getParent().get().getChildren(true).size());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -105,13 +117,12 @@ import org.junit.jupiter.api.Test;
     public void testCreateUsingWrongStr() throws Exception {
         try {
             userTransaction.begin();
-            repo.create("uri");
-            fail("Must throw exception");
-        } catch (Exception e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> repo.create("uri"));
+            assertEquals("Path 'uri' must match regular expression ^(?<tax>[\\p{L}\\d-]+):(?<term>\\/(?:[\\p{L}\\d-]+\\/)*)$", e.getMessage());
         } finally {
             userTransaction.rollback();
         }
+
     }
 
     @Test
@@ -120,8 +131,10 @@ import org.junit.jupiter.api.Test;
             userTransaction.begin();
             Optional<Term> t = repo.find(term.getUuid());
             assertTrue(t.isPresent());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -132,8 +145,10 @@ import org.junit.jupiter.api.Test;
             List<Term> found = repo.findAll();
             assertEquals(1, found.size());
             assertEquals(2, found.get(0).getChildren(true).size());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
