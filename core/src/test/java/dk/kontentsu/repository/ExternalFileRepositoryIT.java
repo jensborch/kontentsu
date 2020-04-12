@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.nio.charset.Charset;
 import java.time.ZoneOffset;
@@ -12,8 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.transaction.TransactionalException;
 import javax.transaction.UserTransaction;
 
 import dk.kontentsu.model.Content;
@@ -54,7 +57,7 @@ import org.junit.jupiter.api.Test;
     @Inject
     private TermRepository termRepo;
 
-    @Resource
+    @Inject
     private UserTransaction userTransaction;
 
     private ExternalFile file;
@@ -156,7 +159,8 @@ import org.junit.jupiter.api.Test;
 
     @Test
     public void testNoTransaction() {
-        fileRepo.findAll();
+        TransactionalException e = assertThrows(TransactionalException.class, () -> fileRepo.findAll());
+        assertThat(e.getMessage(), endsWith("Transaction is required for invocation"));
     }
 
     @Test
