@@ -125,10 +125,8 @@ public class HostRepositoryIT {
             userTransaction.begin();
             NoResultException e = assertThrows(NoResultException.class, () -> hostRepo.get(UUID.randomUUID()));
             assertEquals("No entity found for query", e.getMessage());
-            userTransaction.commit();
-        } catch (Exception e) {
+        } finally {
             userTransaction.rollback();
-            fail(e);
         }
     }
 
@@ -150,10 +148,8 @@ public class HostRepositoryIT {
             userTransaction.begin();
             NoResultException e = assertThrows(NoResultException.class, () -> hostRepo.getByName("test test"));
             assertEquals("No entity found for query", e.getMessage());
-            userTransaction.commit();
-        } catch (Exception e) {
+        } finally {
             userTransaction.rollback();
-            fail(e);
         }
     }
 }
