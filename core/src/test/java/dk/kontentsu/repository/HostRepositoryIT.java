@@ -2,14 +2,19 @@ package dk.kontentsu.repository;
 
 import static com.googlecode.catchexception.CatchException.catchException;
 import static com.googlecode.catchexception.CatchException.caughtException;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.net.URI;
 import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.transaction.TransactionalException;
 import javax.transaction.UserTransaction;
 
 import dk.kontentsu.model.Host;
@@ -34,16 +39,16 @@ import org.junit.jupiter.api.Test;
 public class HostRepositoryIT {
 
     @Inject
-    private HostRepository hostRepo;
+    HostRepository hostRepo;
 
     @Inject
-    private TermRepository catRepo;
+    TermRepository catRepo;
 
     @Inject
-    private ItemRepository itemRepo;
+    ItemRepository itemRepo;
 
     @Inject
-    private UserTransaction userTransaction;
+    UserTransaction userTransaction;
 
     private final Host[] hosts = new Host[2];
 
@@ -58,12 +63,14 @@ public class HostRepositoryIT {
             Term path = catRepo.create(uri);
 
             Item item = itemRepo.findByUri(uri)
-                    .orElseGet(() ->
-                            itemRepo.save(new Item(path, MimeType.APPLICATION_JSON_TYPE))
+                    .orElseGet(()
+                            -> itemRepo.save(new Item(path, MimeType.APPLICATION_JSON_TYPE))
                     );
             item.addHost(hostRepo.getByName("name2"));
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -74,15 +81,18 @@ public class HostRepositoryIT {
             hostRepo.delete(hosts[0].getUuid());
             hostRepo.delete(hosts[1].getUuid());
             assertTrue(hostRepo.findAll().isEmpty());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
 
     }
 
     @Test
     public void testNoTransaction() {
-        hostRepo.findAll();
+        TransactionalException e = assertThrows(TransactionalException.class, () -> hostRepo.findAll());
+        assertThat(e.getMessage(), endsWith("Transaction is required for invocation"));
     }
 
     @Test
@@ -90,8 +100,10 @@ public class HostRepositoryIT {
         try {
             userTransaction.begin();
             assertEquals(2, hostRepo.findAll().size());
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -100,8 +112,10 @@ public class HostRepositoryIT {
         try {
             userTransaction.begin();
             assertEquals(hosts[1], hostRepo.get(hosts[1].getUuid()));
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -109,10 +123,12 @@ public class HostRepositoryIT {
     public void testNotFound() throws Exception {
         try {
             userTransaction.begin();
-            catchException(hostRepo).get(UUID.randomUUID());
-            assertTrue(caughtException().getCause() instanceof NoResultException);
-        } finally {
+            NoResultException e = assertThrows(NoResultException.class, () -> hostRepo.get(UUID.randomUUID()));
+            assertEquals("No entity found for query", e.getMessage());
+            userTransaction.commit();
+        } catch (Exception e) {
             userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -121,8 +137,10 @@ public class HostRepositoryIT {
         try {
             userTransaction.begin();
             assertEquals(hosts[1], hostRepo.getByName(hosts[1].getName()));
-        } finally {
             userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
         }
     }
 
@@ -130,10 +148,12 @@ public class HostRepositoryIT {
     public void testNotFoundByName() throws Exception {
         try {
             userTransaction.begin();
-            catchException(hostRepo).getByName("test test");
-            assertTrue(caughtException().getCause() instanceof NoResultException);
-        } finally {
+            NoResultException e = assertThrows(NoResultException.class, () -> hostRepo.getByName("test test"));
+            assertEquals("No entity found for query", e.getMessage());
+            userTransaction.commit();
+        } catch (Exception e) {
             userTransaction.rollback();
+            fail(e);
         }
     }
 }
