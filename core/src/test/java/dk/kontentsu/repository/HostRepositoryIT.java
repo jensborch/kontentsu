@@ -90,12 +90,6 @@ public class HostRepositoryIT {
     }
 
     @Test
-    public void testNoTransaction() {
-        TransactionalException e = assertThrows(TransactionalException.class, () -> hostRepo.findAll());
-        assertThat(e.getMessage(), endsWith("Transaction is required for invocation"));
-    }
-
-    @Test
     public void testFindAll() throws Exception {
         try {
             userTransaction.begin();

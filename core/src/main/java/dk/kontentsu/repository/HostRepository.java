@@ -28,7 +28,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -43,7 +42,7 @@ import dk.kontentsu.model.Item;
  * @author Jens Borch Christiansen
  */
 @ApplicationScoped
-@Transactional(Transactional.TxType.MANDATORY)
+@Transactional
 public class HostRepository extends Repository<Host> {
 
     @Inject

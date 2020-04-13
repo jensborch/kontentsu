@@ -80,12 +80,6 @@ public class TermRepositoryIT {
     }
 
     @Test
-    public void testNoTransaction() {
-        TransactionalException e = assertThrows(TransactionalException.class, () -> repo.findAll());
-        assertThat(e.getMessage(), endsWith("Transaction is required for invocation"));
-    }
-
-    @Test
     public void testCreate() throws Exception {
         try {
             userTransaction.begin();

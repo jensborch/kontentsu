@@ -53,7 +53,7 @@ import org.hibernate.internal.SessionImpl;
  * @author Jens Borch Christiansen
  */
 @ApplicationScoped
-@Transactional(Transactional.TxType.MANDATORY)
+@Transactional
 public class ItemRepository extends Repository<Item> {
 
     @Inject

@@ -50,7 +50,7 @@ import dk.kontentsu.model.State;
  * @author Jens Borch Christiansen
  */
 @ApplicationScoped
-@Transactional(Transactional.TxType.MANDATORY)
+@Transactional
 public class ExternalFileRepository extends Repository<ExternalFile> {
 
     private static final int MIN_SCHEDULING_INTERVAL = 5;

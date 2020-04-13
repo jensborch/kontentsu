@@ -9,6 +9,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.charset.Charset;
 import java.time.Instant;
@@ -66,27 +67,32 @@ public class ExternalFileRepositoryIT {
 
     @BeforeEach
     public void setUp() throws Exception {
-        userTransaction.begin();
-        Term path = termRepo.create(URI);
+        try {
+            userTransaction.begin();
+            Term path = termRepo.create(URI);
 
-        Item item = itemRepo.findByUri(URI).orElseGet(() -> itemRepo
-                .save(new Item(termRepo.find(path.getUuid()).orElse(path), new MimeType("text", "plain"))));
+            Item item = itemRepo.findByUri(URI).orElseGet(() -> itemRepo
+                    .save(new Item(termRepo.find(path.getUuid()).orElse(path), new MimeType("text", "plain"))));
 
-        Content content = new Content("This is a test".getBytes(), Charset.defaultCharset());
-        file = ExternalFile.builder().content(content).interval(new Interval(FROM, TO)).item(item).build();
+            Content content = new Content("This is a test".getBytes(), Charset.defaultCharset());
+            file = ExternalFile.builder().content(content).interval(new Interval(FROM, TO)).item(item).build();
 
-        fileRepo.save(file);
+            fileRepo.save(file);
 
-        fileRepo.save(ExternalFile.builder().content(content).interval(new Interval(FROM.minusHours(12), FROM))
-                .item(item).build());
+            fileRepo.save(ExternalFile.builder().content(content).interval(new Interval(FROM.minusHours(12), FROM))
+                    .item(item).build());
 
-        fileRepo.save(ExternalFile.builder().content(content).interval(new Interval(TO, TO.plusMinutes(4))).item(item)
-                .build());
+            fileRepo.save(ExternalFile.builder().content(content).interval(new Interval(TO, TO.plusMinutes(4))).item(item)
+                    .build());
 
-        fileRepo.save(ExternalFile.builder().content(content).interval(new Interval(NOW.minusDays(2), NOW.minusDays(1)))
-                .item(item).build());
+            fileRepo.save(ExternalFile.builder().content(content).interval(new Interval(NOW.minusDays(2), NOW.minusDays(1)))
+                    .item(item).build());
 
-        userTransaction.commit();
+            userTransaction.commit();
+        } catch (Exception e) {
+            userTransaction.rollback();
+            fail(e);
+        }
     }
 
     @AfterEach
