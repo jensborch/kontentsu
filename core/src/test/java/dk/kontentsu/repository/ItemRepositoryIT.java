@@ -1,14 +1,9 @@
 package dk.kontentsu.repository;
 
-import static com.googlecode.catchexception.CatchException.catchException;
-import static com.googlecode.catchexception.CatchException.caughtException;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.endsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
@@ -19,10 +14,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.persistence.PersistenceException;
-import javax.transaction.RollbackException;
 import javax.transaction.Transactional;
-import javax.transaction.TransactionalException;
-import javax.transaction.UserTransaction;
 
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.Interval;
@@ -37,10 +29,6 @@ import dk.kontentsu.model.Version;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
-import org.hibernate.TransientPropertyValueException;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -249,7 +237,6 @@ public class ItemRepositoryIT {
                 .build();
         compItem.addVersion(compVersion);
         assertThrows(IllegalStateException.class, () -> itemRepo.save(compItem));
-        //tearDown();
     }
 
     @Test
@@ -264,9 +251,7 @@ public class ItemRepositoryIT {
                 .content(content)
                 .build();
         overlap.addVersion(version);
-
         assertThrows(PersistenceException.class, () -> itemRepo.save(overlap));
-        //tearDown();
     }
 
     @Test
