@@ -148,6 +148,8 @@ subprojects {
 
     test {
         useJUnitPlatform()
+        
+        forkEvery = 1
 
         testLogging {
             events "passed", "skipped", "failed"

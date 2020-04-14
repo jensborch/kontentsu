@@ -15,9 +15,9 @@ import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.transaction.UserTransaction;
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 
 import dk.kontentsu.model.Host;
@@ -31,9 +31,9 @@ import dk.kontentsu.test.ContentTestData;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.Test;
 
 /**
@@ -42,8 +42,9 @@ import org.junit.jupiter.api.Test;
  * @author Jens Borch Christiansen
  */
 @QuarkusTest
+@Transactional
 @QuarkusTestResource(H2DatabaseTestResource.class)
-public class UploaderTest {
+public class UploaderIT {
 
     private static final ZonedDateTime NOW = ZonedDateTime.now();
 
@@ -51,60 +52,42 @@ public class UploaderTest {
     private Host host;
 
     @Inject
-    private HostRepository hostRepo;
+    HostRepository hostRepo;
 
     @Inject
-    private ItemRepository itemRepo;
+    ItemRepository itemRepo;
 
     @Inject
-    private Uploader service;
+    Uploader service;
 
     @Inject
-    private UserTransaction userTransaction;
+    EntityManager em;
 
-    @BeforeEach
     public void setUp() throws Exception {
         data = new ContentTestData();
         host = createHost("test_host");
-
     }
 
     private Host createHost(String name) throws Exception {
-        try {
-            userTransaction.begin();
-            return hostRepo.findByName(name).orElseGet(() ->
-                    hostRepo.save(new Host(name,
-                            "Test description",
-                            URI.create("ftp://myusername:mypassword@somehost/"),
-                            "cdn/upload"))
-            );
-        } finally {
-            userTransaction.commit();
-        }
+        return hostRepo.findByName(name).orElseGet(()
+                -> hostRepo.save(new Host(name,
+                        "Test description",
+                        URI.create("ftp://myusername:mypassword@somehost/"),
+                        "cdn/upload"))
+        );
     }
 
     private Item getItem(final UUID id) throws Exception {
-        try {
-            userTransaction.begin();
-            return itemRepo.get(id);
-        } finally {
-            userTransaction.commit();
-        }
+        return itemRepo.get(id);
     }
 
-    @AfterEach
     public void tearDown() throws Exception {
-        try {
-            userTransaction.begin();
-            itemRepo.findAll().forEach(Item::delete);
-        } finally {
-            userTransaction.commit();
-        }
-
+        itemRepo.findAll().forEach(Item::delete);
     }
 
     @Test
     public void testUploadPlainText() throws Exception {
+        setUp();
         Host textHost = createHost("text_host");
         InputStream is = new ByteArrayInputStream("test data".getBytes());
         UploadItem uploadItem = UploadItem.builder()
@@ -118,22 +101,19 @@ public class UploaderTest {
 
         UUID id = service.upload(uploadItem);
 
-        try {
-            userTransaction.begin();
-            Item r = itemRepo.get(id);
-            assertEquals("name", r.getEdition().get());
-            assertEquals(1, r.getVersions().size());
-            assertEquals(1, ((Long) r.getVersions().stream().filter(v -> v.getInterval().getFrom().toInstant().equals(NOW.toInstant())).count()).intValue());
-            assertEquals(1, ((Long) r.getVersions().stream().filter(v -> v.getInterval().getTo().toInstant().equals(Interval.INFINITE.toInstant())).count()).intValue());
-            assertEquals(1, r.getHosts().size());
-            assertEquals(textHost, r.getHosts().stream().findFirst().get());
-        } finally {
-            userTransaction.commit();
-        }
+        Item r = itemRepo.get(id);
+        assertEquals("name", r.getEdition().get());
+        assertEquals(1, r.getVersions().size());
+        assertEquals(1, ((Long) r.getVersions().stream().filter(v -> v.getInterval().getFrom().toInstant().equals(NOW.toInstant())).count()).intValue());
+        assertEquals(1, ((Long) r.getVersions().stream().filter(v -> v.getInterval().getTo().toInstant().equals(Interval.INFINITE.toInstant())).count()).intValue());
+        assertEquals(1, r.getHosts().size());
+        assertEquals(textHost, r.getHosts().stream().findFirst().get());
+        tearDown();
     }
 
     @Test
     public void testSimplePage() throws Exception {
+        setUp();
         UploadItem uploadItem = UploadItem.builder()
                 .content("article2", new ByteArrayInputStream(data.getArticle(1)))
                 .uri(new Item.URI("items/article2/"))
@@ -153,21 +133,18 @@ public class UploaderTest {
                 .build();
 
         UUID id = service.upload(uploadItem);
-        try {
-            userTransaction.begin();
-            Item r = itemRepo.get(id);
-            assertFalse(r.getEdition().isPresent());
-            assertEquals(1, r.getVersions().size());
-            assertEquals(2, r.getVersions().stream().findFirst().get().getReferences().size());
-            assertEquals(1, r.getHosts().size());
-            assertEquals(host, r.getHosts().stream().findFirst().get());
-        } finally {
-            userTransaction.commit();
-        }
+        Item r = itemRepo.get(id);
+        assertFalse(r.getEdition().isPresent());
+        assertEquals(1, r.getVersions().size());
+        assertEquals(2, r.getVersions().stream().findFirst().get().getReferences().size());
+        assertEquals(1, r.getHosts().size());
+        assertEquals(host, r.getHosts().stream().findFirst().get());
+        tearDown();
     }
 
     @Test
     public void testOverwrite() throws Exception {
+        setUp();
         UploadItem uploadItem = UploadItem.builder()
                 .content("article2", new ByteArrayInputStream(data.getArticle(1)))
                 .uri(new Item.URI("items/article2/"))
@@ -193,18 +170,15 @@ public class UploaderTest {
                 .build();
         service.overwrite(overwrite.getUuid(), uploadItem);
 
-        try {
-            userTransaction.begin();
-            Item item = itemRepo.get(overwrite.getUuid());
-            assertFalse(item.getEdition().isPresent());
-            assertEquals(3, item.getVersions().stream().filter(Version::isActive).count());
-        } finally {
-            userTransaction.commit();
-        }
+        Item item = itemRepo.get(overwrite.getUuid());
+        assertFalse(item.getEdition().isPresent());
+        assertEquals(3, item.getVersions().stream().filter(Version::isActive).count());
+        tearDown();
     }
 
     @Test
     public void testOverwriteWithOverlap() throws Exception {
+        setUp();
         UploadItem upload = UploadItem.builder()
                 .uri(new Item.URI("items/test/"))
                 .content("ref", new ByteArrayInputStream("{}".getBytes()))
@@ -224,16 +198,14 @@ public class UploaderTest {
         assertEquals(1, versions.size());
         UUID newid = versions.stream().findAny().get();
         assertNotEquals(id, newid);
-        try {
-            userTransaction.begin();
-            assertEquals(new Interval(NOW, NOW.plusDays(4)), itemRepo.getVersion(newid).getInterval());
-        } finally {
-            userTransaction.commit();
-        }
+
+        assertEquals(new Interval(NOW, NOW.plusDays(4)), itemRepo.getVersion(newid).getInterval());
+        tearDown();
     }
 
     @Test
-    public void testIncompleteUpload() {
+    public void testIncompleteUpload() throws Exception {
+        setUp();
         InputStream is = new ByteArrayInputStream("test data".getBytes());
         UploadItem uploadItem = UploadItem.builder()
                 .content("TestRef", is)
@@ -246,6 +218,7 @@ public class UploaderTest {
         ConstraintViolationException ex = (ConstraintViolationException) caughtException().getCause();
         assertEquals(1, ex.getConstraintViolations().size());
         assertTrue(ex.getConstraintViolations().stream().findFirst().get().getMessage().startsWith("may not be null"));
+        tearDown();
     }
 
 }
