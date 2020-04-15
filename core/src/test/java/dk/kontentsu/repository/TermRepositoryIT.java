@@ -41,7 +41,7 @@ public class TermRepositoryIT {
     private Term term;
 
     public void setUp() throws Exception {
-        term = repo.save(new Term("uri"));
+        term = repo.save(Term.create("uri"));
         term.append("/test1/test2");
     }
 

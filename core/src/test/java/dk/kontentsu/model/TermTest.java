@@ -20,12 +20,12 @@ public class TermTest {
 
     @BeforeEach
     public void setup() {
-        term1 = new Term("uri").append("test1/");
-        term2 = new Term("uri").append("/test1/test2/");
-        root = new Term("uri");
+        term1 = Term.create("uri").append("test1/");
+        term2 = Term.create("uri").append("/test1/test2/");
+        root = Term.create("uri");
         term3 = root.append("test1/test2/test3");
-        term4 = new Term("color").append("blue");
-        empty = new Term("empty");
+        term4 = Term.create("color").append("blue");
+        empty = Term.create("empty");
     }
 
     @Test
@@ -50,11 +50,12 @@ public class TermTest {
     }
 
     @Test
-    public void testFullPath() {
+    public void testPathWithTaxonomy() {
         assertEquals("uri:/test1/", term1.getPathWithTaxonomy());
         assertEquals("uri:/test1/test2/", term2.getPathWithTaxonomy());
         assertEquals("uri:/test1/test2/test3/", term3.getPathWithTaxonomy());
         assertEquals(term3.toString(), term3.getPathWithTaxonomy());
+        assertEquals("empty:/", empty.getPathWithTaxonomy());
     }
 
     @Test
@@ -69,7 +70,7 @@ public class TermTest {
         Term test = term1.append("test2");
         assertEquals(term2.getPathWithTaxonomy(), test.getPathWithTaxonomy());
         assertEquals(term3.getPathWithTaxonomy(), term1.append("test2/test3").getPathWithTaxonomy());
-        Term testTerm = new Term("test2").append(new Term("test3"));
+        Term testTerm = Term.create("test2").append(Term.create("test3"));
         term1.append(testTerm.getParent().get());
         assertEquals(term3.getPathWithTaxonomy(), testTerm.getPathWithTaxonomy());
     }
@@ -144,13 +145,4 @@ public class TermTest {
 
     }
 
-    @Test
-    public void testPostLoad() {
-        term3.initPath();
-        term3.updatePathElements();
-        assertEquals("uri:/test1/test2/test3/", term3.getPathWithTaxonomy());
-        empty.initPath();
-        empty.updatePathElements();
-        assertEquals("empty:/", empty.getPathWithTaxonomy());
-    }
 }

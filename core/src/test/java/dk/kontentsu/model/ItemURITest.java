@@ -18,7 +18,7 @@ public class ItemURITest {
 
     @BeforeEach
     public void setup() {
-        Term term = new Term("uri").append("test1/test2");
+        Term term = Term.create("uri").append("test1/test2");
         uri = new Item.URI(new Item(term, "test", MimeType.APPLICATION_JSON_TYPE));
     }
 

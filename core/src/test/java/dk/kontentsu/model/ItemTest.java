@@ -36,7 +36,7 @@ public class ItemTest {
 
     @BeforeEach
     public void setUp() {
-        path = new Term().append("test1").append("test2");
+        path = Term.create().append("test1").append("test2");
         item = new Item(path, "default", new MimeType("text", "plain"));
         item.addVersion(create(NOW, Interval.INFINITE));
     }

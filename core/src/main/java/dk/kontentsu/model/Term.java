@@ -48,16 +48,12 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
-import javax.persistence.PostLoad;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -97,6 +93,16 @@ public class Term extends AbstractBaseEntity {
     private static final Pattern FULL_PATH_REGEX_PATTERN = Pattern.compile(FULL_PATH_REGEX);
     private static final Pattern PATH_REGEX_PATTERN = Pattern.compile(PATH_REGEX);
 
+    public static Term create(final String name) {
+        Term t = new Term(name);
+        t.initPath();
+        return t;
+    }
+
+    public static Term create() {
+        return create(URI_TAXONOMY);
+    }
+
     @ManyToMany(mappedBy = "terms")
     private Set<Item> items = new HashSet<>();
 
@@ -119,22 +125,22 @@ public class Term extends AbstractBaseEntity {
     @Column(name = "path", length = 500)
     private String path;
 
-    public Term(final String name) {
+    private Term(final String name) {
         this.name = name;
     }
 
-    public Term() {
-        this.name = URI_TAXONOMY;
+    protected Term() {
+        //Needed by JPA
     }
 
     public static Term parse(final String path) {
         String[] terms = splitPathWithTaxonomy(path);
         Term term = null;
         if (terms.length > 0) {
-            term = new Term(terms[0]);
+            term = Term.create(terms[0]);
             if (terms.length > 1) {
                 for (int i = 1; i < terms.length; i++) {
-                    term = term.append(new Term(terms[i]));
+                    term = term.append(Term.create(terms[i]));
                 }
             }
         }
@@ -149,20 +155,16 @@ public class Term extends AbstractBaseEntity {
                 + (path.endsWith(Item.URI.PATH_SEPARATOR) ? "" : Item.URI.PATH_SEPARATOR);
     }
 
-    @PostLoad
-    public void updatePathElements() {
-        pathElements = splitPathWithTaxonomy(path);
+    private String[] getPathElements() {
+        if (pathElements == null) {
+            pathElements = splitPathWithTaxonomy(path);
+        }
+        return pathElements;
     }
 
-    @PrePersist
-    @PreUpdate
-    public void initPath() {
-        if (pathElements == null) {
-            pathElements = initElements();
-        }
-        if (path == null) {
-            path = initPath(pathElements);
-        }
+    private void initPath() {
+        pathElements = initElements();
+        path = initPath(pathElements);
     }
 
     private String[] initElements() {
@@ -243,6 +245,7 @@ public class Term extends AbstractBaseEntity {
         }
         children.add(child);
         child.setParent(this);
+        child.initPath();
         return child;
     }
 
@@ -268,7 +271,7 @@ public class Term extends AbstractBaseEntity {
             if (found.isPresent()) {
                 term = found.get();
             } else {
-                term = term.append(new Term(e));
+                term = term.append(Term.create(e));
             }
         }
         return term;
@@ -298,12 +301,12 @@ public class Term extends AbstractBaseEntity {
 
     public String getPath() {
         initPath();
-        return toPathString(pathElements);
+        return toPathString(getPathElements());
     }
 
     public String getURIPath() {
         StringJoiner joiner = new StringJoiner(PATH_SEPARATOR);
-        Arrays.stream(getPathPart(pathElements)).forEach(joiner::add);
+        Arrays.stream(getPathPart(getPathElements())).forEach(joiner::add);
         return joiner.toString();
     }
 
@@ -313,7 +316,7 @@ public class Term extends AbstractBaseEntity {
 
     public String[] getElements() {
         initPath();
-        return getPathPart(pathElements);
+        return getPathPart(getPathElements());
     }
 
     public boolean isUri() {
@@ -336,14 +339,9 @@ public class Term extends AbstractBaseEntity {
     public Term remove(final Term child) {
         if (children.remove(child)) {
             child.setParent(null);
-            child.resetPath();
+            child.initPath();
         }
         return this;
-    }
-
-    void resetPath() {
-        this.pathElements = null;
-        this.path = null;
     }
 
     public Optional<Term> getParent() {
@@ -351,8 +349,8 @@ public class Term extends AbstractBaseEntity {
     }
 
     private void setParent(final Term parent) {
-        this.resetPath();
         this.parent = parent;
+        this.initPath();
     }
 
     @Override

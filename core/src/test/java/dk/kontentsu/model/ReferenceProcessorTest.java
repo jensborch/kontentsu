@@ -44,7 +44,7 @@ public class ReferenceProcessorTest {
     @BeforeEach
     public void setUp() throws Exception {
         ContentTestData data = new ContentTestData();
-        Term path = new Term().append("items").append("article2");
+        Term path = Term.create().append("items").append("article2");
         Item article1 = new Item(path, MimeType.APPLICATION_JSON_TYPE);
         Version articleVersion1 = Version.builder()
                 .content(new Content(data.getArticle(1), StandardCharsets.UTF_8))
@@ -60,7 +60,7 @@ public class ReferenceProcessorTest {
                 .build();
         article2.addVersion(articleVersion2);
 
-        Term contactPath = new Term().append("items").append("contact");
+        Term contactPath = Term.create().append("items").append("contact");
         Item contact = new Item(contactPath, MimeType.APPLICATION_JSON_TYPE);
         Version contactVersion = Version.builder()
                 .content(new Content(data.getContact(), StandardCharsets.UTF_8))
@@ -68,7 +68,7 @@ public class ReferenceProcessorTest {
                 .build();
         contact.addVersion(contactVersion);
 
-        Term pagePath = new Term().append("items").append("page-simple");
+        Term pagePath = Term.create().append("items").append("page-simple");
         page = new Item(pagePath, MimeType.APPLICATION_JSON_TYPE);
         pageVersion = Version.builder()
                 .from(NOW)

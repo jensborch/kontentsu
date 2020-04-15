@@ -62,13 +62,13 @@ public class TermRepository extends Repository<Term> {
     }
 
     public Term create(final Item.URI path) {
-        Term term = findAll().stream().filter(Term::isUri).findAny().orElse(new Term());
+        Term term = findAll().stream().filter(Term::isUri).findAny().orElse(Term.create());
         return term.append(path.getFolderElements());
     }
 
     public Term create(final String path) {
         String[] elements = Term.splitPathWithTaxonomy(path);
-        Term taxonomy = findAll().stream().filter(t -> t.getName().equals(elements[0])).findAny().orElse(new Term(elements[0]));
+        Term taxonomy = findAll().stream().filter(t -> t.getName().equals(elements[0])).findAny().orElse(Term.create(elements[0]));
         List<String> p = Arrays.stream(elements).skip(1L).collect(Collectors.toList());
         return taxonomy.append(p);
     }
@@ -107,6 +107,11 @@ public class TermRepository extends Repository<Term> {
     public void delete(final UUID uuid) {
         Term t = get(uuid);
         delete(t);
+    }
+
+    @Override
+    public Term save(Term entity) {
+        return super.save(entity);
     }
 
 }
