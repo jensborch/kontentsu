@@ -79,18 +79,18 @@ import org.slf4j.LoggerFactory;
     @NamedQuery(name = Repository.ITEM_FIND_BY_TERM,
             query = "SELECT i FROM Item i JOIN i.path p WHERE p.uuid = :uuid ORDER BY i.created, i.edition"),
     @NamedQuery(name = Repository.ITEM_FIND_ALL,
-            query = "SELECT DISTINCT i FROM Item i JOIN i.versions v "
-            + "WHERE v.state IN :state "
+            query = "SELECT DISTINCT i FROM Item i LEFT JOIN i.versions v "
+            + "WHERE v.state IN :state OR v.state IS NULL "
             + "ORDER BY i.created, i.edition"),
     @NamedQuery(name = Repository.ITEM_GET,
             query = "SELECT i FROM Item i WHERE i.uuid = :uuid"),
     @NamedQuery(name = Repository.ITEM_FIND_BY_URI,
             query = "SELECT DISTINCT i FROM Item i "
             + "JOIN i.path p "
-            + "JOIN i.versions v "
+            + "LEFT JOIN i.versions v "
             + "WHERE p.path = :path "
             + "AND ((:edition IS NULL AND i.edition IS NULL) OR i.edition = :edition) "
-            + "AND v.state IN :state "
+            + "AND v.state IN :state OR v.state IS NULL "
             + "ORDER BY i.created, i.edition")})
 public class Item extends AbstractBaseEntity {
 

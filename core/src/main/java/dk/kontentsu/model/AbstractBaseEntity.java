@@ -65,15 +65,11 @@ abstract class AbstractBaseEntity implements Serializable {
 
     AbstractBaseEntity() {
         this.uuid = UUID.randomUUID();
-    }
-
-    @PrePersist
-    void initCreated() {
         this.created = ZonedDateTime.now();
-        this.modified = ZonedDateTime.now();
+        this.modified = created;
     }
 
-    @PreUpdate
+    //TODO: Use when setting somthing
     void updateModified() {
         this.modified = ZonedDateTime.now();
     }

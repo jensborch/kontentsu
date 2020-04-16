@@ -27,6 +27,8 @@ import dk.kontentsu.model.Term;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -55,11 +57,12 @@ public class ExternalFileRepositoryIT {
 
     private ExternalFile file;
 
+    @BeforeEach
     public void setUp() throws Exception {
         Term path = termRepo.create(URI);
 
         Item item = itemRepo.findByUri(URI).orElseGet(() -> itemRepo
-                .save(new Item(termRepo.find(path.getUuid()).orElse(path), new MimeType("text", "plain"))));
+                .save(new Item(path, new MimeType("text", "plain"))));
 
         Content content = new Content("This is a test".getBytes(), Charset.defaultCharset());
         file = ExternalFile.builder().content(content).interval(new Interval(FROM, TO)).item(item).build();
@@ -76,31 +79,29 @@ public class ExternalFileRepositoryIT {
                 .item(item).build());
     }
 
+    @AfterEach
     public void tearDown() throws Exception {
         fileRepo.findAll().forEach(ExternalFile::delete);
     }
 
     @Test
     public void testFindAll() throws Exception {
-        setUp();
+        assertEquals(1, termRepo.findAll().size());
+        assertEquals(1, itemRepo.findAll().size());
         List<ExternalFile> files = fileRepo.findAll();
         assertEquals(4, files.size());
-        tearDown();
     }
 
     @Test
     public void testFindAllAtTime() throws Exception {
-        setUp();
         List<ExternalFile> files = fileRepo.findAll(NOW);
         assertEquals(0, files.size());
         files = fileRepo.findAll(NOW.plusDays(43));
         assertEquals(1, files.size());
-        tearDown();
     }
 
     @Test
     public void testFindInInterval() throws Exception {
-        setUp();
         List<ExternalFile> files = fileRepo.findAll(new Interval(NOW, NOW.plusDays(10)));
         assertEquals(0, files.size());
         files = fileRepo.findAll(new Interval(NOW, NOW.plusDays(43)));
@@ -111,39 +112,32 @@ public class ExternalFileRepositoryIT {
         assertEquals(1, files.size());
         files = fileRepo.findAll(new Interval(NOW.plusDays(50), NOW.plusDays(100)));
         assertEquals(2, files.size());
-        tearDown();
     }
 
     @Test
     public void testDelete() throws Exception {
-        setUp();
         file = fileRepo.get(file.getUuid());
         file.delete();
         List<ExternalFile> result = fileRepo.findAll();
         assertNotNull(result);
         assertEquals(3, result.size());
-        tearDown();
     }
 
     @Test
     public void testFindByUri() throws Exception {
-        setUp();
         Optional<ExternalFile> tmpFile = fileRepo.findByUri(URI, (ZonedDateTime) null);
         assertFalse(tmpFile.isPresent());
 
         tmpFile = fileRepo.findByUri(URI, NOW.plusDays(43));
         assertTrue(tmpFile.isPresent());
-        tearDown();
     }
 
     @Test
     public void testGetSchedule() throws Exception {
-        setUp();
         Set<Instant> result = fileRepo.getSchedule().stream().map(ZonedDateTime::toInstant)
                 .collect(Collectors.toSet());
         assertEquals(3, result.size());
         assertThat(result, containsInAnyOrder(FROM.toInstant(), TO.plusMinutes(4).toInstant(), FROM.minusHours(12).toInstant()));
-        tearDown();
     }
 
 }

@@ -67,8 +67,8 @@ import dk.kontentsu.repository.Repository;
 @Entity
 @Table(name = "version")
 @NamedQueries({
-        @NamedQuery(name = Repository.VERSION_GET,
-                query = "SELECT v FROM Version v WHERE v.uuid = :uuid")})
+    @NamedQuery(name = Repository.VERSION_GET,
+            query = "SELECT v FROM Version v WHERE v.uuid = :uuid")})
 public class Version extends AbstractBaseEntity implements Comparable<Version> {
 
     private static final long serialVersionUID = 720940222528135649L;
@@ -93,6 +93,7 @@ public class Version extends AbstractBaseEntity implements Comparable<Version> {
 
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "item_fk")
     private Item item;
 
     @NotNull
@@ -104,7 +105,7 @@ public class Version extends AbstractBaseEntity implements Comparable<Version> {
     @CollectionTable(name = "metadata",
             joinColumns = @JoinColumn(name = "version_id"),
             uniqueConstraints = {
-                    @UniqueConstraint(columnNames = {"version_id", "type", "key"})})
+                @UniqueConstraint(columnNames = {"version_id", "type", "key"})})
     private Map<Metadata.Key, Metadata> metadata;
 
     protected Version() {
@@ -124,8 +125,8 @@ public class Version extends AbstractBaseEntity implements Comparable<Version> {
 
     private static Version create(final Builder builder) {
         Version result = new Version(builder);
-        builder.references.forEach((i) ->
-                result.references.add(new Reference(result, i.composition, i.type))
+        builder.references.forEach((i)
+                -> result.references.add(new Reference(result, i.composition, i.type))
         );
         return result;
     }
@@ -226,8 +227,8 @@ public class Version extends AbstractBaseEntity implements Comparable<Version> {
     public boolean isComplete() {
         return getReferences().isEmpty()
                 || !getReferences().stream()
-                .filter(c -> c.getType() == ReferenceType.COMPOSITION)
-                .anyMatch(c -> c.getItem().getVersions(interval).isEmpty());
+                        .filter(c -> c.getType() == ReferenceType.COMPOSITION)
+                        .anyMatch(c -> c.getItem().getVersions(interval).isEmpty());
     }
 
     @Override

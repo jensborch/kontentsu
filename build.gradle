@@ -156,7 +156,7 @@ subprojects {
         }
 
         systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
-        systemProperty "quarkus.log.level", "DEBUG"
+        systemProperty "quarkus.log.level", "FINE"
         
         finalizedBy jacocoTestReport
     }

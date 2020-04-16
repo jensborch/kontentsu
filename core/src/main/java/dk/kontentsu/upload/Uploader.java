@@ -71,22 +71,22 @@ public class Uploader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Uploader.class);
 
     @Inject
-    private ItemRepository itemRepo;
+    ItemRepository itemRepo;
 
     @Inject
-    private HostRepository hostRepo;
+    HostRepository hostRepo;
 
     @Inject
-    private TermRepository termRepo;
+    TermRepository termRepo;
 
     @Inject
-    private ExternalizerService externalizer;
+    ExternalizerService externalizer;
 
     @Inject
-    private Uploader self;
+    Uploader self;
 
     @Inject
-    private BeanManager bm;
+    BeanManager bm;
 
     public UUID upload(@Valid final UploadItem uploadItem) {
         Version version = self.save(uploadItem);

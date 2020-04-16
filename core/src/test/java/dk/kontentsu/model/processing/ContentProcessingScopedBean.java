@@ -14,7 +14,7 @@ import dk.kontentsu.spi.ContentProcessingScoped;
 public class ContentProcessingScopedBean {
 
     @Inject
-    private Content content;
+    Content content;
 
     public Content getContent() {
         return content;

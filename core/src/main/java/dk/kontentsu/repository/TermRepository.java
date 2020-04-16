@@ -109,9 +109,4 @@ public class TermRepository extends Repository<Term> {
         delete(t);
     }
 
-    @Override
-    public Term save(Term entity) {
-        return super.save(entity);
-    }
-
 }

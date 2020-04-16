@@ -21,6 +21,8 @@ import dk.kontentsu.model.Term;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -33,18 +35,18 @@ import org.junit.jupiter.api.Test;
 @QuarkusTestResource(H2DatabaseTestResource.class)
 public class TermRepositoryIT {
 
-    private static final LocalDateTime NOW = LocalDateTime.now();
-
     @Inject
     TermRepository repo;
 
     private Term term;
 
+    @BeforeEach
     public void setUp() throws Exception {
         term = repo.save(Term.create("uri"));
         term.append("/test1/test2");
     }
 
+    @AfterEach
     public void tearDown() throws Exception {
         term = repo.get(term.getUuid());
         Set<UUID> delete = term.getChildren(true).stream().map(Term::getUuid).collect(Collectors.toSet());
@@ -56,45 +58,42 @@ public class TermRepositoryIT {
 
     @Test
     public void testCreate() throws Exception {
-        setUp();
         Term t = repo.create(new Item.URI("test1/test3/test3-name"));
         assertEquals("uri:/test1/test3/", t.getPathWithTaxonomy());
         assertEquals(3, t.getParent().get().getParent().get().getChildren(true).size());
-        tearDown();
+    }
+
+    @Test
+    public void testPaths() throws Exception {
+        assertEquals("uri:/", term.getPathWithTaxonomy());
+        assertEquals("uri:/test1/", term.getChildren().stream().findAny().get().getPathWithTaxonomy());
+        assertEquals("uri:/test1/test2/", term.getChildren().stream().findAny().get().getChildren().stream().findAny().get().getPathWithTaxonomy());
     }
 
     @Test
     public void testCreateUsingStr() throws Exception {
-        setUp();
         Term t = repo.create("uri:/test1/test3/");
         assertEquals("uri:/test1/test3/", t.getPathWithTaxonomy());
         assertEquals(3, t.getParent().get().getParent().get().getChildren(true).size());
-        tearDown();
     }
 
     @Test
     public void testCreateUsingWrongStr() throws Exception {
-        setUp();
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> repo.create("uri"));
         assertEquals("Path 'uri' must match regular expression ^(?<tax>[\\p{L}\\d-]+):(?<term>\\/(?:[\\p{L}\\d-]+\\/)*)$", e.getMessage());
-        tearDown();
     }
 
     @Test
     public void testFind() throws Exception {
-        setUp();
         Optional<Term> t = repo.find(term.getUuid());
         assertTrue(t.isPresent());
-        tearDown();
     }
 
     @Test
     public void testFindAll() throws Exception {
-        setUp();
         List<Term> found = repo.findAll();
         assertEquals(1, found.size());
         assertEquals(2, found.get(0).getChildren(true).size());
-        tearDown();
     }
 
 }
