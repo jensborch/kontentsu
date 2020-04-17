@@ -29,6 +29,8 @@ import dk.kontentsu.model.Version;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -50,13 +52,15 @@ public class ItemRepositoryIT {
     TermRepository termRepo;
 
     private Item item;
-    private Term path;
+    private Term term;
 
+    @BeforeEach
     public void setUp() throws Exception {
-        path = termRepo.create(new Item.URI("test1/test2/"));
+        term = termRepo.create(new Item.URI("test1/test2/"));
         item = create("test", NOW, Interval.INFINITE);
     }
 
+    @AfterEach
     public void tearDown() throws Exception {
         List<Item> items = itemRepo.findAll();
         items.forEach(Item::delete);
@@ -73,7 +77,8 @@ public class ItemRepositoryIT {
                 .build();
 
         String name = (edition == null) ? "" : "test2-" + edition;
-        Term t = termRepo.find(path.getUuid()).orElse(path);
+
+        Term t = termRepo.find(term.getUuid()).get();
         Item i = itemRepo.findByUri(new Item.URI("test1/test2/" + name), State.ACTIVE, State.DELETED, State.DRAFT)
                 .orElseGet(()
                         -> itemRepo.save(
@@ -88,58 +93,47 @@ public class ItemRepositoryIT {
 
     @Test
     public void testMultipleVersions() throws Exception {
-        setUp();
         create("test1", NOW.minusDays(10), NOW.minusDays(5));
         create("test1", NOW.minusDays(4), NOW.minusDays(1));
         List<Item> items = itemRepo.findAll();
         assertEquals(2, items.size());
         assertEquals(2, items.stream().filter(i -> i.getEdition().orElse("").equals("test1")).findFirst().get().getVersions().size());
-        tearDown();
     }
 
     @Test
     public void testDelete() throws Exception {
-        setUp();
         item = itemRepo.get(item.getUuid());
         item.delete();
         List<Item> result = itemRepo.findAll();
         assertNotNull(result);
         assertEquals(0, result.size());
-        tearDown();
     }
 
     @Test
     public void testFindAll() throws Exception {
-        setUp();
         List<Item> result = itemRepo.findAll();
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(item, result.get(0));
-        tearDown();
     }
 
     @Test
     public void testFindByUri() throws Exception {
-        setUp();
         Optional<Item> result = itemRepo.findByUri(new Item.URI("test1/test2/test2-test"));
         assertTrue(result.isPresent());
         assertEquals(item, result.get());
-        tearDown();
     }
 
     @Test
     public void testFindByUriNoEdition() throws Exception {
-        setUp();
         Item i = create(null, NOW.minusDays(10), NOW.minusDays(5));
         Optional<Item> result = itemRepo.findByUri(new Item.URI("test1/test2/"));
         assertTrue(result.isPresent());
         assertEquals(i, result.get());
-        tearDown();
     }
 
     @Test
     public void testFindByCriteria() throws Exception {
-        setUp();
         List<Item> result = itemRepo.find(Item.Criteria.create()
                 .term("uri:/test1/test2/")
                 .mineType(new MimeType("text", "plain"))
@@ -149,12 +143,10 @@ public class ItemRepositoryIT {
         result = itemRepo.find(Item.Criteria.create().at(NOW.plusSeconds(1)));
         assertNotNull(result);
         assertEquals(1, result.size());
-        tearDown();
     }
 
     @Test
     public void testFindByCriteriaIntervalOverlap() throws Exception {
-        setUp();
         List<Item> result = itemRepo.find(Item.Criteria.create()
                 .term("uri:/test1/test2/")
                 .mineType(new MimeType("text", "plain"))
@@ -167,12 +159,10 @@ public class ItemRepositoryIT {
                 .to(NOW.plusSeconds(1)));
         assertNotNull(result);
         assertEquals(1, result.size());
-        tearDown();
     }
 
     @Test
     public void testFindByCriteriaIntervalIntersects() throws Exception {
-        setUp();
         List<Item> result = itemRepo.find(Item.Criteria.create()
                 .term("uri:/test1/test2/")
                 .mineType(new MimeType("text", "plain"))
@@ -185,12 +175,10 @@ public class ItemRepositoryIT {
                 .to(NOW.plusSeconds(60)));
         assertNotNull(result);
         assertEquals(1, result.size());
-        tearDown();
     }
 
     @Test
     public void testFindItems() throws Exception {
-        setUp();
         List<Item> result = itemRepo.find(Item.Criteria.create()
                 .term("uri:/test1/test2/")
                 .mineType(new MimeType("text", "plain"))
@@ -204,12 +192,10 @@ public class ItemRepositoryIT {
                 .interval(new Interval(NOW.plusSeconds(10), NOW.plusSeconds(60))));
         assertNotNull(result);
         assertEquals(1, result.size());
-        tearDown();
     }
 
     @Test
     public void testNotFoundByCriteria() throws Exception {
-        setUp();
         List<Item> result = itemRepo.find(Item.Criteria.create()
                 .term("uri:/test1/test2/")
                 .mineType(new MimeType("text", "non"))
@@ -219,14 +205,12 @@ public class ItemRepositoryIT {
         result = itemRepo.find(Item.Criteria.create().at(NOW.minusDays(100)));
         assertNotNull(result);
         assertEquals(0, result.size());
-        tearDown();
     }
 
     @Test
     public void testNonExistingComposition() throws Exception {
-        setUp();
         Content content = new Content("Composition".getBytes(), Charset.defaultCharset());
-        Term foundPath = termRepo.get(path.getUuid());
+        Term foundPath = termRepo.get(term.getUuid());
         Item doNotExistItem = new Item(foundPath, "do-not-exist", new MimeType("text", "plain"));
         Item compItem = new Item(foundPath, "composition", new MimeType("text", "plain"));
         Version compVersion = Version.builder()
@@ -241,8 +225,7 @@ public class ItemRepositoryIT {
 
     @Test
     public void testOverlap() throws Exception {
-        setUp();
-        Term foundPath = termRepo.get(path.getUuid());
+        Term foundPath = termRepo.get(term.getUuid());
         Content content = new Content("Overlap".getBytes(), Charset.defaultCharset());
         Item overlap = new Item(foundPath, "test", new MimeType("text", "plain"));
         Version version = Version.builder()
@@ -256,7 +239,6 @@ public class ItemRepositoryIT {
 
     @Test
     public void testSaveContent() throws Exception {
-        setUp();
         item = itemRepo.get(item.getUuid());
 
         Content content = itemRepo.saveContent(new ByteArrayInputStream(new byte[]{'1'}), StandardCharsets.UTF_8, MimeType.IMAGE_ANY_TYPE);
@@ -271,6 +253,5 @@ public class ItemRepositoryIT {
 
         assertNotNull(content.getData());
         assertEquals(1, content.getSize());
-        tearDown();
     }
 }

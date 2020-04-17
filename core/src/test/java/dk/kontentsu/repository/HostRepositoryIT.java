@@ -18,6 +18,9 @@ import dk.kontentsu.model.Term;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import jdk.jfr.SettingDefinition;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -41,6 +44,7 @@ public class HostRepositoryIT {
 
     private final Host[] hosts = new Host[2];
 
+    @BeforeEach
     public void setUp() throws Exception {
         hosts[0] = hostRepo.save(new Host("name1", "test test", URI.create("ftp://myusername:mypassword@somehost/"), "cdn/upload"));
         hosts[1] = hostRepo.save(new Host("name2", "test test", URI.create("sftp://myusername:mypassword@somehost/"), "cdn/upload"));
@@ -55,6 +59,7 @@ public class HostRepositoryIT {
         item.addHost(hostRepo.getByName("name2"));
     }
 
+    @AfterEach
     public void tearDown() throws Exception {
         hostRepo.delete(hosts[0].getUuid());
         hostRepo.delete(hosts[1].getUuid());
@@ -63,39 +68,28 @@ public class HostRepositoryIT {
 
     @Test
     public void testFindAll() throws Exception {
-        setUp();
         assertEquals(2, hostRepo.findAll().size());
-        tearDown();
     }
 
     @Test
     public void testGet() throws Exception {
-        setUp();
         assertEquals(hosts[1], hostRepo.get(hosts[1].getUuid()));
-        tearDown();
     }
 
     @Test()
     public void testNotFound() throws Exception {
-        setUp();
         NoResultException e = assertThrows(NoResultException.class, () -> hostRepo.get(UUID.randomUUID()));
         assertEquals("No entity found for query", e.getMessage());
-        tearDown();
-
     }
 
     @Test
     public void testGetByName() throws Exception {
-        setUp();
         assertEquals(hosts[1], hostRepo.getByName(hosts[1].getName()));
-        tearDown();
     }
 
     @Test
     public void testNotFoundByName() throws Exception {
-        setUp();
         NoResultException e = assertThrows(NoResultException.class, () -> hostRepo.getByName("test test"));
         assertEquals("No entity found for query", e.getMessage());
-        tearDown();
     }
 }
