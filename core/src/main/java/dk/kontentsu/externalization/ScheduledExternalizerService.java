@@ -28,8 +28,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,21 +37,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
 import java.util.stream.Stream;
 
-import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.transaction.Transactional;
 
 import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.Host;
 import dk.kontentsu.repository.ExternalFileRepository;
 import io.quarkus.arc.Arc;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -64,6 +57,8 @@ import org.quartz.SchedulerException;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Scheduler for publishing externalized content.
@@ -84,6 +79,7 @@ public class ScheduledExternalizerService {
     @Inject
     ExternalFileRepository fileRepo;
 
+    @Transactional
     public void reschedule() {
         Set<ZonedDateTime> schedule = fileRepo.getSchedule();
         reschedule(schedule);
@@ -129,6 +125,7 @@ public class ScheduledExternalizerService {
 
     }
 
+    @Transactional
     @SuppressWarnings("PMD.UseConcurrentHashMap")
     public void execute(JobExecutionContext context) {
         ZonedDateTime time = context.getFireTime().toInstant().atZone(ZoneId.systemDefault());

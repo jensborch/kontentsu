@@ -28,6 +28,8 @@ import dk.kontentsu.test.ContentTestData;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -65,6 +67,7 @@ public class ExternalizerServiceIT {
     @Inject
     EntityManager em;
 
+    @BeforeEach
     public void setUp() throws Exception {
         mapper = new ObjectMapper();
         halJsonData = new ContentTestData(ContentTestData.Type.HAL);
@@ -112,6 +115,7 @@ public class ExternalizerServiceIT {
         em.persist(page);
     }
 
+    @AfterEach
     public void tearDown() throws Exception {
         deleteItem(article1);
         deleteItem(contact);
@@ -125,7 +129,6 @@ public class ExternalizerServiceIT {
 
     @Test
     public void testDelete() throws Exception {
-        setUp();
         createItems(MimeType.APPLICATION_HAL_JSON_TYPE, halJsonData);
         Content content = new Content("{\"test\": \"test\"}".getBytes(), Charset.defaultCharset());
         ExternalFile toDelete = ExternalFile.builder()
@@ -140,12 +143,10 @@ public class ExternalizerServiceIT {
         assertEquals(2, result.size());
         ExternalFile deleted = repo.get(toDelete.getUuid());
         assertTrue(deleted.isDeleted());
-        tearDown();
     }
 
     @Test
     public void testExternalizeHalJson() throws Exception {
-        setUp();
         createItems(MimeType.APPLICATION_HAL_JSON_TYPE, halJsonData);
         List<ExternalFile> result = service.externalize(pageVersion.getUuid()).get();
 
@@ -158,12 +159,10 @@ public class ExternalizerServiceIT {
         external = result.get(1).getContent().getData();
         assertEquals(mapper.readTree(halJsonData.getSimplePageResults(2)), mapper.readTree(external));
         assertEquals(new Interval(NOW.plusDays(15), NOW.plusDays(20)), result.get(1).getInterval());
-        tearDown();
     }
 
     @Test
     public void testExternalizeJson() throws Exception {
-        setUp();
         createItems(MimeType.APPLICATION_JSON_TYPE, jsonData);
         List<ExternalFile> result = service.externalize(pageVersion.getUuid()).get();
 
@@ -176,12 +175,10 @@ public class ExternalizerServiceIT {
         external = result.get(1).getContent().getData();
         assertEquals(mapper.readTree(jsonData.getSimplePageResults(2)), mapper.readTree(external));
         assertEquals(new Interval(NOW.plusDays(15), NOW.plusDays(20)), result.get(1).getInterval());
-        tearDown();
     }
 
     @Test
     public void testNewArticle() throws Exception {
-        setUp();
         createItems(MimeType.APPLICATION_HAL_JSON_TYPE, halJsonData);
         Version articleVersion;
         article1 = em.find(Item.class, article1.getId());
@@ -197,12 +194,10 @@ public class ExternalizerServiceIT {
         ExternalFile file = result.stream().filter(f -> f.getInterval().equals(new Interval(NOW.plusDays(21), NOW.plusDays(25)))).findAny().get();
         assertNotNull(file);
         assertEquals(mapper.readTree(halJsonData.getSimplePageResults(2)), mapper.readTree(file.getContent().getData()));
-        tearDown();
     }
 
     @Test
     public void testShouldNotBeExternalized() throws Exception {
-        setUp();
         createItems(MimeType.APPLICATION_HAL_JSON_TYPE, halJsonData);
 
         page = em.find(Item.class, page.getId());
@@ -218,7 +213,6 @@ public class ExternalizerServiceIT {
 
         List<ExternalFile> result = service.externalize(pageVersion.getUuid()).get();
         assertEquals(0, result.size());
-        tearDown();
     }
 
 }

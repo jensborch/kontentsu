@@ -6,5 +6,8 @@ dependencies {
     implementation project(':core')
     implementation project(':spi')
     implementation project(':util')
+    
+    implementation 'com.querydsl:querydsl-jpa:' + querydslVersion
+    
     testImplementation project(':test')
 }
