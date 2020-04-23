@@ -115,7 +115,7 @@ public class ExternalizerServiceIT {
         em.persist(page);
     }
 
-    @AfterEach
+    //@AfterEach
     public void tearDown() throws Exception {
         deleteItem(article1);
         deleteItem(contact);

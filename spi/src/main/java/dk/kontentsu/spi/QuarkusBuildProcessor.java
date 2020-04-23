@@ -17,6 +17,18 @@ public class QuarkusBuildProcessor {
 
     @BuildStep
     @SuppressWarnings("unchecked")
+    public ContextRegistrarBuildItem addContentProcessingContext() {
+        LOGGER.info("Registring the content processing scope");
+        return new ContextRegistrarBuildItem(new ContextRegistrar() {
+            @Override
+            public void register(RegistrationContext registrationContext) {
+                registrationContext.configure(ContentProcessingScoped.class).normal().contextClass(QuarkusContentProcessingContext.class).done();
+            }
+        }, ContentProcessingScoped.class);
+    }
+
+    /*@BuildStep
+    @SuppressWarnings("unchecked")
     public void contentProcessingContext(BuildProducer<ContextRegistrarBuildItem> contextRegistry) {
         LOGGER.info("Registring the content processing scope");
         contextRegistry.produce(new ContextRegistrarBuildItem(new ContextRegistrar() {
@@ -26,6 +38,5 @@ public class QuarkusBuildProcessor {
                         .done();
             }
         }, ContentProcessingScoped.class));
-    }
-
+    }*/
 }

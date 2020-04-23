@@ -1,9 +1,9 @@
 package dk.kontentsu.spi;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -20,13 +20,41 @@ import io.quarkus.arc.impl.ContextInstanceHandleImpl;
 /**
  * Implementation of the CDI content processing context in Quarkus.
  */
-public class QuarkusContentProcessingContext implements InjectableContext {
+public class QuarkusContentProcessingContext implements InjectableContext, StartableContentContext {
 
-    private static final ThreadLocal<ContentProcessingContextState> THREAD_LOCAL_STATE = new ThreadLocal<>();
+    private final static int DEFAULT_SCOPE_NEXTING = 10;
+
+    private final ThreadLocal<ArrayDeque<ContentState>> state = new ThreadLocal<>() {
+        @Override
+        protected ArrayDeque<ContentState> initialValue() {
+            return new ArrayDeque<>(DEFAULT_SCOPE_NEXTING);
+        }
+    };
+
+    private final ThreadLocal<ContentState> active = new ThreadLocal<>();
+
+    @Override
+    public void enter(final ScopedContent content) {
+        Objects.requireNonNull(content);
+        ContentState newState = new ContentState(content);
+        this.active.set(newState);
+        this.state.get().push(newState);
+    }
+
+    @Override
+    public void exit() {
+        this.active.remove();
+        this.state.get().pop();
+    }
+
+    @Override
+    public ScopedContent getScopedContent() {
+        return active.get().content;
+    }
 
     @Override
     public void destroy(Contextual<?> contextual) {
-        Optional.ofNullable(THREAD_LOCAL_STATE.get()).ifPresent(ContentProcessingContextState::destroy);
+        active().destroy();
     }
 
     @Override
@@ -34,27 +62,18 @@ public class QuarkusContentProcessingContext implements InjectableContext {
         return ContentProcessingScoped.class;
     }
 
-    private ContentProcessingContextState initContextState() {
-        ContentProcessingContextState s = new ContentProcessingContextState();
-        THREAD_LOCAL_STATE.set(s);
-        return s;
-    }
-
     @Override
     public <T> T get(Contextual<T> contextual, CreationalContext<T> creationalContext) {
         Objects.requireNonNull(contextual, "Contextual must not be null.");
-        if (!isActive()) {
-            throw new ContextNotActiveException("Content processing scope is not active.");
-        }
-        ContentProcessingContextState state = Optional.ofNullable(THREAD_LOCAL_STATE.get()).orElseGet(this::initContextState);
-        ContextInstanceHandle<T> instanceHandle = state.get(contextual);
+        requireActive();
+        ContextInstanceHandle<T> instanceHandle = active().get(contextual);
         if (instanceHandle != null) {
             return instanceHandle.get();
         } else if (creationalContext != null) {
             T createdInstance = contextual.create(creationalContext);
             instanceHandle = new ContextInstanceHandleImpl<>((InjectableBean<T>) contextual, createdInstance,
                     creationalContext);
-            state.put(contextual, instanceHandle);
+            active().put(contextual, instanceHandle);
             return createdInstance;
         } else {
             return null;
@@ -68,29 +87,37 @@ public class QuarkusContentProcessingContext implements InjectableContext {
 
     @Override
     public boolean isActive() {
-        return THREAD_LOCAL_STATE.get() != null;
+        return active() != null;
     }
 
     @Override
     public void destroy() {
         if (isActive()) {
-            Optional.ofNullable(THREAD_LOCAL_STATE.get()).ifPresent(ContentProcessingContextState::destroy);
+            active().destroy();
         }
-        THREAD_LOCAL_STATE.remove();
+        exit();
     }
 
     @Override
     public ContextState getState() {
+        requireActive();
+        return active();
+    }
+
+    private ContentProcessingContextState active() {
+        return active();
+    }
+
+    private void requireActive() {
         if (!isActive()) {
-            throw new ContextNotActiveException("Content processing scoped is not active.");
+            throw new ContextNotActiveException("Content processing scope is not active.");
         }
-        return Optional.ofNullable(THREAD_LOCAL_STATE.get()).orElse(new ContentProcessingContextState());
     }
 
     /**
      * Container for available beans in the content processing context.
      */
-    private static class ContentProcessingContextState implements ContextState {
+    private static class ContentProcessingContextState extends ContentProcessingScope implements ContextState {
 
         private final ConcurrentMap<Contextual<?>, ContextInstanceHandle<?>> beanToInstanceHandleMap = new ConcurrentHashMap<>();
 
@@ -103,14 +130,12 @@ public class QuarkusContentProcessingContext implements InjectableContext {
         }
 
         @SuppressWarnings("unchecked")
-        <T> ContextInstanceHandle<T> get(Contextual<T> bean) {            
+        <T> ContextInstanceHandle<T> get(Contextual<T> bean) {
             return (ContextInstanceHandle<T>) beanToInstanceHandleMap.get(bean);
         }
 
         void destroy() {
-            for (ContextInstanceHandle<?> handle : beanToInstanceHandleMap.values()) {
-                handle.destroy();
-            }
+            beanToInstanceHandleMap.values().forEach(ContextInstanceHandle::destroy);
             beanToInstanceHandleMap.clear();
         }
 
@@ -119,7 +144,17 @@ public class QuarkusContentProcessingContext implements InjectableContext {
             return beanToInstanceHandleMap.values().stream()
                     .collect(Collectors.toMap(ContextInstanceHandle::getBean, ContextInstanceHandle::get));
         }
-
     }
 
+    private static class ContentState {
+
+        final ScopedContent content;
+        final ContentProcessingContextState state;
+
+        public ContentState(final ScopedContent content) {
+            this.content = content;
+            this.state = new ContentProcessingContextState();
+        }
+
+    }
 }

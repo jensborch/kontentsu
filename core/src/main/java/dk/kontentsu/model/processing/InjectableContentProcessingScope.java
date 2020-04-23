@@ -23,9 +23,13 @@
  */
 package dk.kontentsu.model.processing;
 
+import javax.enterprise.inject.spi.CDI;
+
 import dk.kontentsu.model.Content;
-import dk.kontentsu.spi.ContentProcessingScope;
+import dk.kontentsu.spi.ContentProcessingScoped;
 import dk.kontentsu.spi.ContentProcessingTask;
+import dk.kontentsu.spi.ScopedContent;
+import dk.kontentsu.spi.StartableContentContext;
 
 /**
  * Execute some code in the CDI content processing scope with injected content
@@ -36,49 +40,30 @@ import dk.kontentsu.spi.ContentProcessingTask;
  */
 public class InjectableContentProcessingScope implements AutoCloseable {
 
-    private static final ThreadLocal<Content> CONTENT = new ThreadLocal<>();
+    private final StartableContentContext context;
 
-    private final ContentProcessingScope scope;
+    public InjectableContentProcessingScope(final ScopedContent content) {
+        context = (StartableContentContext) CDI.current().getBeanManager().getContext(ContentProcessingScoped.class);
+        context.enter(content);
+    }
 
     public InjectableContentProcessingScope() {
-        this.scope = new ContentProcessingScope();
-    }
-
-    public InjectableContentProcessingScope(final Content content) {
-        this();
-        inject(content);
-    }
-
-    public static void inject(final Content content) {
-        CONTENT.set(content);
-    }
-
-    public static Content retrieve() {
-        return CONTENT.get();
-    }
-
-    public void start() {
-        scope.start();
+        this(null);
     }
 
     @Override
     public void close() {
-        if (scope.isRootScope()) {
-            CONTENT.remove();
-        }
-        scope.close();
+        context.exit();
     }
 
     public static void execute(final ContentProcessingTask task) {
-        try (InjectableContentProcessingScope scope = new InjectableContentProcessingScope()) {
-            scope.start();
+        try (var scope = new InjectableContentProcessingScope()) {
             task.run();
         }
     }
 
     public static void execute(final ContentProcessingTask task, final Content content) {
-        try (InjectableContentProcessingScope scope = new InjectableContentProcessingScope(content)) {
-            scope.start();
+        try (var scope = new InjectableContentProcessingScope(content)) {
             task.run();
         }
     }

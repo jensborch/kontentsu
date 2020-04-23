@@ -63,6 +63,7 @@ import dk.kontentsu.spi.ContentProcessingMimeType;
 import java.util.EnumMap;
 import java.util.concurrent.CompletableFuture;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Singleton;
 
 import org.slf4j.Logger;
@@ -92,6 +93,9 @@ public class ExternalizerService {
 
     @Inject
     BeanManager bm;
+
+    @Inject
+    Instance<ExternalizationVisitor> visitors;
 
     private Map<MimeType, Bean<?>> externalizationVisitorBeans;
 
@@ -175,6 +179,7 @@ public class ExternalizerService {
     }
 
     private Map<MimeType, Bean<?>> getExternalizationVisitorBeansMap() {
+        visitors.forEach(v -> LOGGER.info("{}", v));
         Map<MimeType, Bean<?>> map = new HashMap<>();
         findAllExternalizationVisitorBeans().forEach(b
                 -> Arrays.stream(b.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class))

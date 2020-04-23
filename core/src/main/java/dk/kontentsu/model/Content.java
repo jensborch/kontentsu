@@ -23,6 +23,8 @@
  */
 package dk.kontentsu.model;
 
+import dk.kontentsu.spi.ScopedContent;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -61,7 +63,7 @@ import dk.kontentsu.repository.Repository;
 @NamedQueries({
     @NamedQuery(name = Repository.CONTENT_GET,
             query = "SELECT c FROM Content c WHERE c.uuid = :uuid")})
-public class Content implements Serializable {
+public class Content implements Serializable, ScopedContent {
 
     private static final long serialVersionUID = 2169103680138791403L;
     private static final String HASH_ALGORITHM = "MD5";
@@ -101,10 +103,12 @@ public class Content implements Serializable {
         initHash();
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public UUID getUuid() {
         return uuid;
     }
@@ -121,10 +125,12 @@ public class Content implements Serializable {
         }
     }
 
+    @Override
     public int getSize() {
         return data.length;
     }
 
+    @Override
     public String getHash() {
         initHash();
         return hash;
@@ -137,6 +143,7 @@ public class Content implements Serializable {
         }
     }
 
+    @Override
     public InputStream getDataAsBinaryStream() {
         return new ByteArrayInputStream(data);
     }
@@ -145,6 +152,7 @@ public class Content implements Serializable {
         return data;
     }
 
+    @Override
     public String getData() {
         Charset e = getEncoding().orElseThrow(() -> new ContentException("Encoding is null"));
         return new String(getDataAsBytes(), e);
@@ -158,6 +166,7 @@ public class Content implements Serializable {
         return String.format("%0" + (digest.length << 1) + "x", new BigInteger(1, digest));
     }
 
+    @Override
     public Optional<Charset> getEncoding() {
         return (encoding == null) ? Optional.empty() : Optional.of(Charset.forName(encoding));
     }

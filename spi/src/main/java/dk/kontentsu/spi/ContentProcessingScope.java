@@ -29,7 +29,6 @@ import java.util.Map;
 
 import javax.enterprise.context.spi.Contextual;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public class ContentProcessingScope implements AutoCloseable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContentProcessingScope.class);
-    private static final ThreadLocal<ArrayDeque<Map<Contextual<?>, ContentProcessingContext.Instance<?>>>> INSTANCES = new ThreadLocal<>();
+    protected static final ThreadLocal<ArrayDeque<Map<Contextual<?>, ContentProcessingContext.Instance<?>>>> INSTANCES = new ThreadLocal<>();
 
     private Map<Contextual<?>, ContentProcessingContext.Instance<?>> map;
 
