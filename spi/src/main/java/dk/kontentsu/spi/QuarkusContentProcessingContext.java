@@ -87,7 +87,7 @@ public class QuarkusContentProcessingContext implements InjectableContext, Start
 
     @Override
     public boolean isActive() {
-        return active() != null;
+        return active.get() != null;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class QuarkusContentProcessingContext implements InjectableContext, Start
     }
 
     private ContentProcessingContextState active() {
-        return active();
+        return active.get().state;
     }
 
     private void requireActive() {

@@ -42,7 +42,6 @@ import javax.inject.Inject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.kontentsu.jackson.ObjectMapperFactory;
-import dk.kontentsu.model.Content;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Metadata;
 import dk.kontentsu.model.MetadataType;
@@ -52,12 +51,14 @@ import dk.kontentsu.parsers.ContentParserException;
 import dk.kontentsu.parsers.Link;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
+import dk.kontentsu.spi.ScopedContent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Parser for HAL+JSON CDN content. The parser will find metadata and compositions in the data.
+ * Parser for HAL+JSON CDN content. The parser will find metadata and
+ * compositions in the data.
  *
  * @author Jens Borch Christiansen
  */
@@ -68,7 +69,7 @@ public class HalJsonParser implements ContentParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(HalJsonParser.class);
 
     @Inject
-    Content content;
+    ScopedContent content;
 
     private final ObjectMapper objectMapper = ObjectMapperFactory.create();
 

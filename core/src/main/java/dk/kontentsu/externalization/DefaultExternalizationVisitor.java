@@ -31,12 +31,15 @@ import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
+import dk.kontentsu.spi.ScopedContent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default externalization visitor for content that should not be processed. Will throw a {@link ExternalizationException} if the content have a composition.
+ * Default externalization visitor for content that should not be processed.
+ * Will throw a {@link ExternalizationException} if the content have a
+ * composition.
  *
  * @author Jens Borch Christiansen
  */
@@ -47,7 +50,7 @@ public class DefaultExternalizationVisitor extends ExternalizationVisitor {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExternalizationVisitor.class);
 
     @Inject
-    private Content content;
+    private ScopedContent content;
 
     @Inject
     private ItemRepository repo;

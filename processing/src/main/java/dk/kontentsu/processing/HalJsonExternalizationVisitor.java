@@ -54,6 +54,7 @@ import dk.kontentsu.model.Version;
 import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
+import dk.kontentsu.spi.ScopedContent;
 
 /**
  * Tree visitor for creating external HAL+JSON page content.
@@ -71,7 +72,7 @@ public class HalJsonExternalizationVisitor extends ExternalizationVisitor {
     private final ObjectMapper mapper;
 
     @Inject
-    private Content content;
+    private ScopedContent content;
 
     public HalJsonExternalizationVisitor() {
         this.counter = new Counter();

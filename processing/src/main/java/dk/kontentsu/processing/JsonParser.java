@@ -42,7 +42,6 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonToken;
-import dk.kontentsu.model.Content;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Metadata;
 import dk.kontentsu.model.MetadataType;
@@ -52,12 +51,14 @@ import dk.kontentsu.parsers.ContentParserException;
 import dk.kontentsu.parsers.Link;
 import dk.kontentsu.spi.ContentProcessingMimeType;
 import dk.kontentsu.spi.ContentProcessingScoped;
+import dk.kontentsu.spi.ScopedContent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Parser for JSON content. The parser will find metadata and compositions in the data.
+ * Parser for JSON content. The parser will find metadata and compositions in
+ * the data.
  *
  * @author Jens Borch Christiansen
  */
@@ -68,7 +69,7 @@ public class JsonParser implements ContentParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonParser.class);
 
     @Inject
-    Content content;
+    ScopedContent content;
 
     private com.fasterxml.jackson.core.JsonParser jsonParser;
 
@@ -88,24 +89,24 @@ public class JsonParser implements ContentParser {
             Map<Metadata.Key, Metadata> metadata = new HashMap<>();
             List<Link> links = new ArrayList<>();
             Processor[] fieldProcessors = new Processor[3];
-            fieldProcessors[0] = new Processor((p, f) ->
-                JSON_HREF.equals(f) && p.contains(JSON_COMPOSITION),
-                (k, v) ->
-                    links.add(new Link(new Item.URI(v), ReferenceType.COMPOSITION))
+            fieldProcessors[0] = new Processor((p, f)
+                    -> JSON_HREF.equals(f) && p.contains(JSON_COMPOSITION),
+                    (k, v)
+                    -> links.add(new Link(new Item.URI(v), ReferenceType.COMPOSITION))
             );
-            fieldProcessors[1] = new Processor((p, f) ->
-                JSON_HREF.equals(f)
+            fieldProcessors[1] = new Processor((p, f)
+                    -> JSON_HREF.equals(f)
                     && !p.contains(JSON_COMPOSITION)
                     && !"template".equals(p.peekLast())
                     && !"composition-type".equals(p.peekLast()),
-                (k, v) -> links.add(new Link(new Item.URI(v), ReferenceType.LINK))
+                    (k, v) -> links.add(new Link(new Item.URI(v), ReferenceType.LINK))
             );
-            fieldProcessors[2] = new Processor((p, f) ->
-                JSON_METADATA.equals(p.peekLast()),
-                (k, v) -> {
-                    LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", k, MetadataType.PAGE, v);
-                    metadata.put(new Metadata.Key(MetadataType.PAGE, k), new Metadata(v));
-                });
+            fieldProcessors[2] = new Processor((p, f)
+                    -> JSON_METADATA.equals(p.peekLast()),
+                    (k, v) -> {
+                        LOGGER.debug("Adding metadata - key:{}, type:{}, value:{}", k, MetadataType.PAGE, v);
+                        metadata.put(new Metadata.Key(MetadataType.PAGE, k), new Metadata(v));
+                    });
             process(fieldProcessors);
             return new Results(links, metadata);
         } catch (IOException ex) {
@@ -156,8 +157,8 @@ public class JsonParser implements ContentParser {
         final BiFunction<Deque<String>, String, Boolean> fieldMatcher;
 
         Processor(
-            final BiFunction<Deque<String>, String, Boolean> fieldMatcher,
-            final BiConsumer<String, String> fieldConsumer) {
+                final BiFunction<Deque<String>, String, Boolean> fieldMatcher,
+                final BiConsumer<String, String> fieldConsumer) {
             this.fieldConsumer = fieldConsumer;
             this.fieldMatcher = fieldMatcher;
         }
