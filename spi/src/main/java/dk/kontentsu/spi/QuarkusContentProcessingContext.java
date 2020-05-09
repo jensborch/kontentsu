@@ -16,11 +16,15 @@ import io.quarkus.arc.ContextInstanceHandle;
 import io.quarkus.arc.InjectableBean;
 import io.quarkus.arc.InjectableContext;
 import io.quarkus.arc.impl.ContextInstanceHandleImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of the CDI content processing context in Quarkus.
  */
 public class QuarkusContentProcessingContext implements InjectableContext, StartableContentContext {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuarkusContentProcessingContext.class);
 
     private final static int DEFAULT_SCOPE_NEXTING = 10;
 
@@ -33,9 +37,14 @@ public class QuarkusContentProcessingContext implements InjectableContext, Start
 
     private final ThreadLocal<ContentState> active = new ThreadLocal<>();
 
+    public QuarkusContentProcessingContext() {
+        LOGGER.info("Initlizing Quarkus content processing context...");
+        ContentProcessingContextManager.getInstance().register(this);
+    }
+
     @Override
     public void enter(final ScopedContent content) {
-        Objects.requireNonNull(content);
+        LOGGER.debug("Entering content processing scope...");
         ContentState newState = new ContentState(content);
         this.active.set(newState);
         this.state.get().push(newState);
@@ -43,13 +52,17 @@ public class QuarkusContentProcessingContext implements InjectableContext, Start
 
     @Override
     public void exit() {
+        LOGGER.debug("Exiting content processing scope...");
         this.active.remove();
         this.state.get().pop();
     }
 
     @Override
     public ScopedContent getScopedContent() {
-        return active.get().content;
+        return state.get().stream()
+                .map(c -> c.content)
+                .filter(Objects::nonNull)
+                .findFirst().orElse(null);
     }
 
     @Override
@@ -117,7 +130,7 @@ public class QuarkusContentProcessingContext implements InjectableContext, Start
     /**
      * Container for available beans in the content processing context.
      */
-    private static class ContentProcessingContextState extends ContentProcessingScope implements ContextState {
+    private static class ContentProcessingContextState implements ContextState {
 
         private final ConcurrentMap<Contextual<?>, ContextInstanceHandle<?>> beanToInstanceHandleMap = new ConcurrentHashMap<>();
 

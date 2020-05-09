@@ -40,7 +40,6 @@ import org.eclipse.microprofile.faulttolerance.Asynchronous;
 import javax.annotation.PostConstruct;
 
 import javax.transaction.Transactional;
-import javax.persistence.TypedQuery;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.spi.Bean;
@@ -53,7 +52,7 @@ import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.ReferenceType;
 import dk.kontentsu.model.Version;
-import dk.kontentsu.model.processing.InjectableContentProcessingScope;
+import dk.kontentsu.spi.InjectableContentProcessingScope;
 import dk.kontentsu.model.processing.ReferenceProcessor;
 import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.repository.ExternalFileRepository;
@@ -83,6 +82,9 @@ public class ExternalizerService {
     private final Set<UUID> processing = new HashSet<>();
 
     @Inject
+    InjectableContentProcessingScope scope;
+
+    @Inject
     ExternalFileRepository fileRepo;
 
     @Inject
@@ -97,13 +99,12 @@ public class ExternalizerService {
     @Inject
     Instance<ExternalizationVisitor> visitors;
 
-    private Map<MimeType, Bean<?>> externalizationVisitorBeans;
+    //private Map<MimeType, Bean<?>> externalizationVisitorBeans;
 
-    @PostConstruct
+    /*@PostConstruct
     public void init() {
         externalizationVisitorBeans = getExternalizationVisitorBeansMap();
-    }
-
+    }*/
     private boolean processing(final UUID uuid) {
         synchronized (processing) {
             if (processing.contains(uuid)) {
@@ -194,7 +195,7 @@ public class ExternalizerService {
 
     private Map<MimeType.Match, Bean<?>> getMatchingExternalizationVisitorBeans(final Version version) {
         Map<MimeType.Match, Bean<?>> matches = new EnumMap<>(MimeType.Match.class);
-        externalizationVisitorBeans.forEach((key, value) -> {
+        getExternalizationVisitorBeansMap().forEach((key, value) -> {
             MimeType.Match m = key.matches(version.getMimeType());
             if (m.isMatch()) {
                 matches.put(m, value);
@@ -218,7 +219,7 @@ public class ExternalizerService {
         } else {
             LOGGER.info("Externalizing version {} with uri {}", version.getUuid(), version.getItem().getUri());
             List<TemporalReferenceTree<ExternalizationIdentifierVisitor.Results, ExternalizationIdentifierVisitor>> trees = new ArrayList<>();
-            InjectableContentProcessingScope.execute(
+            scope.execute(
                     () -> trees.addAll(externalizeVersionInScope(version)),
                     version.getContent());
             LOGGER.debug("Found {} files to externalize", trees.size());

@@ -25,7 +25,10 @@ package dk.kontentsu.spi;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.util.ArrayDeque;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.ContextNotActiveException;
@@ -33,35 +36,69 @@ import javax.enterprise.context.spi.AlterableContext;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Context implementation for the {@link ContentProcessingScoped} scope
  * annotation.
  *
  * @author Jens Borch Christiansen
  */
-public class ContentProcessingContext implements AlterableContext, Serializable {
+public class ContentProcessingContext implements AlterableContext, Serializable, StartableContentContext {
 
     private static final long serialVersionUID = 2249914178328516867L;
+    private final static int DEFAULT_SCOPE_NEXTING = 10;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContentProcessingContext.class);
 
-    private final transient ContentProcessingScope scope;
+    private final ThreadLocal<ArrayDeque<ContentState>> state = new ThreadLocal<>() {
+        @Override
+        protected ArrayDeque<ContentState> initialValue() {
+            return new ArrayDeque<>(DEFAULT_SCOPE_NEXTING);
+        }
+    };
+
+    private final transient ThreadLocal<ContentState> active = new ThreadLocal<>();
 
     public ContentProcessingContext() {
-        this.scope = new ContentProcessingScope();
+        LOGGER.info("Initlizing CDI content processing context...");
+        ContentProcessingContextManager.getInstance().register(this);
+    }
+
+    @Override
+    public void enter(ScopedContent content) {
+        LOGGER.debug("Entering content processing scope...");
+        ContentState newState = new ContentState(content);
+        this.active.set(newState);
+        this.state.get().push(newState);
+    }
+
+    @Override
+    public void exit() {
+        LOGGER.debug("Exiting content processing scope...");
+        this.active.remove();
+        this.state.get().pop();
+    }
+
+    @Override
+    public ScopedContent getScopedContent() {
+        return state.get().stream()
+                .map(c -> c.content)
+                .filter(Objects::nonNull)
+                .findFirst().orElse(null);
     }
 
     @Override
     public void destroy(final Contextual<?> contextual) {
-        Optional.ofNullable(scope.peek().get(contextual))
+        Optional.ofNullable(active().get(contextual))
                 .ifPresent(Instance::destroy);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T get(final Contextual<T> contextual, final CreationalContext<T> creationalContext) {
-        if (!isActive()) {
-            throw new ContextNotActiveException(ContentProcessingScoped.class.getName() + " is not active.");
-        }
-        Map<Contextual<?>, Instance<?>> map = scope.peek();
+        requireActive();
+        Map<Contextual<?>, Instance<?>> map = active();
         if (map.containsKey(contextual)) {
             return (T) map.get(contextual);
         } else {
@@ -74,10 +111,8 @@ public class ContentProcessingContext implements AlterableContext, Serializable 
     @Override
     @SuppressWarnings("unchecked")
     public <T> T get(final Contextual<T> contextual) {
-        if (!isActive()) {
-            throw new ContextNotActiveException(ContentProcessingScoped.class.getName() + " is not active.");
-        }
-        return (T) Optional.ofNullable(scope.peek().get(contextual)).map(i -> i.bean).orElse(null);
+        requireActive();
+        return (T) Optional.ofNullable(active().get(contextual)).map(i -> i.bean).orElse(null);
     }
 
     @Override
@@ -85,9 +120,19 @@ public class ContentProcessingContext implements AlterableContext, Serializable 
         return ContentProcessingScoped.class;
     }
 
+    private Map<Contextual<?>, Instance<?>> active() {
+        return active.get().instances;
+    }
+
     @Override
     public boolean isActive() {
-        return scope.isActive();
+        return active.get() != null;
+    }
+
+    private void requireActive() {
+        if (!isActive()) {
+            throw new ContextNotActiveException("Content processing scope is not active.");
+        }
     }
 
     /**
@@ -121,6 +166,17 @@ public class ContentProcessingContext implements AlterableContext, Serializable 
             }
             contextual.destroy(bean, context);
             bean = null;
+        }
+    }
+
+    private static class ContentState {
+
+        final ScopedContent content;
+        final Map<Contextual<?>, Instance<?>> instances;
+
+        public ContentState(final ScopedContent content) {
+            this.content = content;
+            this.instances = new HashMap<>();
         }
     }
 

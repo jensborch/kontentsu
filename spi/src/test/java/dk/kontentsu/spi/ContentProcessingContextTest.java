@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -20,41 +21,56 @@ import org.junit.jupiter.api.Test;
  * @author Jens Borch Christiansen
  */
 @EnableAutoWeld
-@AddPackages(ContentProcessingScopedBean.class)
+@AddPackages({CountingBean.class, TestContent.class, ContentProducer.class})
 @AddExtensions(ContentProcessingExtension.class)
-public class ContentProcessingScopeTest {
+public class ContentProcessingContextTest {
 
     @Inject
-    private ContentProcessingScopedBean bean;
+    private CountingBean bean;
+
+    private StartableContentContext scope;
+
+    @BeforeEach
+    public void setup() {
+        scope = ContentProcessingContextManager.getInstance().context();
+    }
 
     @Test
     public void testScope() {
         UUID id;
-        try (ContentProcessingScope scope = new ContentProcessingScope()) {
-            scope.start();
+        try {
+            scope.enter(null);
             assertNotNull(bean);
             id = bean.getId();
+        } finally {
+            scope.exit();
         }
         assertNotNull(id);
     }
 
     @Test
     public void testNestedScope() {
-        try (ContentProcessingScope scope1 = new ContentProcessingScope()) {
-            scope1.start();
+        try {
+            scope.enter(null);
             final int count = bean.getCount();
             UUID outerId = bean.getId();
             assertNotEquals(1, count);
-            try (ContentProcessingScope scope2 = new ContentProcessingScope()) {
-                scope2.start();
+            try {
+                scope.enter(null);
                 assertNotEquals(2, bean.getCount());
                 assertNotEquals(outerId, bean.getId());
-                try (ContentProcessingScope scope3 = new ContentProcessingScope()) {
-                    scope3.start();
+                try {
+                    scope.enter(null);
                     assertNotEquals(3, bean.getCount());
                     assertNotEquals(outerId, bean.getId());
+                } finally {
+                    scope.exit();
                 }
+            } finally {
+                scope.exit();
             }
+        } finally {
+            scope.exit();
         }
     }
 

@@ -48,7 +48,7 @@ import dk.kontentsu.model.Host;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Term;
 import dk.kontentsu.model.Version;
-import dk.kontentsu.model.processing.InjectableContentProcessingScope;
+import dk.kontentsu.spi.InjectableContentProcessingScope;
 import dk.kontentsu.parsers.ContentParser;
 import dk.kontentsu.parsers.Link;
 import dk.kontentsu.repository.HostRepository;
@@ -69,6 +69,9 @@ import org.slf4j.LoggerFactory;
 public class Uploader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Uploader.class);
+
+    @Inject
+    InjectableContentProcessingScope scope;
 
     @Inject
     ItemRepository itemRepo;
@@ -220,7 +223,7 @@ public class Uploader {
                 .from(uploadItem.getInterval().getFrom())
                 .to(uploadItem.getInterval().getTo());
 
-        InjectableContentProcessingScope.execute(
+        scope.execute(
                 () -> findAllContentParserBeans().forEach(
                         bean -> Arrays.stream(bean.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class)).forEach(a -> {
                             if (item.getMimeType().matches(a).isMatch()) {

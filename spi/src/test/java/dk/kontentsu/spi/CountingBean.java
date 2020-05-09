@@ -8,13 +8,13 @@ import java.util.UUID;
  * @author Jens Borch Christiansen
  */
 @ContentProcessingScoped
-public class ContentProcessingScopedBean {
+public class CountingBean {
 
     private static int count = 1;
 
     private final UUID id;
 
-    public ContentProcessingScopedBean() {
+    public CountingBean() {
         count++;
         this.id = UUID.randomUUID();
     }

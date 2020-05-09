@@ -1,16 +1,13 @@
-package dk.kontentsu.model.processing;
+package dk.kontentsu.spi;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import javax.inject.Inject;
 
-import dk.kontentsu.model.Content;
-import dk.kontentsu.spi.ContentProcessingExtension;
 import org.jboss.weld.contexts.ContextNotActiveException;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
@@ -24,35 +21,38 @@ import org.junit.jupiter.api.Test;
  * @author Jens Borch Christiansen
  */
 @EnableAutoWeld
-@AddPackages({ContentProcessingScopedBean.class, Content.class})
-@AddExtensions(ContentProcessingExtension.class)
+@AddPackages({ContentBean.class, TestContent.class, ContentProducer.class})
+@AddExtensions({ContentProcessingExtension.class})
 public class InjectableContentProcessingScopeTest {
 
     @Inject
-    private ContentProcessingScopedBean bean;
+    private InjectableContentProcessingScope scope;
 
-    private Content content;
+    @Inject
+    private ContentBean bean;
+
+    private ScopedContent content;
 
     @BeforeEach
     public void setUp() {
-        content = new Content("scope test".getBytes(), StandardCharsets.UTF_8);
+        content = new TestContent(1, "test");
     }
 
     @Test
     public void testScope() {
         final StringBuilder result = new StringBuilder();
-        InjectableContentProcessingScope.execute(()
+        scope.execute(()
                 -> result.append(bean.uppercase()),
                 content);
         assertNotNull(result);
-        assertEquals("SCOPE TEST", result.toString());
+        assertEquals("TEST", result.toString());
     }
 
     @Test
     public void testNestedScope() {
-        InjectableContentProcessingScope.execute(() -> {
+        scope.execute(() -> {
             UUID outerContentId = bean.getContent().getUuid();
-            InjectableContentProcessingScope.execute(()
+            scope.execute(()
                     -> assertEquals(outerContentId, bean.getContent().getUuid())
             );
         }, content);

@@ -23,6 +23,8 @@
  */
 package dk.kontentsu.model.processing;
 
+import dk.kontentsu.spi.InjectableContentProcessingScope;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +32,8 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.enterprise.inject.spi.CDI;
 
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.Item;
@@ -50,15 +54,17 @@ public class ReferenceProcessor<R extends TemporalReferenceTreeVisitor.Results, 
     private final Deque<Node> nodes = new ArrayDeque<>();
     private final Deque<TemporalReferenceTree<R, V>> processing = new ArrayDeque<>();
     private final List<TemporalReferenceTree<R, V>> processed = new ArrayList<>();
+    private final InjectableContentProcessingScope scope;
 
     public ReferenceProcessor(final Version root, final V visitor) {
+        scope = CDI.current().select(InjectableContentProcessingScope.class).get();
         TemporalReferenceTree<R, V> tree = new TemporalReferenceTree<>(root, visitor);
         processing.push(tree);
     }
 
     public List<TemporalReferenceTree<R, V>> process() {
         while (!processing.isEmpty()) {
-            InjectableContentProcessingScope.execute(this::processInScope);
+            scope.execute(this::processInScope);
         }
         return Collections.unmodifiableList(processed);
     }

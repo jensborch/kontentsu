@@ -12,10 +12,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import dk.kontentsu.model.processing.InjectableContentProcessingScope;
+import dk.kontentsu.spi.InjectableContentProcessingScope;
 import dk.kontentsu.model.processing.ReferenceProcessor;
 import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.spi.ContentProcessingExtension;
+import dk.kontentsu.spi.ContentProducer;
 import dk.kontentsu.test.ContentTestData;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
@@ -29,11 +30,14 @@ import org.junit.jupiter.api.Test;
  * @author Jens Borch Christiansen
  */
 @EnableAutoWeld
-@AddPackages({TestVisitor.class, Content.class})
+@AddPackages({TestVisitor.class, Content.class, ContentProducer.class})
 @AddExtensions(ContentProcessingExtension.class)
 public class ReferenceProcessorTest {
 
     private static final ZonedDateTime NOW = ZonedDateTime.now();
+
+    @Inject
+    private InjectableContentProcessingScope scope;
 
     @Inject
     private TestVisitor visitor;
@@ -82,7 +86,7 @@ public class ReferenceProcessorTest {
 
     @Test
     public void testVisitor() {
-        InjectableContentProcessingScope.execute(() -> {
+        scope.execute(() -> {
             ReferenceProcessor<TestVisitor.TestResults, TestVisitor> processor = new ReferenceProcessor<>(pageVersion, visitor);
             List<TemporalReferenceTree<TestVisitor.TestResults, TestVisitor>> result = processor.process();
 

@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.model.processing;
+package dk.kontentsu.spi;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -29,8 +29,6 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
-import dk.kontentsu.spi.ContentProcessingScoped;
-import dk.kontentsu.spi.ScopedContent;
 import dk.kontentsu.spi.StartableContentContext;
 
 import org.slf4j.Logger;

@@ -11,7 +11,7 @@ import dk.kontentsu.spi.ScopedContent;
  * @author Jens Borch Christiansen
  */
 @ContentProcessingScoped
-public class ContentProcessingScopedBean {
+public class ContentBean {
 
     @Inject
     ScopedContent content;

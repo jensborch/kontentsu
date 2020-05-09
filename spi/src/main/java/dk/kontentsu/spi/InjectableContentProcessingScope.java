@@ -21,14 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package dk.kontentsu.model.processing;
+package dk.kontentsu.spi;
 
-import javax.enterprise.inject.spi.CDI;
+import javax.enterprise.context.Dependent;
 
-import dk.kontentsu.model.Content;
-import dk.kontentsu.spi.ContentProcessingScoped;
+import dk.kontentsu.spi.ContentProcessingContextManager;
 import dk.kontentsu.spi.ContentProcessingTask;
-import dk.kontentsu.spi.ScopedContent;
 import dk.kontentsu.spi.StartableContentContext;
 
 /**
@@ -38,33 +36,26 @@ import dk.kontentsu.spi.StartableContentContext;
  *
  * @author Jens Borch Christiansen
  */
-public class InjectableContentProcessingScope implements AutoCloseable {
+@Dependent
+public class InjectableContentProcessingScope {
 
-    private final StartableContentContext context;
+    private StartableContentContext context = ContentProcessingContextManager.getInstance().context();
 
-    public InjectableContentProcessingScope(final ScopedContent content) {
-        context = (StartableContentContext) CDI.current().getBeanManager().getContext(ContentProcessingScoped.class);
-        context.enter(content);
-    }
-
-    public InjectableContentProcessingScope() {
-        this(null);
-    }
-
-    @Override
-    public void close() {
-        context.exit();
-    }
-
-    public static void execute(final ContentProcessingTask task) {
-        try (var scope = new InjectableContentProcessingScope()) {
+    public void execute(final ContentProcessingTask task) {
+        try {
+            context.enter(null);
             task.run();
+        } finally {
+            context.exit();
         }
     }
 
-    public static void execute(final ContentProcessingTask task, final Content content) {
-        try (var scope = new InjectableContentProcessingScope(content)) {
+    public void execute(final ContentProcessingTask task, final ScopedContent content) {
+        try {
+            context.enter(content);
             task.run();
+        } finally {
+            context.exit();
         }
     }
 
