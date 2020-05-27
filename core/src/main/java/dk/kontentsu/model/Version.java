@@ -76,11 +76,15 @@ public class Version extends AbstractBaseEntity implements Comparable<Version> {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> externalizationIds;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(
+            mappedBy = "version",
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<Reference> references = new ArrayList<>();
 
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Content content;
 
     @NotNull

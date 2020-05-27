@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
@@ -93,16 +94,15 @@ public class ScheduledExternalizerService {
             }
         }
 
-        JobDetail job = JobBuilder.newJob(ExternalizerJob.class)
-                .withIdentity("externalizerJob", "kontentsu")
-                .build();
-
         for (ZonedDateTime dateTime : schedule) {
-
+            var id = UUID.randomUUID().toString();
+            JobDetail job = JobBuilder.newJob(ExternalizerJob.class)
+                    .withIdentity("externalizerJob-" + id, "kontentsu")
+                    .build();
             ZonedDateTime t = dateTime.withZoneSameInstant(ZoneId.systemDefault());
             LOGGER.info("Files will be published at: " + t.format(DateTimeFormatter.ISO_DATE_TIME));
             Trigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity("myTrigger", "myGroup")
+                    .withIdentity("externalizerJobTrigger" + id, "externalizerJobGroup")
                     .startNow()
                     .withSchedule(
                             SimpleScheduleBuilder.simpleSchedule()
@@ -117,7 +117,7 @@ public class ScheduledExternalizerService {
         }
     }
 
-    static class ExternalizerJob implements Job {
+    public static class ExternalizerJob implements Job {
 
         public void execute(JobExecutionContext context) throws JobExecutionException {
             Arc.container().instance(ScheduledExternalizerService.class).get().execute(context);

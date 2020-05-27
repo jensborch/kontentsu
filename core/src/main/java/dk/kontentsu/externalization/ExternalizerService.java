@@ -99,12 +99,6 @@ public class ExternalizerService {
     @Inject
     Instance<ExternalizationVisitor> visitors;
 
-    //private Map<MimeType, Bean<?>> externalizationVisitorBeans;
-
-    /*@PostConstruct
-    public void init() {
-        externalizationVisitorBeans = getExternalizationVisitorBeansMap();
-    }*/
     private boolean processing(final UUID uuid) {
         synchronized (processing) {
             if (processing.contains(uuid)) {

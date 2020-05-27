@@ -25,10 +25,6 @@ package dk.kontentsu.spi;
 
 import javax.enterprise.context.Dependent;
 
-import dk.kontentsu.spi.ContentProcessingContextManager;
-import dk.kontentsu.spi.ContentProcessingTask;
-import dk.kontentsu.spi.StartableContentContext;
-
 /**
  * Execute some code in the CDI content processing scope with injected content
  *
@@ -39,9 +35,8 @@ import dk.kontentsu.spi.StartableContentContext;
 @Dependent
 public class InjectableContentProcessingScope {
 
-    private StartableContentContext context = ContentProcessingContextManager.getInstance().context();
-
     public void execute(final ContentProcessingTask task) {
+        StartableContentContext context = ContentProcessingContextManager.getInstance().context();
         try {
             context.enter(null);
             task.run();
@@ -51,6 +46,7 @@ public class InjectableContentProcessingScope {
     }
 
     public void execute(final ContentProcessingTask task, final ScopedContent content) {
+        StartableContentContext context = ContentProcessingContextManager.getInstance().context();
         try {
             context.enter(content);
             task.run();

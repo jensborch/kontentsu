@@ -76,6 +76,8 @@ import org.slf4j.LoggerFactory;
         uniqueConstraints = {
             @UniqueConstraint(columnNames = {"path_id", "edition"}, name = "item_constraint")})
 @NamedQueries({
+    @NamedQuery(name = Repository.ITEM_DELETE_REFERENCE,
+            query = "DELETE FROM Reference r WHERE r.item = :item"),
     @NamedQuery(name = Repository.ITEM_FIND_BY_TERM,
             query = "SELECT i FROM Item i JOIN i.path p WHERE p.uuid = :uuid ORDER BY i.created, i.edition"),
     @NamedQuery(name = Repository.ITEM_FIND_ALL,
@@ -112,7 +114,7 @@ public class Item extends AbstractBaseEntity {
     @JoinColumn(name = "path_id")
     private Term path;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "item")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "item", orphanRemoval = true)
     @OrderBy("interval.from, interval.to")
     private SortedSet<Version> versions = new TreeSet<>();
 

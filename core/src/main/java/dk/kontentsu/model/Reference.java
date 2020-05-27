@@ -32,7 +32,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-
 /**
  *
  * @author Jens Borch Christiansen
@@ -45,7 +44,6 @@ public class Reference extends AbstractBaseEntity {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "version_id")
     private Version version;
 
     @NotNull

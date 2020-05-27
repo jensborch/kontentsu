@@ -23,6 +23,7 @@ import dk.kontentsu.model.ReferenceType;
 import dk.kontentsu.model.Term;
 import dk.kontentsu.model.Version;
 import dk.kontentsu.repository.ExternalFileRepository;
+import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.repository.TermRepository;
 import dk.kontentsu.test.ContentTestData;
 import io.quarkus.test.common.QuarkusTestResource;
@@ -54,6 +55,9 @@ public class ExternalizerServiceIT {
     private Term pagePath;
     private Version pageVersion;
     private ObjectMapper mapper;
+
+    @Inject
+    ItemRepository itemRepo;
 
     @Inject
     ExternalizerService service;
@@ -115,7 +119,7 @@ public class ExternalizerServiceIT {
         em.persist(page);
     }
 
-    //@AfterEach
+    @AfterEach
     public void tearDown() throws Exception {
         deleteItem(article1);
         deleteItem(contact);
@@ -123,8 +127,8 @@ public class ExternalizerServiceIT {
     }
 
     private void deleteItem(Item item) {
-        item = em.find(Item.class, item.getId());
-        em.remove(item);
+        item = itemRepo.get(item.getUuid());
+        itemRepo.remove(item);
     }
 
     @Test

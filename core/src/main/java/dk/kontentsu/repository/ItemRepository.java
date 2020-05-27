@@ -37,6 +37,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import dk.kontentsu.model.Content;
@@ -134,4 +135,14 @@ public class ItemRepository extends Repository<Item> {
     private Connection getConnection() {
         return em.unwrap(SessionImpl.class).connection();
     }
+
+    @Override
+    public void remove(Item item) {
+        item.getVersions().forEach(em::remove);
+        Query query = em.createNamedQuery(Repository.ITEM_DELETE_REFERENCE);
+        query.setParameter("item", item);
+        query.executeUpdate();
+        super.remove(item);
+    }
+
 }

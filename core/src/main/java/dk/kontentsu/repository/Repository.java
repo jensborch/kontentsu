@@ -46,6 +46,7 @@ public abstract class Repository<E> {
     public static final String HOST_GET = "Host.get";
     public static final String HOST_GET_BY_NAME = "Host.getByName";
     public static final String ITEM_GET = "Item.get";
+    public static final String ITEM_DELETE_REFERENCE = "Item.deleteRef";
     public static final String ITEM_FIND_ALL = "Item.findAll";
     public static final String ITEM_FIND_BY_URI = "Item.findByUri";
     public static final String ITEM_FIND_BY_TERM = "Item.findByTerm";
@@ -81,6 +82,10 @@ public abstract class Repository<E> {
     public E save(@NotNull @Valid final E entity) {
         em.persist(entity);
         return entity;
+    }
+
+    public void remove(@NotNull @Valid final E entity) {
+        em.remove(entity);
     }
 
 }
