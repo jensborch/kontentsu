@@ -150,9 +150,6 @@ subprojects {
         testLogging {
             events "passed", "skipped", "failed"
         }
-
-        systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
-        systemProperty "quarkus.log.level", "FINE"
         
         finalizedBy jacocoTestReport
     }

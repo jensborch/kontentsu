@@ -17,6 +17,7 @@ import javax.transaction.Transactional;
 
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Term;
+import dk.kontentsu.repository.TermRepository;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;

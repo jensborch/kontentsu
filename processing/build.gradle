@@ -1,7 +1,3 @@
-plugins {
-    id 'io.quarkus'
-}
-
 jar {
     archiveBaseName = 'kontentsu-processing'
 }
