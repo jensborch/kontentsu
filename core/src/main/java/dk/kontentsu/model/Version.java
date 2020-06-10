@@ -83,7 +83,7 @@ public class Version extends AbstractBaseEntity implements Comparable<Version> {
             orphanRemoval = true)
     private List<Reference> references = new ArrayList<>();
 
-    @NotNull
+    //@NotNull
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Content content;
 

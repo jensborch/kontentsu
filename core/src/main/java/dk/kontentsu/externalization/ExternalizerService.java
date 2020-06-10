@@ -37,8 +37,6 @@ import java.util.stream.Collectors;
 
 import org.eclipse.microprofile.faulttolerance.Asynchronous;
 
-import javax.annotation.PostConstruct;
-
 import javax.transaction.Transactional;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Any;

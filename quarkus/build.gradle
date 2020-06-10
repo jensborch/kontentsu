@@ -5,6 +5,7 @@ plugins {
 dependencies {
     implementation project(':spi')
     implementation project(':core')
+    implementation project(':processing')
     
     implementation 'org.webjars:angular-material:' + angularMaterialVersion
     implementation 'org.webjars:angularjs:' + angularVersion

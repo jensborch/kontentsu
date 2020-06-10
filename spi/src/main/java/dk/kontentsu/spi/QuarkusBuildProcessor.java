@@ -1,5 +1,6 @@
 package dk.kontentsu.spi;
 
+import io.quarkus.arc.deployment.BeanDefiningAnnotationBuildItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,6 +8,7 @@ import io.quarkus.arc.deployment.ContextRegistrarBuildItem;
 import io.quarkus.arc.processor.ContextRegistrar;
 import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
+import org.jboss.jandex.DotName;
 
 /**
  * Quarkus build processor for content processing scoped.
@@ -14,6 +16,11 @@ import io.quarkus.deployment.annotations.BuildStep;
 public class QuarkusBuildProcessor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuarkusBuildProcessor.class);
+
+    @BuildStep
+    public BeanDefiningAnnotationBuildItem addContentProcessingAnnotation() {
+        return new BeanDefiningAnnotationBuildItem(DotName.createSimple(ContentProcessingScoped.class.getName()));
+    }
 
     @BuildStep
     @SuppressWarnings("unchecked")

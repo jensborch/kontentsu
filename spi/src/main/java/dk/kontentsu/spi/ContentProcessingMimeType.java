@@ -28,12 +28,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.inject.Qualifier;
+
 /**
  * Used for specifying the Mime type for content parsing - i.e. use this to
  * specify the mime type a given parser can handle.
  *
  * @author Jens Borch Christiansen
  */
+@Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface ContentProcessingMimeType {

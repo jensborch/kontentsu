@@ -3,11 +3,9 @@ package dk.kontentsu.model.processing;
 import dk.kontentsu.spi.InjectableContentProcessingScope;
 import dk.kontentsu.spi.ScopedContent;
 
-import static io.codearte.catchexception.shade.mockito.Mockito.mock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
