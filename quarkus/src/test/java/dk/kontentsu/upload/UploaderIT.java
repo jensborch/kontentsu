@@ -1,10 +1,9 @@
 package dk.kontentsu.upload;
 
-import static com.googlecode.catchexception.CatchException.catchException;
-import static com.googlecode.catchexception.CatchException.caughtException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -20,7 +19,7 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 
-import dk.kontentsu.model.Host;
+import dk.kontentsu.model.Node;
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
@@ -33,7 +32,6 @@ import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-
 import org.junit.jupiter.api.Test;
 
 /**
@@ -49,7 +47,7 @@ public class UploaderIT {
     private static final ZonedDateTime NOW = ZonedDateTime.now();
 
     private static ContentTestData data;
-    private Host host;
+    private Node host;
 
     @Inject
     HostRepository hostRepo;
@@ -60,17 +58,15 @@ public class UploaderIT {
     @Inject
     Uploader service;
 
-    @Inject
-    EntityManager em;
-
+    @BeforeEach
     public void setUp() throws Exception {
         data = new ContentTestData();
         host = createHost("test_host");
     }
 
-    private Host createHost(String name) throws Exception {
+    private Node createHost(String name) throws Exception {
         return hostRepo.findByName(name).orElseGet(()
-                -> hostRepo.save(new Host(name,
+                -> hostRepo.save(new Node(name,
                         "Test description",
                         URI.create("ftp://myusername:mypassword@somehost/"),
                         "cdn/upload"))
@@ -81,14 +77,23 @@ public class UploaderIT {
         return itemRepo.get(id);
     }
 
+    @AfterEach
     public void tearDown() throws Exception {
         itemRepo.findAll().forEach(Item::delete);
     }
 
     @Test
+    public void testHost() throws Exception {
+        assertEquals(host, hostRepo.get(host.getUuid()));
+        assertEquals(1, hostRepo.findAll().size());
+        assertTrue(hostRepo.findByName(host.getName()).isPresent());
+        assertTrue(hostRepo.find(host.getUuid()).isPresent());
+        assertTrue(hostRepo.findAll().size() == 1);
+    }
+
+    @Test
     public void testUploadPlainText() throws Exception {
-        setUp();
-        Host textHost = createHost("text_host");
+        Node textHost = createHost("text_host");
         InputStream is = new ByteArrayInputStream("test data".getBytes());
         UploadItem uploadItem = UploadItem.builder()
                 .content("TestRef", is)
@@ -108,12 +113,10 @@ public class UploaderIT {
         assertEquals(1, ((Long) r.getVersions().stream().filter(v -> v.getInterval().getTo().toInstant().equals(Interval.INFINITE.toInstant())).count()).intValue());
         assertEquals(1, r.getHosts().size());
         assertEquals(textHost, r.getHosts().stream().findFirst().get());
-        tearDown();
     }
 
     @Test
     public void testSimplePage() throws Exception {
-        setUp();
         UploadItem uploadItem = UploadItem.builder()
                 .content("article2", new ByteArrayInputStream(data.getArticle(1)))
                 .uri(new Item.URI("items/article2/"))
@@ -139,12 +142,10 @@ public class UploaderIT {
         assertEquals(2, r.getVersions().stream().findFirst().get().getReferences().size());
         assertEquals(1, r.getHosts().size());
         assertEquals(host, r.getHosts().stream().findFirst().get());
-        tearDown();
     }
 
     @Test
     public void testOverwrite() throws Exception {
-        setUp();
         UploadItem uploadItem = UploadItem.builder()
                 .content("article2", new ByteArrayInputStream(data.getArticle(1)))
                 .uri(new Item.URI("items/article2/"))
@@ -173,12 +174,10 @@ public class UploaderIT {
         Item item = itemRepo.get(overwrite.getUuid());
         assertFalse(item.getEdition().isPresent());
         assertEquals(3, item.getVersions().stream().filter(Version::isActive).count());
-        tearDown();
     }
 
     @Test
     public void testOverwriteWithOverlap() throws Exception {
-        setUp();
         UploadItem upload = UploadItem.builder()
                 .uri(new Item.URI("items/test/"))
                 .content("ref", new ByteArrayInputStream("{}".getBytes()))
@@ -200,12 +199,10 @@ public class UploaderIT {
         assertNotEquals(id, newid);
 
         assertEquals(new Interval(NOW, NOW.plusDays(4)), itemRepo.getVersion(newid).getInterval());
-        tearDown();
     }
 
     @Test
     public void testIncompleteUpload() throws Exception {
-        setUp();
         InputStream is = new ByteArrayInputStream("test data".getBytes());
         UploadItem uploadItem = UploadItem.builder()
                 .content("TestRef", is)
@@ -213,12 +210,9 @@ public class UploaderIT {
                 .interval(new Interval())
                 .build();
 
-        catchException(service).upload(uploadItem);
-        assertTrue(caughtException().getCause() instanceof ConstraintViolationException);
-        ConstraintViolationException ex = (ConstraintViolationException) caughtException().getCause();
+        ConstraintViolationException ex = assertThrows(ConstraintViolationException.class, () -> service.upload(uploadItem));
         assertEquals(1, ex.getConstraintViolations().size());
         assertTrue(ex.getConstraintViolations().stream().findFirst().get().getMessage().startsWith("may not be null"));
-        tearDown();
     }
 
 }

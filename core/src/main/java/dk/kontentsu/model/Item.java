@@ -88,8 +88,8 @@ import org.slf4j.LoggerFactory;
             query = "SELECT i FROM Item i WHERE i.uuid = :uuid"),
     @NamedQuery(name = Repository.ITEM_FIND_BY_URI,
             query = "SELECT DISTINCT i FROM Item i "
-            + "JOIN i.path p "
             + "LEFT JOIN i.versions v "
+            + "JOIN i.path p "
             + "WHERE p.path = :path "
             + "AND ((:edition IS NULL AND i.edition IS NULL) OR i.edition = :edition) "
             + "AND v.state IN :state OR v.state IS NULL "
@@ -125,8 +125,8 @@ public class Item extends AbstractBaseEntity {
     @JoinColumn(name = "provider_id")
     private Provider provider;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    private Set<Host> hosts = new HashSet<>();
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
+    private Set<Node> hosts = new HashSet<>();
 
     @NotNull
     @Column(name = "mimetype")
@@ -151,15 +151,15 @@ public class Item extends AbstractBaseEntity {
         this.path.addItem(this);
     }
 
-    public Set<Host> getHosts() {
+    public Set<Node> getHosts() {
         return Collections.unmodifiableSet(hosts);
     }
 
-    public void addHost(final Host host) {
+    public void addHost(final Node host) {
         hosts.add(host);
     }
 
-    public void removeHost(final Host host) {
+    public void removeHost(final Node host) {
         hosts.remove(host);
     }
 
@@ -319,7 +319,7 @@ public class Item extends AbstractBaseEntity {
         }
 
         public Criteria host(final String name) {
-            QHost host = QHost.host;
+            QNode host = QNode.node;
             query
                     .join(item.hosts, host)
                     .where(host.name.eq(name));

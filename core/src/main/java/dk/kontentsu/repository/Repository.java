@@ -33,6 +33,8 @@ import javax.persistence.NoResultException;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import dk.kontentsu.model.AbstractBaseEntity;
+
 /**
  * Repository interface used for data access to CDN database.
  *
@@ -40,7 +42,7 @@ import javax.validation.constraints.NotNull;
  *
  * @param <E> type of entities managed by repository
  */
-public abstract class Repository<E> {
+public abstract class Repository<E extends AbstractBaseEntity> {
 
     public static final String HOST_FIND_ALL = "Host.findAll";
     public static final String HOST_GET = "Host.get";
@@ -80,6 +82,7 @@ public abstract class Repository<E> {
     public abstract List<E> findAll();
 
     public E save(@NotNull @Valid final E entity) {
+        entity.prePersist();
         em.persist(entity);
         return entity;
     }

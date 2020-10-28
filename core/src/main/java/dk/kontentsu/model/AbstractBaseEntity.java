@@ -42,7 +42,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author Jens Borch Christiansen
  */
 @MappedSuperclass
-abstract class AbstractBaseEntity implements Serializable {
+public abstract class AbstractBaseEntity implements Serializable {
 
     private static final long serialVersionUID = -1841654741660206472L;
 
@@ -65,6 +65,14 @@ abstract class AbstractBaseEntity implements Serializable {
         this.uuid = UUID.randomUUID();
         this.created = ZonedDateTime.now();
         this.modified = created;
+    }
+
+    public void prePersist() {
+
+    }
+
+    public void preUpdate() {
+
     }
 
     //TODO: Use when setting somthing

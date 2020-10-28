@@ -100,4 +100,13 @@ public class Reference extends AbstractBaseEntity {
         return type;
     }
 
+    @Override
+    public String toString() {
+        return "Reference{" + "version=" + version.getUuid()
+                + ", item=" + item.getUuid()
+                + ", itemPath=" + itemPath
+                + ", itemName=" + itemName
+                + ", type=" + type + '}';
+    }
+
 }

@@ -33,7 +33,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
-import dk.kontentsu.model.Host;
+import dk.kontentsu.model.Node;
 import dk.kontentsu.model.Item;
 
 /**
@@ -43,51 +43,51 @@ import dk.kontentsu.model.Item;
  */
 @ApplicationScoped
 @Transactional
-public class HostRepository extends Repository<Host> {
+public class HostRepository extends Repository<Node> {
 
     @Inject
     ItemRepository itemRepo;
 
     @Override
-    public List<Host> findAll() {
-        TypedQuery<Host> query = em.createNamedQuery(HOST_FIND_ALL, Host.class);
+    public List<Node> findAll() {
+        TypedQuery<Node> query = em.createNamedQuery(HOST_FIND_ALL, Node.class);
         return query.getResultList();
     }
 
     @Override
-    public Host get(final UUID uuid) {
-        TypedQuery<Host> query = em.createNamedQuery(HOST_GET, Host.class);
+    public Node get(final UUID uuid) {
+        TypedQuery<Node> query = em.createNamedQuery(HOST_GET, Node.class);
         query.setParameter("uuid", uuid);
         return query.getSingleResult();
     }
 
-    public Host getByName(final String name) {
-        TypedQuery<Host> query = em.createNamedQuery(HOST_GET_BY_NAME, Host.class);
+    public Node getByName(final String name) {
+        TypedQuery<Node> query = em.createNamedQuery(HOST_GET_BY_NAME, Node.class);
         query.setParameter("name", name);
         return query.getSingleResult();
     }
 
-    public Optional<Host> findByName(final String name) {
+    public Optional<Node> findByName(final String name) {
         try {
-            return Optional.of(getByName(name));
+            return Optional.ofNullable(getByName(name));
         } catch (NoResultException e) {
             return Optional.empty();
         }
     }
 
     public void delete(final UUID uuid) {
-        Host h = get(uuid);
+        Node h = get(uuid);
         removeHostFromItem(h);
         em.remove(h);
     }
 
     public void delete(final String name) {
-        Host h = getByName(name);
+        Node h = getByName(name);
         removeHostFromItem(h);
         em.remove(h);
     }
 
-    private void removeHostFromItem(final Host host) {
+    private void removeHostFromItem(final Node host) {
         itemRepo.find(Item.Criteria.create().host(host.getName())).forEach(i -> i.removeHost(host));
     }
 

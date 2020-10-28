@@ -97,7 +97,7 @@ public class Version extends AbstractBaseEntity implements Comparable<Version> {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "item_fk")
+    //@JoinColumn(name = "item_fk")
     private Item item;
 
     @NotNull

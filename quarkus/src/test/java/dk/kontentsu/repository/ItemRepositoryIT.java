@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
+import javax.transaction.RollbackException;
 import javax.transaction.Transactional;
 
 import dk.kontentsu.model.Content;
@@ -53,13 +55,19 @@ public class ItemRepositoryIT {
     @Inject
     TermRepository termRepo;
 
+    @Inject
+    EntityManager em;
+
     private Item item;
     private Term term;
 
+    private String path = "test1/test2/";
+    private Item.URI URI = new Item.URI(path + "test2-test");
+
     @BeforeEach
     public void setUp() throws Exception {
-        term = termRepo.create(new Item.URI("test1/test2/"));
-        item = create("test", NOW, Interval.INFINITE);
+        term = termRepo.create(URI);
+        item = create(URI, NOW, Interval.INFINITE);
     }
 
     @AfterEach
@@ -68,7 +76,7 @@ public class ItemRepositoryIT {
         items.forEach(Item::delete);
     }
 
-    private Item create(final String edition, final ZonedDateTime from, final ZonedDateTime to) {
+    private Item create(Item.URI uri, final ZonedDateTime from, final ZonedDateTime to) {
         Content content = new Content("This is a test".getBytes(), Charset.defaultCharset());
 
         Version version = Version.builder()
@@ -78,14 +86,12 @@ public class ItemRepositoryIT {
                 .metadata(new Metadata.Key(MetadataType.PAGE, "key"), new Metadata("This is metadata"))
                 .build();
 
-        String name = (edition == null) ? "" : "test2-" + edition;
-
-        Term t = termRepo.find(term.getUuid()).get();
-        Item i = itemRepo.findByUri(new Item.URI("test1/test2/" + name), State.ACTIVE, State.DELETED, State.DRAFT)
+        Term t = termRepo.findByUri(uri).get();
+        Item i = itemRepo.findByUri(uri, State.ACTIVE, State.DELETED, State.DRAFT)
                 .orElseGet(()
                         -> itemRepo.save(
                         new Item(t,
-                                edition,
+                                uri.getEdition().orElse(null),
                                 new MimeType("text", "plain")))
                 );
 
@@ -93,15 +99,14 @@ public class ItemRepositoryIT {
         return i;
     }
 
-    @Test
+    /*@Test
     public void testMultipleVersions() throws Exception {
-        create("test1", NOW.minusDays(10), NOW.minusDays(5));
-        create("test1", NOW.minusDays(4), NOW.minusDays(1));
+        create("test1", new Item.URI(path + "test1"), NOW.minusDays(10), NOW.minusDays(5));
+        create("test1", new Item.URI(path + "test1"), NOW.minusDays(4), NOW.minusDays(1));
         List<Item> items = itemRepo.findAll();
         assertEquals(2, items.size());
         assertEquals(2, items.stream().filter(i -> i.getEdition().orElse("").equals("test1")).findFirst().get().getVersions().size());
-    }
-
+    }*/
     @Test
     public void testDelete() throws Exception {
         item = itemRepo.get(item.getUuid());
@@ -127,8 +132,15 @@ public class ItemRepositoryIT {
     }
 
     @Test
+    public void testFindByUri2() throws Exception {
+        Optional<Item> result = itemRepo.findByUri(new Item.URI("test1/test2/test2-test"));
+        assertTrue(result.isPresent());
+        assertEquals(item, result.get());
+    }
+
+    @Test
     public void testFindByUriNoEdition() throws Exception {
-        Item i = create(null, NOW.minusDays(10), NOW.minusDays(5));
+        Item i = create(new Item.URI("test1/test2/"), NOW.minusDays(10), NOW.minusDays(5));
         Optional<Item> result = itemRepo.findByUri(new Item.URI("test1/test2/"));
         assertTrue(result.isPresent());
         assertEquals(i, result.get());
@@ -222,7 +234,10 @@ public class ItemRepositoryIT {
                 .reference(doNotExistItem, ReferenceType.COMPOSITION)
                 .build();
         compItem.addVersion(compVersion);
-        assertThrows(IllegalStateException.class, () -> itemRepo.save(compItem));
+        assertThrows(IllegalStateException.class, () -> {
+            itemRepo.save(compItem);
+            em.flush();
+        });
     }
 
     @Test

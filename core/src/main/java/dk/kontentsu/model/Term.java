@@ -133,6 +133,11 @@ public class Term extends AbstractBaseEntity {
         //Needed by JPA
     }
 
+    @Override
+    public void prePersist() {
+        initPath();
+    }
+
     public static Term parse(final String path) {
         String[] terms = splitPathWithTaxonomy(path);
         Term term = null;
@@ -162,7 +167,7 @@ public class Term extends AbstractBaseEntity {
         return pathElements;
     }
 
-    private void initPath() {
+    public void initPath() {
         pathElements = initElements();
         path = initPath(pathElements);
     }

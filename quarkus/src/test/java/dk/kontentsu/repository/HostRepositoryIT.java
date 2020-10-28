@@ -11,17 +11,13 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 
-import dk.kontentsu.model.Host;
+import dk.kontentsu.model.Node;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.Term;
-import dk.kontentsu.repository.HostRepository;
-import dk.kontentsu.repository.ItemRepository;
-import dk.kontentsu.repository.TermRepository;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
-import jdk.jfr.SettingDefinition;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,12 +41,12 @@ public class HostRepositoryIT {
     @Inject
     ItemRepository itemRepo;
 
-    private final Host[] hosts = new Host[2];
+    private final Node[] hosts = new Node[2];
 
     @BeforeEach
     public void setUp() throws Exception {
-        hosts[0] = hostRepo.save(new Host("name1", "test test", URI.create("ftp://myusername:mypassword@somehost/"), "cdn/upload"));
-        hosts[1] = hostRepo.save(new Host("name2", "test test", URI.create("sftp://myusername:mypassword@somehost/"), "cdn/upload"));
+        hosts[0] = hostRepo.save(new Node("name1", "test test", URI.create("ftp://myusername:mypassword@somehost/"), "cdn/upload"));
+        hosts[1] = hostRepo.save(new Node("name2", "test test", URI.create("sftp://myusername:mypassword@somehost/"), "cdn/upload"));
 
         Item.URI uri = new Item.URI("test1/test2/");
         Term path = catRepo.create(uri);

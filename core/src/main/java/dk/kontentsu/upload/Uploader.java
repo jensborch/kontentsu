@@ -32,7 +32,6 @@ import java.util.concurrent.ExecutionException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
-import javax.persistence.TypedQuery;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.spi.Bean;
@@ -44,7 +43,7 @@ import javax.validation.constraints.NotNull;
 
 import dk.kontentsu.externalization.ExternalizerService;
 import dk.kontentsu.model.Content;
-import dk.kontentsu.model.Host;
+import dk.kontentsu.model.Node;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Term;
 import dk.kontentsu.model.Version;
@@ -66,6 +65,7 @@ import org.slf4j.LoggerFactory;
  * @author Jens Borch Christiansen
  */
 @ApplicationScoped
+@Transactional
 public class Uploader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Uploader.class);
@@ -193,7 +193,7 @@ public class Uploader {
     }
 
     private void addHosts(final Item item, final UploadItem uploadItem) {
-        List<Host> hosts = hostRepo.findAll();
+        List<Node> hosts = hostRepo.findAll();
         if (uploadItem.getHosts().isEmpty()) {
             hosts.forEach(item::addHost);
         } else {

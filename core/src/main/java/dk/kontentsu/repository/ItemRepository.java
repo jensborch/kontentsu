@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -39,6 +40,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.validation.constraints.NotNull;
 
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.ContentException;
@@ -47,6 +49,8 @@ import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.State;
 import dk.kontentsu.model.Version;
 import org.hibernate.internal.SessionImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Repository for performing CRUD operations on CDN items.
@@ -56,6 +60,8 @@ import org.hibernate.internal.SessionImpl;
 @ApplicationScoped
 @Transactional
 public class ItemRepository extends Repository<Item> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemRepository.class);
 
     @Inject
     TermRepository termRepo;
@@ -84,7 +90,7 @@ public class ItemRepository extends Repository<Item> {
         return query.getSingleResult();
     }
 
-    public Optional<Item> findByUri(final Item.URI uri, State... states) {
+    public Optional<Item> findByUri(final @NotNull Item.URI uri, State... states) {
         if (states.length == 0) {
             states = new State[]{State.ACTIVE, State.DRAFT};
         }
@@ -93,6 +99,11 @@ public class ItemRepository extends Repository<Item> {
             query.setParameter("path", uri.toTerm());
             query.setParameter("edition", uri.getEdition().orElse(null));
             query.setParameter("state", Arrays.asList(states));
+            LOGGER.debug("Finding by term: {}", uri.toTerm());
+            LOGGER.debug("Found {} items matching uri {}: {}",
+                    query.getResultList().size(),
+                    uri,
+                    query.getResultStream().map(Item::toString).collect(Collectors.joining(" ")));
             return Optional.of(query.getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();
