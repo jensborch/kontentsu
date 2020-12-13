@@ -6,8 +6,6 @@ addons:
     organization: "jensborch-github"
 jdk:
   - openjdk11
-before_install:
-  gradle -b wrapper.gradle addwrapper
 script:
   - ./gradlew build
   - ./gradlew codeCoverageReport
