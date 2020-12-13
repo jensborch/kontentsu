@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
  * @author Jens Borch Christiansen
  */
 @ApplicationScoped
-@Transactional
+@Transactional(Transactional.TxType.MANDATORY)
 public class ItemRepository extends Repository<Item> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ItemRepository.class);

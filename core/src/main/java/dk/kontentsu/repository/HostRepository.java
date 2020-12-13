@@ -42,7 +42,7 @@ import dk.kontentsu.model.Item;
  * @author Jens Borch Christiansen
  */
 @ApplicationScoped
-@Transactional
+@Transactional(Transactional.TxType.MANDATORY)
 public class HostRepository extends Repository<Node> {
 
     @Inject
@@ -69,7 +69,7 @@ public class HostRepository extends Repository<Node> {
 
     public Optional<Node> findByName(final String name) {
         try {
-            return Optional.ofNullable(getByName(name));
+            return Optional.of(getByName(name));
         } catch (NoResultException e) {
             return Optional.empty();
         }

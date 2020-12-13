@@ -29,7 +29,6 @@ import java.util.function.Function;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +49,7 @@ public final class Transaction {
     }
 
     /**
-     * ToCommit the code im the given transaction.
+     * ToCommit the code in the given transaction.
      */
     public static final class ToCommit {
 

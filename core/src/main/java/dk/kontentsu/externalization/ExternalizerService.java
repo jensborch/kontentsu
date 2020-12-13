@@ -25,6 +25,7 @@ package dk.kontentsu.externalization;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,37 +33,33 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-import org.eclipse.microprofile.faulttolerance.Asynchronous;
-
-import javax.transaction.Transactional;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.transaction.Transactional;
+import javax.transaction.UserTransaction;
 
 import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.ReferenceType;
 import dk.kontentsu.model.Version;
-import dk.kontentsu.spi.InjectableContentProcessingScope;
 import dk.kontentsu.model.processing.ReferenceProcessor;
 import dk.kontentsu.model.processing.TemporalReferenceTree;
 import dk.kontentsu.repository.ExternalFileRepository;
 import dk.kontentsu.repository.ItemRepository;
 import dk.kontentsu.spi.ContentProcessingMimeType;
-
-import java.util.EnumMap;
-import java.util.concurrent.CompletableFuture;
-
-import javax.enterprise.inject.Instance;
-import javax.inject.Singleton;
-
+import dk.kontentsu.spi.InjectableContentProcessingScope;
+import org.eclipse.microprofile.faulttolerance.Asynchronous;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,14 +113,12 @@ public class ExternalizerService {
 
     @Asynchronous
     public Future<List<ExternalFile>> externalize(final UUID version) {
-        Version v = itemRepo.getVersion(version);
-        LOGGER.info("Externalizing version {} and its references", version);
-        return CompletableFuture.completedFuture(externalize(v));
-
+        Version tmp = itemRepo.getVersion(version);
+        LOGGER.info("Externalizing version {} and its references", tmp);
+        return CompletableFuture.completedFuture(externalize(tmp));
     }
 
-    @Transactional(Transactional.TxType.MANDATORY)
-    public List<ExternalFile> externalize(final Version version) {
+    private List<ExternalFile> externalize(final Version version) {
         List<Version> versions = findVersionsToExternalize(version);
         return versions.stream()
                 .flatMap(v -> externalizeVersion(v).stream())

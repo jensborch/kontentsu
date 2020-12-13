@@ -30,6 +30,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -42,6 +43,7 @@ import dk.kontentsu.model.AbstractBaseEntity;
  *
  * @param <E> type of entities managed by repository
  */
+@Transactional(Transactional.TxType.MANDATORY)
 public abstract class Repository<E extends AbstractBaseEntity> {
 
     public static final String HOST_FIND_ALL = "Host.findAll";

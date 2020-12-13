@@ -45,7 +45,7 @@ import dk.kontentsu.model.Term;
  * @author Jens Borch Christiansen
  */
 @ApplicationScoped
-@Transactional
+@Transactional(Transactional.TxType.MANDATORY)
 public class TermRepository extends Repository<Term> {
 
     @Override

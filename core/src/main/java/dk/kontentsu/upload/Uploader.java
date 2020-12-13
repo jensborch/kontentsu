@@ -140,7 +140,6 @@ public class Uploader {
         return externalized;
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Set<UUID> overwriteAndSave(final UUID itemId, @Valid final UploadItem uploadItem) {
         Item item = itemRepo.get(itemId);
         Set<UUID> toExternalize = new HashSet<>();
@@ -174,7 +173,6 @@ public class Uploader {
         return toExternalize;
     }
 
-    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public Version save(@Valid final UploadItem uploadItem) {
         Item item = findOrCreateItem(uploadItem);
         Version version = addVersion(item, uploadItem);
