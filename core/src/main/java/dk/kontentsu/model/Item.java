@@ -88,7 +88,7 @@ import org.slf4j.LoggerFactory;
             query = "SELECT i FROM Item i WHERE i.uuid = :uuid"),
     @NamedQuery(name = Repository.ITEM_FIND_BY_URI,
             query = "SELECT DISTINCT i FROM Item i "
-            + "LEFT JOIN i.versions v "
+            + "JOIN i.versions v "
             + "JOIN i.path p "
             + "WHERE p.path = :path "
             + "AND ((:edition IS NULL AND i.edition IS NULL) OR i.edition = :edition) "
@@ -498,7 +498,8 @@ public class Item extends AbstractBaseEntity {
 
     @Override
     public String toString() {
-        return "Item{" + "terms=" + terms
+        return "Item{ id=" + getId()
+                + ", terms=" + terms
                 + ", edition=" + edition
                 + ", path=" + path
                 + ", versions=" + versions

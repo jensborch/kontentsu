@@ -43,6 +43,7 @@ import javax.validation.constraints.NotNull;
 
 import dk.kontentsu.externalization.ExternalizerService;
 import dk.kontentsu.model.Content;
+import dk.kontentsu.model.ExternalFile;
 import dk.kontentsu.model.Node;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Term;
@@ -86,19 +87,16 @@ public class Uploader {
     ExternalizerService externalizer;
 
     @Inject
-    Uploader self;
-
-    @Inject
     BeanManager bm;
 
     public UUID upload(@Valid final UploadItem uploadItem) {
-        Version version = self.save(uploadItem);
+        Version version = save(uploadItem);
         externalizer.externalize(version.getUuid());
         return version.getItem().getUuid();
     }
 
     public UUID uploadSync(@Valid final UploadItem uploadItem) {
-        Version version = self.save(uploadItem);
+        Version version = save(uploadItem);
         try {
             externalizer.externalize(version.getUuid()).get();
         } catch (InterruptedException ex) {
@@ -111,7 +109,7 @@ public class Uploader {
     }
 
     /**
-     * Overwrite a existing item with a given UUID. The will if needed change
+     * Overwrite a existing item with a given UUID. This will if needed change
      * the internals of the existing active versions of the item, to make room
      * for the new item.
      *
@@ -120,13 +118,13 @@ public class Uploader {
      * @return a list of the identifiers for the new versions created
      */
     public Set<UUID> overwrite(@NotNull final UUID itemId, @Valid final UploadItem uploadItem) {
-        Set<UUID> externalized = self.overwriteAndSave(itemId, uploadItem);
+        Set<UUID> externalized = overwriteAndSave(itemId, uploadItem);
         externalized.forEach(u -> externalizer.externalize(u));
         return externalized;
     }
 
     public Set<UUID> overwriteSync(final UUID itemId, @Valid final UploadItem uploadItem) {
-        Set<UUID> externalized = self.overwriteAndSave(itemId, uploadItem);
+        Set<UUID> externalized = overwriteAndSave(itemId, uploadItem);
         externalized.forEach(u -> {
             try {
                 externalizer.externalize(u).get();
@@ -140,7 +138,7 @@ public class Uploader {
         return externalized;
     }
 
-    public Set<UUID> overwriteAndSave(final UUID itemId, @Valid final UploadItem uploadItem) {
+    private Set<UUID> overwriteAndSave(final UUID itemId, @Valid final UploadItem uploadItem) {
         Item item = itemRepo.get(itemId);
         Set<UUID> toExternalize = new HashSet<>();
         //We need to create tmp set to avoid ConcurrentModificationException. HasSet do not support that we loop and modify at the same time.
@@ -173,7 +171,7 @@ public class Uploader {
         return toExternalize;
     }
 
-    public Version save(@Valid final UploadItem uploadItem) {
+    private Version save(@Valid final UploadItem uploadItem) {
         Item item = findOrCreateItem(uploadItem);
         Version version = addVersion(item, uploadItem);
         addHosts(item, uploadItem);
@@ -252,10 +250,10 @@ public class Uploader {
     }
 
     private Item findOrCreate(final Link link) {
+        LOGGER.debug("Found link in content: {}", link);
         return itemRepo.findByUri(link.getUri())
                 .orElseGet(() -> {
                     Term path = termRepo.create(link.getUri());
-                    LOGGER.debug("Found link in content with path {} and name {}", path, link.getUri().getEdition());
                     Item tmpItem = new Item(path, link.getUri().getEdition().orElse(null), link.getUri().getMimeType());
                     return itemRepo.save(tmpItem);
                 });
