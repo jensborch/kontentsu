@@ -28,6 +28,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import javax.persistence.Column;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,6 +43,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author Jens Borch Christiansen
  */
 @MappedSuperclass
+@EntityListeners(ModifiedListener.class)
 public abstract class AbstractBaseEntity implements Serializable {
 
     private static final long serialVersionUID = -1841654741660206472L;
@@ -75,7 +77,7 @@ public abstract class AbstractBaseEntity implements Serializable {
 
     }
 
-    //TODO: Use when setting somthing
+    //TODO: Use when setting something
     void updateModified() {
         this.modified = ZonedDateTime.now();
     }
