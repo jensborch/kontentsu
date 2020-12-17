@@ -9,7 +9,7 @@ jdk:
 script:
   - ./gradlew build
   - ./gradlew codeCoverageReport
-  - ./gradlew sonarqube -Dsonar.branch.name=$TRAVIS_BRANCH
+  - ./gradlew sonarqube -Dsonar.branch.name=$TRAVIS_BRANCH --Dsonar.branch.target=master --scan
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 cache:
