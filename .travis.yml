@@ -4,12 +4,14 @@ install: true
 addons:
   sonarcloud:
     organization: "jensborch-github"
+    token: 
+      secure: "LAULG77uBBlq3Igk8+pg9aJlwXf3FS3oMxm10c2kG0UUJti8ZsSU69u36hvqssbnPa6kBSZsJw3zspf32IewCTKM6OBKu2N2IBwHmCwpP6wYaBL5RJn17XFmgBt0KeoYaXhv3huxwX05/uFu6vUUhhpgdgeN/sZK2ycvPbCjo1eVj6riLMaVG25WNUX5nMi0lZ3yNJWTSxXswuqk0iXaw3BhWwjsCzOOJmOI+YuJR4AmYvTiSQrPnIeMM56SDFBDoEYHBEqna19qdx6dTUHwUdBickZoAXW3loOawTOrd0LuaBlGzqRk4k33W98qL8hWxcTfArGVRvcdUW9TPFpoM8bTxI9N31L1ZFee4QBfFJ4ghgpxnEymrkC+ZfyimFrjNq3N0frcgTGU2b8D76mgZMkAnfbgyqWWo436Kh3/2BSj2nCjz8pLWXdeTRs9Mx6dxfBACxwsBEuV/Pv6Lx8LzvG8JmSasoMZSlfmEkhDFcIS3N99Mu5WOfwgEjLD8O6i0sP3GrKjJz251SatUxj20UKWNBQYru/0kcQ08PmhQMzxRwvLrVDZp00aCdl9q/cwRrx89CP6TYc5AIYl3+e5/p+/ZwZdai3mjO5zBkwnCnAT8R4ZyB4FldmOn0W4vcMBUr2LgTgyoDV4DZ3qRjXqRuUz8h3SymIGQDD8iWM6w9c="
 jdk:
   - openjdk11
 script:
   - ./gradlew build
   - ./gradlew codeCoverageReport
-  - ./gradlew sonarqube --stacktrace
+  - ./gradlew sonarqube
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 cache:
