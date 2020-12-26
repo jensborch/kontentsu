@@ -45,4 +45,12 @@ dependencies {
     )
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java', 'build/generated/source/annotationProcessor/main']
+        }
+    }
+}
+
 jar.dependsOn javadocJar

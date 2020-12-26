@@ -73,11 +73,6 @@ public abstract class AbstractBaseEntity implements Serializable {
 
     }
 
-    public void preUpdate() {
-
-    }
-
-    //TODO: Use when setting something
     void updateModified() {
         this.modified = ZonedDateTime.now();
     }

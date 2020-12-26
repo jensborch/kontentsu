@@ -12,5 +12,6 @@ public class ModifiedListener {
     @PrePersist
 	public void prePersist(AbstractBaseEntity entity) {
 		entity.updateModified();
+		entity.prePersist();
 	}
 }

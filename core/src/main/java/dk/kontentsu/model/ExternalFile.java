@@ -180,6 +180,11 @@ public class ExternalFile extends AbstractBaseEntity {
         return item.getMimeType();
     }
 
+    public String toString() {
+        return "ExternalFile{ id=" + getId() +
+            ", state=" + getState() + "}";
+    }
+
     /**
      * Builder for composite version.
      */

@@ -84,7 +84,6 @@ public abstract class Repository<E extends AbstractBaseEntity> {
     public abstract List<E> findAll();
 
     public E save(@NotNull @Valid final E entity) {
-        entity.prePersist();
         em.persist(entity);
         return entity;
     }
