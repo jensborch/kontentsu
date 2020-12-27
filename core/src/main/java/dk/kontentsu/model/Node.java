@@ -44,7 +44,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import dk.kontentsu.repository.Repository;
 
 /**
- * Host server for a CDN item.
+ * Host node for a CDN item.
  *
  * @author Jens Borch Christiansen
  */
@@ -99,6 +99,10 @@ public class Node extends AbstractBaseEntity {
 
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Optional<URI> getFilesystemURI() {

@@ -20,6 +20,7 @@ import dk.kontentsu.spi.ContentProducer;
 import dk.kontentsu.test.ContentTestData;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
+import org.jboss.weld.junit5.auto.ExcludeBeanClasses;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.Test;
  * @author Jens Borch Christiansen
  */
 @EnableAutoWeld
+@ExcludeBeanClasses(HibernateInterceptorRegistrator.class)
 @AddPackages({TestVisitor.class, Content.class, ContentProducer.class})
 @AddExtensions(ContentProcessingExtension.class)
 public class ReferenceProcessorTest {

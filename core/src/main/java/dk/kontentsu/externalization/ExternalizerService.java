@@ -112,10 +112,10 @@ public class ExternalizerService {
     }
 
     @Asynchronous
-    public Future<List<ExternalFile>> externalize(final UUID version) {
-        Version tmp = itemRepo.getVersion(version);
-        LOGGER.info("Externalizing version {} and its references", tmp);
-        return CompletableFuture.completedFuture(externalize(tmp));
+    public Future<List<ExternalFile>> externalize(final UUID versionId) {
+        Version version = itemRepo.getVersion(versionId);
+        LOGGER.info("Externalizing version {} and its references", version);
+        return CompletableFuture.completedFuture(externalize(version));
     }
 
     private List<ExternalFile> externalize(final Version version) {
@@ -167,7 +167,9 @@ public class ExternalizerService {
     }
 
     private Map<MimeType, Bean<?>> getExternalizationVisitorBeansMap() {
-        visitors.forEach(v -> LOGGER.info("{}", v));
+        if (LOGGER.isDebugEnabled()) {
+            visitors.forEach(v -> LOGGER.debug("{}", v));
+        }
         Map<MimeType, Bean<?>> map = new HashMap<>();
         findAllExternalizationVisitorBeans().forEach(b
                 -> Arrays.stream(b.getBeanClass().getAnnotationsByType(ContentProcessingMimeType.class))

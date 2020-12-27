@@ -93,16 +93,6 @@ public class Term extends AbstractBaseEntity {
     private static final Pattern FULL_PATH_REGEX_PATTERN = Pattern.compile(FULL_PATH_REGEX);
     private static final Pattern PATH_REGEX_PATTERN = Pattern.compile(PATH_REGEX);
 
-    public static Term create(final String name) {
-        Term t = new Term(name);
-        t.initPath();
-        return t;
-    }
-
-    public static Term create() {
-        return create(URI_TAXONOMY);
-    }
-
     @ManyToMany(mappedBy = "terms")
     private Set<Item> items = new HashSet<>();
 
@@ -133,9 +123,14 @@ public class Term extends AbstractBaseEntity {
         //Needed by JPA
     }
 
-    @Override
-    public void prePersist() {
-        initPath();
+    public static Term create(final String name) {
+        Term t = new Term(name);
+        t.initPath();
+        return t;
+    }
+
+    public static Term create() {
+        return create(URI_TAXONOMY);
     }
 
     public static Term parse(final String path) {
