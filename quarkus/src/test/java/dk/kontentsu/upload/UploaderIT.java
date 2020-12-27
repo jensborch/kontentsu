@@ -30,7 +30,6 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.h2.H2DatabaseTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -136,7 +135,6 @@ public class UploaderIT {
     }
 
     @Test
-    @Disabled
     public void testOverwrite() throws Exception {
         UploadItem uploadItem = UploadItem.builder()
                 .content("article2", new ByteArrayInputStream(data.getArticle(1)))
@@ -162,7 +160,7 @@ public class UploaderIT {
                 .mimeType(new MimeType("application", "hal+json"))
                 .encoding(StandardCharsets.UTF_8)
                 .build();
-        service.overwrite(overwrite.getUuid(), uploadItem);
+        service.overwriteSync(overwrite.getUuid(), uploadItem);
 
         Item item = itemRepo.get(overwrite.getUuid());
         assertFalse(item.getEdition().isPresent());
@@ -195,7 +193,6 @@ public class UploaderIT {
     }
 
     @Test
-    @Disabled
     public void testIncompleteUpload() throws Exception {
         InputStream is = new ByteArrayInputStream("test data".getBytes());
         UploadItem uploadItem = UploadItem.builder()
@@ -206,6 +203,7 @@ public class UploaderIT {
 
         ConstraintViolationException ex = assertThrows(ConstraintViolationException.class, () -> service.upload(uploadItem));
         assertEquals(1, ex.getConstraintViolations().size());
-        assertTrue(ex.getConstraintViolations().stream().findFirst().get().getMessage().startsWith("may not be null"));
+        String msg = ex.getConstraintViolations().stream().findFirst().get().getMessage();
+        assertTrue(msg.startsWith("must not be null"));
     }
 }
