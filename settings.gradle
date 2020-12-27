@@ -10,5 +10,5 @@ pluginManagement {
     }
 }
 rootProject.name = 'kontentsu-cms'
-include 'processing', 'core', 'spi', 'util', 'test', 'quarkus'
+include 'processing', 'core', 'spi', 'util', 'test', 'quarkus', 'oauth'
 
