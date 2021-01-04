@@ -23,29 +23,29 @@ class ModifiedListenerTest {
     @Inject
     private EntityManager em;
 
-    private Node node;
+    private Host host;
 
     @BeforeEach
     void setup() throws Exception {
-        node = new Node("name", "desc", new URI("ftp://test"), "test");
-        em.persist(node);
+        host = new Host("name", "desc", new URI("ftp://test"), "test");
+        em.persist(host);
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        Node n = em.find(Node.class, node.getId());
+        Host n = em.find(Host.class, host.getId());
         em.remove(n);
     }
 
     @Test
     void testNotModified() throws Exception {
-        Node n = em.find(Node.class, node.getId());
+        Host n = em.find(Host.class, host.getId());
         assertEquals(n.getCreated(), n.getModified());
     }
 
     @Test
     void testModified() throws Exception {
-        Node n = em.find(Node.class, node.getId());
+        Host n = em.find(Host.class, host.getId());
         TimeUnit.SECONDS.sleep(1);
         n.setDescription("test");
         em.flush();

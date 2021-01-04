@@ -126,7 +126,7 @@ public class Item extends AbstractBaseEntity {
     private Provider provider;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    private Set<Node> hosts = new HashSet<>();
+    private Set<Host> hosts = new HashSet<>();
 
     @NotNull
     @Column(name = "mimetype")
@@ -151,15 +151,15 @@ public class Item extends AbstractBaseEntity {
         this.path.addItem(this);
     }
 
-    public Set<Node> getHosts() {
+    public Set<Host> getHosts() {
         return Collections.unmodifiableSet(hosts);
     }
 
-    public void addHost(final Node host) {
+    public void addHost(final Host host) {
         hosts.add(host);
     }
 
-    public void removeHost(final Node host) {
+    public void removeHost(final Host host) {
         hosts.remove(host);
     }
 
@@ -319,7 +319,7 @@ public class Item extends AbstractBaseEntity {
         }
 
         public Criteria host(final String name) {
-            QNode host = QNode.node;
+            QHost host = QHost.host;
             query
                     .join(item.hosts, host)
                     .where(host.name.eq(name));

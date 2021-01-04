@@ -21,7 +21,7 @@ import javax.validation.ConstraintViolationException;
 import dk.kontentsu.model.Interval;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
-import dk.kontentsu.model.Node;
+import dk.kontentsu.model.Host;
 import dk.kontentsu.model.Version;
 import dk.kontentsu.repository.HostRepository;
 import dk.kontentsu.repository.ItemRepository;
@@ -55,9 +55,9 @@ public class UploaderIT {
     @Inject
     Uploader service;
 
-    private Node createHost(String name) throws Exception {
+    private Host createHost(String name) throws Exception {
         return hostRepo.findByName(name).orElseGet(()
-                -> hostRepo.save(new Node(name,
+                -> hostRepo.save(new Host(name,
                         "Test description",
                         URI.create("ftp://myusername:mypassword@somehost/"),
                         "cdn/upload"))
@@ -71,7 +71,7 @@ public class UploaderIT {
 
     @Test
     public void testHost() throws Exception {
-        Node host = createHost("name");
+        Host host = createHost("name");
         assertEquals(host, hostRepo.get(host.getUuid()));
         assertEquals(1, hostRepo.findAll().size());
         assertTrue(hostRepo.findByName(host.getName()).isPresent());
@@ -81,7 +81,7 @@ public class UploaderIT {
 
     @Test
     public void testUploadPlainText() throws Exception {
-        Node textHost = createHost("text_host");
+        Host textHost = createHost("text_host");
         InputStream is = new ByteArrayInputStream("test data".getBytes());
         UploadItem uploadItem = UploadItem.builder()
                 .content("TestRef", is)
@@ -105,7 +105,7 @@ public class UploaderIT {
 
     @Test
     public void testSimplePage() throws Exception {
-        Node host = createHost("name");
+        Host host = createHost("name");
         UploadItem uploadItem = UploadItem.builder()
                 .content("article2", new ByteArrayInputStream(data.getArticle(1)))
                 .uri(new Item.URI("items/article2/"))

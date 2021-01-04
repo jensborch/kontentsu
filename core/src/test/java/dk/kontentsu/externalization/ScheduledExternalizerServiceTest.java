@@ -15,7 +15,7 @@ import java.util.List;
 
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.ExternalFile;
-import dk.kontentsu.model.Node;
+import dk.kontentsu.model.Host;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.MimeType;
 import dk.kontentsu.model.Term;
@@ -57,7 +57,7 @@ public class ScheduledExternalizerServiceTest {
     public void setUp() throws Exception {
         path = Files.createTempDirectory("junit");
         Files.createFile(path.resolve("delete"));
-        Node host = new Node("test", "desc", path.toString());
+        Host host = new Host("test", "desc", path.toString());
         Term path = Term.parse("uri:/test/file/");
         Item item = new Item(path, "xl", MimeType.APPLICATION_JSON_TYPE);
         item.addHost(host);

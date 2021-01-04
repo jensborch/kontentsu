@@ -16,7 +16,7 @@ import javax.validation.groups.Default;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test for {@link Node} class.
+ * Test for {@link Host} class.
  *
  * @author Jens Borch Christiansen
  */
@@ -24,20 +24,20 @@ public class HostTest {
 
     @Test
     public void testInvalidPath() throws Exception {
-        Node invalid = new Node("name", "desc", new URI("ftp://test"), "test \t test");
+        Host invalid = new Host("name", "desc", new URI("ftp://test"), "test \t test");
         ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
         Validator validator = vf.getValidator();
-        Set<ConstraintViolation<Node>> errors = validator.validate(invalid, Default.class);
+        Set<ConstraintViolation<Host>> errors = validator.validate(invalid, Default.class);
         assertEquals(1, errors.size());
         assertThat(errors.stream().findFirst().get().getMessage(), startsWith("must match"));
     }
 
     @Test
     public void testValidPath() throws Exception {
-        Node invalid = new Node("name", "desc", new URI("ftp://test"), "path/test   /  \\");
+        Host invalid = new Host("name", "desc", new URI("ftp://test"), "path/test   /  \\");
         ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
         Validator validator = vf.getValidator();
-        Set<ConstraintViolation<Node>> errors = validator.validate(invalid, Default.class);
+        Set<ConstraintViolation<Host>> errors = validator.validate(invalid, Default.class);
         assertEquals(0, errors.size());
     }
 

@@ -49,15 +49,15 @@ import dk.kontentsu.repository.Repository;
  * @author Jens Borch Christiansen
  */
 @Entity
-@Table(name = "node")
+@Table(name = "host")
 @NamedQueries({
     @NamedQuery(name = Repository.HOST_FIND_ALL,
-            query = "SELECT h FROM Node h"),
+            query = "SELECT h FROM Host h"),
     @NamedQuery(name = Repository.HOST_GET_BY_NAME,
-            query = "SELECT h FROM Node h WHERE h.name = :name"),
+            query = "SELECT h FROM Host h WHERE h.name = :name"),
     @NamedQuery(name = Repository.HOST_GET,
-            query = "SELECT h FROM Node h WHERE h.uuid = :uuid")})
-public class Node extends AbstractBaseEntity {
+            query = "SELECT h FROM Host h WHERE h.uuid = :uuid")})
+public class Host extends AbstractBaseEntity {
 
     private static final long serialVersionUID = 6648972303846562274L;
 
@@ -78,18 +78,18 @@ public class Node extends AbstractBaseEntity {
     @Column(name = "path", length = 1000)
     private String path;
 
-    protected Node() {
+    protected Host() {
         //Needed by JPA
     }
 
-    public Node(final String name, final String description, final URI filesystem, final String path) {
+    public Host(final String name, final String description, final URI filesystem, final String path) {
         this.name = name;
         this.description = description;
         this.filesystem = filesystem;
         this.path = path;
     }
 
-    public Node(final String name, final String description, final String path) {
+    public Host(final String name, final String description, final String path) {
         this(name, description, null, path);
     }
 

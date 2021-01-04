@@ -44,7 +44,7 @@ import javax.validation.constraints.NotNull;
 import dk.kontentsu.externalization.ExternalizerService;
 import dk.kontentsu.model.Content;
 import dk.kontentsu.model.ExternalFile;
-import dk.kontentsu.model.Node;
+import dk.kontentsu.model.Host;
 import dk.kontentsu.model.Item;
 import dk.kontentsu.model.Term;
 import dk.kontentsu.model.Version;
@@ -189,7 +189,7 @@ public class Uploader {
     }
 
     private void addHosts(final Item item, final UploadItem uploadItem) {
-        List<Node> hosts = hostRepo.findAll();
+        List<Host> hosts = hostRepo.findAll();
         if (uploadItem.getHosts().isEmpty()) {
             hosts.forEach(item::addHost);
         } else {

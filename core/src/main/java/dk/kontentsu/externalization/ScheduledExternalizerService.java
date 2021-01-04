@@ -45,7 +45,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import dk.kontentsu.model.ExternalFile;
-import dk.kontentsu.model.Node;
+import dk.kontentsu.model.Host;
 import dk.kontentsu.repository.ExternalFileRepository;
 import io.quarkus.arc.Arc;
 import org.quartz.Job;
@@ -132,7 +132,7 @@ public class ScheduledExternalizerService {
         LOGGER.info("Publishing externalised files available at: {}", time.format(DateTimeFormatter.ISO_DATE_TIME));
         List<ExternalFile> all = fileRepo.findAll(time);
         LOGGER.info("Found {} files to publish", all.size());
-        Map<Node, Set<ExternalFile>> filesMap = new HashMap<>();
+        Map<Host, Set<ExternalFile>> filesMap = new HashMap<>();
         all.forEach(f
                 -> f.getItem().getHosts().forEach(h -> {
                     filesMap.putIfAbsent(h, new HashSet<>());
@@ -146,7 +146,7 @@ public class ScheduledExternalizerService {
         });
     }
 
-    private void deleteAll(final Node host, final Set<ExternalFile> files) {
+    private void deleteAll(final Host host, final Set<ExternalFile> files) {
         try (Stream<Path> walker = Files.walk(host.getPath())) {
             walker.filter(p -> p.toFile().isFile()).forEach(fsPath -> {
                 if (files.stream().map(f -> f.resolvePath(host.getPath())).noneMatch(p -> p.equals(fsPath))) {
@@ -166,7 +166,7 @@ public class ScheduledExternalizerService {
         }
     }
 
-    private void publishAll(final Node host, final Set<ExternalFile> files) {
+    private void publishAll(final Host host, final Set<ExternalFile> files) {
         files.forEach(f -> publish(f, host.getPath()));
     }
 
