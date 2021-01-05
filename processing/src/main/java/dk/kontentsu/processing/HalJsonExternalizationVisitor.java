@@ -72,7 +72,7 @@ public class HalJsonExternalizationVisitor extends ExternalizationVisitor {
     private final ObjectMapper mapper;
 
     @Inject
-    private ScopedContent content;
+    ScopedContent content;
 
     public HalJsonExternalizationVisitor() {
         this.counter = new Counter();

@@ -65,7 +65,7 @@ public class JsonExternalizationVisitor extends ExternalizationVisitor {
     private final ObjectMapper mapper;
 
     @Inject
-    private ScopedContent content;
+    ScopedContent content;
 
     public JsonExternalizationVisitor() {
         this.mapper = ObjectMapperFactory.create();

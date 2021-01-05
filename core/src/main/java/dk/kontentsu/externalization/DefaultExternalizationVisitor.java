@@ -50,10 +50,10 @@ public class DefaultExternalizationVisitor extends ExternalizationVisitor {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultExternalizationVisitor.class);
 
     @Inject
-    private ScopedContent content;
+    ScopedContent content;
 
     @Inject
-    private ItemRepository repo;
+    ItemRepository repo;
 
     @PostConstruct
     public void init() {
